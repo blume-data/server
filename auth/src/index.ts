@@ -16,13 +16,13 @@ const start = async () => {
       useUnifiedTopology: true,
       useCreateIndex: true,
     });
-    console.log('Connected to MongoDb Api');
+    console.log('Auth: Connected to MongoDb');
   } catch (err) {
     console.error(err);
   }
 
   app.listen(3000, () => {
-    console.log('Api Server is Listening on port 3000!!!');
+    console.log('Auth Server is Listening on port 3000!!!');
   });
 };
 
