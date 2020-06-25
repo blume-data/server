@@ -14,7 +14,7 @@ module.exports = {
     resolve: {
         extensions: ['.ts', '.js'],
     },
-    externals: [ nodeExternals() ],
+    externals: [ nodeExternals(), 'test' ],
     module: {
         rules: [
             {
