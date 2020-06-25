@@ -13,7 +13,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: AUTH INTO DOCKER
-      run: cd auth && docker build -t $DOCKER_USERNAME/auth .
+      run: cd auth && docker build -t taranjeetsingh/auth .
     - run: docker login -u $DOCKER_USERNAME && -P $DOCKER_PASSWORD
       env:
         DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
