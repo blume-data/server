@@ -3,14 +3,15 @@ import { body } from 'express-validator';
 import jwt from 'jsonwebtoken';
 import { validateRequest, BadRequestError } from '@ranjodhbirkaur/common';
 
-import {rootUrl, stringLimitOptionErrorMessage, stringLimitOptions} from "../util/constants";
+import {stringLimitOptionErrorMessage, stringLimitOptions} from "../util/constants";
 import {TempUser} from "../models/tempUser";
 import {RANDOM_STRING} from "../util/methods";
+import {signUp} from "../util/urls";
 
 const router = express.Router();
 
 router.post(
-  rootUrl+'client/signup',
+    signUp,
   [
     body('email').isEmail().withMessage('Email must be valid'),
     body('password')
@@ -50,7 +51,10 @@ router.post(
         id: user.id,
         email: user.email,
         userName: user.userName,
+        verificationToken: user.verificationToken
     };
+
+    console.log('verification token', verificationToken);
 
     // Generate JWT
     const userJwt = jwt.sign(
