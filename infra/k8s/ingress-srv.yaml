@@ -10,7 +10,7 @@ spec:
     - host: blumedata.store
       http:
         paths:
-          - path: /api/auth/?(.*)
+          - path: /auth/?(.*)
             backend:
               serviceName: auth-srv
               servicePort: 3000
