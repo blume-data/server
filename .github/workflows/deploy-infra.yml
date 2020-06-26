@@ -12,7 +12,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: LOGIN TO DIGITAL OCEAN
     - uses: digitalocean/action-doctl@v2
       with:
         token: ${{ secrets.DIGITAL_OCEAN_ACCESS_TOKEN }}
