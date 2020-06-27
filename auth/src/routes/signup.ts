@@ -1,9 +1,9 @@
 import express, { Request, Response } from 'express';
 import { body } from 'express-validator';
-import jwt from 'jsonwebtoken';
+
 import { validateRequest, BadRequestError } from '@ranjodhbirkaur/common';
 
-import {stringLimitOptionErrorMessage, stringLimitOptions} from "../util/constants";
+import {okayStatus, stringLimitOptionErrorMessage, stringLimitOptions} from "../util/constants";
 import {TempUser} from "../models/tempUser";
 import {RANDOM_STRING} from "../util/methods";
 import {signUp} from "../util/urls";
@@ -44,7 +44,7 @@ router.post(
 
     const verificationToken = RANDOM_STRING(4);
 
-    const user = TempUser.build({ email, password, firstName, isVerified: false, lastName, role: 'client', userName, verificationToken });
+    const user = TempUser.build({ email, password, firstName, lastName, role: 'client', userName, verificationToken });
     await user.save();
 
     const payload = {
@@ -54,7 +54,7 @@ router.post(
         verificationToken: user.verificationToken
     };
 
-    res.status(201).send({... payload});
+    res.status(okayStatus).send({... payload});
   }
 );
 

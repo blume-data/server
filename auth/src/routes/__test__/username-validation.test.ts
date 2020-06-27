@@ -1,6 +1,7 @@
 import request from 'supertest';
 import { app } from '../../app';
 import {signUp, userNameValidationUrl} from "../../util/urls";
+import {errorStatus, okayStatus} from "../../util/constants";
 
 const sampleData = {
     "email": "t@t.com",
@@ -14,23 +15,23 @@ it('Client username validation', async (done) => {
     await request(app)
         .post(signUp)
         .send(sampleData)
-        .expect(201);
+        .expect(okayStatus);
 
     await request(app)
         .post(userNameValidationUrl)
         .send({})
-        .expect(400);
+        .expect(errorStatus);
 
     await request(app)
         .post(userNameValidationUrl)
         .send({userName: 'taranjeet'})
-        .expect(400);
+        .expect(errorStatus);
 
 
     await request(app)
         .post(userNameValidationUrl)
         .send({userName: 'sdfdsf'})
-        .expect(200);
+        .expect(okayStatus);
 
     done();
 });

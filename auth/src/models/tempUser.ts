@@ -8,7 +8,6 @@ interface TempUserAttrs {
     lastName: string;
     verificationToken: string,
     userName: string;
-    isVerified: boolean;
     role: string;
 }
 
@@ -23,7 +22,6 @@ interface TempUserDoc extends mongoose.Document {
     lastName: string;
     verificationToken: string,
     userName: string;
-    isVerified: boolean;
     role: string;
     created_at: string;
 }
@@ -56,10 +54,6 @@ const tempUserSchema = new mongoose.Schema(
             type: String,
             required: true
         },
-        isVerified : {
-            type: Boolean,
-            required: true
-        },
         role : {
             type: String,
             required: true
@@ -81,6 +75,7 @@ const tempUserSchema = new mongoose.Schema(
 tempUserSchema.pre('save', async function(done) {
     if (this.isModified('password')) {
         const hashed = await Password.toHash(this.get('password'));
+
         this.set('password', hashed);
     }
     done();

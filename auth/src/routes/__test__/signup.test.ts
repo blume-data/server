@@ -1,6 +1,7 @@
 import request from 'supertest';
 import { app } from '../../app';
 import {signUp} from "../../util/urls";
+import {errorStatus, okayStatus} from "../../util/constants";
 
 const sampleData = {
     "email": "t@t.com",
@@ -14,7 +15,7 @@ it('returns a 201 on successful signup', async () => {
   return request(app)
     .post(signUp)
     .send(sampleData)
-    .expect(201);
+    .expect(okayStatus);
 });
 
 it('returns a 400 with an invalid email', async () => {
@@ -23,7 +24,7 @@ it('returns a 400 with an invalid email', async () => {
     .send({
         ...sampleData, email: ''
     })
-    .expect(400);
+    .expect(errorStatus);
 });
 
 it('returns a 400 with an invalid password', async () => {
@@ -32,7 +33,7 @@ it('returns a 400 with an invalid password', async () => {
     .send({
       ...sampleData, password: ''
     })
-    .expect(400);
+    .expect(errorStatus);
 });
 
 it('returns a 400 with an invalid username', async () => {
@@ -41,7 +42,7 @@ it('returns a 400 with an invalid username', async () => {
         .send({
             ...sampleData, userName: ''
         })
-        .expect(400);
+        .expect(errorStatus);
 });
 
 it('returns a 400 with missing email and password', async () => {
@@ -50,14 +51,14 @@ it('returns a 400 with missing email and password', async () => {
     .send({
       ...sampleData, email: undefined
     })
-    .expect(400);
+    .expect(errorStatus);
 
   await request(app)
     .post(signUp)
     .send({
       ...sampleData, password: undefined
     })
-    .expect(400);
+    .expect(errorStatus);
 });
 
 it('disallows duplicate emails', async () => {
@@ -73,7 +74,7 @@ it('disallows duplicate emails', async () => {
     .send({
       ...sampleData
     })
-    .expect(400);
+    .expect(errorStatus);
 });
 
 it('sets a cookie after successful signup', async () => {

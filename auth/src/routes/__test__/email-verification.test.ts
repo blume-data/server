@@ -1,6 +1,7 @@
 import request from 'supertest';
 import { app } from '../../app';
 import {emailVerificationUrl, signUp} from "../../util/urls";
+import {errorStatus, okayStatus} from "../../util/constants";
 
 const sampleData = {
     "email": "t@t.com",
@@ -14,21 +15,21 @@ it('Client : Email verification', async (done) => {
     const response = await request(app)
         .post(signUp)
         .send(sampleData)
-        .expect(201);
+        .expect(okayStatus);
 
     await request(app)
         .get(emailVerificationUrl)
         .send({})
-        .expect(400);
+        .expect(errorStatus);
 
     await request(app)
         .get(`${emailVerificationUrl}?email=${response.body.email}&token=${response.body.verificationToken}`)
-        .expect(201);
+        .expect(okayStatus);
 
 
     await request(app)
         .get(`${emailVerificationUrl}?email=${response.body.email}&token=4324sdfssdf`)
-        .expect(400);
+        .expect(errorStatus);
 
     done();
 });

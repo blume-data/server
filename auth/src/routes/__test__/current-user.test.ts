@@ -1,3 +1,4 @@
+/*
 import request from 'supertest';
 import { app } from '../../app';
 
@@ -21,3 +22,4 @@ it('responds with null if not authenticated', async () => {
 
   expect(response.body.currentUser).toEqual(null);
 });
+*/

@@ -4,6 +4,7 @@ import {BadRequestError} from "@ranjodhbirkaur/common";
 import {TempUser} from "../models/tempUser";
 import {ClientUser} from "../models/clientUser";
 import jwt from "jsonwebtoken";
+import {okayStatus} from "../util/constants";
 
 interface ReqIsUserNameAvailable extends Request{
     body: {
@@ -28,7 +29,7 @@ export const isUserNameAvailable = async function (req: ReqIsUserNameAvailable, 
                 throw new BadRequestError('Username not available');
             }
             else {
-                res.status(200).send(false);
+                res.status(okayStatus).send(false);
             }
         }
     }
@@ -43,7 +44,6 @@ export const verifyEmailToken = async function (req: ReqValidateEmail, res: Resp
 
         const newUser = await ClientUser.build({
             email: userExist.email,
-            isVerified: true,
             password: userExist.password,
             firstName: userExist.firstName,
             lastName: userExist.lastName,
@@ -70,7 +70,7 @@ export const verifyEmailToken = async function (req: ReqValidateEmail, res: Resp
             jwt: userJwt,
         };
 
-        res.status(201).send({... payload, accessToken: userJwt});
+        res.status(okayStatus).send({... payload, accessToken: userJwt});
 
         TempUser.deleteMany({email: modelProps.email}).then(() => {});
 
