@@ -2,6 +2,7 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
 import request from 'supertest';
 import { app } from '../app';
+import {signIn} from "../util/urls";
 
 declare global {
   namespace NodeJS {
@@ -39,15 +40,17 @@ afterAll(async () => {
 });
 
 global.signin = async () => {
-  const email = 'test@test.com';
-  const password = 'password';
+  const sampleData = {
+    "email": "t@t.com",
+    "password": "sddsdf",
+    "firstName": "Taranjeet",
+    "lastName": "Singh",
+    "userName": "taranjeet"
+  };
 
   const response = await request(app)
-    .post('/api/users/signup')
-    .send({
-      email,
-      password
-    })
+    .post(signIn)
+    .send(sampleData)
     .expect(201);
 
   const cookie = response.get('Set-Cookie');

@@ -3,10 +3,11 @@ import {rootUrl, stringLimitOptionErrorMessage, stringLimitOptions} from "../uti
 import {body, query} from "express-validator";
 import {validateRequest} from "@ranjodhbirkaur/common";
 import {isUserNameAvailable, verifyEmailToken} from "../Controllers/UserController";
+import {emailVerificationUrl, userNameValidationUrl} from "../util/urls";
 
 const router = express.Router();
 
-router.post(rootUrl+'/client/username-validation', [
+router.post(userNameValidationUrl, [
         body('userName')
             .trim()
             .notEmpty()
@@ -16,7 +17,7 @@ router.post(rootUrl+'/client/username-validation', [
     ],
     validateRequest, isUserNameAvailable);
 
-router.get(rootUrl+'/client/email-verification', [
+router.get(emailVerificationUrl, [
     query('token')
         .trim()
         .notEmpty()
