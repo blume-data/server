@@ -1,6 +1,6 @@
 import request from 'supertest';
 import { app } from '../../app';
-import {signUp} from "../../util/urls";
+import {emailVerificationUrl, signUp} from "../../util/urls";
 import {errorStatus, okayStatus} from "../../util/constants";
 
 const sampleData = {
@@ -11,7 +11,18 @@ const sampleData = {
     "userName": "taranjeet"
 };
 
-it('returns a 201 on successful signup', async () => {
+async function beforeEach() {
+    const user = await request(app)
+        .post(signUp)
+        .send(sampleData)
+        .expect(okayStatus);
+
+    await request(app)
+        .get(`${emailVerificationUrl}?email=${sampleData.email}&token=${user.body.verificationToken}`)
+        .expect(okayStatus);
+}
+
+it('returns a okay on successful signup', async () => {
   return request(app)
     .post(signUp)
     .send(sampleData)
@@ -61,13 +72,13 @@ it('returns a 400 with missing email and password', async () => {
     .expect(errorStatus);
 });
 
-it('disallows duplicate emails', async () => {
+it('allows duplicate emails in temp emails', async () => {
   await request(app)
     .post(signUp)
     .send({
       ...sampleData
     })
-    .expect(201);
+    .expect(okayStatus);
 
   await request(app)
     .post(signUp)
@@ -77,13 +88,13 @@ it('disallows duplicate emails', async () => {
     .expect(errorStatus);
 });
 
-it('sets a cookie after successful signup', async () => {
-  const response = await request(app)
-    .post(signUp)
-    .send({
-      ...sampleData
-    })
-    .expect(201);
+it('Disallows verified users to signup', async () => {
 
-  expect(response.get('Set-Cookie')).toBeDefined();
+    await beforeEach();
+    await request(app)
+        .post(signUp)
+        .send({
+            ...sampleData
+        })
+        .expect(errorStatus);
 });

@@ -7,6 +7,7 @@ import {okayStatus, stringLimitOptionErrorMessage, stringLimitOptions} from "../
 import {TempUser} from "../models/tempUser";
 import {RANDOM_STRING} from "../util/methods";
 import {signUp} from "../util/urls";
+import {ClientUser} from "../models/clientUser";
 
 const router = express.Router();
 
@@ -32,12 +33,12 @@ router.post(
   async (req: Request, res: Response) => {
     const { email, password, firstName, lastName, userName } = req.body;
 
-    let existingUser = await TempUser.findOne({ email });
+    let existingUser = await ClientUser.findOne({ email });
 
     if (existingUser) {
-      throw new BadRequestError('Email in use');
+      throw new BadRequestError('Account with this Email already exist');
     }
-    existingUser = await TempUser.findOne({ userName });
+    existingUser = await ClientUser.findOne({ userName });
     if (existingUser) {
       throw new BadRequestError('Username in use');
     }
