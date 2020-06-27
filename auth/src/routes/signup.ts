@@ -1,12 +1,13 @@
 import express, { Request, Response } from 'express';
 import { body } from 'express-validator';
-import jwt from 'jsonwebtoken';
+
 import { validateRequest, BadRequestError } from '@ranjodhbirkaur/common';
 
-import {stringLimitOptionErrorMessage, stringLimitOptions} from "../util/constants";
+import {okayStatus, stringLimitOptionErrorMessage, stringLimitOptions} from "../util/constants";
 import {TempUser} from "../models/tempUser";
 import {RANDOM_STRING} from "../util/methods";
 import {signUp} from "../util/urls";
+import {ClientUser} from "../models/clientUser";
 
 const router = express.Router();
 
@@ -32,19 +33,19 @@ router.post(
   async (req: Request, res: Response) => {
     const { email, password, firstName, lastName, userName } = req.body;
 
-    let existingUser = await TempUser.findOne({ email });
+    let existingUser = await ClientUser.findOne({ email });
 
     if (existingUser) {
-      throw new BadRequestError('Email in use');
+      throw new BadRequestError('Account with this Email already exist');
     }
-    existingUser = await TempUser.findOne({ userName });
+    existingUser = await ClientUser.findOne({ userName });
     if (existingUser) {
       throw new BadRequestError('Username in use');
     }
 
     const verificationToken = RANDOM_STRING(4);
 
-    const user = TempUser.build({ email, password, firstName, isVerified: false, lastName, role: 'client', userName, verificationToken });
+    const user = TempUser.build({ email, password, firstName, lastName, role: 'client', userName, verificationToken });
     await user.save();
 
     const payload = {
@@ -54,7 +55,7 @@ router.post(
         verificationToken: user.verificationToken
     };
 
-    res.status(201).send({... payload});
+    res.status(okayStatus).send({... payload});
   }
 );
 

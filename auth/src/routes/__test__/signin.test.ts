@@ -1,50 +1,69 @@
 import request from 'supertest';
 import { app } from '../../app';
+import {emailVerificationUrl, signIn, signUp} from "../../util/urls";
+import {errorStatus, okayStatus} from "../../util/constants";
 
-it('fails when a email that does not exist is supplied', async () => {
+const sampleData = {
+    "email": "t@t.com",
+    "password": "sddsdf",
+    "firstName": "Taranjeet",
+    "lastName": "Singh",
+    "userName": "taranjeet"
+};
+
+async function beforeEach() {
+    const user = await request(app)
+        .post(signUp)
+        .send(sampleData)
+        .expect(okayStatus);
+
+    await request(app)
+        .get(`${emailVerificationUrl}?email=${sampleData.email}&token=${user.body.verificationToken}`)
+        .expect(okayStatus);
+}
+
+it('fails when a email/password that does not exist is supplied', async () => {
+
   await request(app)
-    .post('/api/users/signin')
-    .send({
-      email: 'test@test.com',
-      password: 'password'
-    })
-    .expect(400);
+    .post(signIn)
+    .send({})
+    .expect(errorStatus);
 });
 
-it('fails when an incorrect password is supplied', async () => {
-  await request(app)
-    .post('/api/users/signup')
-    .send({
-      email: 'test@test.com',
-      password: 'password'
-    })
-    .expect(201);
+it('SignIn: verification and signin', async () => {
 
-  await request(app)
-    .post('/api/users/signin')
-    .send({
-      email: 'test@test.com',
-      password: 'aslkdfjalskdfj'
-    })
-    .expect(400);
+    await beforeEach();
+    await request(app)
+        .post(signIn)
+        .send({
+            email: sampleData.email,
+            password: sampleData.password
+        })
+        .expect(okayStatus);
+});
+
+it('SignIn: verification fails when wrong password provided', async () => {
+
+    await beforeEach();
+    await request(app)
+        .post(signIn)
+        .send({
+            email: sampleData.email,
+            password: 'some-wrong-password'
+        })
+        .expect(errorStatus);
 });
 
 it('responds with a cookie when given valid credentials', async () => {
-  await request(app)
-    .post('/api/users/signup')
-    .send({
-      email: 'test@test.com',
-      password: 'password'
-    })
-    .expect(201);
 
-  const response = await request(app)
-    .post('/api/users/signin')
-    .send({
-      email: 'test@test.com',
-      password: 'password'
-    })
-    .expect(200);
+    await beforeEach();
+    const response = await request(app)
+        .post(signIn)
+        .send({
+            email: sampleData.email,
+            password: sampleData.password
+        })
+        .expect(okayStatus);
 
-  expect(response.get('Set-Cookie')).toBeDefined();
+    expect(response.get('Set-Cookie')).toBeDefined();
 });

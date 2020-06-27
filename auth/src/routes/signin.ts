@@ -4,8 +4,10 @@ import jwt from 'jsonwebtoken';
 import { validateRequest, BadRequestError } from '@ranjodhbirkaur/common';
 
 import { Password } from '../services/password';
-import { User } from '../models/user';
+
 import {signIn} from "../util/urls";
+import {okayStatus} from "../util/constants";
+import {ClientUser} from "../models/clientUser";
 
 const router = express.Router();
 
@@ -22,7 +24,7 @@ router.post(
   async (req: Request, res: Response) => {
     const { email, password } = req.body;
 
-    const existingUser = await User.findOne({ email });
+    const existingUser = await ClientUser.findOne({ email });
     if (!existingUser) {
       throw new BadRequestError('Invalid credentials: Email not found');
     }
@@ -35,12 +37,14 @@ router.post(
       throw new BadRequestError('Invalid Credentials');
     }
 
+    const payload = {
+      id: existingUser.id,
+      email: existingUser.email,
+      userName: existingUser.userName
+    };
     // Generate JWT
     const userJwt = jwt.sign(
-      {
-        id: existingUser.id,
-        email: existingUser.email,
-      },
+      payload,
       process.env.JWT_KEY!
     );
 
@@ -49,7 +53,7 @@ router.post(
       jwt: userJwt,
     };
 
-    res.status(200).send(existingUser);
+    res.status(okayStatus).send(payload);
   }
 );
 

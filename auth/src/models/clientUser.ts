@@ -7,7 +7,7 @@ interface ClientUserAttrs {
     firstName: string;
     lastName: string;
     userName: string;
-    isVerified: boolean;
+    metaData?: string;
     role: string;
 }
 
@@ -21,7 +21,7 @@ interface ClientUserDoc extends mongoose.Document {
     firstName: string;
     lastName: string;
     userName: string;
-    isVerified: boolean;
+    metaData?: string;
     role: string;
     created_at: string;
 }
@@ -50,9 +50,8 @@ const clientUserSchema = new mongoose.Schema(
             type: String,
             required: true
         },
-        isVerified : {
-            type: Boolean,
-            required: true
+        metaData : {
+            type: String
         },
         role : {
             type: String,
