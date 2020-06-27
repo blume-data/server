@@ -1,25 +1,26 @@
-/*
 import request from 'supertest';
 import { app } from '../../app';
+import {currentUserUrl} from "../../util/urls";
+import {okayStatus} from "../../util/constants";
 
 it('responds with details about the current user', async () => {
   const cookie = await global.signin();
 
   const response = await request(app)
-    .get('/api/users/currentuser')
+    .get(currentUserUrl)
     .set('Cookie', cookie)
     .send()
-    .expect(200);
+    .expect(okayStatus);
 
   expect(response.body.currentUser.email).toEqual('test@test.com');
 });
 
 it('responds with null if not authenticated', async () => {
   const response = await request(app)
-    .get('/api/users/currentuser')
+    .get(currentUserUrl)
     .send()
-    .expect(200);
+    .expect(okayStatus);
 
   expect(response.body.currentUser).toEqual(null);
 });
-*/
+
