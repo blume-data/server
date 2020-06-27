@@ -85,7 +85,7 @@ it('allows duplicate emails in temp emails', async () => {
     .send({
       ...sampleData
     })
-    .expect(errorStatus);
+    .expect(okayStatus);
 });
 
 it('Disallows verified users to signup', async () => {
