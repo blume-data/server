@@ -5,12 +5,12 @@ import { validateRequest, BadRequestError } from '@ranjodhbirkaur/common';
 
 import { Password } from '../services/password';
 import { User } from '../models/user';
-import {rootUrl} from "../util/constants";
+import {signIn} from "../util/urls";
 
 const router = express.Router();
 
 router.post(
-    rootUrl+'signin',
+    signIn,
   [
     body('email').isEmail().withMessage('Email must be valid'),
     body('password')
@@ -24,7 +24,7 @@ router.post(
 
     const existingUser = await User.findOne({ email });
     if (!existingUser) {
-      throw new BadRequestError('Invalid credentials');
+      throw new BadRequestError('Invalid credentials: Email not found');
     }
 
     const passwordsMatch = await Password.compare(

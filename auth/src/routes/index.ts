@@ -6,7 +6,7 @@ import {isUserNameAvailable, verifyEmailToken} from "../Controllers/UserControll
 
 const router = express.Router();
 
-router.post(rootUrl+'client/username-validation', [
+router.post(rootUrl+'/client/username-validation', [
         body('userName')
             .trim()
             .notEmpty()
@@ -16,13 +16,14 @@ router.post(rootUrl+'client/username-validation', [
     ],
     validateRequest, isUserNameAvailable);
 
-router.get(rootUrl+'client/email-verification', [
+router.get(rootUrl+'/client/email-verification', [
     query('token')
         .trim()
         .notEmpty()
         .withMessage('token is required')
         .isLength(stringLimitOptions)
-        .withMessage(stringLimitOptionErrorMessage('token'))
+        .withMessage(stringLimitOptionErrorMessage('token')),
+    query('email').isEmail().withMessage('Email must be valid')
     ],
     validateRequest, verifyEmailToken);
 

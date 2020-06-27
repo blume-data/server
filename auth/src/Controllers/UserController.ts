@@ -1,46 +1,82 @@
 import {Request, Response} from 'express';
 
-import {ClientUser} from '../models/clientUser';
 import {BadRequestError} from "@ranjodhbirkaur/common";
 import {TempUser} from "../models/tempUser";
+import {ClientUser} from "../models/clientUser";
+import jwt from "jsonwebtoken";
 
-interface Req extends Request{
+interface ReqIsUserNameAvailable extends Request{
     body: {
         userName: string
-    }
+    },
 }
 
-export const isUserNameAvailable = async function (req: Req, res: Response) {
+interface ReqValidateEmail extends Request{
+    query: {
+        email: string,
+        token: string
+    },
+}
+
+export const isUserNameAvailable = async function (req: ReqIsUserNameAvailable, res: Response) {
     const modelProps = req.body;
     
     if (modelProps) {
         if (modelProps.userName) {
             const userExist = await TempUser.findOne({userName: modelProps.userName});
-            console.log('user exist', userExist);
             if (userExist) {
-                res.status(200).send(false);
+                throw new BadRequestError('Username not available');
             }
             else {
-                res.status(200).send(true);
+                res.status(200).send(false);
             }
         }
     }
 };
 
-export const verifyEmailToken = async function (req: Req, res: Response) {
+export const verifyEmailToken = async function (req: ReqValidateEmail, res: Response) {
     const modelProps = req.query;
 
-    if (modelProps) {
-        /*if (modelProps.userName) {
-            const userExist = await TempUser.findOne({userName: modelProps.userName});
-            console.log('user exist', userExist);
-            if (userExist) {
-                res.status(200).send(false);
-            }
-            else {
-                res.status(200).send(true);
-            }
-        }*/
+    const userExist = await TempUser.findOne({email: modelProps.email, verificationToken: modelProps.token});
+
+    if (userExist) {
+
+        const newUser = await ClientUser.build({
+            email: userExist.email,
+            isVerified: true,
+            password: userExist.password,
+            firstName: userExist.firstName,
+            lastName: userExist.lastName,
+            userName: userExist.userName,
+            role: userExist.role
+        });
+
+        await newUser.save();
+
+        const payload = {
+            id: newUser.id,
+            email: newUser.email,
+            userName: newUser.userName
+        };
+
+        // Generate JWT
+        const userJwt = jwt.sign(
+            payload,
+            process.env.JWT_KEY!
+        );
+
+        // Store it on session object
+        req.session = {
+            jwt: userJwt,
+        };
+
+        res.status(201).send({... payload, accessToken: userJwt});
+
+        TempUser.deleteMany({email: modelProps.email}).then(() => {});
+
+    }
+    else {
+        throw new BadRequestError('Token not valid');
     }
 };
 
