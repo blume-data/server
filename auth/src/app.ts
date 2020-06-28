@@ -13,9 +13,9 @@ import { signupRouter } from './routes/signup';
 import {routes} from "./routes";
 
 const app = express();
+app.use(cors());
 app.set('trust proxy', true);
 app.use(compression());
-app.use(cors());
 app.use(json());
 app.use(
   cookieSession({
@@ -23,6 +23,7 @@ app.use(
     secure: false
   })
 );
+app.options('*', cors());
 
 app.use(currentUserRouter);
 app.use(signinRouter);
