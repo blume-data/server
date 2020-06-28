@@ -4,7 +4,7 @@ import {BadRequestError} from "@ranjodhbirkaur/common";
 import {TempUser} from "../models/tempUser";
 import {ClientUser} from "../models/clientUser";
 import jwt from "jsonwebtoken";
-import {okayStatus} from "../util/constants";
+import {AUTH_TOKEN, okayStatus} from "../util/constants";
 
 interface ReqIsUserNameAvailable extends Request{
     body: {
@@ -61,7 +61,6 @@ export const verifyEmailToken = async function (req: ReqValidateEmail, res: Resp
             const payload = {
                 id: newUser.id,
                 email: newUser.email,
-                userName: newUser.userName
             };
 
             // Generate JWT
@@ -75,7 +74,7 @@ export const verifyEmailToken = async function (req: ReqValidateEmail, res: Resp
                 jwt: userJwt,
             };
 
-            res.status(okayStatus).send({... payload, accessToken: userJwt});
+            res.status(okayStatus).send({... payload, [AUTH_TOKEN]: userJwt, userName: newUser.userName});
 
             TempUser.deleteMany({email: modelProps.email}).then(() => {});
 
