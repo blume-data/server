@@ -29,7 +29,7 @@ export const isUserNameAvailable = async function (req: ReqIsUserNameAvailable, 
                 throw new BadRequestError('Username not available');
             }
             else {
-                res.status(okayStatus).send(false);
+                res.status(okayStatus).send(true);
             }
         }
     }
