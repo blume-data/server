@@ -11,7 +11,7 @@ spec:
   tls:
   - hosts:
     - api.blumedata.store
-    secretName: api-tls
+    secretName: api-blumedata-tls
   rules:
     - host: api.blumedata.store
       http:

@@ -6,7 +6,7 @@ import { validateRequest, BadRequestError } from '@ranjodhbirkaur/common';
 import { Password } from '../services/password';
 
 import {signIn} from "../util/urls";
-import {okayStatus} from "../util/constants";
+import {AUTH_TOKEN, USER_NAME, okayStatus} from "../util/constants";
 import {ClientUser} from "../models/clientUser";
 
 const router = express.Router();
@@ -53,7 +53,7 @@ router.post(
       jwt: userJwt,
     };
 
-    res.status(okayStatus).send(payload);
+    res.status(okayStatus).send({...payload, [AUTH_TOKEN]: userJwt, [USER_NAME]: existingUser.userName});
   }
 );
 
