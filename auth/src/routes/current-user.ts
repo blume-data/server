@@ -1,5 +1,5 @@
 import express, {Response, Request, NextFunction} from 'express';
-import { currentUser } from '@ranjodhbirkaur/common';
+import {BadRequestError, currentUser} from '@ranjodhbirkaur/common';
 import {currentUserUrl} from "../util/urls";
 import {okayStatus} from "../util/constants";
 import {ClientUser} from "../models/clientUser";
@@ -20,7 +20,12 @@ async function checkIsEnabled(req: Request, res: Response, next: NextFunction) {
 }
 
 router.get(currentUserUrl, currentUser, checkIsEnabled, (req, res) => {
-  res.status(okayStatus).send({ currentUser: req.currentUser || null });
+  if (req.currentUser) {
+    res.status(okayStatus).send({ currentUser: req.currentUser });
+  }
+  else {
+    throw new BadRequestError('Account is not authenticated. Please try to login again!');
+  }
 });
 
 export { router as currentUserRouter };
