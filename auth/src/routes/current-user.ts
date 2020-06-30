@@ -15,8 +15,8 @@ async function checkIsEnabled(req: Request, res: Response, next: NextFunction) {
       req.currentUser = undefined;
       req.session = null;
     }
-    next();
   }
+  next();
 }
 
 router.get(currentUserUrl, currentUser, checkIsEnabled, (req, res) => {
