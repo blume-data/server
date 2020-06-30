@@ -6,3 +6,5 @@ export const errorStatus = 400;
 
 export const AUTH_TOKEN = 'AUTH_TOKEN';
 export const USER_NAME = 'userName';
+
+export const SUPPORTED_DATA_TYPES = ['string', 'boolean', 'number'];

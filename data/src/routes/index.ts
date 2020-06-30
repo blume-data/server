@@ -1,23 +1,33 @@
 import express from 'express';
-import {rootUrl, stringLimitOptionErrorMessage, stringLimitOptions} from "../util/constants";
-import {body, query} from "express-validator";
+import {stringLimitOptionErrorMessage, stringLimitOptions} from "../util/constants";
+import {body, param, query} from "express-validator";
 import {validateRequest} from "@ranjodhbirkaur/common";
-import {isUserNameAvailable, verifyEmailToken} from "../Controllers/UserController";
 import {emailVerificationUrl, userNameValidationUrl} from "../util/urls";
+import {createItemSchema} from "../Controllers/ItemSchemaController";
 
 const router = express.Router();
 
 router.post(userNameValidationUrl, [
-        body('userName')
+        param('userName')
             .trim()
             .notEmpty()
             .withMessage('username is required')
             .isLength(stringLimitOptions)
-            .withMessage(stringLimitOptionErrorMessage('username'))
+            .withMessage(stringLimitOptionErrorMessage('username')),
+        body('rules')
+            .trim()
+            .notEmpty()
+            .withMessage('rules is required'),
+        body('name')
+            .trim()
+            .notEmpty()
+            .withMessage('name is required')
+            .isLength(stringLimitOptions)
+            .withMessage(stringLimitOptionErrorMessage('name'))
     ],
-    validateRequest, isUserNameAvailable);
+    validateRequest, createItemSchema);
 
-router.get(emailVerificationUrl, [
+/*router.get(emailVerificationUrl, [
     query('token')
         .trim()
         .notEmpty()
@@ -26,6 +36,6 @@ router.get(emailVerificationUrl, [
         .withMessage(stringLimitOptionErrorMessage('token')),
     query('email').isEmail().withMessage('Email must be valid')
     ],
-    validateRequest, verifyEmailToken);
+    validateRequest, verifyEmailToken);*/
 
 export { router as routes };

@@ -16,13 +16,13 @@ const start = async () => {
       useUnifiedTopology: true,
       useCreateIndex: true,
     });
-    console.log('Auth: Connected to MongoDb');
+    console.log('Auth Service: Connected to MongoDb');
   } catch (err) {
     console.error(err);
   }
 
   app.listen(3000, () => {
-    console.log('Auth Server is Listening');
+    console.log('Auth Service: Server is Listening');
   });
 };
 
