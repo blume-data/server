@@ -1,0 +1,31 @@
+import express, {Response, Request, NextFunction} from 'express';
+import {BadRequestError, currentUser} from '@ranjodhbirkaur/common';
+import {currentUserUrl} from "../util/urls";
+import {okayStatus} from "../util/constants";
+import {ClientUser} from "../models/clientUser";
+
+const router = express.Router();
+
+async function checkIsEnabled(req: Request, res: Response, next: NextFunction) {
+
+  if (req.currentUser) {
+    const email = req.currentUser.email;
+    const userExist = await ClientUser.find({email, isEnabled: true}, 'id');
+    if (!userExist) {
+      req.currentUser = undefined;
+      req.session = null;
+    }
+  }
+  next();
+}
+
+router.get(currentUserUrl, currentUser, checkIsEnabled, (req, res) => {
+  if (req.currentUser) {
+    res.status(okayStatus).send({ currentUser: req.currentUser });
+  }
+  else {
+    throw new BadRequestError('Account is not authenticated. Please try to login again!');
+  }
+});
+
+export { router as currentUserRouter };

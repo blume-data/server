@@ -36,3 +36,7 @@ spec:
             backend:
               serviceName: auth-srv
               servicePort: 3000
+          - path: /data/?(.*)
+            backend:
+              serviceName: data-srv
+              servicePort: 3000
