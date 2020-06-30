@@ -10,6 +10,7 @@ auth/src/auth-test
 build
 skaffold.yaml
 infra/k8s-dev/ingress-srv.yaml
+.kube
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
