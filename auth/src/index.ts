@@ -22,7 +22,7 @@ const start = async () => {
   }
 
   app.listen(3000, () => {
-    console.log('Auth Server is Listening.');
+    console.log('Auth Server is Listening');
   });
 };
 
