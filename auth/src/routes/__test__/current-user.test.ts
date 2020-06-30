@@ -2,6 +2,7 @@ import request from 'supertest';
 import { app } from '../../app';
 import {currentUserUrl} from "../../util/urls";
 import {okayStatus} from "../../util/constants";
+jest.setTimeout(30000);
 
 it('responds with details about the current user', async () => {
   const cookie = await global.signin();
