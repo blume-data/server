@@ -8,6 +8,7 @@ interface ClientUserAttrs {
     lastName: string;
     userName: string;
     metaData?: string;
+    isEnabled?: boolean;
     role: string;
 }
 
@@ -22,6 +23,7 @@ interface ClientUserDoc extends mongoose.Document {
     lastName: string;
     userName: string;
     metaData?: string;
+    isEnabled?: boolean;
     role: string;
     created_at: string;
 }
@@ -56,6 +58,11 @@ const clientUserSchema = new mongoose.Schema(
         role : {
             type: String,
             required: true
+        },
+        isEnabled : {
+            type: Boolean,
+            required: true,
+            default: true
         },
         created_at : { type: Date, default: Date.now }
     },
