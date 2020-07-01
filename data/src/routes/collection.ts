@@ -1,27 +1,20 @@
 import express from 'express';
 import {stringLimitOptionErrorMessage, stringLimitOptions} from "../util/constants";
-import {body, param, query} from "express-validator";
+import {body, param} from "express-validator";
 import {validateRequest} from "@ranjodhbirkaur/common";
-import {emailVerificationUrl, userNameValidationUrl} from "../util/urls";
-import {createItemSchema} from "../Controllers/ItemSchemaController";
+import {emailVerificationUrl, CollectionUrl, userNameValidationUrl} from "../util/urls";
+import {createItemSchema} from "../Controllers/CollectionController";
 
 const router = express.Router();
 
-router.post(userNameValidationUrl, [
-        param('userName')
-            .trim()
-            .notEmpty()
-            .withMessage('username is required')
-            .isLength(stringLimitOptions)
-            .withMessage(stringLimitOptionErrorMessage('username')),
+// Create Item Schema
+router.post(CollectionUrl, [
         body('rules')
             .trim()
             .notEmpty()
             .withMessage('rules is required'),
         body('name')
             .trim()
-            .notEmpty()
-            .withMessage('name is required')
             .isLength(stringLimitOptions)
             .withMessage(stringLimitOptionErrorMessage('name'))
     ],
@@ -38,4 +31,4 @@ router.post(userNameValidationUrl, [
     ],
     validateRequest, verifyEmailToken);*/
 
-export { router as routes };
+export { router as CollectionRoutes };

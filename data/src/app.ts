@@ -6,9 +6,10 @@ import { errorHandler, NotFoundError } from '@ranjodhbirkaur/common';
 import cors from 'cors';
 import compression from 'compression';
 
-import {routes} from "./routes";
+import {CollectionRoutes} from "./routes/collection";
 
 const app = express();
+
 app.use(cors());
 app.set('trust proxy', true);
 app.use(compression());
@@ -21,7 +22,7 @@ app.use(
 );
 app.options('*', cors());
 
-app.use(routes);
+app.use(CollectionRoutes);
 
 app.all('*', async (req, res) => {
   throw new NotFoundError();

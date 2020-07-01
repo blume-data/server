@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-interface ItemSchemaAttrs {
+interface CollectionAttrs {
     userName : string,
     rules: string,
     name: string,
@@ -10,11 +10,11 @@ interface ItemSchemaAttrs {
     isEnabled?: boolean;
 }
 
-interface ItemSchemaModel extends mongoose.Model<ItemSchemaDoc> {
-    build(attrs: ItemSchemaAttrs): ItemSchemaDoc;
+interface CollectionModel extends mongoose.Model<CollectionDoc> {
+    build(attrs: CollectionAttrs): CollectionDoc;
 }
 
-interface ItemSchemaDoc extends mongoose.Document {
+interface CollectionDoc extends mongoose.Document {
     userName : string,
     rules: string,
     name: string,
@@ -25,7 +25,7 @@ interface ItemSchemaDoc extends mongoose.Document {
     created_at: string;
 }
 
-const ItemSchema = new mongoose.Schema(
+const Collection = new mongoose.Schema(
     {
         body: {
             type: String,
@@ -68,10 +68,10 @@ const ItemSchema = new mongoose.Schema(
     }
 );
 
-ItemSchema.statics.build = (attrs: ItemSchemaAttrs) => {
-    return new ItemsModel(attrs);
+Collection.statics.build = (attrs: CollectionAttrs) => {
+    return new CollectionModel(attrs);
 };
 
-const ItemsModel = mongoose.model<ItemSchemaDoc, ItemSchemaModel>('ItemsModel', ItemSchema);
+const CollectionModel = mongoose.model<CollectionDoc, CollectionModel>('CollectionModel', Collection);
 
-export { ItemsModel };
+export { CollectionModel };

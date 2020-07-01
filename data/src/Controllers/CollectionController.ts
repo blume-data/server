@@ -2,7 +2,7 @@ import {Request, Response} from 'express';
 import {BadRequestError} from "@ranjodhbirkaur/common";
 import {errorStatus, SUPPORTED_DATA_TYPES} from "../util/constants";
 import {RANDOM_COLLECTION_NAME} from "../util/methods";
-import {ItemsModel} from "../models/ItemSchema";
+import {CollectionModel} from "../models/Collection";
 import {
     COLLECTION_ALREADY_EXIST,
     INVALID_BODY_MESSAGE,
@@ -21,26 +21,13 @@ export async function createItemSchema(req: Request, res: Response) {
 
     const randomCollectionName = '_'+RANDOM_COLLECTION_NAME();
 
-    const rules = {
-        name : {
-            required : true,
-            type : "string"
-        },
-        body : {
-            required : true,
-        },
-        rules: {
-            required: true
-        }
-    };
-
     // the name of the custom schema collection should not contain any space
     if (reqBody && reqBody.name && typeof reqBody.name === 'string') {
         reqBody.name = reqBody.name.split(' ').join('_');
     }
 
     // Check if there is not other collection with same name and user_id
-    const alreadyExist = await ItemsModel.findOne({ userName: userName, name: reqBody.name }, 'id');
+    const alreadyExist = await CollectionModel.findOne({ userName: userName, name: reqBody.name }, 'id');
     if (alreadyExist) {
         throw new BadRequestError(COLLECTION_ALREADY_EXIST);
     }
@@ -56,7 +43,9 @@ export async function createItemSchema(req: Request, res: Response) {
             if (data.name
                 && data.type
                 && SUPPORTED_DATA_TYPES.includes(data.type)
+                // check type of name
                 && typeof data.type === 'string'
+                // check type of type
                 && typeof data.name === 'string') {
                 // property is valid
                 data.name = data.name.split(' ').join('_');
@@ -126,7 +115,7 @@ export async function createItemSchema(req: Request, res: Response) {
         stored_in: randomCollectionName
     };
 
-    createMethod(res, data, ItemsModel);
+    createMethod(res, data, CollectionModel);
 }
 
 
