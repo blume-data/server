@@ -1,6 +1,6 @@
 import {rootUrl} from "./constants";
 
-export const CollectionUrl = `${rootUrl}/:username/collection`;
+export const CollectionUrl = `${rootUrl}/:userName/collection`;
 
 export const signOutUrl = `${rootUrl}/client/signout`;
 export const signIn = `${rootUrl}/client/signin`;

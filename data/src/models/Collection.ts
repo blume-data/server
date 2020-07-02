@@ -1,11 +1,11 @@
 import mongoose from 'mongoose';
 
 interface CollectionAttrs {
-    userName : string,
-    rules: string,
-    name: string,
-    body: string,
-    storedIn: string,
+    userName : string;
+    rules: string;
+    name: string;
+    dbName: string;
+    connectionName: string;
     metaData?: string;
     isEnabled?: boolean;
 }
@@ -15,11 +15,11 @@ interface CollectionModel extends mongoose.Model<CollectionDoc> {
 }
 
 interface CollectionDoc extends mongoose.Document {
-    userName : string,
-    rules: string,
-    name: string,
-    body: string,
-    storedIn: string,
+    userName : string;
+    rules: string;
+    name: string;
+    dbName: string;
+    connectionName: string;
     metaData?: string;
     isEnabled?: boolean;
     created_at: string;
@@ -27,10 +27,6 @@ interface CollectionDoc extends mongoose.Document {
 
 const Collection = new mongoose.Schema(
     {
-        body: {
-            type: String,
-            required: true
-        },
         rules : {
             type: String,
             required: true
@@ -43,7 +39,11 @@ const Collection = new mongoose.Schema(
             type: String,
             required: true
         },
-        storedIn: {
+        dbName: {
+            type: String,
+            required: true
+        },
+        collectionName: {
             type: String,
             required: true
         },

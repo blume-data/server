@@ -10,7 +10,6 @@ const router = express.Router();
 // Create Item Schema
 router.post(CollectionUrl, [
         body('rules')
-            .trim()
             .notEmpty()
             .withMessage('rules is required'),
         body('name')

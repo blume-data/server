@@ -1,7 +1,7 @@
 import {Request, Response} from 'express';
 import {BadRequestError} from "@ranjodhbirkaur/common";
 import {errorStatus, SUPPORTED_DATA_TYPES} from "../util/constants";
-import {RANDOM_COLLECTION_NAME} from "../util/methods";
+import {RANDOM_STRING} from "../util/methods";
 import {CollectionModel} from "../models/Collection";
 import {
     COLLECTION_ALREADY_EXIST,
@@ -13,18 +13,18 @@ import {createMethod} from "../services/crudMethods";
 
 export async function createItemSchema(req: Request, res: Response) {
 
-    const reqBody = req.body;
-
     const userName  = req.params && req.params.userName;
 
-    let isValidBody = true;
+    const reqBody = req.body;
 
-    const randomCollectionName = '_'+RANDOM_COLLECTION_NAME();
+    let isValidBody = true;
 
     // the name of the custom schema collection should not contain any space
     if (reqBody && reqBody.name && typeof reqBody.name === 'string') {
         reqBody.name = reqBody.name.split(' ').join('_');
     }
+
+    const randomCollectionName = `_${userName}_${reqBody.name}`;
 
     // Check if there is not other collection with same name and user_id
     const alreadyExist = await CollectionModel.findOne({ userName: userName, name: reqBody.name }, 'id');
@@ -56,6 +56,7 @@ export async function createItemSchema(req: Request, res: Response) {
         });
     }
     catch (e) {
+        console.log('Error validating body', e);
         isValidBody = false;
     }
 
@@ -68,9 +69,12 @@ export async function createItemSchema(req: Request, res: Response) {
     // Check if rule contain space
     for(const ruleName in reqBody.rules) {
         if (reqBody.rules.hasOwnProperty(ruleName)) {
+            console.log('rule', ruleName, reqBody.rules);
             if (ruleName.split(' ').length !== 1) {
                 isValidBody = false;
-                inValidMessage.push(`${ruleName} should not contain space`);
+                inValidMessage.push({
+                    message: `${ruleName} should not contain space`
+                });
             }
         }
     }
@@ -91,12 +95,16 @@ export async function createItemSchema(req: Request, res: Response) {
 
         if (!reqBody.rules || !reqBody.rules[bodyName]) {
             isValidBody = false;
-            inValidMessage.push(`${bodyName} ${RULE_DOES_NOT_EXIST_IN_RULE}`);
+            inValidMessage.push({
+                message: `${bodyName} ${RULE_DOES_NOT_EXIST_IN_RULE}`
+            });
         }
         else if(reqBody.rules[bodyName].required
             && typeof reqBody.rules[bodyName].required !== "boolean") {
             isValidBody = false;
-            inValidMessage.push(`${bodyName} ${REQUIRED_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN}`);
+            inValidMessage.push({
+                message: `${bodyName} ${REQUIRED_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN}`
+            });
         }
 
     });
