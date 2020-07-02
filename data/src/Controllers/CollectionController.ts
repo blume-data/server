@@ -32,82 +32,30 @@ export async function createItemSchema(req: Request, res: Response) {
         throw new BadRequestError(COLLECTION_ALREADY_EXIST);
     }
 
-    interface BodyType {
-        name: string;
-        type: string;
-    }
+    let inValidMessage = [];
 
-    // Validate the body object
-    try {
-        reqBody.body && reqBody.body.length && reqBody.body.forEach((data: BodyType) => {
-            if (data.name
-                && data.type
-                && SUPPORTED_DATA_TYPES.includes(data.type)
-                // check type of name
-                && typeof data.type === 'string'
-                // check type of type
-                && typeof data.name === 'string') {
-                // property is valid
-                data.name = data.name.split(' ').join('_');
+    // Validate Rules
+    if (reqBody.rules && typeof reqBody.rules === 'object' && reqBody.rules.length) {
+        reqBody.rules.forEach((rule: {type: string, required?: boolean, name: string}) => {
+            if (typeof rule.type === 'string' && SUPPORTED_DATA_TYPES.includes(rule.type)) {
+                // remove all the spaces
+                rule.name = rule.name.split(' ').join('_');
             }
             else {
                 isValidBody = false;
-            }
-        });
-    }
-    catch (e) {
-        console.log('Error validating body', e);
-        isValidBody = false;
-    }
-
-    if (!isValidBody) {
-        throw new BadRequestError(INVALID_BODY_MESSAGE);
-    }
-
-    let inValidMessage = [];
-
-    // Check if rule contain space
-    for(const ruleName in reqBody.rules) {
-        if (reqBody.rules.hasOwnProperty(ruleName)) {
-            console.log('rule', ruleName, reqBody.rules);
-            if (ruleName.split(' ').length !== 1) {
-                isValidBody = false;
                 inValidMessage.push({
-                    message: `${ruleName} should not contain space`
+                    message: `${rule.name} should have valid type`
                 });
             }
-        }
-    }
-    if (!isValidBody) {
-        return res.status(errorStatus).send({
-            errors: inValidMessage
         });
     }
-
-    interface BodyItemType {
-        name: string;
-
+    else {
+        isValidBody = false;
+        inValidMessage.push({
+            message: `rules is not valid object`,
+            field: 'rules'
+        })
     }
-
-    // Check all rules with body
-    reqBody.body.map((bodyItem: BodyItemType) => {
-        const bodyName = bodyItem.name.split(' ').join('_');
-
-        if (!reqBody.rules || !reqBody.rules[bodyName]) {
-            isValidBody = false;
-            inValidMessage.push({
-                message: `${bodyName} ${RULE_DOES_NOT_EXIST_IN_RULE}`
-            });
-        }
-        else if(reqBody.rules[bodyName].required
-            && typeof reqBody.rules[bodyName].required !== "boolean") {
-            isValidBody = false;
-            inValidMessage.push({
-                message: `${bodyName} ${REQUIRED_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN}`
-            });
-        }
-
-    });
 
     if (!isValidBody) {
         return res.status(errorStatus).send({
@@ -119,11 +67,11 @@ export async function createItemSchema(req: Request, res: Response) {
         userName: userName,
         rules: JSON.stringify(reqBody.rules),
         name: reqBody.name,
-        body : JSON.stringify(reqBody.body),
         stored_in: randomCollectionName
     };
 
-    createMethod(res, data, CollectionModel);
+    console.log('data', data);
+    //createMethod(res, data, CollectionModel);
 }
 
 
