@@ -108,10 +108,9 @@ export async function createItemSchema(req: Request, res: Response) {
 
 async function assignConnectionAndDb(searchedConnections?: string[]) : Promise<any> {
 
-    const connections = await ConnectionModel.findOne({count: {$lt: MAX_DB_LIMIT}});
+    const connections = await ConnectionModel.findOne({count: {$lte: MAX_DB_LIMIT}}, ['name', 'count']);
     console.log('limited connections', connections);
     const allConnections = await ConnectionModel.find({}, 'id');
-    console.log('all connections', allConnections);
 
     if (!connections && !allConnections.length) {
         // create a new connection
@@ -125,19 +124,25 @@ async function assignConnectionAndDb(searchedConnections?: string[]) : Promise<a
     else if(connections) {
         const dbs = await DbsModel.findOne({connectionName: connections.name, count: {$lte: MAX_COLLECTION_LIMIT}});
         const allDbs = await DbsModel.find({connectionName: connections.name}, 'id');
+        console.log('limited dbs', dbs);
+        console.log('all dbs', allDbs);
         if(!dbs && !allDbs.length) {
             // create new db here
             await incrementConnectionCount(connections.name, connections.count);
             const newDb = DbsModel.build({connectionName: connections.name, count: 1, name: '_1' });
+            console.log('no db and no all db EXIST. Created new DB', newDb);
             return await newDb.save();
         }
         else if (!dbs) {
             // all dbs capacity is full create a new db
             await incrementConnectionCount(connections.name, connections.count);
             const newDb = DbsModel.build({connectionName: connections.name, count: 1, name: `_${allDbs.length + 1}` });
+            console.log('Alls dbs capacity is full. Created new db', newDb);
             return await newDb.save();
         }
         else if(dbs) {
+            const updatedDb = await DbsModel.updateOne({connectionName:dbs.connectionName, name: dbs.name}, {count: dbs.count + 1});
+            console.log('db was avaiable ', updatedDb);
             return dbs;
         }
     }
@@ -147,7 +152,8 @@ async function assignConnectionAndDb(searchedConnections?: string[]) : Promise<a
 }
 
 async function incrementConnectionCount(connectionName: string, count: number) {
-    await ConnectionModel.update({name: connectionName}, {count: count + 1});
+    const updatedConnection = await ConnectionModel.updateOne({name: connectionName}, {count: count + 1});
+    console.log('updatedConnection', updatedConnection);
 }
 
 
