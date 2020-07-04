@@ -43,7 +43,7 @@ const Collection = new mongoose.Schema(
             type: String,
             required: true
         },
-        collectionName: {
+        connectionName: {
             type: String,
             required: true
         },

@@ -1,18 +1,35 @@
 import {Response} from 'express';
 import {BadRequestError} from "@ranjodhbirkaur/common";
 import {okayStatus} from "../util/constants";
-export const createMethod = function (res: Response,modelProps: any,Model: any) {
+import {Model} from "mongoose";
+export const createRecord = async function (modelProps: any,Model: Model<any>,res?: Response | null,) {
 
-    Model.create(modelProps)
+    return Model.create(modelProps)
         .then((response:any) => {
             if(response){
-                res.status(okayStatus).send('Created');
+                if (res) {
+                    res.status(okayStatus).send('Created');
+                }
+                else {
+                    return response;
+                }
             }
             else{
-                throw new BadRequestError('failed');
+                if (res) {
+                    return null;
+                }
+                else {
+                    throw new BadRequestError('failed to create');
+                }
             }
         })
         .catch((err: any) => {
-            throw new BadRequestError('Error');
+            console.log('Error in creating record', err);
+            if (res) {
+                return null;
+            }
+            else {
+                throw new BadRequestError('Error');
+            }
         });
 };

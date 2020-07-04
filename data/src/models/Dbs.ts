@@ -1,27 +1,33 @@
 import mongoose from 'mongoose';
 
-interface DbCollectionAttrs {
+interface DbsAttrs {
     count: number;
     name: string;
+    connectionName: string;
 }
 
-interface DbCollectionModel extends mongoose.Model<DbCollectionDoc> {
-    build(attrs: DbCollectionAttrs): DbCollectionDoc;
+interface DbsModel extends mongoose.Model<DbsDoc> {
+    build(attrs: DbsAttrs): DbsDoc;
 }
 
-interface DbCollectionDoc extends mongoose.Document {
+interface DbsDoc extends mongoose.Document {
     count: number;
     name: string;
-    created_at: string;
+    connectionName: string;
+    created_at?: string;
 }
 
-const DbCollection = new mongoose.Schema(
+const Dbs = new mongoose.Schema(
     {
         count: {
             type: Number,
             required: true
         },
         name: {
+            type: String,
+            required: true
+        },
+        connectionName: {
             type: String,
             required: true
         },
@@ -38,10 +44,10 @@ const DbCollection = new mongoose.Schema(
     }
 );
 
-DbCollection.statics.build = (attrs: DbCollectionAttrs) => {
-    return new DbCollectionModel(attrs);
+Dbs.statics.build = (attrs: DbsAttrs) => {
+    return new DbsModel(attrs);
 };
 
-const DbCollectionModel = mongoose.model<DbCollectionDoc, DbCollectionModel>('DbCollectionModel', DbCollection);
+const DbsModel = mongoose.model<DbsDoc, DbsModel>('DbsModel', Dbs);
 
-export { DbCollectionModel };
+export { DbsModel };
