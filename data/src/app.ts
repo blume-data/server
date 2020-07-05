@@ -7,6 +7,7 @@ import cors from 'cors';
 import compression from 'compression';
 
 import {CollectionRoutes} from "./routes/collection";
+import {StoreRoutes} from "./routes/store";
 
 const app = express();
 
@@ -23,6 +24,7 @@ app.use(
 app.options('*', cors());
 
 app.use(CollectionRoutes);
+app.use(StoreRoutes);
 
 app.all('*', async (req, res) => {
   throw new NotFoundError();

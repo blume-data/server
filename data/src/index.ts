@@ -20,7 +20,7 @@ const start = async () => {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       useCreateIndex: true,
-      //poolSize: MONGO_DB_DATA_CONNECTIONS_AVAILABLE.length
+      poolSize: /*MONGO_DB_DATA_CONNECTIONS_AVAILABLE.length*/10
     });
     console.log('Data Service: Connected to MongoDb');
   } catch (err) {
