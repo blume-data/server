@@ -48,7 +48,15 @@ export function createModel(params: CreateModelType) {
 
     const dbConnection = mongoose.createConnection(`mongodb://data-mongo-${connectionName}-srv/${dbName}`);
 
-    const schema = new Schema(schemaData);
+    const schema = new Schema(schemaData, {
+        toJSON: {
+            transform(doc, ret) {
+                ret.id = ret._id;
+                delete ret._id;
+                delete ret.__v;
+            }
+        }
+    });
 
     return dbConnection.model(name, schema);
 }
