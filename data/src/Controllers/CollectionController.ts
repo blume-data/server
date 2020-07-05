@@ -18,7 +18,7 @@ import {
 import {ConnectionModel} from "../models/Connections";
 import {DbsModel} from "../models/Dbs";
 
-export async function createItemSchema(req: Request, res: Response) {
+export async function createCollectionSchema(req: Request, res: Response) {
 
     const userName  = req.params && req.params.userName;
 
@@ -93,7 +93,7 @@ export async function createItemSchema(req: Request, res: Response) {
     res.status(200).send(newCollection);
 }
 
-export async function deleteItemSchema(req: Request, res: Response) {
+export async function deleteCollectionSchema(req: Request, res: Response) {
     const userName  = req.params && req.params.userName;
 
     const reqBody = req.body;
@@ -130,6 +130,16 @@ export async function deleteItemSchema(req: Request, res: Response) {
         throw new BadRequestError('Collection not found');
     }
     res.status(okayStatus).send(true);
+}
+
+export async function getCollectionSchema(req: Request, res: Response) {
+    
+    const userName  = req.params && req.params.userName;
+
+    const reqBody = req.body;
+
+    const collections = await CollectionModel.find({userName});
+    res.status(okayStatus).send(collections);
 }
 
 async function assignConnectionAndDb() : Promise<any> {

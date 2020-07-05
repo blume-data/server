@@ -3,7 +3,7 @@ import {stringLimitOptionErrorMessage, stringLimitOptions} from "../util/constan
 import {body} from "express-validator";
 import {validateRequest} from "@ranjodhbirkaur/common";
 import {CollectionUrl} from "../util/urls";
-import {createItemSchema, deleteItemSchema} from "../Controllers/CollectionController";
+import {createCollectionSchema, deleteCollectionSchema, getCollectionSchema} from "../Controllers/CollectionController";
 
 const router = express.Router();
 
@@ -17,7 +17,7 @@ router.post(CollectionUrl, [
             .isLength(stringLimitOptions)
             .withMessage(stringLimitOptionErrorMessage('name'))
     ],
-    validateRequest, createItemSchema);
+    validateRequest, createCollectionSchema);
 
 // Delete Item Schema
 router.delete(CollectionUrl, [
@@ -26,6 +26,9 @@ router.delete(CollectionUrl, [
             .isLength(stringLimitOptions)
             .withMessage(stringLimitOptionErrorMessage('name'))
     ],
-    validateRequest, deleteItemSchema);
+    validateRequest, deleteCollectionSchema);
+
+// Get Item Schema
+router.get(CollectionUrl, getCollectionSchema);
 
 export { router as CollectionRoutes };
