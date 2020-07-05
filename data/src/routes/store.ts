@@ -1,10 +1,12 @@
 import express from "express";
 import {StoreUrl} from "../util/urls";
-import {createStoreRecord} from "../Controllers/StoreController";
+import {createStoreRecord, getStoreRecord} from "../Controllers/StoreController";
 
 const router = express.Router();
 
-// Get data
+// Get Data
+router.get(StoreUrl, getStoreRecord);
+// Create Data
 router.post(StoreUrl, createStoreRecord);
 
 export { router as StoreRoutes };

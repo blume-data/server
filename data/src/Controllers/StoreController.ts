@@ -2,7 +2,8 @@ import {Request, Response} from 'express';
 import {CollectionModel} from "../models/Collection";
 import {BadRequestError} from "@ranjodhbirkaur/common";
 import {createModel} from "../util/methods";
-import {errorStatus, okayStatus} from "../util/constants";
+import {okayStatus} from "../util/constants";
+import {COLLECTION_NOT_FOUND} from "./Messages";
 
 // Create Record
 export async function createStoreRecord(req: Request, res: Response) {
@@ -27,14 +28,30 @@ export async function createStoreRecord(req: Request, res: Response) {
 
     }
     else {
-        throw new BadRequestError('Collection not found');
+        throw new BadRequestError(COLLECTION_NOT_FOUND);
     }
 }
 
 // Get Record
 export async function getStoreRecord(req: Request, res: Response) {
-    const userName  = req.params && req.params.userName;
-    const collectionName = req.params && req.params.collectionName;
+
+    // get collection
+    const collection = await getCollection(req);
+    if (collection) {
+        const rules = JSON.parse(collection.rules);
+        const model = createModel({
+            rules,
+            connectionName: collection.connectionName,
+            dbName: collection.dbName,
+            name: collection.name
+        });
+
+        const collections = await model.find({});
+        res.status(okayStatus).send(collections);
+    }
+    else {
+        throw new BadRequestError(COLLECTION_NOT_FOUND);
+    }
 }
 
 async function getCollection(req: Request) {
