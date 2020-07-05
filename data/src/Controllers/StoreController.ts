@@ -3,40 +3,15 @@ import {CollectionModel} from "../models/Collection";
 import {BadRequestError} from "@ranjodhbirkaur/common";
 import {createModel} from "../util/methods";
 import {errorStatus, okayStatus} from "../util/constants";
+
+// Create Record
 export async function createStoreRecord(req: Request, res: Response) {
-    const userName  = req.params && req.params.userName;
-    const collectionName = req.params && req.params.collectionName;
-
-
 
     // get collection
-    const collection = await CollectionModel.findOne({userName, name: collectionName});
+    const collection = await getCollection(req);
     if (collection) {
         const rules = JSON.parse(collection.rules);
-        const reqBody = req.body;
-        let body = {};
-        let isValid = true;
-        let inValidMessage = [];
-        
-        rules.forEach((rule: {type: string; name: string}) => {
-            if (!reqBody[rule.name] || typeof reqBody[rule.name] !== rule.type) {
-                isValid = false;
-                inValidMessage.push(`${rule.name} is required`);
-            }
-            else {
-                body = {
-                    ...body,
-                    [rule.name] : reqBody[rule.name]
-                };
-            }
-        });
-
-        if (!isValid) {
-            console.log('inValidMessage');
-            return res.status(errorStatus).send({
-                errors: 'error in body data'
-            });
-        }
+        let body = checkBodyAndRules(rules, req);
 
         const model = createModel({
             rules,
@@ -53,6 +28,49 @@ export async function createStoreRecord(req: Request, res: Response) {
     }
     else {
         throw new BadRequestError('Collection not found');
+    }
+}
+
+// Get Record
+export async function getStoreRecord(req: Request, res: Response) {
+    const userName  = req.params && req.params.userName;
+    const collectionName = req.params && req.params.collectionName;
+}
+
+async function getCollection(req: Request) {
+    const userName  = req.params && req.params.userName;
+    const collectionName = req.params && req.params.collectionName;
+
+    return CollectionModel.findOne({userName, name: collectionName});
+}
+
+function checkBodyAndRules(rules: {type: string; name: string}[], req: Request) {
+
+    const reqBody = req.body;
+    let body = {};
+    let isValid = true;
+    const inValidMessage = [];
+
+    rules.forEach((rule) => {
+        if (!reqBody[rule.name] || typeof reqBody[rule.name] !== rule.type) {
+            isValid = false;
+            inValidMessage.push({
+                field: rule.name,
+                message: `${rule.name} is required`
+            });
+        }
+        else {
+            body = {
+                ...body,
+                [rule.name] : reqBody[rule.name]
+            };
+        }
+    });
+    if (isValid) {
+        return body;
+    }
+    else {
+        throw new BadRequestError('Error in request body');
     }
 }
 
