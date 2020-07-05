@@ -14,3 +14,5 @@ export const MONGO_DB_DATA_CONNECTIONS_AVAILABLE = ['one','two'];
 export const MAX_DB_LIMIT = 2;
 
 export const MAX_COLLECTION_LIMIT = 2;
+
+export const ALL_CONNECTIONS_AND_DB_CAPACITY_FULL = 'All connections and db capacity is full';

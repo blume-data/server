@@ -14,7 +14,6 @@ import {
     INVALID_RULES_MESSAGE,
     REQUIRED_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN
 } from "./Messages";
-import {createRecord} from "../services/crudMethods";
 import {ConnectionModel} from "../models/Connections";
 import {DbsModel} from "../models/Dbs";
 
@@ -78,82 +77,80 @@ export async function createItemSchema(req: Request, res: Response) {
             errors: inValidMessage
         });
     }
-
-    const connectionName = _.sample(MONGO_DB_DATA_CONNECTIONS_AVAILABLE);
-    const newDbCollection = await assignConnectionAndDb();
-
-
-    //console.log('newDbCollection', newDbCollection);
-
-    const data = {
-        userName: userName,
-        rules: JSON.stringify(reqBody.rules),
-        name: reqBody.name,
-        dbName: newDbCollection.name,
-        connectionName: newDbCollection.connectionName
-    };
+    const newDbConnection = await assignConnectionAndDb();
 
     const newCollection = CollectionModel.build({
         userName: userName,
         rules: JSON.stringify(reqBody.rules),
         name: reqBody.name,
-        dbName: newDbCollection.name,
-        connectionName: newDbCollection.connectionName
+        dbName: newDbConnection.name,
+        connectionName: newDbConnection.connectionName
     });
+
     await newCollection.save();
 
     res.status(200).send(newCollection);
-    //createMethod(res, data, CollectionModel);
 }
 
-async function assignConnectionAndDb(searchedConnections?: string[]) : Promise<any> {
+async function assignConnectionAndDb() : Promise<any> {
 
     const connections = await ConnectionModel.findOne({count: {$lte: MAX_DB_LIMIT}}, ['name', 'count']);
-    console.log('limited connections', connections);
     const allConnections = await ConnectionModel.find({}, 'id');
 
     if (!connections && !allConnections.length) {
         // create a new connection
-        const connectionName = MONGO_DB_DATA_CONNECTIONS_AVAILABLE[0];
-        const newConnection = ConnectionModel.build({ name: connectionName, count: 1 });
-        await newConnection.save();
-        console.log('new connection created', newConnection);
-        const newDb = DbsModel.build({ connectionName, name: '_1', count: 1 });
-        return await newDb.save();
+        return await createNewConnection(allConnections.length);
     }
     else if(connections) {
         const dbs = await DbsModel.findOne({connectionName: connections.name, count: {$lte: MAX_COLLECTION_LIMIT}});
         const allDbs = await DbsModel.find({connectionName: connections.name}, 'id');
-        console.log('limited dbs', dbs);
-        console.log('all dbs', allDbs);
         if(!dbs && !allDbs.length) {
             // create new db here
             await incrementConnectionCount(connections.name, connections.count);
             const newDb = DbsModel.build({connectionName: connections.name, count: 1, name: '_1' });
-            console.log('no db and no all db EXIST. Created new DB', newDb);
             return await newDb.save();
         }
         else if (!dbs) {
             // all dbs capacity is full create a new db
-            await incrementConnectionCount(connections.name, connections.count);
-            const newDb = DbsModel.build({connectionName: connections.name, count: 1, name: `_${allDbs.length + 1}` });
-            console.log('Alls dbs capacity is full. Created new db', newDb);
-            return await newDb.save();
+            if (allDbs.length === MAX_DB_LIMIT) {
+                // HACK HACK HACK
+                // on delete of any collection: update the count of connection to the length of dbs
+                await incrementConnectionCount(connections.name, connections.count);
+                return await createNewConnection(allConnections.length);
+            }
+            else{
+                await incrementConnectionCount(connections.name, connections.count);
+                const newDb = DbsModel.build({connectionName: connections.name, count: 1, name: `_${allDbs.length + 1}` });
+                return await newDb.save();
+            }
         }
         else if(dbs) {
-            const updatedDb = await DbsModel.updateOne({connectionName:dbs.connectionName, name: dbs.name}, {count: dbs.count + 1});
-            console.log('db was avaiable ', updatedDb);
+            await DbsModel.updateOne({connectionName:dbs.connectionName, name: dbs.name}, {count: dbs.count + 1});
             return dbs;
         }
     }
+    else if(allConnections.length <= MONGO_DB_DATA_CONNECTIONS_AVAILABLE.length) {
+        return await createNewConnection(allConnections.length);
+    }
     else {
-        throw new Error('Need another connection');
+        throw new Error('All connections and db capacity is full');
     }
 }
 
 async function incrementConnectionCount(connectionName: string, count: number) {
-    const updatedConnection = await ConnectionModel.updateOne({name: connectionName}, {count: count + 1});
-    console.log('updatedConnection', updatedConnection);
+    await ConnectionModel.updateOne({name: connectionName}, {count: count + 1});
 }
 
+async function createNewConnection(allConnectionsLength: number) {
+    const connectionName = MONGO_DB_DATA_CONNECTIONS_AVAILABLE[allConnectionsLength];
+    if (connectionName) {
+        const newConnection = ConnectionModel.build({ name: connectionName, count: 1 });
+        await newConnection.save();
+        const newDb = DbsModel.build({ connectionName, name: '_1', count: 1 });
+        return await newDb.save();
+    }
+    else {
+        throw new Error('All Connections and DB are exhausted');
+    }
+}
 
