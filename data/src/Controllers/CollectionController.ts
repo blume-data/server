@@ -5,7 +5,7 @@ import {
     errorStatus,
     MAX_COLLECTION_LIMIT,
     MAX_DB_LIMIT,
-    MONGO_DB_DATA_CONNECTIONS_AVAILABLE,
+    MONGO_DB_DATA_CONNECTIONS_AVAILABLE, okayStatus,
     SUPPORTED_DATA_TYPES
 } from "../util/constants";
 import _ from 'lodash';
@@ -91,6 +91,45 @@ export async function createItemSchema(req: Request, res: Response) {
     await newCollection.save();
 
     res.status(200).send(newCollection);
+}
+
+export async function deleteItemSchema(req: Request, res: Response) {
+    const userName  = req.params && req.params.userName;
+
+    const reqBody = req.body;
+
+    const itemSchema = await CollectionModel.findOne({
+        userName: userName,
+        name: reqBody.name
+    });
+
+    if (itemSchema) {
+        await CollectionModel.deleteOne({
+            userName: userName,
+            name: reqBody.name
+        });
+        // calculate the exact length of the dbs
+        const dbs = await DbsModel.find({connectionName: itemSchema.connectionName}, 'id');
+        await ConnectionModel.updateOne({name: itemSchema.connectionName}, {count: dbs.length});
+        // update the count on db
+        const db = await DbsModel.findOne({
+            connectionName: itemSchema.connectionName,
+            name: itemSchema.dbName
+        }, 'count');
+        if (db) {
+            await DbsModel.updateOne({
+                connectionName: itemSchema.connectionName,
+                name: itemSchema.dbName
+            }, {
+                count: db.count - 1
+            });
+        }
+
+    }
+    else {
+        throw new BadRequestError('Collection not found');
+    }
+    res.status(okayStatus).send(true);
 }
 
 async function assignConnectionAndDb() : Promise<any> {

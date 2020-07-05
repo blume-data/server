@@ -1,9 +1,9 @@
 import express from 'express';
 import {stringLimitOptionErrorMessage, stringLimitOptions} from "../util/constants";
-import {body, param} from "express-validator";
+import {body} from "express-validator";
 import {validateRequest} from "@ranjodhbirkaur/common";
-import {emailVerificationUrl, CollectionUrl, userNameValidationUrl} from "../util/urls";
-import {createItemSchema} from "../Controllers/CollectionController";
+import {CollectionUrl} from "../util/urls";
+import {createItemSchema, deleteItemSchema} from "../Controllers/CollectionController";
 
 const router = express.Router();
 
@@ -19,15 +19,13 @@ router.post(CollectionUrl, [
     ],
     validateRequest, createItemSchema);
 
-/*router.get(emailVerificationUrl, [
-    query('token')
-        .trim()
-        .notEmpty()
-        .withMessage('token is required')
-        .isLength(stringLimitOptions)
-        .withMessage(stringLimitOptionErrorMessage('token')),
-    query('email').isEmail().withMessage('Email must be valid')
+// Delete Item Schema
+router.delete(CollectionUrl, [
+        body('name')
+            .trim()
+            .isLength(stringLimitOptions)
+            .withMessage(stringLimitOptionErrorMessage('name'))
     ],
-    validateRequest, verifyEmailToken);*/
+    validateRequest, deleteItemSchema);
 
 export { router as CollectionRoutes };
