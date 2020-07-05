@@ -46,6 +46,13 @@ export function createModel(params: CreateModelType) {
         }
     });
 
+    schemaData = {
+        ...schemaData,
+        created_at : { type: Date, default: Date.now },
+        updated_at : { type: Date },
+        deleted_at : { type: Date },
+    };
+
     const dbConnection = mongoose.createConnection(`mongodb://data-mongo-${connectionName}-srv/${dbName}`);
 
     const schema = new Schema(schemaData, {
