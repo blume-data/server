@@ -1,6 +1,7 @@
 import {Request, Response} from 'express';
 import {BadRequestError} from "@ranjodhbirkaur/common";
 import {
+    ALL_CONNECTIONS_AND_DB_CAPACITY_FULL,
     errorStatus,
     MAX_COLLECTION_LIMIT,
     MAX_DB_LIMIT,
@@ -133,7 +134,7 @@ async function assignConnectionAndDb() : Promise<any> {
         return await createNewConnection(allConnections.length);
     }
     else {
-        throw new Error('All connections and db capacity is full');
+        throw new Error(ALL_CONNECTIONS_AND_DB_CAPACITY_FULL+' : while creating DB');
     }
 }
 
@@ -150,7 +151,7 @@ async function createNewConnection(allConnectionsLength: number) {
         return await newDb.save();
     }
     else {
-        throw new Error('All Connections and DB are exhausted');
+        throw new Error(ALL_CONNECTIONS_AND_DB_CAPACITY_FULL);
     }
 }
 
