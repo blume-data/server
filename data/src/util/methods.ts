@@ -53,7 +53,11 @@ export function createModel(params: CreateModelType) {
         deleted_at : { type: Date },
     };
 
-    const dbConnection = mongoose.createConnection(`mongodb://data-mongo-${connectionName}-srv/${dbName}`);
+    const dbConnection = mongoose.createConnection(`mongodb://data-mongo-${connectionName}-srv/${dbName}`, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        useCreateIndex: true
+    });
 
     const schema = new Schema(schemaData, {
         toJSON: {

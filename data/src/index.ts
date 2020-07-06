@@ -19,8 +19,7 @@ const start = async () => {
     await mongoose.connect(process.env.MONGO_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
-      useCreateIndex: true,
-      poolSize: /*MONGO_DB_DATA_CONNECTIONS_AVAILABLE.length*/10
+      useCreateIndex: true
     });
     console.log('Data Service: Connected to MongoDb');
   } catch (err) {

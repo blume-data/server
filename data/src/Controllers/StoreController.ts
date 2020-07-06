@@ -2,8 +2,13 @@ import {Request, Response} from 'express';
 import {CollectionModel} from "../models/Collection";
 import {BadRequestError} from "@ranjodhbirkaur/common";
 import {createModel} from "../util/methods";
-import {okayStatus} from "../util/constants";
+import {errorStatus, okayStatus, PER_PAGE} from "../util/constants";
 import {COLLECTION_NOT_FOUND} from "./Messages";
+
+interface ErrorMessagesType {
+    field: string;
+    message: string;
+}
 
 // Create Record
 export async function createStoreRecord(req: Request, res: Response) {
@@ -37,17 +42,22 @@ export async function getStoreRecord(req: Request, res: Response) {
 
     // get collection
     const collection = await getCollection(req);
+    const {pageNo, perPage=PER_PAGE} = req.query;
     if (collection) {
         const rules = JSON.parse(collection.rules);
-        const model = createModel({
-            rules,
-            connectionName: collection.connectionName,
-            dbName: collection.dbName,
-            name: collection.name
-        });
 
-        const collections = await model.find({});
-        res.status(okayStatus).send(collections);
+        if (validateParams(req, res, rules)) {
+            const model = createModel({
+                rules,
+                connectionName: collection.connectionName,
+                dbName: collection.dbName,
+                name: collection.name
+            });
+
+            const collections = await model.find({});
+            
+            res.status(okayStatus).send(collections);
+        }
     }
     else {
         throw new BadRequestError(COLLECTION_NOT_FOUND);
@@ -88,6 +98,48 @@ function checkBodyAndRules(rules: {type: string; name: string}[], req: Request) 
     }
     else {
         throw new BadRequestError('Error in request body');
+    }
+}
+
+function validateParams(req: Request, res: Response, rules: {name: string; type: string}[]) {
+    const reqBody = req.body;
+    let isValid = true;
+    const errorMessages = [];
+    console.log('ere', reqBody);
+    if (reqBody.where && typeof reqBody.where === 'object') {
+        let where = {};
+        // Iterate where
+        for(const condition in reqBody.where) {
+            if (reqBody.where.hasOwnProperty(condition)) {
+                rules.forEach(rule => {
+                    if(condition === rule.name) {
+                        if (typeof reqBody.where[condition] !== rule.type) {
+                            isValid = false;
+                            const messages = {} as ErrorMessagesType;
+                            if (rule.name) {
+                                messages.field = rule.name;
+                                messages.message = `${rule.name} should be of type ${rule.type}`;
+                                errorMessages.push(messages);
+                            }
+                        }
+                        else {
+                            where = {
+                                ...where,
+                                [condition]: reqBody.where[condition]
+                            }
+                        }
+                    }
+                });
+            }
+        }
+        if (!isValid) {
+            res.status(errorStatus).send({
+                errors: 'where is not valid'
+            });
+            return false;
+        }
+        reqBody.where = where;
+        return true;
     }
 }
 
