@@ -47,6 +47,7 @@ export async function getStoreRecord(req: Request, res: Response) {
         const rules = JSON.parse(collection.rules);
 
         if (validateParams(req, res, rules)) {
+            const {where, getOnly} = req.body;
             const model = createModel({
                 rules,
                 connectionName: collection.connectionName,
@@ -54,7 +55,7 @@ export async function getStoreRecord(req: Request, res: Response) {
                 name: collection.name
             });
 
-            const collections = await model.find({});
+            const collections = await model.find(where, getOnly);
             
             res.status(okayStatus).send(collections);
         }
@@ -105,41 +106,87 @@ function validateParams(req: Request, res: Response, rules: {name: string; type:
     const reqBody = req.body;
     let isValid = true;
     const errorMessages = [];
-    console.log('ere', reqBody);
     if (reqBody.where && typeof reqBody.where === 'object') {
         let where = {};
         // Iterate where
         for(const condition in reqBody.where) {
             if (reqBody.where.hasOwnProperty(condition)) {
-                rules.forEach(rule => {
-                    if(condition === rule.name) {
-                        if (typeof reqBody.where[condition] !== rule.type) {
-                            isValid = false;
-                            const messages = {} as ErrorMessagesType;
-                            if (rule.name) {
-                                messages.field = rule.name;
-                                messages.message = `${rule.name} should be of type ${rule.type}`;
-                                errorMessages.push(messages);
-                            }
-                        }
-                        else {
-                            where = {
-                                ...where,
-                                [condition]: reqBody.where[condition]
-                            }
+                const ruleExist = rules.find(rule => rule.name === condition);
+                if (ruleExist) {
+                    if (typeof reqBody.where[condition] !== ruleExist.type) {
+                        isValid = false;
+                        errorMessages.push({
+                            field: ruleExist.name,
+                            message: `${ruleExist.name} should be of type ${ruleExist.type}`
+                        });
+                    }
+                    else {
+                        where = {
+                            ...where,
+                            [condition]: reqBody.where[condition]
                         }
                     }
+                }
+                else {
+                    isValid = false;
+                    errorMessages.push({
+                        field: 'where',
+                        message: `${condition} does not exist in schema`
+                    })
+                }
+            }
+        }
+
+        reqBody.where = where;
+    }
+    if (reqBody.getOnly && (typeof reqBody.getOnly === 'object' || typeof reqBody.getOnly === 'string')) {
+        if (typeof reqBody.getOnly === 'string') {
+            const exist = rules.find(rule => rule.name === reqBody.getOnly);
+            if (!exist) {
+                isValid = false;
+                errorMessages.push({
+                    field: 'getOnly',
+                    message: reqBody.getOnly+' does not exist in schema'
                 });
             }
         }
-        if (!isValid) {
-            res.status(errorStatus).send({
-                errors: 'where is not valid'
-            });
-            return false;
+        else {
+            // if the type is object|Array
+            if (reqBody.getOnly.length) {
+                reqBody.getOnly.forEach((str: string) => {
+                    const exist = rules.find(rule => rule.name === str);
+                    if (!exist) {
+                        isValid = false;
+                        errorMessages.push({
+                            field: 'getOnly',
+                            message: `${str} does not exist in schema`
+                        })
+                    }
+                });
+            }
+            else {
+                reqBody.getOnly = null;
+            }
         }
-        reqBody.where = where;
-        return true;
     }
+    else {
+        if (reqBody.getOnly) {
+            isValid = false;
+            errorMessages.push({
+                field: 'getOnly',
+                message: 'getOnly should be an array of params to get or a string of param'
+            });
+        }
+        // getOnly does not exist
+        reqBody.getOnly = null;
+    }
+
+    if (!isValid) {
+        res.status(errorStatus).send({
+            errors: errorMessages
+        });
+        return false;
+    }
+    return true;
 }
 
