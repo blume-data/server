@@ -5,11 +5,6 @@ import {createModel} from "../util/methods";
 import {errorStatus, okayStatus, PER_PAGE} from "../util/constants";
 import {COLLECTION_NOT_FOUND} from "./Messages";
 
-interface ErrorMessagesType {
-    field: string;
-    message: string;
-}
-
 // Create Record
 export async function createStoreRecord(req: Request, res: Response) {
 
