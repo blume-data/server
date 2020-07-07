@@ -21,6 +21,7 @@ import {DbsModel} from "../models/Dbs";
 export async function createCollectionSchema(req: Request, res: Response) {
 
     const userName  = req.params && req.params.userName;
+    const language = req.params && req.params.language;
 
     const reqBody = req.body;
 
@@ -84,10 +85,12 @@ export async function createCollectionSchema(req: Request, res: Response) {
 
     const newCollection = CollectionModel.build({
         userName: userName,
+
         rules: JSON.stringify(reqBody.rules),
         name: reqBody.name,
         dbName: newDbConnection.name,
-        connectionName: newDbConnection.connectionName
+        connectionName: newDbConnection.connectionName,
+        language
     });
 
     await newCollection.save();
@@ -97,12 +100,14 @@ export async function createCollectionSchema(req: Request, res: Response) {
 
 export async function deleteCollectionSchema(req: Request, res: Response) {
     const userName  = req.params && req.params.userName;
+    const language = req.params && req.params.language;
 
     const reqBody = req.body;
 
     const itemSchema = await CollectionModel.findOne({
         userName: userName,
-        name: reqBody.name
+        name: reqBody.name,
+        language
     });
 
     if (itemSchema) {
@@ -137,10 +142,11 @@ export async function deleteCollectionSchema(req: Request, res: Response) {
 export async function getCollectionSchema(req: Request, res: Response) {
     
     const userName  = req.params && req.params.userName;
+    const language = req.params && req.params.language;
 
     const reqBody = req.body;
 
-    const collections = await CollectionModel.find({userName});
+    const collections = await CollectionModel.find({userName, language});
     res.status(okayStatus).send(collections);
 }
 

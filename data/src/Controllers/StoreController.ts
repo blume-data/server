@@ -60,6 +60,11 @@ export async function getStoreRecord(req: Request, res: Response) {
     }
 }
 
+// Update Record
+
+// Delete Record
+
+
 async function getCollection(req: Request) {
     const userName  = req.params && req.params.userName;
     const collectionName = req.params && req.params.collectionName;
