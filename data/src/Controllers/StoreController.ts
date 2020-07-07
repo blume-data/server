@@ -67,9 +67,10 @@ export async function getStoreRecord(req: Request, res: Response) {
 
 async function getCollection(req: Request) {
     const userName  = req.params && req.params.userName;
+    const language = req.params && req.params.language;
     const collectionName = req.params && req.params.collectionName;
 
-    return CollectionModel.findOne({userName, name: collectionName});
+    return CollectionModel.findOne({userName, name: collectionName, language});
 }
 
 function checkBodyAndRules(rules: {type: string; name: string}[], req: Request) {

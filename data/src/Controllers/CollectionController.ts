@@ -85,7 +85,6 @@ export async function createCollectionSchema(req: Request, res: Response) {
 
     const newCollection = CollectionModel.build({
         userName: userName,
-
         rules: JSON.stringify(reqBody.rules),
         name: reqBody.name,
         dbName: newDbConnection.name,
