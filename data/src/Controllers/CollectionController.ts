@@ -1,22 +1,23 @@
 import {Request, Response} from 'express';
 import {BadRequestError} from "@ranjodhbirkaur/common";
 import {
-    ALL_CONNECTIONS_AND_DB_CAPACITY_FULL,
+    ALL_CONNECTIONS_AND_DB_CAPACITY_FULL, COLLECTION_TYPES, DATA_COLLECTION,
     errorStatus,
     MAX_COLLECTION_LIMIT,
     MAX_DB_LIMIT,
     MONGO_DB_DATA_CONNECTIONS_AVAILABLE, okayStatus,
-    SUPPORTED_DATA_TYPES
+    SUPPORTED_DATA_TYPES, USER_COLLECTION
 } from "../util/constants";
 import _ from 'lodash';
 import {CollectionModel} from "../models/Collection";
 import {
-    COLLECTION_ALREADY_EXIST,
+    COLLECTION_ALREADY_EXIST, DEFAULT_VALUE_SHOULD_BE_OF_SPECIFIED_TYPE,
     INVALID_RULES_MESSAGE,
-    REQUIRED_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN
+    REQUIRED_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN, UNIQUE_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN
 } from "./Messages";
 import {ConnectionModel} from "../models/Connections";
 import {DbsModel} from "../models/Dbs";
+import {RuleType} from "../util/interface";
 
 export async function createCollectionSchema(req: Request, res: Response) {
 
@@ -26,10 +27,18 @@ export async function createCollectionSchema(req: Request, res: Response) {
     const reqBody = req.body;
 
     let isValidBody = true;
+    let isUserCollection = false;
 
     // the name of the custom schema collection should not contain any space
     if (reqBody && reqBody.name && typeof reqBody.name === 'string') {
-        reqBody.name = reqBody.name.split(' ').join('_');
+        const name = reqBody.name.split(' ').join('_');
+        if (reqBody.collectionType && reqBody.collectionType === USER_COLLECTION) {
+            isUserCollection = true;
+            reqBody.name = `${USER_COLLECTION}_${name}`
+        }
+        else {
+            reqBody.name = name;
+        }
     }
 
     // Check if there is not other collection with same name and user_id
@@ -44,12 +53,49 @@ export async function createCollectionSchema(req: Request, res: Response) {
 
     // Validate Rules
     if (reqBody.rules && typeof reqBody.rules === 'object' && reqBody.rules.length) {
-        reqBody.rules.forEach((rule: {type: string, required?: boolean, name: string}) => {
+        if (isUserCollection) {
+            const hasEmail = reqBody.rules.find((rule: RuleType) => rule.name === 'email');
+            if (!hasEmail) {
+                isValidBody = false;
+                inValidMessage.push({
+                    message: 'Email is required',
+                    field: 'rules'
+                });
+            }
+            const hasPassword = reqBody.rules.find((rule: RuleType) => rule.name === 'password');
+            if (!hasPassword) {
+                isValidBody = false;
+                inValidMessage.push({
+                    message: 'Password is required',
+                    field: 'rules'
+                });
+            }
+        }
+
+        reqBody.rules.forEach((rule: RuleType) => {
             // Check required property
             if (rule.required !== undefined && typeof rule.required !== 'boolean') {
                 isValidBody = false;
                 inValidMessage.push({
                     message: `${rule.name}: ${REQUIRED_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN}`,
+                    field: rule.name
+                });
+            }
+
+            // Check unique property
+            if (rule.unique !== undefined && typeof rule.unique !== 'boolean') {
+                isValidBody = false;
+                inValidMessage.push({
+                    message: `${rule.name}: ${UNIQUE_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN}`,
+                    field: rule.name
+                });
+            }
+
+            // check default property
+            if (rule.default && typeof rule.default !== rule.type) {
+                isValidBody = false;
+                inValidMessage.push({
+                    message: `${rule.name}: ${DEFAULT_VALUE_SHOULD_BE_OF_SPECIFIED_TYPE}${rule.type}`,
                     field: rule.name
                 });
             }
@@ -81,6 +127,7 @@ export async function createCollectionSchema(req: Request, res: Response) {
             errors: inValidMessage
         });
     }
+
     const newDbConnection = await assignConnectionAndDb();
 
     const newCollection = CollectionModel.build({
@@ -89,6 +136,8 @@ export async function createCollectionSchema(req: Request, res: Response) {
         name: reqBody.name,
         dbName: newDbConnection.name,
         connectionName: newDbConnection.connectionName,
+        collectionType: (reqBody.collectionType
+            && COLLECTION_TYPES.includes(reqBody.collectionType) ? reqBody.collectionType : DATA_COLLECTION),
         language
     });
 

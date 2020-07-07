@@ -1,5 +1,6 @@
 import { randomBytes } from 'crypto';
 import mongoose from "mongoose";
+import {RuleType} from "./interface";
 
 export const RANDOM_STRING = function (minSize=10) {
     return randomBytes(minSize).toString('hex')
@@ -21,12 +22,16 @@ export function createModel(params: CreateModelType) {
     const Schema = mongoose.Schema;
     let schemaData = {};
     // Create the schema
-    rules.forEach(rule => {
+    rules.forEach((rule: RuleType) => {
         switch (rule.type) {
             case 'string': {
                 schemaData = {
                     ...schemaData,
-                    [rule.name]: String
+                    [rule.name]: {
+                        type: String,
+                        required: !!rule.required,
+                        unique: !!rule.unique
+                    }
                 };
                 break;
             }

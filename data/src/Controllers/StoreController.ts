@@ -3,7 +3,9 @@ import {CollectionModel} from "../models/Collection";
 import {BadRequestError} from "@ranjodhbirkaur/common";
 import {createModel} from "../util/methods";
 import {errorStatus, okayStatus, PER_PAGE} from "../util/constants";
-import {COLLECTION_NOT_FOUND} from "./Messages";
+import {COLLECTION_NOT_FOUND, PARAM_SHOULD_BE_UNIQUE} from "./Messages";
+import {RuleType} from "../util/interface";
+import {Model} from "mongoose";
 
 // Create Record
 export async function createStoreRecord(req: Request, res: Response) {
@@ -12,7 +14,7 @@ export async function createStoreRecord(req: Request, res: Response) {
     const collection = await getCollection(req);
     if (collection) {
         const rules = JSON.parse(collection.rules);
-        let body = checkBodyAndRules(rules, req);
+        let body = checkBodyAndRules(rules, req, res);
 
         const model = createModel({
             rules,
@@ -21,11 +23,15 @@ export async function createStoreRecord(req: Request, res: Response) {
             name: collection.name
         });
 
-        const item = new model(body);
-        await item.save();
-
-        res.status(okayStatus).send(item);
-
+        const hasError = await validateUniqueParam(model, rules, body);
+        if (!hasError) {
+            const item = new model(body);
+            await item.save();
+            res.status(okayStatus).send(item);
+        }
+        else {
+            throw new BadRequestError(hasError);
+        }
     }
     else {
         throw new BadRequestError(COLLECTION_NOT_FOUND);
@@ -73,36 +79,45 @@ async function getCollection(req: Request) {
     return CollectionModel.findOne({userName, name: collectionName, language});
 }
 
-function checkBodyAndRules(rules: {type: string; name: string}[], req: Request) {
+function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
 
     const reqBody = req.body;
     let body = {};
     let isValid = true;
-    const inValidMessage = [];
+    const errorMessages: {field: string, message: string}[] = [];
 
     rules.forEach((rule) => {
-        if (!reqBody[rule.name] || typeof reqBody[rule.name] !== rule.type) {
+        if ((!reqBody[rule.name] && rule.required) || (reqBody[rule.name] && typeof reqBody[rule.name] !== rule.type)) {
             isValid = false;
-            inValidMessage.push({
+            errorMessages.push({
                 field: rule.name,
                 message: `${rule.name} is required`
             });
         }
-        else {
+        if (isValid) {
             body = {
                 ...body,
                 [rule.name] : reqBody[rule.name]
             };
+            if (!reqBody[rule.name] && rule.default) {
+                body = {
+                    ...body,
+                    [rule.name] : rule.default
+                };
+            }
         }
     });
     if (isValid) {
         return body;
     }
     else {
-        throw new BadRequestError('Error in request body');
+        res.status(errorStatus).send({
+            errors: errorMessages
+        })
     }
 }
 
+// Validate Params for where and getOnly
 function validateParams(req: Request, res: Response, rules: {name: string; type: string}[]) {
     const reqBody = req.body;
     let isValid = true;
@@ -189,5 +204,19 @@ function validateParams(req: Request, res: Response, rules: {name: string; type:
         return false;
     }
     return true;
+}
+
+async function validateUniqueParam(model: Model<any>, rules: RuleType[], reqBody: any) {
+    let errorMessage: string | null = null;
+
+    for(let i = 0; i<=rules.length-1; i++) {
+        if (rules[i].unique && reqBody[rules[i].name]) {
+            const exist = await model.find({[rules[i].name]: reqBody[rules[i].name]}, '_id');
+            if (exist && exist.length) {
+                errorMessage = `${rules[i].name} ${PARAM_SHOULD_BE_UNIQUE}. Value ${reqBody[rules[i].name]} already exist.`;
+            }
+        }
+    }
+    return errorMessage;
 }
 
