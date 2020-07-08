@@ -7,7 +7,7 @@ export const errorStatus = 400;
 export const AUTH_TOKEN = 'AUTH_TOKEN';
 export const USER_NAME = 'userName';
 
-export const SUPPORTED_DATA_TYPES = ['string', 'boolean', 'number'];
+export const SUPPORTED_DATA_TYPES = ['string', 'boolean', 'number', 'date', 'html'];
 
 export const MONGO_DB_DATA_CONNECTIONS_AVAILABLE = ['one','two'];
 
@@ -21,4 +21,4 @@ export const PER_PAGE = 10;
 
 export const USER_COLLECTION = 'user_collection';
 export const DATA_COLLECTION = 'data_collection';
-export const COLLECTION_TYPES = [USER_COLLECTION];
+export const COLLECTION_TYPES = [USER_COLLECTION, DATA_COLLECTION];

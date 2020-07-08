@@ -87,12 +87,76 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
     const errorMessages: {field: string, message: string}[] = [];
 
     rules.forEach((rule) => {
-        if ((!reqBody[rule.name] && rule.required) || (reqBody[rule.name] && typeof reqBody[rule.name] !== rule.type)) {
+        // check for required params
+        if ((!reqBody[rule.name] && rule.required)) {
             isValid = false;
             errorMessages.push({
                 field: rule.name,
                 message: `${rule.name} is required`
             });
+        }
+        // check the types
+        if (reqBody[rule.name]) {
+            switch (rule.type) {
+                case 'string': {
+                    if (typeof reqBody[rule.name] !== 'string' ||
+                        typeof reqBody[rule.name] !== 'number' ||
+                        typeof reqBody[rule.name] !== 'boolean' ) {
+                        isValid = false;
+                        errorMessages.push({
+                            field: rule.name,
+                            message: `${rule.name} should be of type ${rule.type}`
+                        });
+                    }
+                    else {
+                        reqBody[rule.name]=String(reqBody[rule.name]);
+                    }
+                    break;
+                }
+                case 'number': {
+                    if (typeof reqBody[rule.name] !== 'string' || typeof reqBody[rule.name] !== 'number') {
+                        isValid = false;
+                        errorMessages.push({
+                            field: rule.name,
+                            message: `${rule.name} should be of type ${rule.type}`
+                        });
+                    }
+                    else {
+                        reqBody[rule.name] = Number(reqBody[rule.name]);
+                    }
+                    break;
+                }
+                case 'boolean': {
+                    if (typeof reqBody[rule.name] !== 'boolean') {
+                        isValid = false;
+                        errorMessages.push({
+                            field: rule.name,
+                            message: `${rule.name} should be of type ${rule.type}`
+                        });
+                    }
+                    break;
+                }
+                case 'date': {
+                    if (typeof reqBody[rule.name] !== 'string') {
+                        isValid = false;
+                        errorMessages.push({
+                            field: rule.name,
+                            message: `${rule.name} should be of type string`
+                        });
+                    }
+                    break;
+                }
+                case 'html': {
+                    if (typeof reqBody[rule.name] !== 'string') {
+                        isValid = false;
+                        errorMessages.push({
+                            field: rule.name,
+                            message: `${rule.name} should be of type string`
+                        });
+                    }
+                    break;
+                }
+            }
         }
         if (isValid) {
             body = {

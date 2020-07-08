@@ -53,6 +53,7 @@ export async function createCollectionSchema(req: Request, res: Response) {
 
     // Validate Rules
     if (reqBody.rules && typeof reqBody.rules === 'object' && reqBody.rules.length) {
+        // Validations specific to user collection
         if (isUserCollection) {
             const hasEmail = reqBody.rules.find((rule: RuleType) => rule.name === 'email');
             if (!hasEmail) {
@@ -70,6 +71,13 @@ export async function createCollectionSchema(req: Request, res: Response) {
                     field: 'rules'
                 });
             }
+        }
+        else if (reqBody.type && !COLLECTION_TYPES.includes(reqBody.type)) {
+            isValidBody = false;
+            inValidMessage.push({
+                message: `${reqBody.type} is not a valid type`,
+                field: 'type'
+            });
         }
 
         reqBody.rules.forEach((rule: RuleType) => {
