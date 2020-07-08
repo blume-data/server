@@ -182,7 +182,7 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
 }
 
 // Validate Params for where and getOnly
-function validateParams(req: Request, res: Response, rules: {name: string; type: string}[]) {
+function validateParams(req: Request, res: Response, rules: RuleType[]) {
     const reqBody = req.body;
     let isValid = true;
     const errorMessages = [];
