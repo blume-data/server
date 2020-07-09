@@ -1,34 +1,44 @@
 import {Request, Response} from 'express';
 import {BadRequestError} from "@ranjodhbirkaur/common";
 import {
-    ALL_CONNECTIONS_AND_DB_CAPACITY_FULL,
+    ALL_CONNECTIONS_AND_DB_CAPACITY_FULL, COLLECTION_TYPES, DATA_COLLECTION,
     errorStatus,
     MAX_COLLECTION_LIMIT,
     MAX_DB_LIMIT,
     MONGO_DB_DATA_CONNECTIONS_AVAILABLE, okayStatus,
-    SUPPORTED_DATA_TYPES
+    SUPPORTED_DATA_TYPES, USER_COLLECTION
 } from "../util/constants";
 import _ from 'lodash';
 import {CollectionModel} from "../models/Collection";
 import {
-    COLLECTION_ALREADY_EXIST,
+    COLLECTION_ALREADY_EXIST, DEFAULT_VALUE_SHOULD_BE_OF_SPECIFIED_TYPE,
     INVALID_RULES_MESSAGE,
-    REQUIRED_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN
+    REQUIRED_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN, UNIQUE_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN
 } from "./Messages";
 import {ConnectionModel} from "../models/Connections";
 import {DbsModel} from "../models/Dbs";
+import {RuleType} from "../util/interface";
 
 export async function createCollectionSchema(req: Request, res: Response) {
 
     const userName  = req.params && req.params.userName;
+    const language = req.params && req.params.language;
 
     const reqBody = req.body;
 
     let isValidBody = true;
+    let isUserCollection = false;
 
     // the name of the custom schema collection should not contain any space
     if (reqBody && reqBody.name && typeof reqBody.name === 'string') {
-        reqBody.name = reqBody.name.split(' ').join('_');
+        const name = reqBody.name.split(' ').join('_');
+        if (reqBody.collectionType && reqBody.collectionType === USER_COLLECTION) {
+            isUserCollection = true;
+            reqBody.name = `${USER_COLLECTION}_${name}`
+        }
+        else {
+            reqBody.name = name;
+        }
     }
 
     // Check if there is not other collection with same name and user_id
@@ -43,12 +53,57 @@ export async function createCollectionSchema(req: Request, res: Response) {
 
     // Validate Rules
     if (reqBody.rules && typeof reqBody.rules === 'object' && reqBody.rules.length) {
-        reqBody.rules.forEach((rule: {type: string, required?: boolean, name: string}) => {
+        // Validations specific to user collection
+        if (isUserCollection) {
+            const hasEmail = reqBody.rules.find((rule: RuleType) => rule.name === 'email');
+            if (!hasEmail) {
+                reqBody.rules.push({
+                    name: 'email',
+                    type: 'string',
+                    isEmail: true
+                });
+            }
+            const hasPassword = reqBody.rules.find((rule: RuleType) => rule.name === 'password');
+            if (!hasPassword) {
+                reqBody.rules.push({
+                    name: 'password',
+                    type: 'string',
+                    isPassword: true
+                });
+            }
+        }
+        else if (reqBody.type && !COLLECTION_TYPES.includes(reqBody.type)) {
+            isValidBody = false;
+            inValidMessage.push({
+                message: `${reqBody.type} is not a valid type`,
+                field: 'type'
+            });
+        }
+
+        reqBody.rules.forEach((rule: RuleType) => {
             // Check required property
             if (rule.required !== undefined && typeof rule.required !== 'boolean') {
                 isValidBody = false;
                 inValidMessage.push({
                     message: `${rule.name}: ${REQUIRED_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN}`,
+                    field: rule.name
+                });
+            }
+
+            // Check unique property
+            if (rule.unique !== undefined && typeof rule.unique !== 'boolean') {
+                isValidBody = false;
+                inValidMessage.push({
+                    message: `${rule.name}: ${UNIQUE_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN}`,
+                    field: rule.name
+                });
+            }
+
+            // check default property
+            if (rule.default && typeof rule.default !== rule.type) {
+                isValidBody = false;
+                inValidMessage.push({
+                    message: `${rule.name}: ${DEFAULT_VALUE_SHOULD_BE_OF_SPECIFIED_TYPE}${rule.type}`,
                     field: rule.name
                 });
             }
@@ -75,11 +130,30 @@ export async function createCollectionSchema(req: Request, res: Response) {
         })
     }
 
+    // Validate unique name in the rules
+    if (reqBody.rules && typeof reqBody.rules === 'object' && reqBody.rules.length) {
+        const names: string[] = [];
+        reqBody.rules.forEach((rule: RuleType) => {
+            const exist = names.find(item => item === rule.name);
+            if (exist) {
+                isValidBody = false;
+                inValidMessage.push({
+                    message: `${rule.name} is already present in rules`,
+                    field: 'rules'
+                })
+            }
+            else {
+                names.push(rule.name);
+            }
+        });
+    }
+
     if (!isValidBody) {
         return res.status(errorStatus).send({
             errors: inValidMessage
         });
     }
+
     const newDbConnection = await assignConnectionAndDb();
 
     const newCollection = CollectionModel.build({
@@ -87,22 +161,27 @@ export async function createCollectionSchema(req: Request, res: Response) {
         rules: JSON.stringify(reqBody.rules),
         name: reqBody.name,
         dbName: newDbConnection.name,
-        connectionName: newDbConnection.connectionName
+        connectionName: newDbConnection.connectionName,
+        collectionType: (reqBody.collectionType
+            && COLLECTION_TYPES.includes(reqBody.collectionType) ? reqBody.collectionType : DATA_COLLECTION),
+        language
     });
 
     await newCollection.save();
 
-    res.status(200).send(newCollection);
+    res.status(okayStatus).send(newCollection);
 }
 
 export async function deleteCollectionSchema(req: Request, res: Response) {
     const userName  = req.params && req.params.userName;
+    const language = req.params && req.params.language;
 
     const reqBody = req.body;
 
     const itemSchema = await CollectionModel.findOne({
         userName: userName,
-        name: reqBody.name
+        name: reqBody.name,
+        language
     });
 
     if (itemSchema) {
@@ -137,10 +216,11 @@ export async function deleteCollectionSchema(req: Request, res: Response) {
 export async function getCollectionSchema(req: Request, res: Response) {
     
     const userName  = req.params && req.params.userName;
+    const language = req.params && req.params.language;
 
     const reqBody = req.body;
 
-    const collections = await CollectionModel.find({userName});
+    const collections = await CollectionModel.find({userName, language});
     res.status(okayStatus).send(collections);
 }
 

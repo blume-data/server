@@ -3,12 +3,9 @@ import {CollectionModel} from "../models/Collection";
 import {BadRequestError} from "@ranjodhbirkaur/common";
 import {createModel} from "../util/methods";
 import {errorStatus, okayStatus, PER_PAGE} from "../util/constants";
-import {COLLECTION_NOT_FOUND} from "./Messages";
-
-interface ErrorMessagesType {
-    field: string;
-    message: string;
-}
+import {COLLECTION_NOT_FOUND, PARAM_SHOULD_BE_UNIQUE} from "./Messages";
+import {RuleType} from "../util/interface";
+import {Model} from "mongoose";
 
 // Create Record
 export async function createStoreRecord(req: Request, res: Response) {
@@ -17,7 +14,7 @@ export async function createStoreRecord(req: Request, res: Response) {
     const collection = await getCollection(req);
     if (collection) {
         const rules = JSON.parse(collection.rules);
-        let body = checkBodyAndRules(rules, req);
+        let body = checkBodyAndRules(rules, req, res);
 
         const model = createModel({
             rules,
@@ -26,11 +23,15 @@ export async function createStoreRecord(req: Request, res: Response) {
             name: collection.name
         });
 
-        const item = new model(body);
-        await item.save();
-
-        res.status(okayStatus).send(item);
-
+        const hasError = await validateUniqueParam(model, rules, body);
+        if (!hasError) {
+            const item = new model(body);
+            await item.save();
+            res.status(okayStatus).send(item);
+        }
+        else {
+            throw new BadRequestError(hasError);
+        }
     }
     else {
         throw new BadRequestError(COLLECTION_NOT_FOUND);
@@ -47,6 +48,7 @@ export async function getStoreRecord(req: Request, res: Response) {
         const rules = JSON.parse(collection.rules);
 
         if (validateParams(req, res, rules)) {
+            const {where, getOnly} = req.body;
             const model = createModel({
                 rules,
                 connectionName: collection.connectionName,
@@ -54,7 +56,7 @@ export async function getStoreRecord(req: Request, res: Response) {
                 name: collection.name
             });
 
-            const collections = await model.find({});
+            const collections = await model.find(where, getOnly);
             
             res.status(okayStatus).send(collections);
         }
@@ -64,82 +66,221 @@ export async function getStoreRecord(req: Request, res: Response) {
     }
 }
 
+// Update Record
+
+// Delete Record
+
+
 async function getCollection(req: Request) {
     const userName  = req.params && req.params.userName;
+    const language = req.params && req.params.language;
     const collectionName = req.params && req.params.collectionName;
 
-    return CollectionModel.findOne({userName, name: collectionName});
+    return CollectionModel.findOne({userName, name: collectionName, language});
 }
 
-function checkBodyAndRules(rules: {type: string; name: string}[], req: Request) {
+function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
 
     const reqBody = req.body;
     let body = {};
     let isValid = true;
-    const inValidMessage = [];
+    const errorMessages: {field: string, message: string}[] = [];
 
     rules.forEach((rule) => {
-        if (!reqBody[rule.name] || typeof reqBody[rule.name] !== rule.type) {
+        // check for required params
+        if ((!reqBody[rule.name] && rule.required)) {
             isValid = false;
-            inValidMessage.push({
+            errorMessages.push({
                 field: rule.name,
                 message: `${rule.name} is required`
             });
         }
-        else {
+        // check the types
+        if (reqBody[rule.name]) {
+            switch (rule.type) {
+                case 'string': {
+                    if (typeof reqBody[rule.name] !== 'string' ||
+                        typeof reqBody[rule.name] !== 'number' ||
+                        typeof reqBody[rule.name] !== 'boolean' ) {
+                        isValid = false;
+                        errorMessages.push({
+                            field: rule.name,
+                            message: `${rule.name} should be of type ${rule.type}`
+                        });
+                    }
+                    else {
+                        reqBody[rule.name]=String(reqBody[rule.name]);
+                    }
+                    break;
+                }
+                case 'number': {
+                    if (typeof reqBody[rule.name] !== 'string' || typeof reqBody[rule.name] !== 'number') {
+                        isValid = false;
+                        errorMessages.push({
+                            field: rule.name,
+                            message: `${rule.name} should be of type ${rule.type}`
+                        });
+                    }
+                    else {
+                        reqBody[rule.name] = Number(reqBody[rule.name]);
+                    }
+                    break;
+                }
+                case 'boolean': {
+                    if (typeof reqBody[rule.name] !== 'boolean') {
+                        isValid = false;
+                        errorMessages.push({
+                            field: rule.name,
+                            message: `${rule.name} should be of type ${rule.type}`
+                        });
+                    }
+                    break;
+                }
+                case 'date': {
+                    if (typeof reqBody[rule.name] !== 'string') {
+                        isValid = false;
+                        errorMessages.push({
+                            field: rule.name,
+                            message: `${rule.name} should be of type string`
+                        });
+                    }
+                    break;
+                }
+                case 'html': {
+                    if (typeof reqBody[rule.name] !== 'string') {
+                        isValid = false;
+                        errorMessages.push({
+                            field: rule.name,
+                            message: `${rule.name} should be of type string`
+                        });
+                    }
+                    break;
+                }
+            }
+        }
+        if (isValid) {
             body = {
                 ...body,
                 [rule.name] : reqBody[rule.name]
             };
+            if (!reqBody[rule.name] && rule.default) {
+                body = {
+                    ...body,
+                    [rule.name] : rule.default
+                };
+            }
         }
     });
     if (isValid) {
         return body;
     }
     else {
-        throw new BadRequestError('Error in request body');
+        res.status(errorStatus).send({
+            errors: errorMessages
+        })
     }
 }
 
-function validateParams(req: Request, res: Response, rules: {name: string; type: string}[]) {
+// Validate Params for where and getOnly
+function validateParams(req: Request, res: Response, rules: RuleType[]) {
     const reqBody = req.body;
     let isValid = true;
     const errorMessages = [];
-    console.log('ere', reqBody);
     if (reqBody.where && typeof reqBody.where === 'object') {
         let where = {};
         // Iterate where
         for(const condition in reqBody.where) {
             if (reqBody.where.hasOwnProperty(condition)) {
-                rules.forEach(rule => {
-                    if(condition === rule.name) {
-                        if (typeof reqBody.where[condition] !== rule.type) {
-                            isValid = false;
-                            const messages = {} as ErrorMessagesType;
-                            if (rule.name) {
-                                messages.field = rule.name;
-                                messages.message = `${rule.name} should be of type ${rule.type}`;
-                                errorMessages.push(messages);
-                            }
-                        }
-                        else {
-                            where = {
-                                ...where,
-                                [condition]: reqBody.where[condition]
-                            }
+                const ruleExist = rules.find(rule => rule.name === condition);
+                if (ruleExist) {
+                    if (typeof reqBody.where[condition] !== ruleExist.type) {
+                        isValid = false;
+                        errorMessages.push({
+                            field: ruleExist.name,
+                            message: `${ruleExist.name} should be of type ${ruleExist.type}`
+                        });
+                    }
+                    else {
+                        where = {
+                            ...where,
+                            [condition]: reqBody.where[condition]
                         }
                     }
+                }
+                else {
+                    isValid = false;
+                    errorMessages.push({
+                        field: 'where',
+                        message: `${condition} does not exist in schema`
+                    })
+                }
+            }
+        }
+
+        reqBody.where = where;
+    }
+    if (reqBody.getOnly && (typeof reqBody.getOnly === 'object' || typeof reqBody.getOnly === 'string')) {
+        if (typeof reqBody.getOnly === 'string') {
+            const exist = rules.find(rule => rule.name === reqBody.getOnly);
+            if (!exist) {
+                isValid = false;
+                errorMessages.push({
+                    field: 'getOnly',
+                    message: reqBody.getOnly+' does not exist in schema'
                 });
             }
         }
-        if (!isValid) {
-            res.status(errorStatus).send({
-                errors: 'where is not valid'
-            });
-            return false;
+        else {
+            // if the type is object|Array
+            if (reqBody.getOnly.length) {
+                reqBody.getOnly.forEach((str: string) => {
+                    const exist = rules.find(rule => rule.name === str);
+                    if (!exist) {
+                        isValid = false;
+                        errorMessages.push({
+                            field: 'getOnly',
+                            message: `${str} does not exist in schema`
+                        })
+                    }
+                });
+            }
+            else {
+                reqBody.getOnly = null;
+            }
         }
-        reqBody.where = where;
-        return true;
     }
+    else {
+        if (reqBody.getOnly) {
+            isValid = false;
+            errorMessages.push({
+                field: 'getOnly',
+                message: 'getOnly should be an array of params to get or a string of param'
+            });
+        }
+        // getOnly does not exist
+        reqBody.getOnly = null;
+    }
+
+    if (!isValid) {
+        res.status(errorStatus).send({
+            errors: errorMessages
+        });
+        return false;
+    }
+    return true;
+}
+
+async function validateUniqueParam(model: Model<any>, rules: RuleType[], reqBody: any) {
+    let errorMessage: string | null = null;
+
+    for(let i = 0; i<=rules.length-1; i++) {
+        if (rules[i].unique && reqBody[rules[i].name]) {
+            const exist = await model.find({[rules[i].name]: reqBody[rules[i].name]}, '_id');
+            if (exist && exist.length) {
+                errorMessage = `${rules[i].name} ${PARAM_SHOULD_BE_UNIQUE}. Value ${reqBody[rules[i].name]} already exist.`;
+            }
+        }
+    }
+    return errorMessage;
 }
 

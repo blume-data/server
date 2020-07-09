@@ -1,5 +1,7 @@
 import { randomBytes } from 'crypto';
 import mongoose from "mongoose";
+import {RuleType} from "./interface";
+import {DATE_TYPE, HTML_TYPE} from "./constants";
 
 export const RANDOM_STRING = function (minSize=10) {
     return randomBytes(minSize).toString('hex')
@@ -21,27 +23,60 @@ export function createModel(params: CreateModelType) {
     const Schema = mongoose.Schema;
     let schemaData = {};
     // Create the schema
-    rules.forEach(rule => {
+    rules.forEach((rule: RuleType) => {
         switch (rule.type) {
             case 'string': {
                 schemaData = {
                     ...schemaData,
-                    [rule.name]: String
+                    [rule.name]: {
+                        type: String,
+                        required: !!rule.required,
+                        unique: !!rule.unique
+                    }
                 };
                 break;
             }
             case 'number': {
                 schemaData = {
                     ...schemaData,
-                    [rule.name] : Number
+                    [rule.name] : {
+                        type: Number,
+                        required: !!rule.required,
+                        unique: !!rule.unique
+                    },
                 };
                 break;
             }
             case 'boolean': {
                 schemaData = {
                     ...schemaData,
-                    [rule.name]: Boolean
-                }
+                    [rule.name]: {
+                        type: Boolean,
+                        required: !!rule.required,
+                        unique: !!rule.unique
+                    }
+                };
+                break;
+            }
+            case DATE_TYPE: {
+                schemaData = {
+                    ...schemaData,
+                    [rule.name]: {
+                        type: Date,
+                        required: !!rule.required,
+                    }
+                };
+                break;
+            }
+            case HTML_TYPE: {
+                schemaData = {
+                    ...schemaData,
+                    [rule.name]: {
+                        type: String,
+                        required: !!rule.required,
+                    }
+                };
+                break;
             }
         }
     });
