@@ -57,18 +57,18 @@ export async function createCollectionSchema(req: Request, res: Response) {
         if (isUserCollection) {
             const hasEmail = reqBody.rules.find((rule: RuleType) => rule.name === 'email');
             if (!hasEmail) {
-                isValidBody = false;
-                inValidMessage.push({
-                    message: 'Email is required',
-                    field: 'rules'
+                reqBody.rules.push({
+                    name: 'email',
+                    type: 'string',
+                    isEmail: true
                 });
             }
             const hasPassword = reqBody.rules.find((rule: RuleType) => rule.name === 'password');
             if (!hasPassword) {
-                isValidBody = false;
-                inValidMessage.push({
-                    message: 'Password is required',
-                    field: 'rules'
+                reqBody.rules.push({
+                    name: 'password',
+                    type: 'string',
+                    isPassword: true
                 });
             }
         }
@@ -130,6 +130,24 @@ export async function createCollectionSchema(req: Request, res: Response) {
         })
     }
 
+    // Validate unique name in the rules
+    if (reqBody.rules && typeof reqBody.rules === 'object' && reqBody.rules.length) {
+        const names: string[] = [];
+        reqBody.rules.forEach((rule: RuleType) => {
+            const exist = names.find(item => item === rule.name);
+            if (exist) {
+                isValidBody = false;
+                inValidMessage.push({
+                    message: `${rule.name} is already present in rules`,
+                    field: 'rules'
+                })
+            }
+            else {
+                names.push(rule.name);
+            }
+        });
+    }
+
     if (!isValidBody) {
         return res.status(errorStatus).send({
             errors: inValidMessage
@@ -151,7 +169,7 @@ export async function createCollectionSchema(req: Request, res: Response) {
 
     await newCollection.save();
 
-    res.status(200).send(newCollection);
+    res.status(okayStatus).send(newCollection);
 }
 
 export async function deleteCollectionSchema(req: Request, res: Response) {
