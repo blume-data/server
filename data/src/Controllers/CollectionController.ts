@@ -81,6 +81,7 @@ export async function createCollectionSchema(req: Request, res: Response) {
         }
 
         reqBody.rules.forEach((rule: RuleType) => {
+
             // Check required property
             if (rule.required !== undefined && typeof rule.required !== 'boolean') {
                 isValidBody = false;
@@ -107,11 +108,14 @@ export async function createCollectionSchema(req: Request, res: Response) {
                     field: rule.name
                 });
             }
+
+            console.log('rule', rule.type);
             // Validate rule type
             if (typeof rule.type === 'string' && SUPPORTED_DATA_TYPES.includes(rule.type)) {
                 // remove all the spaces from name
                 rule.name = rule.name.split(' ').join('_');
             }
+
 
             else {
                 isValidBody = false;

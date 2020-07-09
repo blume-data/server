@@ -3,6 +3,7 @@ import { app } from '../../app';
 import {errorStatus, okayStatus, rootUrl, USER_COLLECTION} from "../../util/constants";
 
 const collectionUrl = `${rootUrl}/en/sampleUserName/collection`;
+
 const sampleData = {
     "userName": "sampleUserName",
     "name": "sampleName",
@@ -145,7 +146,7 @@ describe('Collection Validation', () => {
             })
             .expect(okayStatus);
 
-        console.log('resp', response.body);
+        //console.log('resp', response.body);
     });
 });
 
