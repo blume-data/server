@@ -115,7 +115,7 @@ describe('Collection Validation', () => {
             .expect(errorStatus);
     });
 
-    it('User Collection: Returns error when password and email is not present', async () => {
+    it('User Collection: creat the user collection even when email & password is not present', async () => {
         const response = await request(app)
             .post(collectionUrl)
             .send({
@@ -123,6 +123,29 @@ describe('Collection Validation', () => {
                 collectionType: USER_COLLECTION
             })
             .expect(okayStatus);
+    });
+
+    it('User Collection: creat the user collection even when email & password is present', async () => {
+        const response = await request(app)
+            .post(collectionUrl)
+            .send({
+                ...sampleData,
+                collectionType: USER_COLLECTION,
+                rules: [
+                    ...sampleData.rules,
+                    {
+                        name: "email",
+                        type: "string"
+                    },
+                    {
+                        name: "password",
+                        type: "string"
+                    }
+                ]
+            })
+            .expect(okayStatus);
+
+        console.log('resp', response.body);
     });
 });
 
