@@ -1,12 +1,13 @@
 import request from 'supertest';
 import { app } from '../../app';
 import {errorStatus, okayStatus, rootUrl, USER_COLLECTION} from "../../util/constants";
+import {RANDOM_STRING} from "../../util/methods";
 
-const collectionUrl = `${rootUrl}/en/sampleUserName/collection`;
+const sampleUserName = RANDOM_STRING(10);
+const collectionUrl = `${rootUrl}/en/${sampleUserName}/collection`;
 
 const sampleData = {
-    "userName": "sampleUserName",
-    "name": "sampleName",
+    "name": RANDOM_STRING(6),
     "rules": [
         {
         "name": "lastName",
@@ -34,8 +35,8 @@ describe('Collection Validation', () => {
 
         expect(response.body.isEnabled).toEqual(true);
         expect(response.body.language).toEqual('en');
-        expect(response.body.userName).toEqual('sampleUserName');
-        expect(response.body.name).toEqual('sampleName');
+        expect(response.body.userName).toEqual(sampleUserName);
+        expect(response.body.name).toEqual(sampleData.name);
         expect(response.body.rules).toEqual(JSON.stringify(sampleData.rules));
         expect(response.body.id).toBeDefined();
         expect(response.body.dbName).toBeDefined();
@@ -84,7 +85,7 @@ describe('Collection Validation', () => {
                     {
                         type: 'number',
                         name: 'hello',
-                        required: 'dsff'
+                        required: 'required'
                     }
                 ]
             })
@@ -128,7 +129,7 @@ describe('Collection Validation', () => {
                     {
                         type: 'number',
                         name: 'hello',
-                        default: 'dsff'
+                        default: 'invalid_defaultValue'
                     }
                 ]
             })

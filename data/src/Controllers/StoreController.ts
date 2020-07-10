@@ -25,13 +25,16 @@ export async function createStoreRecord(req: Request, res: Response) {
         });
 
         const hasError = await validateUniqueParam(model, rules, body);
+        console.log('hasError', hasError);
         if (!hasError) {
             const item = new model(body);
             await item.save();
             res.status(okayStatus).send(item);
         }
         else {
-            throw new BadRequestError(hasError);
+            res.status(errorStatus).send({
+                errors: hasError
+            });
         }
     }
     else {
@@ -289,15 +292,26 @@ function validateParams(req: Request, res: Response, rules: RuleType[]) {
 
 async function validateUniqueParam(model: Model<any>, rules: RuleType[], reqBody: any) {
     let errorMessage: string | null = null;
+    let field: string = '';
 
     for(let i = 0; i<=rules.length-1; i++) {
         if (rules && rules[i].unique && reqBody[rules[i].name]) {
             const exist = await model.find({[rules[i].name]: reqBody[rules[i].name]}, '_id');
             if (exist && exist.length) {
                 errorMessage = `${rules[i].name} ${PARAM_SHOULD_BE_UNIQUE}. Value ${reqBody[rules[i].name]} already exist.`;
+                field = rules[i].name;
             }
         }
     }
-    return errorMessage;
+    if (errorMessage && field) {
+        return {
+            message: errorMessage,
+            field
+        };
+    }
+    else {
+        return null;
+    }
+
 }
 

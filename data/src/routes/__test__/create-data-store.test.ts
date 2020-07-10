@@ -1,13 +1,15 @@
 import {errorStatus, okayStatus, rootUrl, USER_COLLECTION} from "../../util/constants";
 import request from "supertest";
 import {app} from "../../app";
+import {RANDOM_STRING} from "../../util/methods";
 
-
-const collectionUrl = `${rootUrl}/en/sampleUserName/collection`;
-const storeUrl = `${rootUrl}/en/sampleUserName/collection/sampleName`;
+const sampleUserName = RANDOM_STRING();
+const sampleCollectionName = RANDOM_STRING();
+const collectionUrl = `${rootUrl}/en/${sampleUserName}/collection`;
+const storeUrl = `${rootUrl}/en/${sampleUserName}/collection/${sampleCollectionName}`;
 
 const sampleData = {
-    "name": "sampleName",
+    "name": sampleCollectionName,
     "rules": [
         {
             "name": "lastName",
@@ -34,7 +36,7 @@ describe('Çreate Data in Collection:Store', () => {
             .send(sampleData)
             .expect(okayStatus);
 
-        /*const response =*/ await request(app)
+        await request(app)
             .post(storeUrl)
             .send(sampleStoreData)
             .expect(okayStatus);
@@ -45,11 +47,8 @@ describe('Çreate Data in Collection:Store', () => {
             .expect(errorStatus);
 
         console.log('response', response.body);
-
-        /*
-
-        expect(response.body.errors[0].message).toEqual('hello is already present in rules');
-        expect(response.body.errors[0].field).toEqual('rules');*/
+        expect(response.body.errors[0].message).toEqual('lastName should be unique. Value dfd already exist.');
+        expect(response.body.errors[0].field).toEqual('lastName');
     });
 
     /*it('Data Store: It create the data in a collection', async () => {

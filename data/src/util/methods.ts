@@ -89,8 +89,6 @@ export function createModel(params: CreateModelType) {
         deleted_at : { type: Date },
     };
 
-
-
     const schema = new Schema(schemaData, {
         toJSON: {
             transform(doc, ret) {
@@ -111,6 +109,12 @@ export function createModel(params: CreateModelType) {
         return dbConnection.model(CollectionName, schema);
     }
     else {
-        return mongoose.model(CollectionName, schema);
+        const dbConnection = mongoose.createConnection(`mongodb://test:test123@ds339968.mlab.com:39968/test-auth`, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+            useCreateIndex: true
+        });
+
+        return dbConnection.model(CollectionName, schema);
     }
 }
