@@ -27,10 +27,21 @@ const sampleData = {
 describe('Collection Validation', () => {
 
     it('Collection: Collection can be created', async () => {
-        await request(app)
+        const response = await request(app)
             .post(collectionUrl)
             .send(sampleData)
             .expect(okayStatus);
+
+        expect(response.body.isEnabled).toEqual(true);
+        expect(response.body.language).toEqual('en');
+        expect(response.body.userName).toEqual('sampleUserName');
+        expect(response.body.name).toEqual('sampleName');
+        expect(response.body.rules).toEqual(JSON.stringify(sampleData.rules));
+        expect(response.body.id).toBeDefined();
+        expect(response.body.dbName).toBeDefined();
+        expect(response.body.connectionName).toBeDefined();
+        expect(response.body.collectionType).toBeDefined();
+        expect(response.body.created_at).toBeDefined();
     });
 
     it('Collection: Returns Error on create duplicate collection.', async () => {
@@ -38,14 +49,15 @@ describe('Collection Validation', () => {
             .post(collectionUrl)
             .send(sampleData)
             .expect(okayStatus);
-        await request(app)
+        const response = await request(app)
             .post(collectionUrl)
             .send(sampleData)
             .expect(errorStatus);
+        expect(response.body.errors[0].message).toEqual('collection already exist');
     });
 
     it('Collection: Returns error on invalid type', async () => {
-        await request(app)
+        const response = await request(app)
             .post(collectionUrl)
             .send({
                 ...sampleData,
@@ -58,10 +70,12 @@ describe('Collection Validation', () => {
                 ]
             })
             .expect(errorStatus);
+        expect(response.body.errors[0].message).toEqual('hello is of invalid type invalid_type');
+        expect(response.body.errors[0].field).toEqual('rules');
     });
 
     it('Collection: Required type should be boolean', async () => {
-        await request(app)
+        const response = await request(app)
             .post(collectionUrl)
             .send({
                 ...sampleData,
@@ -75,10 +89,13 @@ describe('Collection Validation', () => {
                 ]
             })
             .expect(errorStatus);
+
+        expect(response.body.errors[0].message).toEqual('hello: required property in the rules should be boolean');
+        expect(response.body.errors[0].field).toEqual('rules');
     });
 
     it('Collection: Returns error when duplicate name in rules', async () => {
-        await request(app)
+        const response = await request(app)
             .post(collectionUrl)
             .send({
                 ...sampleData,
@@ -97,10 +114,12 @@ describe('Collection Validation', () => {
                 ]
             })
             .expect(errorStatus);
+        expect(response.body.errors[0].message).toEqual('hello is already present in rules');
+        expect(response.body.errors[0].field).toEqual('rules');
     });
 
     it('Collection: Default value should be of valid type', async () => {
-        await request(app)
+        const response = await request(app)
             .post(collectionUrl)
             .send({
                 ...sampleData,
@@ -114,9 +133,15 @@ describe('Collection Validation', () => {
                 ]
             })
             .expect(errorStatus);
+        expect(response.body.errors).toEqual([
+            {
+                "message": "hello: default value should be of type number",
+                "field": "rules"
+            }
+        ]);
     });
 
-    it('User Collection: creat the user collection even when email & password is not present', async () => {
+    it('User Collection: creates the user collection even when email & password is not present', async () => {
         const response = await request(app)
             .post(collectionUrl)
             .send({
@@ -124,9 +149,24 @@ describe('Collection Validation', () => {
                 collectionType: USER_COLLECTION
             })
             .expect(okayStatus);
+        expect(response.body.collectionType).toEqual(USER_COLLECTION);
+        expect(response.body.rules).toEqual(JSON.stringify([
+            ...sampleData.rules,
+            {
+                name: 'email',
+                type: 'string',
+                unique: true,
+                isEmail: true
+            },
+            {
+                name: 'password',
+                type: 'string',
+                isPassword: true
+            }
+        ]))
     });
 
-    it('User Collection: creat the user collection even when email & password is present', async () => {
+    it('User Collection: creates the user collection even when email & password is present', async () => {
         const response = await request(app)
             .post(collectionUrl)
             .send({
@@ -146,7 +186,19 @@ describe('Collection Validation', () => {
             })
             .expect(okayStatus);
 
-        //console.log('resp', response.body);
+        expect(response.body.collectionType).toEqual(USER_COLLECTION);
+        expect(response.body.id).toBeDefined();
+        expect(response.body.rules).toEqual(JSON.stringify([
+            ...sampleData.rules,
+            {
+                name: "email",
+                type: "string"
+            },
+            {
+                name: "password",
+                type: "string"
+            }
+        ]))
     });
 });
 

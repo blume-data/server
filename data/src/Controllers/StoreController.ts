@@ -6,6 +6,7 @@ import {errorStatus, okayStatus, PER_PAGE} from "../util/constants";
 import {COLLECTION_NOT_FOUND, PARAM_SHOULD_BE_UNIQUE} from "./Messages";
 import {RuleType} from "../util/interface";
 import {Model} from "mongoose";
+import moment from 'moment';
 
 // Create Record
 export async function createStoreRecord(req: Request, res: Response) {
@@ -97,11 +98,11 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
         }
         // check the types
         if (reqBody[rule.name]) {
+
+            const type = typeof reqBody[rule.name];
             switch (rule.type) {
                 case 'string': {
-                    if (typeof reqBody[rule.name] !== 'string' ||
-                        typeof reqBody[rule.name] !== 'number' ||
-                        typeof reqBody[rule.name] !== 'boolean' ) {
+                    if (!['string','number'].includes(type)) {
                         isValid = false;
                         errorMessages.push({
                             field: rule.name,
@@ -114,7 +115,7 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
                     break;
                 }
                 case 'number': {
-                    if (typeof reqBody[rule.name] !== 'string' || typeof reqBody[rule.name] !== 'number') {
+                    if (!['string', 'number'].includes(type)) {
                         isValid = false;
                         errorMessages.push({
                             field: rule.name,
@@ -143,6 +144,20 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
                             field: rule.name,
                             message: `${rule.name} should be of type string`
                         });
+                    }
+                    else {
+                        const date = moment(reqBody[rule.name],'YYYY/MM/DD hh:mm:ss').format();
+                        const timestamp = Date.parse(date);
+                        if (!isNaN(timestamp)) {
+                            reqBody[rule.name] = new Date(timestamp);
+                        }
+                        else {
+                            isValid = false;
+                            errorMessages.push({
+                                field: rule.name,
+                                message: `${rule.name} is not a valid date`
+                            });
+                        }
                     }
                     break;
                 }

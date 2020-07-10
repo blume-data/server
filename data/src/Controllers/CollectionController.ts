@@ -60,6 +60,7 @@ export async function createCollectionSchema(req: Request, res: Response) {
                 reqBody.rules.push({
                     name: 'email',
                     type: 'string',
+                    unique: true,
                     isEmail: true
                 });
             }
@@ -86,8 +87,8 @@ export async function createCollectionSchema(req: Request, res: Response) {
             if (rule.required !== undefined && typeof rule.required !== 'boolean') {
                 isValidBody = false;
                 inValidMessage.push({
-                    message: `${rule.name}: ${REQUIRED_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN}`,
-                    field: rule.name
+                    message: `${rule.name}:${REQUIRED_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN}`,
+                    field: 'rules'
                 });
             }
 
@@ -96,7 +97,7 @@ export async function createCollectionSchema(req: Request, res: Response) {
                 isValidBody = false;
                 inValidMessage.push({
                     message: `${rule.name}: ${UNIQUE_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN}`,
-                    field: rule.name
+                    field: 'rules'
                 });
             }
 
@@ -105,23 +106,21 @@ export async function createCollectionSchema(req: Request, res: Response) {
                 isValidBody = false;
                 inValidMessage.push({
                     message: `${rule.name}: ${DEFAULT_VALUE_SHOULD_BE_OF_SPECIFIED_TYPE}${rule.type}`,
-                    field: rule.name
+                    field: 'rules'
                 });
             }
 
-            console.log('rule', rule.type);
             // Validate rule type
             if (typeof rule.type === 'string' && SUPPORTED_DATA_TYPES.includes(rule.type)) {
                 // remove all the spaces from name
                 rule.name = rule.name.split(' ').join('_');
             }
 
-
             else {
                 isValidBody = false;
                 inValidMessage.push({
-                    message: `${rule.name} should of type ${rule.type}`,
-                    field: rule.name
+                    message: `${rule.name} is of invalid type ${rule.type}`,
+                    field: 'rules'
                 });
             }
         });
@@ -166,8 +165,7 @@ export async function createCollectionSchema(req: Request, res: Response) {
         name: reqBody.name,
         dbName: newDbConnection.name,
         connectionName: newDbConnection.connectionName,
-        collectionType: (reqBody.collectionType
-            && COLLECTION_TYPES.includes(reqBody.collectionType) ? reqBody.collectionType : DATA_COLLECTION),
+        collectionType: (reqBody.collectionType ? reqBody.collectionType : DATA_COLLECTION),
         language
     });
 
