@@ -57,7 +57,19 @@ describe('Collection Validation', () => {
         expect(response.body.errors[0].message).toEqual('collection already exist');
     });
 
-    it('Collection: Returns error on invalid type', async () => {
+    it('Collection: Returns error on invalid collection type', async () => {
+        const response = await request(app)
+            .post(collectionUrl)
+            .send({
+                ...sampleData,
+                collectionType: 'invalid_type'
+            })
+            .expect(errorStatus);
+        expect(response.body.errors[0].message).toEqual('invalid_type is not a valid collectionType');
+        expect(response.body.errors[0].field).toEqual('collectionType');
+    });
+
+    it('Collection: Returns error on invalid rule type', async () => {
         const response = await request(app)
             .post(collectionUrl)
             .send({

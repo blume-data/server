@@ -72,11 +72,11 @@ export async function createCollectionSchema(req: Request, res: Response) {
                 });
             }
         }
-        else if (reqBody.type && !COLLECTION_TYPES.includes(reqBody.type)) {
+        else if (reqBody.collectionType && !COLLECTION_TYPES.includes(reqBody.collectionType)) {
             isValidBody = false;
             inValidMessage.push({
-                message: `${reqBody.type} is not a valid type`,
-                field: 'type'
+                message: `${reqBody.collectionType} is not a valid collectionType`,
+                field: 'collectionType'
             });
         }
 
