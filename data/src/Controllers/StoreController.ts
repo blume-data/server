@@ -25,7 +25,7 @@ export async function createStoreRecord(req: Request, res: Response) {
         });
 
         const hasError = await validateUniqueParam(model, rules, body);
-        console.log('hasError', hasError);
+
         if (!hasError) {
             const item = new model(body);
             await item.save();
@@ -33,7 +33,7 @@ export async function createStoreRecord(req: Request, res: Response) {
         }
         else {
             res.status(errorStatus).send({
-                errors: hasError
+                errors: [hasError]
             });
         }
     }

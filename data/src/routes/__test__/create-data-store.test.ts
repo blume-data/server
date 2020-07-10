@@ -46,7 +46,6 @@ describe('Çreate Data in Collection:Store', () => {
             .send(sampleStoreData)
             .expect(errorStatus);
 
-        console.log('response', response.body);
         expect(response.body.errors[0].message).toEqual('lastName should be unique. Value dfd already exist.');
         expect(response.body.errors[0].field).toEqual('lastName');
     });
