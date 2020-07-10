@@ -289,7 +289,7 @@ async function validateUniqueParam(model: Model<any>, rules: RuleType[], reqBody
     let errorMessage: string | null = null;
 
     for(let i = 0; i<=rules.length-1; i++) {
-        if (rules[i].unique && reqBody[rules[i].name]) {
+        if (rules && rules[i].unique && reqBody[rules[i].name]) {
             const exist = await model.find({[rules[i].name]: reqBody[rules[i].name]}, '_id');
             if (exist && exist.length) {
                 errorMessage = `${rules[i].name} ${PARAM_SHOULD_BE_UNIQUE}. Value ${reqBody[rules[i].name]} already exist.`;

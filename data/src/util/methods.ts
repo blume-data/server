@@ -88,11 +88,7 @@ export function createModel(params: CreateModelType) {
         deleted_at : { type: Date },
     };
 
-    const dbConnection = mongoose.createConnection(`mongodb://data-mongo-${connectionName}-srv/${dbName}`, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-        useCreateIndex: true
-    });
+
 
     const schema = new Schema(schemaData, {
         toJSON: {
@@ -104,5 +100,16 @@ export function createModel(params: CreateModelType) {
         }
     });
 
-    return dbConnection.model(name, schema);
+    if (process.env.NODE_ENV !== 'test') {
+        const dbConnection = mongoose.createConnection(`mongodb://data-mongo-${connectionName}-srv/${dbName}`, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+            useCreateIndex: true
+        });
+
+        return dbConnection.model(name, schema);
+    }
+    else {
+        return mongoose.model(name, schema);
+    }
 }

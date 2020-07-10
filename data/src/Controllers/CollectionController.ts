@@ -34,11 +34,8 @@ export async function createCollectionSchema(req: Request, res: Response) {
         const name = reqBody.name.split(' ').join('_');
         if (reqBody.collectionType && reqBody.collectionType === USER_COLLECTION) {
             isUserCollection = true;
-            reqBody.name = `${USER_COLLECTION}_${name}`
         }
-        else {
-            reqBody.name = name;
-        }
+        reqBody.name = name;
     }
 
     // Check if there is not other collection with same name and user_id
@@ -61,6 +58,7 @@ export async function createCollectionSchema(req: Request, res: Response) {
                     name: 'email',
                     type: 'string',
                     unique: true,
+                    required: true,
                     isEmail: true
                 });
             }
@@ -69,6 +67,7 @@ export async function createCollectionSchema(req: Request, res: Response) {
                 reqBody.rules.push({
                     name: 'password',
                     type: 'string',
+                    required: true,
                     isPassword: true
                 });
             }

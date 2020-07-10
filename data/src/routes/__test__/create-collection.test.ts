@@ -74,7 +74,7 @@ describe('Collection Validation', () => {
         expect(response.body.errors[0].field).toEqual('rules');
     });
 
-    it('Collection: Required type should be boolean', async () => {
+    it('Collection:Required - type should be boolean', async () => {
         const response = await request(app)
             .post(collectionUrl)
             .send({
@@ -94,7 +94,7 @@ describe('Collection Validation', () => {
         expect(response.body.errors[0].field).toEqual('rules');
     });
 
-    it('Collection: Returns error when duplicate name in rules', async () => {
+    it('Collection:DuplicateName - Returns error when duplicate name in rules', async () => {
         const response = await request(app)
             .post(collectionUrl)
             .send({
@@ -118,7 +118,7 @@ describe('Collection Validation', () => {
         expect(response.body.errors[0].field).toEqual('rules');
     });
 
-    it('Collection: Default value should be of valid type', async () => {
+    it('Collection:Default - value should be of valid type', async () => {
         const response = await request(app)
             .post(collectionUrl)
             .send({
@@ -156,12 +156,14 @@ describe('Collection Validation', () => {
                 name: 'email',
                 type: 'string',
                 unique: true,
+                required: true,
                 isEmail: true
             },
             {
                 name: 'password',
                 type: 'string',
-                isPassword: true
+                required: true,
+                isPassword: true,
             }
         ]))
     });
