@@ -83,7 +83,9 @@ async function getCollection(req: Request) {
 function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
 
     const reqBody = req.body;
-    let body = {};
+    let body = {
+        created_at: new Date()
+    };
     let isValid = true;
     const errorMessages: {field: string, message: string}[] = [];
 

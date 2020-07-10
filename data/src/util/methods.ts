@@ -20,6 +20,7 @@ interface CreateModelType {
 
 export function createModel(params: CreateModelType) {
     const {rules, name, dbName, connectionName} = params;
+    const CollectionName = name.split(' ').join('_');
     const Schema = mongoose.Schema;
     let schemaData = {};
     // Create the schema
@@ -83,7 +84,7 @@ export function createModel(params: CreateModelType) {
 
     schemaData = {
         ...schemaData,
-        created_at : { type: Date, default: Date.now },
+        created_at : { type: Date },
         updated_at : { type: Date },
         deleted_at : { type: Date },
     };
@@ -107,9 +108,9 @@ export function createModel(params: CreateModelType) {
             useCreateIndex: true
         });
 
-        return dbConnection.model(name, schema);
+        return dbConnection.model(CollectionName, schema);
     }
     else {
-        return mongoose.model(name, schema);
+        return mongoose.model(CollectionName, schema);
     }
 }
