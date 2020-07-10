@@ -86,7 +86,7 @@ export async function createCollectionSchema(req: Request, res: Response) {
             if (rule.required !== undefined && typeof rule.required !== 'boolean') {
                 isValidBody = false;
                 inValidMessage.push({
-                    message: `${rule.name}:${REQUIRED_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN}`,
+                    message: `${rule.name}: ${REQUIRED_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN}`,
                     field: 'rules'
                 });
             }

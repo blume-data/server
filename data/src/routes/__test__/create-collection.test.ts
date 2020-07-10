@@ -154,6 +154,23 @@ describe('Collection Validation', () => {
         ]);
     });
 
+    it('Collection: Unique - value is checked', async () => {
+        const response = await request(app)
+            .post(collectionUrl)
+            .send({
+                ...sampleData,
+                rules: [
+                    ...sampleData.rules,
+                    {
+                        name: "someName",
+                        unique: 'notBoolean'
+                    }
+                ]
+            });
+        expect(response.body.errors[0].message).toEqual("someName:  unique property in the rules should be boolean");
+        expect(response.body.errors[0].field).toEqual('rules');
+    });
+
     it('User Collection: creates the user collection even when email & password is not present', async () => {
         const response = await request(app)
             .post(collectionUrl)
