@@ -2,6 +2,7 @@ import { randomBytes } from 'crypto';
 import mongoose from "mongoose";
 import {RuleType} from "./interface";
 import {DATE_TYPE, HTML_TYPE} from "./constants";
+import {BadRequestError} from "@ranjodhbirkaur/common";
 
 export const RANDOM_STRING = function (minSize=10) {
     return randomBytes(minSize).toString('hex')
@@ -98,15 +99,22 @@ export function createModel(params: CreateModelType) {
             }
         }
     });
+    console.log('connectionName', connectionName);
+    console.log('dbName', dbName);
 
     if (process.env.NODE_ENV !== 'test') {
-        const dbConnection = mongoose.createConnection(`mongodb://data-mongo-${connectionName}-srv/${dbName}`, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-            useCreateIndex: true
-        });
+        try {
+            const dbConnection = mongoose.createConnection(`mongodb://data-mongo-${connectionName}-srv/${dbName}`, {
+                useNewUrlParser: true,
+                useUnifiedTopology: true,
+                useCreateIndex: true
+            });
 
-        return dbConnection.model(CollectionName, schema);
+            return dbConnection.model(CollectionName, schema);
+        }
+        catch(error) {
+            throw new BadRequestError('Error in creating connection');
+        }
     }
     else {
         const dbConnection = mongoose.createConnection(`mongodb://test:test123@ds339968.mlab.com:39968/test-auth`, {

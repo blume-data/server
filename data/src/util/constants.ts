@@ -13,7 +13,7 @@ export const SUPPORTED_DATA_TYPES = ['string', 'boolean', 'number', 'date', 'htm
 
 export const MONGO_DB_DATA_CONNECTIONS_AVAILABLE = ['one','two'];
 
-export const MAX_DB_LIMIT = 10000;
+export const MAX_DB_LIMIT = 13000;
 
 export const MAX_COLLECTION_LIMIT = 10000;
 
