@@ -2,6 +2,12 @@ import request from 'supertest';
 import { app } from '../../app';
 import {errorStatus, okayStatus, rootUrl, USER_COLLECTION} from "../../util/constants";
 import {RANDOM_STRING} from "../../util/methods";
+import {
+    EMAIL_PROPERTY_IN_RULES_SHOULD_BE_STRING, INVALID_RULES_MESSAGE,
+    IS_EMAIL_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN,
+    IS_PASSWORD_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN,
+    PASSWORD_PROPERTY_IN_RULES_SHOULD_BE_STRING
+} from "../../Controllers/Messages";
 
 const sampleUserName = RANDOM_STRING(10);
 const collectionUrl = `${rootUrl}/en/${sampleUserName}/collection`;
@@ -154,8 +160,8 @@ describe('Collection Validation', () => {
         ]);
     });
 
-    it('Collection: Unique - value is checked', async () => {
-        const response = await request(app)
+    it('Collection: Unique / isEmail / isPassword - value is checked', async () => {
+        let response = await request(app)
             .post(collectionUrl)
             .send({
                 ...sampleData,
@@ -167,7 +173,84 @@ describe('Collection Validation', () => {
                     }
                 ]
             });
-        expect(response.body.errors[0].message).toEqual("someName:  unique property in the rules should be boolean");
+        expect(response.body.errors[0].message).toContain("unique property in the rules should be boolean");
+        expect(response.body.errors[0].field).toEqual('rules');
+
+        response = await request(app)
+            .post(collectionUrl)
+            .send({
+                ...sampleData,
+                rules: [
+                    ...sampleData.rules,
+                    {
+                        name: "someName",
+                        type: "string",
+                        isEmail: 'notBoolean'
+                    }
+                ]
+            });
+        expect(response.body.errors[0].message).toContain(`${IS_EMAIL_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN}`);
+        expect(response.body.errors[0].field).toEqual('rules');
+
+        response = await request(app)
+            .post(collectionUrl)
+            .send({
+                ...sampleData,
+                rules: [
+                    ...sampleData.rules,
+                    {
+                        name: "someName",
+                        type: "string",
+                        isPassword: 'notBoolean'
+                    }
+                ]
+            });
+        expect(response.body.errors[0].message).toContain(`${IS_PASSWORD_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN}`);
+        expect(response.body.errors[0].field).toEqual('rules');
+
+        response = await request(app)
+            .post(collectionUrl)
+            .send({
+                ...sampleData,
+                rules: [
+                    ...sampleData.rules,
+                    {
+                        name: "someName",
+                        type: "number",
+                        isEmail: true
+                    }
+                ]
+            });
+        expect(response.body.errors[0].message).toContain(`${EMAIL_PROPERTY_IN_RULES_SHOULD_BE_STRING}`);
+        expect(response.body.errors[0].field).toEqual('rules');
+
+        response = await request(app)
+            .post(collectionUrl)
+            .send({
+                ...sampleData,
+                rules: [
+                    ...sampleData.rules,
+                    {
+                        name: "someName",
+                        type: "number",
+                        isPassword: true
+                    }
+                ]
+            });
+        expect(response.body.errors[0].message).toContain(`${PASSWORD_PROPERTY_IN_RULES_SHOULD_BE_STRING}`);
+        expect(response.body.errors[0].field).toEqual('rules');
+    });
+
+    it('Collection:Invalid Rules - Error when we send invalid rules', async () => {
+        const response = await request(app)
+            .post(collectionUrl)
+            .send({
+                ...sampleData,
+                rules: 'taranjeetsingh'
+            })
+            .expect(errorStatus);
+
+        expect(response.body.errors[0].message).toContain(INVALID_RULES_MESSAGE);
         expect(response.body.errors[0].field).toEqual('rules');
     });
 

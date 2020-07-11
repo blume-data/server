@@ -11,9 +11,13 @@ import {
 import _ from 'lodash';
 import {CollectionModel} from "../models/Collection";
 import {
-    COLLECTION_ALREADY_EXIST, DEFAULT_VALUE_SHOULD_BE_OF_SPECIFIED_TYPE,
+    COLLECTION_ALREADY_EXIST,
+    DEFAULT_VALUE_SHOULD_BE_OF_SPECIFIED_TYPE, EMAIL_PROPERTY_IN_RULES_SHOULD_BE_STRING,
     INVALID_RULES_MESSAGE,
-    REQUIRED_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN, UNIQUE_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN
+    IS_EMAIL_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN,
+    IS_PASSWORD_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN, PASSWORD_PROPERTY_IN_RULES_SHOULD_BE_STRING,
+    REQUIRED_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN,
+    UNIQUE_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN
 } from "./Messages";
 import {ConnectionModel} from "../models/Connections";
 import {DbsModel} from "../models/Dbs";
@@ -98,6 +102,38 @@ export async function createCollectionSchema(req: Request, res: Response) {
                     message: `${rule.name}: ${UNIQUE_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN}`,
                     field: 'rules'
                 });
+            }
+
+            // Check ifEmail property
+            if (rule.isEmail !== undefined && typeof rule.isEmail !== 'boolean') {
+                isValidBody = false;
+                inValidMessage.push({
+                    message: `${rule.name}: ${IS_EMAIL_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN}`,
+                    field: 'rules'
+                });
+            }
+            else if(rule.isEmail && typeof rule.isEmail === 'boolean' && rule.type !== 'string') {
+                isValidBody = false;
+                inValidMessage.push({
+                    message: `${rule.name}: ${EMAIL_PROPERTY_IN_RULES_SHOULD_BE_STRING}`,
+                    field: 'rules'
+                })
+            }
+
+            // Check isPassword property
+            if (rule.isPassword !== undefined && typeof rule.isPassword !== 'boolean') {
+                isValidBody = false;
+                inValidMessage.push({
+                    message: `${rule.name}: ${IS_PASSWORD_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN}`,
+                    field: 'rules'
+                });
+            }
+            else if(rule.isPassword && typeof rule.isPassword === 'boolean' && rule.type !== 'string') {
+                isValidBody = false;
+                inValidMessage.push({
+                    message: `${rule.name}: ${PASSWORD_PROPERTY_IN_RULES_SHOULD_BE_STRING}`,
+                    field: 'rules'
+                })
             }
 
             // check default property

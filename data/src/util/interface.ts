@@ -4,4 +4,6 @@ export interface RuleType {
     required?: boolean;
     unique?: boolean;
     default?: any;
+    isEmail?: boolean;
+    isPassword?: boolean;
 }
