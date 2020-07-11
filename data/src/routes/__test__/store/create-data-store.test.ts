@@ -1,7 +1,7 @@
-import {errorStatus, okayStatus, rootUrl, USER_COLLECTION} from "../../util/constants";
+import {errorStatus, okayStatus, rootUrl, USER_COLLECTION} from "../../../util/constants";
 import request from "supertest";
-import {app} from "../../app";
-import {RANDOM_STRING} from "../../util/methods";
+import {app} from "../../../app";
+import {RANDOM_STRING} from "../../../util/methods";
 
 const sampleUserName = RANDOM_STRING();
 const sampleCollectionName = RANDOM_STRING();

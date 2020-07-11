@@ -1,13 +1,13 @@
 import request from 'supertest';
-import { app } from '../../app';
-import {errorStatus, okayStatus, rootUrl, USER_COLLECTION} from "../../util/constants";
-import {RANDOM_STRING} from "../../util/methods";
+import { app } from '../../../app';
+import {errorStatus, okayStatus, rootUrl, USER_COLLECTION} from "../../../util/constants";
+import {RANDOM_STRING} from "../../../util/methods";
 import {
     EMAIL_PROPERTY_IN_RULES_SHOULD_BE_STRING, INVALID_RULES_MESSAGE,
     IS_EMAIL_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN,
     IS_PASSWORD_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN,
     PASSWORD_PROPERTY_IN_RULES_SHOULD_BE_STRING
-} from "../../Controllers/Messages";
+} from "../../../Controllers/Messages";
 
 const sampleUserName = RANDOM_STRING(10);
 const collectionUrl = `${rootUrl}/en/${sampleUserName}/collection`;
@@ -31,7 +31,7 @@ const sampleData = {
         }]
 };
 
-describe('Collection Validation', () => {
+describe('Collection:Create', () => {
 
     it('Collection: Collection can be created', async () => {
         const response = await request(app)
