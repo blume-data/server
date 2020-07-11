@@ -24,3 +24,5 @@ export const PER_PAGE = 10;
 export const USER_COLLECTION = 'user_collection';
 export const DATA_COLLECTION = 'data_collection';
 export const COLLECTION_TYPES = [USER_COLLECTION, DATA_COLLECTION];
+
+export const AUTHORIZATION_TOKEN = 'authorization';
