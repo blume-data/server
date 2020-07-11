@@ -1,7 +1,10 @@
 import express from "express";
-import {SignUpUrl} from "../util/urls";
+import {RoleUrl} from "../util/urls";
 import {SignUp} from "../Controllers/AuthController";
+import {requireAuth} from "@ranjodhbirkaur/common";
 
 const router = express.Router();
 
-router.post(SignUpUrl, SignUp);
+router.post(RoleUrl, requireAuth, SignUp);
+
+export { router as AuthRoutes };
