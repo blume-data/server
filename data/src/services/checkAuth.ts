@@ -10,11 +10,22 @@ export async function checkAuth(req: Request, res: Response, next: NextFunction 
 
     try {
         const headers: any = req.headers;
-        // verify token
-        const payload: any = jwt.verify(
-            headers[AUTHORIZATION_TOKEN],
-            process.env.JWT_KEY!
-        );
+        let payload: any;
+
+        if (headers[AUTHORIZATION_TOKEN]) {
+            // verify token
+            payload = jwt.verify(
+                headers[AUTHORIZATION_TOKEN],
+                process.env.JWT_KEY!
+            );
+        }
+        else if(req.session && req.session.jwt) {
+            payload = jwt.verify(
+                req.session.jwt,
+                process.env.JWT_KEY!
+            )
+        }
+
         // check the payload
         if (payload && payload.userName && payload.userName === userName) {
             await axios.post(`${AUTH_SRV_URL}/check`,{
