@@ -17,13 +17,18 @@ export const isUserEnabled = async function (req: ReqIsUserEnabled, res: Respons
     
     if (modelProps) {
         if (modelProps.userName) {
-            const userExist = await ClientUser.findOne({userName: modelProps.userName, isEnabled: true});
-            console.log('user', userExist);
+            let userExist = await ClientUser.findOne({userName: modelProps.userName, isEnabled: true}, 'id');
             if (userExist) {
                 res.status(okayStatus).send(true);
             }
             else {
-                throw new NotAuthorizedError();
+                userExist = await ClientUser.findOne({userName: modelProps.userName, isEnabled: false}, 'id');
+                if (userExist) {
+                    throw new BadRequestError('User is disabled');
+                }
+                else {
+                    throw new BadRequestError('User not found');
+                }
             }
         }
     }
