@@ -11,3 +11,8 @@ export const DEFAULT_VALUE_SHOULD_BE_OF_SPECIFIED_TYPE = 'default value should b
 export const COLLECTION_NOT_FOUND = 'Collection not found';
 
 export const PARAM_SHOULD_BE_UNIQUE = 'should be unique';
+
+
+/*Role Message*/
+
+export const ROLE_NAME_EXIST = 'role exist';

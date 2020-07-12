@@ -7,3 +7,8 @@ export interface RuleType {
     isEmail?: boolean;
     isPassword?: boolean;
 }
+
+export interface ErrorMessages {
+    field?: string;
+    message: string;
+}

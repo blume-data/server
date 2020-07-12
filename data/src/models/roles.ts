@@ -5,7 +5,6 @@ interface RolesAttrs {
     name: string;
     language: string;
     userName: string;
-    created_at: string;
 }
 
 interface RolesModel extends mongoose.Model<RolesDoc> {
