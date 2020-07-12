@@ -1,7 +1,7 @@
 import express from "express";
 import {RoleUrl} from "../util/urls";
 import {checkAuth} from "../services/checkAuth";
-import {validatePermission} from "../services/middlewares/validatePermissions";
+import {validatePermission} from "../services/middlewares/permissions/validatePermissions";
 import {CreateRole, GetRoles} from "../Controllers/RoleController";
 import {body} from "express-validator";
 import {validateRequest} from "@ranjodhbirkaur/common";

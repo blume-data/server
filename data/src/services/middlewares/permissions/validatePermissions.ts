@@ -1,6 +1,6 @@
 import {Request, Response, NextFunction} from "express";
-import {ErrorMessages} from "../../util/interface";
-import {errorStatus} from "../../util/constants";
+import {ErrorMessages} from "../../../util/interface";
+import {errorStatus} from "../../../util/constants";
 import {BadRequestError} from "@ranjodhbirkaur/common";
 
 export async function validatePermission(req: Request, res: Response, next: NextFunction) {
