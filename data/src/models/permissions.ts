@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 interface PermissionsAttrs {
     name: string;
     userName: string;
-    created_at: string;
+    type: string;
 }
 
 interface PermissionsModel extends mongoose.Model<PermissionsDoc> {
@@ -13,12 +13,17 @@ interface PermissionsModel extends mongoose.Model<PermissionsDoc> {
 interface PermissionsDoc extends mongoose.Document {
     name: string;
     userName: string;
+    type: string;
     created_at: string;
 }
 
 const Permissions = new mongoose.Schema(
     {
         name: {
+            type: String,
+            required: true
+        },
+        type: {
             type: String,
             required: true
         },

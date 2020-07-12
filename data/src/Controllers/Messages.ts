@@ -16,3 +16,8 @@ export const PARAM_SHOULD_BE_UNIQUE = 'should be unique';
 /*Role Message*/
 
 export const ROLE_NAME_EXIST = 'role exist';
+
+
+/*Permission Message*/
+
+export const PERMISSION_NAME_EXIST = 'permission with same name and type exist';

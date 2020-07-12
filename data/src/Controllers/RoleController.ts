@@ -29,3 +29,24 @@ export async function CreateRole(req: Request, res: Response) {
     res.status(okayStatus).send(newRole);
 
 }
+
+export async function GetRoles(req: Request, res: Response) {
+
+    const userName = req.params && req.params.userName;
+    const name = req.params && req.params.roleName;
+
+    const conditions: {
+        userName: string;
+        name?: string;
+    } = {
+        userName
+    };
+    if (name) {
+        conditions['name'] = name;
+    }
+
+    const roles = await RolesModel.find(conditions);
+
+    res.status(okayStatus).send(roles);
+
+}

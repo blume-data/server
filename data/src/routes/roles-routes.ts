@@ -2,7 +2,7 @@ import express from "express";
 import {RoleUrl} from "../util/urls";
 import {checkAuth} from "../services/checkAuth";
 import {validatePermission} from "../services/middlewares/validatePermissions";
-import {CreateRole} from "../Controllers/RoleController";
+import {CreateRole, GetRoles} from "../Controllers/RoleController";
 import {body} from "express-validator";
 import {validateRequest} from "@ranjodhbirkaur/common";
 import {validateLanguage} from "../util/laguage";
@@ -16,5 +16,8 @@ router.post(RoleUrl, checkAuth, validatePermission,
     ],
     validateRequest, validateLanguage,
     CreateRole);
+
+// get role
+router.get(RoleUrl, checkAuth, GetRoles);
 
 export { router as RoleRoutes };

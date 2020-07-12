@@ -7,5 +7,4 @@ export async function SignUp(req: Request, res: Response) {
 
     res.status(okayStatus).send('okay');
 
-
 }

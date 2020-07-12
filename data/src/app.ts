@@ -9,6 +9,7 @@ import compression from 'compression';
 import {CollectionRoutes} from "./routes/collection";
 import {StoreRoutes} from "./routes/store";
 import {RoleRoutes} from "./routes/roles-routes";
+import {PermissionRoutes} from "./routes/permissions-routes";
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.use(
 );
 app.options('*', cors());
 
+app.use(PermissionRoutes);
 app.use(RoleRoutes);
 app.use(CollectionRoutes);
 app.use(StoreRoutes);
