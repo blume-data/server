@@ -4,7 +4,7 @@ import {BadRequestError} from "@ranjodhbirkaur/common";
 import {createModel} from "../util/methods";
 import {errorStatus, okayStatus, PER_PAGE} from "../util/constants";
 import {COLLECTION_NOT_FOUND, PARAM_SHOULD_BE_UNIQUE} from "./Messages";
-import {RuleType} from "../util/interface";
+import {DbConnectionModel, RuleType} from "../util/interface";
 import {Model} from "mongoose";
 import moment from 'moment';
 
@@ -17,18 +17,20 @@ export async function createStoreRecord(req: Request, res: Response) {
         const rules = JSON.parse(collection.rules);
         let body = checkBodyAndRules(rules, req, res);
 
-        const model = createModel({
+        const model: DbConnectionModel = createModel({
             rules,
             connectionName: collection.connectionName,
             dbName: collection.dbName,
             name: collection.name
         });
 
-        const hasError = await validateUniqueParam(model, rules, body);
+        const hasError = await validateUniqueParam(model.model, rules, body);
 
         if (!hasError) {
-            const item = new model(body);
+            const item = new model.model(body);
             await item.save();
+            // close db connection
+            await model.dbConnection.close();
             res.status(okayStatus).send(item);
         }
         else {
@@ -53,15 +55,15 @@ export async function getStoreRecord(req: Request, res: Response) {
 
         if (validateParams(req, res, rules)) {
             const {where, getOnly} = req.body;
-            const model = createModel({
+            const model: DbConnectionModel = createModel({
                 rules,
                 connectionName: collection.connectionName,
                 dbName: collection.dbName,
                 name: collection.name
             });
 
-            const collections = await model.find(where, getOnly);
-            
+            const collections = await model.model.find(where, getOnly);
+            await model.dbConnection.close();
             res.status(okayStatus).send(collections);
         }
     }
