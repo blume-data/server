@@ -11,9 +11,13 @@ import {
 import _ from 'lodash';
 import {CollectionModel} from "../models/Collection";
 import {
-    COLLECTION_ALREADY_EXIST, DEFAULT_VALUE_SHOULD_BE_OF_SPECIFIED_TYPE,
+    COLLECTION_ALREADY_EXIST,
+    DEFAULT_VALUE_SHOULD_BE_OF_SPECIFIED_TYPE, EMAIL_PROPERTY_IN_RULES_SHOULD_BE_STRING,
     INVALID_RULES_MESSAGE,
-    REQUIRED_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN, UNIQUE_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN
+    IS_EMAIL_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN,
+    IS_PASSWORD_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN, PASSWORD_PROPERTY_IN_RULES_SHOULD_BE_STRING,
+    REQUIRED_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN,
+    UNIQUE_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN
 } from "./Messages";
 import {ConnectionModel} from "../models/Connections";
 import {DbsModel} from "../models/Dbs";
@@ -34,11 +38,8 @@ export async function createCollectionSchema(req: Request, res: Response) {
         const name = reqBody.name.split(' ').join('_');
         if (reqBody.collectionType && reqBody.collectionType === USER_COLLECTION) {
             isUserCollection = true;
-            reqBody.name = `${USER_COLLECTION}_${name}`
         }
-        else {
-            reqBody.name = name;
-        }
+        reqBody.name = name;
     }
 
     // Check if there is not other collection with same name and user_id
@@ -60,6 +61,8 @@ export async function createCollectionSchema(req: Request, res: Response) {
                 reqBody.rules.push({
                     name: 'email',
                     type: 'string',
+                    unique: true,
+                    required: true,
                     isEmail: true
                 });
             }
@@ -68,25 +71,27 @@ export async function createCollectionSchema(req: Request, res: Response) {
                 reqBody.rules.push({
                     name: 'password',
                     type: 'string',
+                    required: true,
                     isPassword: true
                 });
             }
         }
-        else if (reqBody.type && !COLLECTION_TYPES.includes(reqBody.type)) {
+        else if (reqBody.collectionType && !COLLECTION_TYPES.includes(reqBody.collectionType)) {
             isValidBody = false;
             inValidMessage.push({
-                message: `${reqBody.type} is not a valid type`,
-                field: 'type'
+                message: `${reqBody.collectionType} is not a valid collectionType`,
+                field: 'collectionType'
             });
         }
 
         reqBody.rules.forEach((rule: RuleType) => {
+
             // Check required property
             if (rule.required !== undefined && typeof rule.required !== 'boolean') {
                 isValidBody = false;
                 inValidMessage.push({
                     message: `${rule.name}: ${REQUIRED_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN}`,
-                    field: rule.name
+                    field: 'rules'
                 });
             }
 
@@ -95,8 +100,40 @@ export async function createCollectionSchema(req: Request, res: Response) {
                 isValidBody = false;
                 inValidMessage.push({
                     message: `${rule.name}: ${UNIQUE_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN}`,
-                    field: rule.name
+                    field: 'rules'
                 });
+            }
+
+            // Check ifEmail property
+            if (rule.isEmail !== undefined && typeof rule.isEmail !== 'boolean') {
+                isValidBody = false;
+                inValidMessage.push({
+                    message: `${rule.name}: ${IS_EMAIL_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN}`,
+                    field: 'rules'
+                });
+            }
+            else if(rule.isEmail && typeof rule.isEmail === 'boolean' && rule.type !== 'string') {
+                isValidBody = false;
+                inValidMessage.push({
+                    message: `${rule.name}: ${EMAIL_PROPERTY_IN_RULES_SHOULD_BE_STRING}`,
+                    field: 'rules'
+                })
+            }
+
+            // Check isPassword property
+            if (rule.isPassword !== undefined && typeof rule.isPassword !== 'boolean') {
+                isValidBody = false;
+                inValidMessage.push({
+                    message: `${rule.name}: ${IS_PASSWORD_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN}`,
+                    field: 'rules'
+                });
+            }
+            else if(rule.isPassword && typeof rule.isPassword === 'boolean' && rule.type !== 'string') {
+                isValidBody = false;
+                inValidMessage.push({
+                    message: `${rule.name}: ${PASSWORD_PROPERTY_IN_RULES_SHOULD_BE_STRING}`,
+                    field: 'rules'
+                })
             }
 
             // check default property
@@ -104,9 +141,10 @@ export async function createCollectionSchema(req: Request, res: Response) {
                 isValidBody = false;
                 inValidMessage.push({
                     message: `${rule.name}: ${DEFAULT_VALUE_SHOULD_BE_OF_SPECIFIED_TYPE}${rule.type}`,
-                    field: rule.name
+                    field: 'rules'
                 });
             }
+
             // Validate rule type
             if (typeof rule.type === 'string' && SUPPORTED_DATA_TYPES.includes(rule.type)) {
                 // remove all the spaces from name
@@ -116,8 +154,8 @@ export async function createCollectionSchema(req: Request, res: Response) {
             else {
                 isValidBody = false;
                 inValidMessage.push({
-                    message: `${rule.name} should of type ${rule.type}`,
-                    field: rule.name
+                    message: `${rule.name} is of invalid type ${rule.type}`,
+                    field: 'rules'
                 });
             }
         });
@@ -162,8 +200,7 @@ export async function createCollectionSchema(req: Request, res: Response) {
         name: reqBody.name,
         dbName: newDbConnection.name,
         connectionName: newDbConnection.connectionName,
-        collectionType: (reqBody.collectionType
-            && COLLECTION_TYPES.includes(reqBody.collectionType) ? reqBody.collectionType : DATA_COLLECTION),
+        collectionType: (reqBody.collectionType ? reqBody.collectionType : DATA_COLLECTION),
         language
     });
 

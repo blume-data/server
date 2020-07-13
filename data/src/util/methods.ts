@@ -1,7 +1,8 @@
 import { randomBytes } from 'crypto';
-import mongoose from "mongoose";
+import mongoose, {set} from "mongoose";
 import {RuleType} from "./interface";
 import {DATE_TYPE, HTML_TYPE} from "./constants";
+import {BadRequestError} from "@ranjodhbirkaur/common";
 
 export const RANDOM_STRING = function (minSize=10) {
     return randomBytes(minSize).toString('hex')
@@ -20,6 +21,7 @@ interface CreateModelType {
 
 export function createModel(params: CreateModelType) {
     const {rules, name, dbName, connectionName} = params;
+    const CollectionName = name.split(' ').join('_');
     const Schema = mongoose.Schema;
     let schemaData = {};
     // Create the schema
@@ -83,16 +85,10 @@ export function createModel(params: CreateModelType) {
 
     schemaData = {
         ...schemaData,
-        created_at : { type: Date, default: Date.now },
+        created_at : { type: Date },
         updated_at : { type: Date },
         deleted_at : { type: Date },
     };
-
-    const dbConnection = mongoose.createConnection(`mongodb://data-mongo-${connectionName}-srv/${dbName}`, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-        useCreateIndex: true
-    });
 
     const schema = new Schema(schemaData, {
         toJSON: {
@@ -103,6 +99,36 @@ export function createModel(params: CreateModelType) {
             }
         }
     });
+    console.log('connectionName', connectionName);
+    console.log('dbName', dbName);
 
-    return dbConnection.model(name, schema);
+    if (process.env.NODE_ENV !== 'test') {
+        try {
+            const dbConnection = mongoose.createConnection(`mongodb://data-mongo-${connectionName}-srv/${dbName}`, {
+                useNewUrlParser: true,
+                useUnifiedTopology: true,
+                useCreateIndex: true
+            });
+
+            return {
+                model: dbConnection.model(CollectionName, schema),
+                dbConnection
+            };
+        }
+        catch(error) {
+            throw new BadRequestError('Error in creating connection');
+        }
+    }
+    else {
+        const dbConnection = mongoose.createConnection(`mongodb://test:test123@ds339968.mlab.com:39968/test-auth`, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+            useCreateIndex: true
+        });
+
+        return {
+            model: dbConnection.model(CollectionName, schema),
+            dbConnection
+        };
+    }
 }

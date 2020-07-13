@@ -11,6 +11,7 @@ import { signinRouter } from './routes/signin';
 import { signoutRouter } from './routes/signout';
 import { signupRouter } from './routes/signup';
 import {routes} from "./routes";
+import {checkAuthRoutes} from "./routes/checkAuth";
 
 const app = express();
 app.use(cors());
@@ -25,6 +26,7 @@ app.use(
 );
 app.options('*', cors());
 
+app.use(checkAuthRoutes);
 app.use(currentUserRouter);
 app.use(signinRouter);
 app.use(signoutRouter);

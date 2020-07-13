@@ -4,8 +4,9 @@ import {BadRequestError} from "@ranjodhbirkaur/common";
 import {createModel} from "../util/methods";
 import {errorStatus, okayStatus, PER_PAGE} from "../util/constants";
 import {COLLECTION_NOT_FOUND, PARAM_SHOULD_BE_UNIQUE} from "./Messages";
-import {RuleType} from "../util/interface";
+import {DbConnectionModel, RuleType} from "../util/interface";
 import {Model} from "mongoose";
+import moment from 'moment';
 
 // Create Record
 export async function createStoreRecord(req: Request, res: Response) {
@@ -16,21 +17,26 @@ export async function createStoreRecord(req: Request, res: Response) {
         const rules = JSON.parse(collection.rules);
         let body = checkBodyAndRules(rules, req, res);
 
-        const model = createModel({
+        const model: DbConnectionModel = createModel({
             rules,
             connectionName: collection.connectionName,
             dbName: collection.dbName,
             name: collection.name
         });
 
-        const hasError = await validateUniqueParam(model, rules, body);
+        const hasError = await validateUniqueParam(model.model, rules, body);
+
         if (!hasError) {
-            const item = new model(body);
+            const item = new model.model(body);
             await item.save();
+            // close db connection
+            await model.dbConnection.close();
             res.status(okayStatus).send(item);
         }
         else {
-            throw new BadRequestError(hasError);
+            res.status(errorStatus).send({
+                errors: [hasError]
+            });
         }
     }
     else {
@@ -49,15 +55,15 @@ export async function getStoreRecord(req: Request, res: Response) {
 
         if (validateParams(req, res, rules)) {
             const {where, getOnly} = req.body;
-            const model = createModel({
+            const model: DbConnectionModel = createModel({
                 rules,
                 connectionName: collection.connectionName,
                 dbName: collection.dbName,
                 name: collection.name
             });
 
-            const collections = await model.find(where, getOnly);
-            
+            const collections = await model.model.find(where, getOnly);
+            await model.dbConnection.close();
             res.status(okayStatus).send(collections);
         }
     }
@@ -82,7 +88,9 @@ async function getCollection(req: Request) {
 function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
 
     const reqBody = req.body;
-    let body = {};
+    let body = {
+        created_at: new Date()
+    };
     let isValid = true;
     const errorMessages: {field: string, message: string}[] = [];
 
@@ -97,11 +105,11 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
         }
         // check the types
         if (reqBody[rule.name]) {
+
+            const type = typeof reqBody[rule.name];
             switch (rule.type) {
                 case 'string': {
-                    if (typeof reqBody[rule.name] !== 'string' ||
-                        typeof reqBody[rule.name] !== 'number' ||
-                        typeof reqBody[rule.name] !== 'boolean' ) {
+                    if (!['string','number'].includes(type)) {
                         isValid = false;
                         errorMessages.push({
                             field: rule.name,
@@ -114,7 +122,7 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
                     break;
                 }
                 case 'number': {
-                    if (typeof reqBody[rule.name] !== 'string' || typeof reqBody[rule.name] !== 'number') {
+                    if (!['string', 'number'].includes(type)) {
                         isValid = false;
                         errorMessages.push({
                             field: rule.name,
@@ -143,6 +151,20 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
                             field: rule.name,
                             message: `${rule.name} should be of type string`
                         });
+                    }
+                    else {
+                        const date = moment(reqBody[rule.name],'YYYY/MM/DD hh:mm:ss').format();
+                        const timestamp = Date.parse(date);
+                        if (!isNaN(timestamp)) {
+                            reqBody[rule.name] = new Date(timestamp);
+                        }
+                        else {
+                            isValid = false;
+                            errorMessages.push({
+                                field: rule.name,
+                                message: `${rule.name} is not a valid date`
+                            });
+                        }
                     }
                     break;
                 }
@@ -272,15 +294,26 @@ function validateParams(req: Request, res: Response, rules: RuleType[]) {
 
 async function validateUniqueParam(model: Model<any>, rules: RuleType[], reqBody: any) {
     let errorMessage: string | null = null;
+    let field: string = '';
 
     for(let i = 0; i<=rules.length-1; i++) {
-        if (rules[i].unique && reqBody[rules[i].name]) {
+        if (rules && rules[i].unique && reqBody[rules[i].name]) {
             const exist = await model.find({[rules[i].name]: reqBody[rules[i].name]}, '_id');
             if (exist && exist.length) {
                 errorMessage = `${rules[i].name} ${PARAM_SHOULD_BE_UNIQUE}. Value ${reqBody[rules[i].name]} already exist.`;
+                field = rules[i].name;
             }
         }
     }
-    return errorMessage;
+    if (errorMessage && field) {
+        return {
+            message: errorMessage,
+            field
+        };
+    }
+    else {
+        return null;
+    }
+
 }
 

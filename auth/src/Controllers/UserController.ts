@@ -61,6 +61,7 @@ export const verifyEmailToken = async function (req: ReqValidateEmail, res: Resp
             const payload = {
                 id: newUser.id,
                 email: newUser.email,
+                userName: newUser.userName
             };
 
             // Generate JWT
