@@ -1,5 +1,5 @@
 import { randomBytes } from 'crypto';
-import mongoose from "mongoose";
+import mongoose, {set} from "mongoose";
 import {RuleType} from "./interface";
 import {DATE_TYPE, HTML_TYPE} from "./constants";
 import {BadRequestError} from "@ranjodhbirkaur/common";
@@ -110,7 +110,10 @@ export function createModel(params: CreateModelType) {
                 useCreateIndex: true
             });
 
-            return dbConnection.model(CollectionName, schema);
+            return {
+                model: dbConnection.model(CollectionName, schema),
+                dbConnection
+            };
         }
         catch(error) {
             throw new BadRequestError('Error in creating connection');
@@ -123,6 +126,9 @@ export function createModel(params: CreateModelType) {
             useCreateIndex: true
         });
 
-        return dbConnection.model(CollectionName, schema);
+        return {
+            model: dbConnection.model(CollectionName, schema),
+            dbConnection
+        };
     }
 }
