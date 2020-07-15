@@ -5,6 +5,7 @@ import {validateRequest} from "@ranjodhbirkaur/common";
 import {CollectionUrl} from "../util/urls";
 import {createCollectionSchema, deleteCollectionSchema, getCollectionSchema} from "../Controllers/CollectionController";
 import {validateEnvType} from "../util/enviornmentTypes";
+import {validateCollections} from "../services/middlewares/collections/validateCollections";
 
 const router = express.Router();
 
@@ -22,7 +23,7 @@ router.post(CollectionUrl, [
             .isLength(stringLimitOptions)
             .withMessage(stringLimitOptionErrorMessage('env'))
     ],
-    validateRequest, validateEnvType, createCollectionSchema);
+    validateRequest, validateEnvType, validateCollections, createCollectionSchema);
 
 // Delete Item Schema
 router.delete(CollectionUrl, [

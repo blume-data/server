@@ -2,6 +2,7 @@ import {errorStatus, okayStatus, rootUrl, USER_COLLECTION} from "../../../util/c
 import request from "supertest";
 import {app} from "../../../app";
 import {RANDOM_STRING} from "../../../util/methods";
+import {PRODUCTION_ENV} from "../../../util/enviornmentTypes";
 
 const sampleUserName = RANDOM_STRING();
 const sampleCollectionName = RANDOM_STRING();
@@ -10,6 +11,7 @@ const storeUrl = `${rootUrl}/en/${sampleUserName}/collection/${sampleCollectionN
 
 const sampleData = {
     "name": sampleCollectionName,
+    "env": PRODUCTION_ENV,
     "rules": [
         {
             "name": "lastName",

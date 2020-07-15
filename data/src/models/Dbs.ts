@@ -10,7 +10,7 @@ interface DbsModel extends mongoose.Model<DbsDoc> {
     build(attrs: DbsAttrs): DbsDoc;
 }
 
-interface DbsDoc extends mongoose.Document {
+export interface DbsDoc extends mongoose.Document {
     count: number;
     name: string;
     connectionName: string;
@@ -25,7 +25,8 @@ const Dbs = new mongoose.Schema(
         },
         name: {
             type: String,
-            required: true
+            required: true,
+            unique: true
         },
         connectionName: {
             type: String,

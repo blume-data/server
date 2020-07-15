@@ -2,12 +2,14 @@ import {RANDOM_STRING} from "../../../util/methods";
 import {errorStatus, okayStatus, rootUrl} from "../../../util/constants";
 import request from "supertest";
 import {app} from "../../../app";
+import {PRODUCTION_ENV} from "../../../util/enviornmentTypes";
 
 const sampleUserName = RANDOM_STRING(10);
 const collectionUrl = `${rootUrl}/en/${sampleUserName}/collection`;
 const sampleCollectionName = RANDOM_STRING();
 const sampleData = {
     "name": sampleCollectionName,
+    "env": PRODUCTION_ENV,
     "rules": [
         {
             "name": "lastName",

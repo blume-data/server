@@ -8,12 +8,14 @@ import {
     IS_PASSWORD_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN,
     PASSWORD_PROPERTY_IN_RULES_SHOULD_BE_STRING
 } from "../../../Controllers/Messages";
+import {PRODUCTION_ENV} from "../../../util/enviornmentTypes";
 
 const sampleUserName = RANDOM_STRING(10);
 const collectionUrl = `${rootUrl}/en/${sampleUserName}/collection`;
 
 const sampleData = {
     "name": RANDOM_STRING(6),
+    "env": PRODUCTION_ENV,
     "rules": [
         {
         "name": "lastName",
