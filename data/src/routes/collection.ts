@@ -4,6 +4,7 @@ import {body} from "express-validator";
 import {validateRequest} from "@ranjodhbirkaur/common";
 import {CollectionUrl} from "../util/urls";
 import {createCollectionSchema, deleteCollectionSchema, getCollectionSchema} from "../Controllers/CollectionController";
+import {validateEnvType} from "../util/enviornmentTypes";
 
 const router = express.Router();
 
@@ -15,9 +16,13 @@ router.post(CollectionUrl, [
         body('name')
             .trim()
             .isLength(stringLimitOptions)
-            .withMessage(stringLimitOptionErrorMessage('name'))
+            .withMessage(stringLimitOptionErrorMessage('name')),
+        body('env')
+            .trim()
+            .isLength(stringLimitOptions)
+            .withMessage(stringLimitOptionErrorMessage('env'))
     ],
-    validateRequest, createCollectionSchema);
+    validateRequest, validateEnvType, createCollectionSchema);
 
 // Delete Item Schema
 router.delete(CollectionUrl, [
@@ -26,7 +31,7 @@ router.delete(CollectionUrl, [
             .isLength(stringLimitOptions)
             .withMessage(stringLimitOptionErrorMessage('name'))
     ],
-    validateRequest, deleteCollectionSchema);
+    validateRequest, validateEnvType, deleteCollectionSchema);
 
 // Get Item Schema
 router.get(CollectionUrl, getCollectionSchema);

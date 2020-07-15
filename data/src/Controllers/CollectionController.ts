@@ -22,6 +22,7 @@ import {
 import {ConnectionModel} from "../models/Connections";
 import {DbsModel} from "../models/Dbs";
 import {RuleType} from "../util/interface";
+import {validateEnvType} from "../util/enviornmentTypes";
 
 export async function createCollectionSchema(req: Request, res: Response) {
 
@@ -198,6 +199,7 @@ export async function createCollectionSchema(req: Request, res: Response) {
         userName: userName,
         rules: JSON.stringify(reqBody.rules),
         name: reqBody.name,
+        env: reqBody.env,
         dbName: newDbConnection.name,
         connectionName: newDbConnection.connectionName,
         collectionType: (reqBody.collectionType ? reqBody.collectionType : DATA_COLLECTION),
