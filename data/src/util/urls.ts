@@ -1,9 +1,11 @@
 import {rootUrl} from "./constants";
 
-export const RoleUrl = `${rootUrl}/:userName/role/:roleName?`;
-export const PermissionUrl = `${rootUrl}/:userName/permission/:permissionName?`;
+const ENV = '/:env';
 
-export const CollectionUrl = `${rootUrl}/:language/:userName/collection`;
-export const StoreUrl = `${rootUrl}/:language/:userName/collection/:collectionName`;
+export const RoleUrl = `${rootUrl}${ENV}/:userName/role/:roleName?`;
+export const PermissionUrl = `${rootUrl}${ENV}/:userName/permission/:permissionName?`;
+
+export const CollectionUrl = `${rootUrl}${ENV}/:language/:userName/collection`;
+export const StoreUrl = `${rootUrl}${ENV}/:language/:userName/collection/:collectionName`;
 
 export const AUTH_SRV_URL = 'http://auth-srv:3000/events';

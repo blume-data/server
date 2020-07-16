@@ -11,11 +11,10 @@ import {
 import {PRODUCTION_ENV} from "../../../util/enviornmentTypes";
 
 const sampleUserName = RANDOM_STRING(10);
-const collectionUrl = `${rootUrl}/en/${sampleUserName}/collection`;
+const collectionUrl = `${rootUrl}/${PRODUCTION_ENV}/en/${sampleUserName}/collection`;
 
 const sampleData = {
     "name": RANDOM_STRING(6),
-    "env": PRODUCTION_ENV,
     "rules": [
         {
         "name": "lastName",

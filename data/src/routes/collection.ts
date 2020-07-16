@@ -17,11 +17,7 @@ router.post(CollectionUrl, [
         body('name')
             .trim()
             .isLength(stringLimitOptions)
-            .withMessage(stringLimitOptionErrorMessage('name')),
-        body('env')
-            .trim()
-            .isLength(stringLimitOptions)
-            .withMessage(stringLimitOptionErrorMessage('env'))
+            .withMessage(stringLimitOptionErrorMessage('name'))
     ],
     validateRequest, validateEnvType, validateCollections, createCollectionSchema);
 

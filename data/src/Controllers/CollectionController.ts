@@ -28,6 +28,7 @@ export async function createCollectionSchema(req: Request, res: Response) {
 
     const userName  = req.params && req.params.userName;
     const language = req.params && req.params.language;
+    const env = req.params && req.params.env;
 
     const reqBody = req.body;
 
@@ -60,7 +61,7 @@ export async function createCollectionSchema(req: Request, res: Response) {
 
     // Check if there is not other collection with same name and user_id
     const alreadyExist = await CollectionModel.findOne({
-        userName: userName, name: reqBody.name, env: reqBody.env
+        userName: userName, name: reqBody.name, env
     }, 'id');
 
     if (alreadyExist) {
@@ -74,7 +75,7 @@ export async function createCollectionSchema(req: Request, res: Response) {
             userName: userName,
             rules: JSON.stringify(reqBody.rules),
             name: reqBody.name,
-            env: reqBody.env,
+            env,
             dbName: newDbConnection.name,
             connectionName: newDbConnection.connectionName,
             collectionType: (reqBody.collectionType ? reqBody.collectionType : DATA_COLLECTION),
@@ -93,6 +94,7 @@ export async function createCollectionSchema(req: Request, res: Response) {
 export async function deleteCollectionSchema(req: Request, res: Response) {
     const userName  = req.params && req.params.userName;
     const language = req.params && req.params.language;
+    const env = req.params && req.params.env;
 
     const reqBody = req.body;
 
@@ -102,28 +104,19 @@ export async function deleteCollectionSchema(req: Request, res: Response) {
         language
     });
 
+    console.log('item', itemSchema);
+
     if (itemSchema) {
         await CollectionModel.deleteOne({
             userName: userName,
             name: reqBody.name
         });
+        await DbsModel.deleteOne({
+            name: userName
+        });
         // calculate the exact length of the dbs
         const dbs = await DbsModel.find({connectionName: itemSchema.connectionName}, 'id');
         await ConnectionModel.updateOne({name: itemSchema.connectionName}, {count: dbs.length});
-        // update the count on db
-        const db = await DbsModel.findOne({
-            connectionName: itemSchema.connectionName,
-            name: itemSchema.dbName
-        }, 'count');
-        if (db) {
-            await DbsModel.updateOne({
-                connectionName: itemSchema.connectionName,
-                name: itemSchema.dbName
-            }, {
-                count: db.count - 1
-            });
-        }
-
     }
     else {
         throw new BadRequestError('Collection not found');

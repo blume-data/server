@@ -7,7 +7,7 @@ export const DEVELOPMENT_ENV = 'development';
 export const SUPPORTED_ENVS = [PRODUCTION_ENV, DEVELOPMENT_ENV];
 
 export function validateEnvType(req: Request, res: Response, next: NextFunction ) {
-    const envType = req.body && req.body.env;
+    const envType = req.params && req.params.env;
     const exist = SUPPORTED_ENVS.find((item: string) => item === envType);
     if (exist) {
         next();
