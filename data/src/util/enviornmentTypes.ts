@@ -1,5 +1,7 @@
 import {NextFunction, Request, Response} from "express";
 import {BadRequestError} from "@ranjodhbirkaur/common";
+import {ENV_IS_NOT_SUPPORTED} from "../Controllers/Messages";
+import {errorStatus} from "./constants";
 
 export const PRODUCTION_ENV = 'production';
 export const DEVELOPMENT_ENV = 'development';
@@ -13,6 +15,11 @@ export function validateEnvType(req: Request, res: Response, next: NextFunction 
         next();
     }
     else {
-        throw new BadRequestError('Env type is not supported');
+        res.status(errorStatus).send({
+            errors: [{
+                message: ENV_IS_NOT_SUPPORTED,
+                field: 'env'
+            }]
+        });
     }
 }

@@ -3,7 +3,7 @@ import { app } from '../../../app';
 import {errorStatus, okayStatus, rootUrl, USER_COLLECTION} from "../../../util/constants";
 import {RANDOM_STRING} from "../../../util/methods";
 import {
-    EMAIL_PROPERTY_IN_RULES_SHOULD_BE_STRING, INVALID_RULES_MESSAGE,
+    EMAIL_PROPERTY_IN_RULES_SHOULD_BE_STRING, ENV_IS_NOT_SUPPORTED, INVALID_RULES_MESSAGE,
     IS_EMAIL_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN,
     IS_PASSWORD_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN,
     PASSWORD_PROPERTY_IN_RULES_SHOULD_BE_STRING
@@ -315,6 +315,30 @@ describe('Collection:Create', () => {
                 type: "string"
             }
         ]))
+    });
+
+    it('User Collection: Check ENV type is valid', async () => {
+        const response = await request(app)
+            .post(collectionUrl)
+            .send({
+                ...sampleData,
+                env: 'some_malicious env',
+                rules: [
+                    ...sampleData.rules,
+                    {
+                        name: "email",
+                        type: "string"
+                    },
+                    {
+                        name: "password",
+                        type: "string"
+                    }
+                ]
+            })
+            .expect(errorStatus);
+
+        expect(response.body.errors[0].message).toContain(ENV_IS_NOT_SUPPORTED);
+        expect(response.body.errors[0].field).toEqual('env');
     });
 });
 

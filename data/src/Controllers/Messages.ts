@@ -21,3 +21,7 @@ export const ROLE_NAME_EXIST = 'role exist';
 /*Permission Message*/
 
 export const PERMISSION_NAME_EXIST = 'permission with same name and type exist';
+
+/*ENV*/
+
+export const ENV_IS_NOT_SUPPORTED = 'env is not supported';
