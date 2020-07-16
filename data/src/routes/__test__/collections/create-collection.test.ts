@@ -319,10 +319,9 @@ describe('Collection:Create', () => {
 
     it('User Collection: Check ENV type is valid', async () => {
         const response = await request(app)
-            .post(collectionUrl)
+            .post(`${rootUrl}/hjhjh/en/${sampleUserName}/collection`)
             .send({
                 ...sampleData,
-                env: 'some_malicious env',
                 rules: [
                     ...sampleData.rules,
                     {
