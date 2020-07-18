@@ -1,7 +1,7 @@
 import express from 'express';
 import {rootUrl, stringLimitOptionErrorMessage, stringLimitOptions} from "../util/constants";
 import {body, query} from "express-validator";
-import {validateRequest} from "@ranjodhbirkaur/common";
+import {validateEnvType, validateRequest} from "@ranjodhbirkaur/common";
 import {isUserNameAvailable, verifyEmailToken} from "../Controllers/UserController";
 import {emailVerificationUrl, userNameValidationUrl} from "../util/urls";
 
@@ -14,7 +14,7 @@ router.post(userNameValidationUrl, [
             .withMessage('username is required')
             .isLength(stringLimitOptions)
             .withMessage(stringLimitOptionErrorMessage('username'))
-    ],
+    ], validateEnvType,
     validateRequest, isUserNameAvailable);
 
 router.get(emailVerificationUrl, [
@@ -25,7 +25,7 @@ router.get(emailVerificationUrl, [
         .isLength(stringLimitOptions)
         .withMessage(stringLimitOptionErrorMessage('token')),
     query('email').isEmail().withMessage('Email must be valid')
-    ],
+    ], validateEnvType,
     validateRequest, verifyEmailToken);
 
 export { router as routes };

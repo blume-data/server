@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import { body } from 'express-validator';
 import jwt from 'jsonwebtoken';
-import { validateRequest, BadRequestError } from '@ranjodhbirkaur/common';
+import {validateRequest, BadRequestError, validateEnvType} from '@ranjodhbirkaur/common';
 
 import { Password } from '../services/password';
 
@@ -20,7 +20,7 @@ router.post(
       .notEmpty()
       .withMessage('You must supply a password'),
   ],
-  validateRequest,
+  validateRequest, validateEnvType,
   async (req: Request, res: Response) => {
     const { email, password } = req.body;
 

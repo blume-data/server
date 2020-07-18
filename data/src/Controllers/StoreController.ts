@@ -49,7 +49,12 @@ export async function getStoreRecord(req: Request, res: Response) {
 
     // get collection
     const collection = await getCollection(req);
-    const {pageNo, perPage=PER_PAGE} = req.query;
+    const {perPage=PER_PAGE} = req.query;
+    let pageNo: number = (req.query && Number(req.query.pageNo)) || 1;
+    if (pageNo) {
+        --pageNo;
+    }
+
     if (collection) {
         const rules = JSON.parse(collection.rules);
 
@@ -62,7 +67,7 @@ export async function getStoreRecord(req: Request, res: Response) {
                 name: collection.name
             });
 
-            const collections = await model.model.find(where, getOnly);
+            const collections = await model.model.find(where, getOnly).skip(pageNo*10).limit(perPage);
             await model.dbConnection.close();
             res.status(okayStatus).send(collections);
         }
