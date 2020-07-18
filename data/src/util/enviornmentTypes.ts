@@ -1,5 +1,4 @@
 import {NextFunction, Request, Response} from "express";
-import {BadRequestError} from "@ranjodhbirkaur/common";
 import {ENV_IS_NOT_SUPPORTED} from "../Controllers/Messages";
 import {errorStatus} from "./constants";
 

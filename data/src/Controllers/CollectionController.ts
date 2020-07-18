@@ -104,8 +104,6 @@ export async function deleteCollectionSchema(req: Request, res: Response) {
         language
     });
 
-    console.log('item', itemSchema);
-
     if (itemSchema) {
         await CollectionModel.deleteOne({
             userName: userName,
