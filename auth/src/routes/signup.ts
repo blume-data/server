@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import { body } from 'express-validator';
 
-import {validateRequest, BadRequestError, validateEnvType} from '@ranjodhbirkaur/common';
+import {validateRequest, BadRequestError} from '@ranjodhbirkaur/common';
 
 import {okayStatus, stringLimitOptionErrorMessage, stringLimitOptions} from "../util/constants";
 import {TempUser} from "../models/tempUser";
@@ -29,7 +29,7 @@ router.post(
         .isLength(stringLimitOptions)
         .withMessage(stringLimitOptionErrorMessage('User name')),
   ],
-  validateRequest, validateEnvType,
+  validateRequest,
   async (req: Request, res: Response) => {
     const { email, password, firstName, lastName, userName } = req.body;
 

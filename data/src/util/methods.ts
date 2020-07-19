@@ -99,8 +99,6 @@ export function createModel(params: CreateModelType) {
             }
         }
     });
-    console.log('connectionName', connectionName);
-    console.log('dbName', dbName);
 
     if (process.env.NODE_ENV !== 'test') {
         try {
