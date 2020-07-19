@@ -1,28 +1,18 @@
 import {Request, Response} from 'express';
 import {BadRequestError} from "@ranjodhbirkaur/common";
 import {
-    ALL_CONNECTIONS_AND_DB_CAPACITY_FULL, COLLECTION_TYPES, DATA_COLLECTION,
-    errorStatus,
+    ALL_CONNECTIONS_AND_DB_CAPACITY_FULL, DATA_COLLECTION,
     MAX_COLLECTION_LIMIT,
     MAX_DB_LIMIT,
     MONGO_DB_DATA_CONNECTIONS_AVAILABLE, okayStatus,
-    SUPPORTED_DATA_TYPES, USER_COLLECTION
+    USER_COLLECTION
 } from "../util/constants";
 import _ from 'lodash';
 import {CollectionModel} from "../models/Collection";
-import {
-    COLLECTION_ALREADY_EXIST,
-    DEFAULT_VALUE_SHOULD_BE_OF_SPECIFIED_TYPE, EMAIL_PROPERTY_IN_RULES_SHOULD_BE_STRING,
-    INVALID_RULES_MESSAGE,
-    IS_EMAIL_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN,
-    IS_PASSWORD_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN, PASSWORD_PROPERTY_IN_RULES_SHOULD_BE_STRING,
-    REQUIRED_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN,
-    UNIQUE_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN
-} from "./Messages";
+import {COLLECTION_ALREADY_EXIST} from "./Messages";
 import {ConnectionModel} from "../models/Connections";
 import {DbsModel} from "../models/Dbs";
 import {RuleType} from "../util/interface";
-import {validateEnvType} from "../util/enviornmentTypes";
 
 export async function createCollectionSchema(req: Request, res: Response) {
 
