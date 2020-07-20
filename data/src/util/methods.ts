@@ -102,6 +102,13 @@ export function createModel(params: CreateModelType) {
 
     if (process.env.NODE_ENV !== 'test') {
         try {
+            return mongoose.model(CollectionName, schema);
+        }
+        catch (e) {
+            return mongoose.model(CollectionName);
+        }
+
+        /*try {
             const dbConnection = mongoose.createConnection(`mongodb://data-mongo-${connectionName}-srv/${dbName}`, {
                 useNewUrlParser: true,
                 useUnifiedTopology: true,
@@ -115,7 +122,7 @@ export function createModel(params: CreateModelType) {
         }
         catch(error) {
             throw new BadRequestError('Error in creating connection');
-        }
+        }*/
     }
     else {
         const dbConnection = mongoose.createConnection(`mongodb://test:test123@ds339968.mlab.com:39968/test-auth`, {
