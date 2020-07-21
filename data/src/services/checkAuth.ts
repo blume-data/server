@@ -28,8 +28,9 @@ export async function checkAuth(req: Request, res: Response, next: NextFunction 
                 process.env.JWT_KEY!
             )
         }
+        next();
 
-        // check the payload
+        /*// check the payload
         if (payload && payload.userName && payload.userName === userName) {
             await axios.post(`${AUTH_SRV_URL}/check`,{
                 userName
@@ -38,7 +39,7 @@ export async function checkAuth(req: Request, res: Response, next: NextFunction 
         }
         else {
             throw new Error();
-        }
+        }*/
     }
     catch (e) {
         throw new NotAuthorizedError();
