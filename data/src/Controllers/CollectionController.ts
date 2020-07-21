@@ -1,13 +1,13 @@
 import {Request, Response} from 'express';
 import {BadRequestError} from "@ranjodhbirkaur/common";
 import {
-    ALL_CONNECTIONS_AND_DB_CAPACITY_FULL, DATA_COLLECTION,
+    ALL_CONNECTIONS_AND_DB_CAPACITY_FULL, DATA_COLLECTION, MAX_COLLECTION_LIMIT,
     MAX_USER_LIMIT, MONGO_DB_DATA_CONNECTIONS_AVAILABLE,
     okayStatus, USER_COLLECTION
 } from "../util/constants";
 import _ from 'lodash';
 import {CollectionModel} from "../models/Collection";
-import {COLLECTION_ALREADY_EXIST} from "./Messages";
+import {CANNOT_CREATE_COLLECTIONS_MORE_THAN_LIMIT, COLLECTION_ALREADY_EXIST} from "./Messages";
 import {ConnectionModel} from "../models/Connections";
 import {UserConnectionModel} from "../models/UserConnection";
 import {RuleType} from "../util/interface";
@@ -19,6 +19,13 @@ export async function createCollectionSchema(req: Request, res: Response) {
     const env = req.params && req.params.env;
 
     const reqBody = req.body;
+
+    const isInLimit = await CollectionModel.find({
+        userName
+    },'name');
+    if ((isInLimit && isInLimit.length) > MAX_COLLECTION_LIMIT) {
+        throw new BadRequestError(CANNOT_CREATE_COLLECTIONS_MORE_THAN_LIMIT);
+    }
 
     // the name of the custom schema collection should not contain any space
     if (reqBody && reqBody.name && typeof reqBody.name === 'string') {
@@ -135,7 +142,6 @@ async function assignConnection(userName: string) : Promise<any> {
         // Search a connection with count less the max users per connection
         const availableConnection = await ConnectionModel.findOne({count: {$lte: MAX_USER_LIMIT}}, ['name', 'count']);
         const allConnections = await ConnectionModel.find({});
-        console.log('all connections', allConnections);
         if (!availableConnection && !allConnections.length) {
             // create a new connection
             return await createNewConnection(allConnections.length, userName);

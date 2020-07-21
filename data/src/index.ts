@@ -3,7 +3,6 @@ import mongoose from 'mongoose';
 import { app } from './app';
 import {MONGO_DB_DATA_CONNECTIONS_AVAILABLE} from "./util/constants";
 import {initClientDbConnection} from "./util/connections";
-import {raw} from "express";
 
 const start = async () => {
   if (!process.env.JWT_KEY) {

@@ -6,7 +6,7 @@ import { errorHandler, NotFoundError } from '@ranjodhbirkaur/common';
 import cors from 'cors';
 import compression from 'compression';
 
-import {CollectionRoutes} from "./routes/collection";
+import {CollectionRoutes} from "./routes/collection-routes";
 import {StoreRoutes} from "./routes/store";
 import {RoleRoutes} from "./routes/roles-routes";
 import {PermissionRoutes} from "./routes/permissions-routes";

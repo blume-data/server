@@ -1,6 +1,6 @@
 import {NextFunction, Request, Response} from "express";
 import {RuleType} from "../../../util/interface";
-import {COLLECTION_TYPES, errorStatus, SUPPORTED_DATA_TYPES, USER_COLLECTION} from "../../../util/constants";
+import {COLLECTION_TYPES, errorStatus, SUPPORTED_DATA_TYPES} from "../../../util/constants";
 import {
     DEFAULT_VALUE_SHOULD_BE_OF_SPECIFIED_TYPE,
     EMAIL_PROPERTY_IN_RULES_SHOULD_BE_STRING, INVALID_RULES_MESSAGE,

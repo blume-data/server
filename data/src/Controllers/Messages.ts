@@ -1,3 +1,5 @@
+import {MAX_COLLECTION_LIMIT} from "../util/constants";
+
 export const COLLECTION_ALREADY_EXIST = 'collection already exist';
 export const INVALID_RULES_MESSAGE = 'Body should be array of type and name properties';
 export const REQUIRED_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN = 'required property in the rules should be boolean';
@@ -7,6 +9,7 @@ export const EMAIL_PROPERTY_IN_RULES_SHOULD_BE_STRING = 'to set isEmail property
 export const PASSWORD_PROPERTY_IN_RULES_SHOULD_BE_STRING = 'to set isPassword property, type should be string in the rules';
 export const IS_PASSWORD_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN = 'isPassword property in the rules should be boolean';
 export const DEFAULT_VALUE_SHOULD_BE_OF_SPECIFIED_TYPE = 'default value should be of type ';
+export const CANNOT_CREATE_COLLECTIONS_MORE_THAN_LIMIT = 'cannot create more than '+MAX_COLLECTION_LIMIT+' collections';
 
 export const COLLECTION_NOT_FOUND = 'Collection not found';
 

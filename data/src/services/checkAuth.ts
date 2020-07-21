@@ -5,6 +5,9 @@ import {NotAuthorizedError} from "@ranjodhbirkaur/common";
 import jwt from 'jsonwebtoken';
 import {AUTHORIZATION_TOKEN} from "../util/constants";
 
+/*
+* This route requires the root client auth
+* */
 export async function checkAuth(req: Request, res: Response, next: NextFunction ) {
     const userName  = req.params && req.params.userName;
 
