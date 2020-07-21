@@ -4,7 +4,7 @@ import {BadRequestError} from "@ranjodhbirkaur/common";
 import {createModel} from "../util/methods";
 import {errorStatus, okayStatus, PER_PAGE} from "../util/constants";
 import {COLLECTION_NOT_FOUND, PARAM_SHOULD_BE_UNIQUE} from "./Messages";
-import {DbConnectionModel, RuleType} from "../util/interface";
+import {RuleType} from "../util/interface";
 import {Model} from "mongoose";
 import moment from 'moment';
 
@@ -20,7 +20,6 @@ export async function createStoreRecord(req: Request, res: Response) {
         const model: any = createModel({
             rules,
             connectionName: collection.connectionName,
-            dbName: collection.dbName,
             name: collection.name
         });
 
@@ -63,12 +62,10 @@ export async function getStoreRecord(req: Request, res: Response) {
             const model: any = createModel({
                 rules,
                 connectionName: collection.connectionName,
-                dbName: collection.dbName,
                 name: collection.name
             });
 
             const collections = await model.find(where, getOnly).skip(pageNo*10).limit(perPage);
-            //await model.dbConnection.close();
             res.status(okayStatus).send(collections);
         }
     }

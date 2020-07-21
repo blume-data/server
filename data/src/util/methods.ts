@@ -3,6 +3,7 @@ import mongoose, {set} from "mongoose";
 import {RuleType} from "./interface";
 import {DATE_TYPE, HTML_TYPE} from "./constants";
 import {BadRequestError} from "@ranjodhbirkaur/common";
+import {getConnection} from "./connections";
 
 export const RANDOM_STRING = function (minSize=10) {
     return randomBytes(minSize).toString('hex')
@@ -14,13 +15,12 @@ export const RANDOM_COLLECTION_NAME = function (min=1, max=1010) {
 
 interface CreateModelType {
     rules: {name: string; type: string}[];
-    dbName: string;
     connectionName: string;
     name: string;
 }
 
 export function createModel(params: CreateModelType) {
-    const {rules, name, dbName, connectionName} = params;
+    const {rules, name, connectionName} = params;
     const CollectionName = name.split(' ').join('_');
     const Schema = mongoose.Schema;
     let schemaData = {};
@@ -101,28 +101,18 @@ export function createModel(params: CreateModelType) {
     });
 
     if (process.env.NODE_ENV !== 'test') {
+        const dbConnection = getConnection(connectionName);
         try {
-            return mongoose.model(CollectionName, schema);
+            if (dbConnection) {
+                return dbConnection.model(connectionName, schema);
+            }
+            else {
+                return null;
+            }
         }
         catch (e) {
-            return mongoose.model(CollectionName);
+            return dbConnection.model(connectionName);
         }
-
-        /*try {
-            const dbConnection = mongoose.createConnection(`mongodb://data-mongo-${connectionName}-srv/${dbName}`, {
-                useNewUrlParser: true,
-                useUnifiedTopology: true,
-                useCreateIndex: true
-            });
-
-            return {
-                model: dbConnection.model(CollectionName, schema),
-                dbConnection
-            };
-        }
-        catch(error) {
-            throw new BadRequestError('Error in creating connection');
-        }*/
     }
     else {
         const dbConnection = mongoose.createConnection(`mongodb://test:test123@ds339968.mlab.com:39968/test-auth`, {
@@ -131,9 +121,6 @@ export function createModel(params: CreateModelType) {
             useCreateIndex: true
         });
 
-        return {
-            model: dbConnection.model(CollectionName, schema),
-            dbConnection
-        };
+        return dbConnection.model(CollectionName, schema);
     }
 }
