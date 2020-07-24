@@ -1,15 +1,17 @@
 import mongoose from 'mongoose';
 
 interface CollectionAttrs {
-    userName : string;
+    clientUserName : string;
     rules: string;
     name: string;
     language: string;
     env: string;
     connectionName: string;
     collectionType?: string;
-    metaData?: string;
+    isPublic: boolean;
     isEnabled?: boolean;
+    metaData?: string;
+    created_at?: string;
 }
 
 interface CollectionModel extends mongoose.Model<CollectionDoc> {
@@ -17,15 +19,16 @@ interface CollectionModel extends mongoose.Model<CollectionDoc> {
 }
 
 interface CollectionDoc extends mongoose.Document {
-    userName : string;
+    clientUserName : string;
     rules: string;
     name: string;
     language: string;
     env: string;
     connectionName: string;
     collectionType?: string;
-    metaData?: string;
-    isEnabled?: boolean;
+    isPublic: boolean;
+    isEnabled: boolean;
+    metaData: string;
     created_at: string;
 }
 
