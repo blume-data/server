@@ -5,48 +5,100 @@ import {validateRequest, BadRequestError} from '@ranjodhbirkaur/common';
 
 import {okayStatus, stringLimitOptionErrorMessage, stringLimitOptions} from "../util/constants";
 import {ClientTempUser} from "../models/clientTempUser";
-import {RANDOM_STRING} from "../util/methods";
+import {RANDOM_STRING, validateEmail} from "../util/methods";
 import {signUp} from "../util/urls";
 import {ClientUser} from "../models/clientUser";
-import {validateUserType} from "../middleware/userTypeCheck";
+import {adminUserType, clientUserType, freeUserType, validateUserType} from "../middleware/userTypeCheck";
+import {ErrorMessages} from "../util/ínterface";
 
 const router = express.Router();
 
 router.post(
-    signUp,
-  [
-    body('email').isEmail().withMessage('Email must be valid'),
-    body('password')
-      .trim()
-      .isLength({ min: 6, max: 20 })
-      .withMessage('Password must be between 4 and 20 characters'),
-      body('firstName')
-          .isLength(stringLimitOptions)
-          .withMessage(stringLimitOptionErrorMessage('First name')),
-    body('lastName')
-        .isLength(stringLimitOptions)
-        .withMessage(stringLimitOptionErrorMessage('Last name')),
-    body('userName')
-        .isLength(stringLimitOptions)
-        .withMessage(stringLimitOptionErrorMessage('User name')),
-  ],
-  validateRequest, validateUserType,
+    signUp, validateUserType,
+    [
+        body('email').isEmail().withMessage('Email must be valid'),
+        body('password')
+            .trim()
+            .isLength({ min: 6, max: 20 })
+            .withMessage('Password must be between 4 and 20 characters'),
+        body('firstName')
+            .isLength(stringLimitOptions)
+            .withMessage(stringLimitOptionErrorMessage('First name')),
+        body('lastName')
+            .isLength(stringLimitOptions)
+            .withMessage(stringLimitOptionErrorMessage('Last name')),
+        body('userName')
+            .isLength(stringLimitOptions)
+            .withMessage(stringLimitOptionErrorMessage('User name')),
+    ],
+    validateRequest,
+
   async (req: Request, res: Response) => {
+
+        const userType = req.params.userType;
+
+        switch (userType) {
+            case clientUserType: {
+                return await saveClientUser(req, res);
+            }
+            case freeUserType: {
+                break;
+            }
+            case adminUserType: {
+                break;
+            }
+        }
+  }
+);
+
+export { router as signupRouter };
+
+async function saveClientUser(req: Request, res: Response) {
+
+    const reqBody = req.body;
+    let isValidBody = true;
+    let errorMessages: ErrorMessages[] = [];
+
+    if (reqBody.email) {
+        if (!validateEmail(reqBody.email)) {
+            isValidBody = false;
+            errorMessages.push({
+                field: 'email',
+                message: `valid email is required`
+            });
+        }
+    }
+    else {
+        isValidBody = false;
+        errorMessages.push({
+            field: 'email',
+            message: `valid email is required`
+        });
+    }
+
+    if(!reqBody.password) {
+        isValidBody = false;
+        errorMessages.push({
+            field: 'password',
+            message: `password is required`
+        });
+    }
+
     const { email, password, firstName, lastName, userName } = req.body;
 
     let existingUser = await ClientUser.findOne({ email });
 
     if (existingUser) {
-      throw new BadRequestError('Account with this Email already exist');
+        throw new BadRequestError('Account with this Email already exist');
     }
     existingUser = await ClientUser.findOne({ userName });
     if (existingUser) {
-      throw new BadRequestError('Username in use');
+        throw new BadRequestError('Username in use');
     }
 
     const verificationToken = RANDOM_STRING(4);
 
-    const user = ClientTempUser.build({ email, password, firstName, lastName, role: 'client', userName, verificationToken });
+    const user = ClientTempUser.build({ email, password, firstName, lastName, userName, verificationToken });
     await user.save();
 
     const payload = {
@@ -57,7 +109,4 @@ router.post(
     };
 
     res.status(okayStatus).send({... payload});
-  }
-);
-
-export { router as signupRouter };
+}

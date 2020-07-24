@@ -8,7 +8,6 @@ interface ClientTempUserAttrs {
     lastName: string;
     verificationToken: string,
     userName: string;
-    role: string;
 }
 
 interface ClientTempUserModel extends mongoose.Model<ClientTempUserDoc> {
@@ -22,7 +21,6 @@ interface ClientTempUserDoc extends mongoose.Document {
     lastName: string;
     verificationToken: string,
     userName: string;
-    role: string;
     created_at: string;
 }
 
@@ -50,10 +48,6 @@ const clientTempUserSchema = new mongoose.Schema(
             required: true
         },
         userName: {
-            type: String,
-            required: true
-        },
-        role : {
             type: String,
             required: true
         },
