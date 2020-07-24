@@ -1,7 +1,7 @@
 import {Request, Response} from 'express';
 
 import {BadRequestError} from "@ranjodhbirkaur/common";
-import {TempUser} from "../models/tempUser";
+import {ClientTempUser} from "../models/clientTempUser";
 import {ClientUser} from "../models/clientUser";
 import jwt from "jsonwebtoken";
 import {AUTH_TOKEN, okayStatus, USER_NAME} from "../util/constants";
@@ -24,7 +24,7 @@ export const isUserNameAvailable = async function (req: ReqIsUserNameAvailable, 
     
     if (modelProps) {
         if (modelProps.userName) {
-            const userExist = await TempUser.findOne({userName: modelProps.userName});
+            const userExist = await ClientUser.findOne({userName: modelProps.userName});
             if (userExist) {
                 throw new BadRequestError('Username not available');
             }
@@ -43,7 +43,7 @@ export const verifyEmailToken = async function (req: ReqValidateEmail, res: Resp
         throw new BadRequestError('Invalid Request');
     }
     else {
-        const userExist = await TempUser.findOne({email: modelProps.email, verificationToken: modelProps.token});
+        const userExist = await ClientTempUser.findOne({email: modelProps.email, verificationToken: modelProps.token});
 
         if (userExist) {
 
@@ -77,7 +77,7 @@ export const verifyEmailToken = async function (req: ReqValidateEmail, res: Resp
 
             res.status(okayStatus).send({... payload, [AUTH_TOKEN]: userJwt, [USER_NAME]: newUser.userName});
 
-            TempUser.deleteMany({email: modelProps.email}).then(() => {});
+            ClientTempUser.deleteMany({email: modelProps.email}).then(() => {});
 
         }
         else {

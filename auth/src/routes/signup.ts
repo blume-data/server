@@ -4,7 +4,7 @@ import { body } from 'express-validator';
 import {validateRequest, BadRequestError} from '@ranjodhbirkaur/common';
 
 import {okayStatus, stringLimitOptionErrorMessage, stringLimitOptions} from "../util/constants";
-import {TempUser} from "../models/tempUser";
+import {ClientTempUser} from "../models/clientTempUser";
 import {RANDOM_STRING} from "../util/methods";
 import {signUp} from "../util/urls";
 import {ClientUser} from "../models/clientUser";
@@ -45,7 +45,7 @@ router.post(
 
     const verificationToken = RANDOM_STRING(4);
 
-    const user = TempUser.build({ email, password, firstName, lastName, role: 'client', userName, verificationToken });
+    const user = ClientTempUser.build({ email, password, firstName, lastName, role: 'client', userName, verificationToken });
     await user.save();
 
     const payload = {

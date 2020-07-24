@@ -3,33 +3,35 @@ import { Password } from '../services/password';
 
 // An interface that describes the properties
 // that are required to create a new User
-interface UserAttrs {
+interface FreeUserAttrs {
   email?: string;
   userName?: string;
   mainUserName: string;
   appName: string;
   env: string;
   password: string;
+  isEnabled?: boolean;
 }
 
 // An interface that describes the properties
 // that a User Model has
-interface UserModel extends mongoose.Model<UserDoc> {
-  build(attrs: UserAttrs): UserDoc;
+interface FreeUserModel extends mongoose.Model<FreeUserDoc> {
+  build(attrs: FreeUserAttrs): FreeUserDoc;
 }
 
 // An interface that describes the properties
 // that a User Document has
-interface UserDoc extends mongoose.Document {
+interface FreeUserDoc extends mongoose.Document {
   email?: string;
   userName?: string;
   mainUserName: string;
   appName: string;
   env: string;
   password: string;
+  isEnabled?: boolean;
 }
 
-const userSchema = new mongoose.Schema(
+const freeUserSchema = new mongoose.Schema(
   {
     email: {
       type: String
@@ -38,10 +40,12 @@ const userSchema = new mongoose.Schema(
       type: String
     },
     mainUserName: {
-      type: String
+      type: String,
+      required: true
     },
     appName: {
-      type: String
+      type: String,
+      required: true
     },
     env: {
       type: String
@@ -49,7 +53,11 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: true
-    }
+    },
+    isEnabled : {
+    type: Boolean,
+    default: true
+    },
   },
   {
     toJSON: {
@@ -63,7 +71,7 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-userSchema.pre('save', async function(done) {
+freeUserSchema.pre('save', async function(done) {
   if (this.isModified('password')) {
     const hashed = await Password.toHash(this.get('password'));
     this.set('password', hashed);
@@ -71,10 +79,10 @@ userSchema.pre('save', async function(done) {
   done();
 });
 
-userSchema.statics.build = (attrs: UserAttrs) => {
-  return new User(attrs);
+freeUserSchema.statics.build = (attrs: FreeUserAttrs) => {
+  return new FreeUser(attrs);
 };
 
-const User = mongoose.model<UserDoc, UserModel>('User', userSchema);
+const FreeUser = mongoose.model<FreeUserDoc, FreeUserModel>('FreeUser', freeUserSchema);
 
-export { User };
+export { FreeUser };

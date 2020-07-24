@@ -1,7 +1,7 @@
 import {Request, Response} from 'express';
 
 import {BadRequestError, NotAuthorizedError} from "@ranjodhbirkaur/common";
-import {TempUser} from "../models/tempUser";
+import {TempClientUser} from "../models/tempUser";
 import {ClientUser} from "../models/clientUser";
 import jwt from "jsonwebtoken";
 import {AUTH_TOKEN, okayStatus, USER_NAME} from "../util/constants";
