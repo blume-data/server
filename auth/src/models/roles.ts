@@ -7,7 +7,9 @@ interface RolesAttrs {
     name: string;
     // all means can access all languages
     language: string;
-    userName: string;
+    clientUserName: string;
+    applicationName: string;
+    env: string;
 }
 
 interface RolesModel extends mongoose.Model<RolesDoc> {
@@ -18,7 +20,9 @@ interface RolesDoc extends mongoose.Document {
     permissions: string[];
     name: string;
     language: string;
-    userName: string;
+    clientUserName: string;
+    applicationName: string;
+    env: string;
     created_at: string;
 }
 
@@ -32,7 +36,15 @@ const Roles = new mongoose.Schema(
             type: String,
             required: true
         },
-        userName: {
+        clientUserName: {
+            type: String,
+            required: true
+        },
+        applicationName: {
+            type: String,
+            required: true
+        },
+        env: {
             type: String,
             required: true
         },

@@ -1,10 +1,14 @@
 import mongoose from 'mongoose';
 
 interface RolesAttrs {
+    clientUserName : string;
+    applicationName: string;
+    env: string;
+    language: string;
+
     permissions: string[];
     name: string;
-    language: string;
-    userName: string;
+    created_at?: string;
 }
 
 interface RolesModel extends mongoose.Model<RolesDoc> {
@@ -12,30 +16,42 @@ interface RolesModel extends mongoose.Model<RolesDoc> {
 }
 
 interface RolesDoc extends mongoose.Document {
+    clientUserName : string;
+    applicationName: string;
+    env: string;
+    language: string;
+
     permissions: string[];
     name: string;
-    language: string;
-    userName: string;
     created_at: string;
 }
 
 const Roles = new mongoose.Schema(
     {
+        clientUserName: {
+            type: String,
+            required: true
+        },
+        applicationName: {
+            type: String,
+            required: true
+        },
+        env: {
+            type: String,
+            required: true
+        },
         language: {
             type: String,
             required: true
         },
+
+        permissions: [{
+            type: String
+        }],
         name: {
             type: String,
             required: true
         },
-        userName: {
-            type: String,
-            required: true
-        },
-        permissions: [{
-            type: String
-        }],
         created_at : { type: Date, default: Date.now }
     },
     {

@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 interface UserConnectionAttrs {
-    userName: string;
+    clientUserName: string;
     connectionName: string;
 }
 
@@ -10,14 +10,14 @@ interface UserConnectionModel extends mongoose.Model<UserConnectionDoc> {
 }
 
 export interface UserConnectionDoc extends mongoose.Document {
-    userName: string;
+    clientUserName: string;
     connectionName: string;
     created_at?: string;
 }
 
 const UserConnection = new mongoose.Schema(
     {
-        userName: {
+        clientUserName: {
             type: String,
             required: true,
             unique: true

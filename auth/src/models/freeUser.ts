@@ -6,8 +6,8 @@ import { Password } from '../services/password';
 interface FreeUserAttrs {
   email?: string;
   userName?: string;
-  mainUserName: string;
-  appName: string;
+  clientUserName: string;
+  applicationName: string;
   env: string;
   password: string;
   isEnabled?: boolean;
@@ -24,8 +24,8 @@ interface FreeUserModel extends mongoose.Model<FreeUserDoc> {
 interface FreeUserDoc extends mongoose.Document {
   email?: string;
   userName?: string;
-  mainUserName: string;
-  appName: string;
+  clientUserName: string;
+  applicationName: string;
   env: string;
   password: string;
   isEnabled?: boolean;
@@ -39,11 +39,11 @@ const freeUserSchema = new mongoose.Schema(
     userName: {
       type: String
     },
-    mainUserName: {
+    clientUserName: {
       type: String,
       required: true
     },
-    appName: {
+    applicationName: {
       type: String,
       required: true
     },
