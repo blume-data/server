@@ -18,7 +18,10 @@ export async function CreateRole(req: Request, res: Response) {
     }
 
     const newRole = RolesModel.build({
-        userName,
+        clientUserName: userName,
+        applicationName: '',
+        env: '',
+
         language,
         permissions,
         name

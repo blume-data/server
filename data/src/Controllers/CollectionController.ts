@@ -67,7 +67,9 @@ export async function createCollectionSchema(req: Request, res: Response) {
 
     if (newDbConnection) {
         const newCollection = CollectionModel.build({
-            userName: userName,
+            clientUserName: userName,
+            isPublic: false,
+            applicationName: 'some name',
             rules: JSON.stringify(reqBody.rules),
             name: reqBody.name,
             env,
@@ -162,7 +164,7 @@ async function assignConnection(userName: string) : Promise<any> {
 
 async function incrementConnectionCount(connectionName: string, count: number, userName: string) {
     const newUserConnection = UserConnectionModel.build({
-        userName, connectionName
+        clientUserName: userName, connectionName
     });
     await newUserConnection.save();
     await ConnectionModel.updateOne({name: connectionName}, {count: count + 1});
@@ -175,10 +177,10 @@ async function createNewConnection(allConnectionsLength: number, userName: strin
     const connectionName = MONGO_DB_DATA_CONNECTIONS_AVAILABLE[allConnectionsLength];
     if (connectionName) {
         const newUserConnection = UserConnectionModel.build({
-            userName, connectionName
+            clientUserName: userName, connectionName
         });
         await newUserConnection.save();
-        const newConnection = ConnectionModel.build({ name: connectionName, count: 1 });
+        const newConnection = ConnectionModel.build({ name: connectionName, count: 1, type: 'connection_type' });
         await newConnection.save();
         return {
             connectionName: newConnection.name

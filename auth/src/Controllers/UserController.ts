@@ -53,7 +53,6 @@ export const verifyEmailToken = async function (req: ReqValidateEmail, res: Resp
                 firstName: userExist.firstName,
                 lastName: userExist.lastName,
                 userName: userExist.userName,
-                role: userExist.role
             });
 
             await newUser.save();
