@@ -31,6 +31,6 @@ router.delete(CollectionUrl, [
     validateRequest, validateEnvType, checkAuth, deleteCollectionSchema);
 
 // Get Item Schema
-router.get(CollectionUrl, getCollectionSchema);
+router.get(CollectionUrl, checkAuth, getCollectionSchema);
 
 export { router as CollectionRoutes };
