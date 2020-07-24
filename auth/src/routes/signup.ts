@@ -8,6 +8,7 @@ import {ClientTempUser} from "../models/clientTempUser";
 import {RANDOM_STRING} from "../util/methods";
 import {signUp} from "../util/urls";
 import {ClientUser} from "../models/clientUser";
+import {validateUserType} from "../middleware/userTypeCheck";
 
 const router = express.Router();
 
@@ -29,7 +30,7 @@ router.post(
         .isLength(stringLimitOptions)
         .withMessage(stringLimitOptionErrorMessage('User name')),
   ],
-  validateRequest,
+  validateRequest, validateUserType,
   async (req: Request, res: Response) => {
     const { email, password, firstName, lastName, userName } = req.body;
 

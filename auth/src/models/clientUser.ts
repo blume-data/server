@@ -11,10 +11,6 @@ interface ClientUserAttrs {
     isEnabled?: boolean;
     role: string;
     created_at?: string;
-
-    clientUserName: string;
-    applicationName: string;
-    env: string;
 }
 
 interface ClientUserModel extends mongoose.Model<ClientUserDoc> {
@@ -31,10 +27,6 @@ interface ClientUserDoc extends mongoose.Document {
     isEnabled?: boolean;
     role: string;
     created_at: string;
-
-    clientUserName: string;
-    applicationName: string;
-    env: string;
 }
 
 const clientUserSchema = new mongoose.Schema(
@@ -64,20 +56,6 @@ const clientUserSchema = new mongoose.Schema(
         metaData : {
             type: String
         },
-        clientUserName: {
-            type: String,
-            required: true
-        },
-        applicationName: {
-            type: String,
-            required: true
-        },
-        env: {
-            type: String,
-            required: true
-        },
-
-
         role : {
             type: String,
             required: true
