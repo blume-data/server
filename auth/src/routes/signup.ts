@@ -55,35 +55,6 @@ export { router as signupRouter };
 
 async function saveClientUser(req: Request, res: Response) {
 
-    const reqBody = req.body;
-    let isValidBody = true;
-    let errorMessages: ErrorMessages[] = [];
-
-    if (reqBody.email) {
-        if (!validateEmail(reqBody.email)) {
-            isValidBody = false;
-            errorMessages.push({
-                field: 'email',
-                message: `valid email is required`
-            });
-        }
-    }
-    else {
-        isValidBody = false;
-        errorMessages.push({
-            field: 'email',
-            message: `valid email is required`
-        });
-    }
-
-    if(!reqBody.password) {
-        isValidBody = false;
-        errorMessages.push({
-            field: 'password',
-            message: `password is required`
-        });
-    }
-
     const { email, password, firstName, lastName, userName } = req.body;
 
     let existingUser = await ClientUser.findOne({ email });
