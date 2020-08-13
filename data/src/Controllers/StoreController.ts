@@ -84,7 +84,7 @@ async function getCollection(req: Request) {
     const language = req.params && req.params.language;
     const collectionName = req.params && req.params.collectionName;
 
-    return CollectionModel.findOne({userName, name: collectionName, language});
+    return CollectionModel.findOne({clientUserName: userName, name: collectionName, language});
 }
 
 function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {

@@ -21,7 +21,7 @@ export async function createCollectionSchema(req: Request, res: Response) {
     const reqBody = req.body;
 
     const isInLimit = await CollectionModel.find({
-        userName
+        clientUserName: userName
     },'name');
     if ((isInLimit && isInLimit.length) > MAX_COLLECTION_LIMIT) {
         throw new BadRequestError(CANNOT_CREATE_COLLECTIONS_MORE_THAN_LIMIT);
@@ -56,7 +56,7 @@ export async function createCollectionSchema(req: Request, res: Response) {
 
     // Check if there is not other collection with same name and user_id
     const alreadyExist = await CollectionModel.findOne({
-        userName: userName, name: reqBody.name, env
+        clientUserName: userName, name: reqBody.name, env
     }, 'id');
 
     if (alreadyExist) {
@@ -95,7 +95,7 @@ export async function deleteCollectionSchema(req: Request, res: Response) {
     const reqBody = req.body;
 
     const itemSchema = await CollectionModel.findOne({
-        userName: userName,
+        clientUserName: userName,
         name: reqBody.name,
         language
     });
@@ -129,11 +129,11 @@ export async function getCollectionSchema(req: Request, res: Response) {
     res.status(okayStatus).send(collections);
 }
 
-async function assignConnection(userName: string) : Promise<any> {
+async function assignConnection(clientUserName: string) : Promise<any> {
 
     const userConnectionExist = await UserConnectionModel.findOne({
-        userName
-    }, ['connectionName', 'userName']);
+        clientUserName: clientUserName
+    }, ['connectionName', 'clientUserName']);
 
     if(userConnectionExist) {
         return {
@@ -146,15 +146,15 @@ async function assignConnection(userName: string) : Promise<any> {
         const allConnections = await ConnectionModel.find({});
         if (!availableConnection && !allConnections.length) {
             // create a new connection
-            return await createNewConnection(allConnections.length, userName);
+            return await createNewConnection(allConnections.length, clientUserName);
         }
         else if(availableConnection) {
             // assign a new connection and increase count
-            return await incrementConnectionCount(availableConnection.name, availableConnection.count, userName);
+            return await incrementConnectionCount(availableConnection.name, availableConnection.count, clientUserName);
         }
         else if(allConnections.length <= MONGO_DB_DATA_CONNECTIONS_AVAILABLE.length) {
             // create a new connection
-            return await createNewConnection(allConnections.length, userName);
+            return await createNewConnection(allConnections.length, clientUserName);
         }
         else {
             throw new Error(ALL_CONNECTIONS_AND_DB_CAPACITY_FULL+' : while creating a new connection');
@@ -162,9 +162,9 @@ async function assignConnection(userName: string) : Promise<any> {
     }
 }
 
-async function incrementConnectionCount(connectionName: string, count: number, userName: string) {
+async function incrementConnectionCount(connectionName: string, count: number, clientUserName: string) {
     const newUserConnection = UserConnectionModel.build({
-        clientUserName: userName, connectionName
+        clientUserName: clientUserName, connectionName
     });
     await newUserConnection.save();
     await ConnectionModel.updateOne({name: connectionName}, {count: count + 1});
@@ -173,11 +173,11 @@ async function incrementConnectionCount(connectionName: string, count: number, u
     };
 }
 
-async function createNewConnection(allConnectionsLength: number, userName: string) {
+async function createNewConnection(allConnectionsLength: number, clientUserName: string) {
     const connectionName = MONGO_DB_DATA_CONNECTIONS_AVAILABLE[allConnectionsLength];
     if (connectionName) {
         const newUserConnection = UserConnectionModel.build({
-            clientUserName: userName, connectionName
+            clientUserName: clientUserName, connectionName
         });
         await newUserConnection.save();
         const newConnection = ConnectionModel.build({ name: connectionName, count: 1, type: 'connection_type' });

@@ -1,7 +1,8 @@
 export const stringLimitOptions = { min: 1, max: 40 };
 export const stringLimitOptionErrorMessage = (field: string) => field+' must be present';
 const ENV = '/:env';
-export const rootUrl = `/data${ENV}`;
+export const serviceName = '/data';
+export const rootUrl = `${serviceName}${ENV}`;
 export const okayStatus = 202;
 export const errorStatus = 400;
 
@@ -14,7 +15,7 @@ export const SUPPORTED_DATA_TYPES = ['string', 'boolean', 'number', 'date', 'htm
 
 export const MONGO_DB_DATA_CONNECTIONS_AVAILABLE = ['one','two'];
 export const MAX_USER_LIMIT = 110;
-export const MAX_COLLECTION_LIMIT = 10;
+export const MAX_COLLECTION_LIMIT = 1000;
 
 export const ALL_CONNECTIONS_AND_DB_CAPACITY_FULL = 'All connections and db capacity is full';
 
