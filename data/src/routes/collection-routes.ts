@@ -1,11 +1,12 @@
 import express from 'express';
 import {stringLimitOptionErrorMessage, stringLimitOptions} from "../util/constants";
 import {body} from "express-validator";
-import {validateRequest, validateEnvType} from "@ranjodhbirkaur/common";
+import {validateRequest} from "@ranjodhbirkaur/common";
 import {CollectionUrl} from "../util/urls";
 import {createCollectionSchema, deleteCollectionSchema, getCollectionSchema} from "../Controllers/CollectionController";
 import {validateCollections} from "../services/middlewares/collections/validateCollections";
 import {checkAuth} from "../services/checkAuth";
+import {validateEnvType} from "../util/enviornmentTypes";
 
 const router = express.Router();
 
