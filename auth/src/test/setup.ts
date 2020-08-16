@@ -17,7 +17,7 @@ declare global {
 jest.setTimeout(30000);
 let mongo: any;
 beforeAll(async () => {
-  process.env.JWT_KEY = 'asdfasdfj';
+  process.env.JWT_KEY = 'asdfasdfjkkjjkhjkhjkhjkhjkhkjhkjhkjhkjhkjhkjhjkhkjhjkhkjhkjhkjhkjhjkhkjhkjhjkhjkhhkh';
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
   mongo = new MongoMemoryServer();
