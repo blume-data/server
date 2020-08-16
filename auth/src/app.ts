@@ -1,30 +1,14 @@
-import express from 'express';
+import {NotFoundError, serverApp} from '@ranjodhbirkaur/common';
 import 'express-async-errors';
-import { json } from 'body-parser';
-import cookieSession from 'cookie-session';
-import { errorHandler, NotFoundError } from '@ranjodhbirkaur/common';
-import cors from 'cors';
-import compression from 'compression';
 
-import { currentUserRouter } from './routes/current-user';
-import { signinRouter } from './routes/signin';
-import { signoutRouter } from './routes/signout';
-import { signupRouter } from './routes/signup';
+import {currentUserRouter} from './routes/current-user';
+import {signinRouter} from './routes/signin';
+import {signoutRouter} from './routes/signout';
+import {signupRouter} from './routes/signup';
 import {routes} from "./routes";
 import {checkAuthRoutes} from "./routes/checkAuth";
 
-const app = express();
-app.use(cors());
-app.set('trust proxy', true);
-app.use(compression());
-app.use(json());
-app.use(
-  cookieSession({
-    signed: false,
-    secure: false
-  })
-);
-app.options('*', cors());
+const app = serverApp;
 
 app.use(checkAuthRoutes);
 app.use(currentUserRouter);
@@ -36,7 +20,5 @@ app.use(routes);
 app.all('*', async (req, res) => {
   throw new NotFoundError();
 });
-
-app.use(errorHandler);
 
 export { app };

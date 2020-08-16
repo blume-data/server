@@ -1,12 +1,13 @@
 import {Request, Response, NextFunction} from "express";
-import {BadRequestError} from "@ranjodhbirkaur/common";
+import {BadRequestError, errorStatus} from "@ranjodhbirkaur/common";
 import {ErrorMessages} from "../util/ínterface";
-import {errorStatus} from "../util/constants";
 
 export const adminUserType = 'admin';
+export const superVisorUserType = 'supervisor';
+export const supportUserType = 'support';
 export const clientUserType = 'client';// client user
 export const freeUserType = 'user';// free user
-export const SupportedUserType = [adminUserType, clientUserType, freeUserType];
+export const SupportedUserType = [adminUserType, clientUserType, freeUserType, superVisorUserType, supportUserType];
 
 export async function validateUserType(req: Request, res: Response, next: NextFunction) {
 
@@ -54,6 +55,6 @@ export async function validateUserType(req: Request, res: Response, next: NextFu
         }
     }
     else {
-        throw new BadRequestError('User type is not supported!');
+        throw new BadRequestError('User type is not valid');
     }
 }

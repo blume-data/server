@@ -2,13 +2,15 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
 import request from 'supertest';
 import { app } from '../app';
-import {emailVerificationUrl, signIn, signUp} from "../util/urls";
-import {okayStatus} from "../util/constants";
+import {emailVerification, register, signInUrl} from "../util/urls";
+import {okayStatus} from "@ranjodhbirkaur/common";
+import {rootUrl} from "../util/constants";
+import {clientUserType} from "../middleware/userTypeCheck";
 
 declare global {
   namespace NodeJS {
     interface Global {
-      signin(): Promise<string[]>;
+      signIn(userType: string): Promise<string[]>;
     }
   }
 }
@@ -40,7 +42,11 @@ afterAll(async () => {
   await mongoose.connection.close();
 });
 
-global.signin = async () => {
+const emailVerificationUrl = `${rootUrl}/${clientUserType}/${emailVerification}`;
+
+global.signIn = async (userType: string) => {
+
+  const registrationUrl = `${rootUrl}/${userType}/${register}`;
 
   const sampleData = {
     "email": "test@test.com",
@@ -51,7 +57,7 @@ global.signin = async () => {
   };
 
   const tempUser = await request(app)
-      .post(signUp)
+      .post(registrationUrl)
       .send(sampleData)
       .expect(okayStatus);
 
@@ -60,7 +66,7 @@ global.signin = async () => {
       .expect(okayStatus);
 
   const response = await request(app)
-    .post(signIn)
+    .post(registrationUrl)
     .send({
       email: sampleData.email,
       password: sampleData.password

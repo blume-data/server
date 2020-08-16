@@ -1,7 +1,6 @@
 import express, {Response, Request, NextFunction} from 'express';
-import {BadRequestError, currentUser} from '@ranjodhbirkaur/common';
+import {BadRequestError, currentUser, okayStatus} from '@ranjodhbirkaur/common';
 import {currentUserUrl} from "../util/urls";
-import {okayStatus} from "../util/constants";
 import {ClientUser} from "../models/clientUser";
 
 const router = express.Router();

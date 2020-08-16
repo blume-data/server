@@ -1,26 +1,23 @@
 import express, { Request, Response } from 'express';
 import { body } from 'express-validator';
-
-import {validateRequest, BadRequestError} from '@ranjodhbirkaur/common';
-
-import {okayStatus, stringLimitOptionErrorMessage, stringLimitOptions} from "../util/constants";
+import {validateRequest, BadRequestError, okayStatus, RANDOM_STRING} from '@ranjodhbirkaur/common';
+import {stringLimitOptionErrorMessage, stringLimitOptions} from "../util/constants";
 import {ClientTempUser} from "../models/clientTempUser";
-import {RANDOM_STRING, validateEmail} from "../util/methods";
-import {signUp} from "../util/urls";
+import {signUpUrl} from "../util/urls";
 import {ClientUser} from "../models/clientUser";
 import {adminUserType, clientUserType, freeUserType, validateUserType} from "../middleware/userTypeCheck";
-import {ErrorMessages} from "../util/ínterface";
 
-const router = express.Router();
+const
+    router = express.Router();
 
 router.post(
-    signUp, validateUserType,
+    signUpUrl, validateUserType,
     [
         body('email').isEmail().withMessage('Email must be valid'),
         body('password')
             .trim()
             .isLength({ min: 6, max: 20 })
-            .withMessage('Password must be between 4 and 20 characters'),
+            .withMessage('Password must be between 6 and 20 characters'),
         body('firstName')
             .isLength(stringLimitOptions)
             .withMessage(stringLimitOptionErrorMessage('First name')),
