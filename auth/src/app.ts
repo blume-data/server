@@ -1,6 +1,4 @@
-import {NotFoundError, serverApp} from '@ranjodhbirkaur/common';
-import 'express-async-errors';
-
+import {errorHandler, NotFoundError, serverApp} from '@ranjodhbirkaur/common';
 import {currentUserRouter} from './routes/current-user';
 import {signinRouter} from './routes/signin';
 import {signoutRouter} from './routes/signout';
@@ -8,17 +6,17 @@ import {signupRouter} from './routes/signup';
 import {routes} from "./routes";
 import {checkAuthRoutes} from "./routes/checkAuth";
 
-const app = serverApp;
+serverApp.use(checkAuthRoutes);
+serverApp.use(currentUserRouter);
+serverApp.use(signinRouter);
+serverApp.use(signoutRouter);
+serverApp.use(signupRouter);
+serverApp.use(routes);
 
-app.use(checkAuthRoutes);
-app.use(currentUserRouter);
-app.use(signinRouter);
-app.use(signoutRouter);
-app.use(signupRouter);
-app.use(routes);
-
-app.all('*', async (req, res) => {
+serverApp.all('*', async () => {
   throw new NotFoundError();
 });
 
-export { app };
+serverApp.use(errorHandler);
+
+export { serverApp as app };

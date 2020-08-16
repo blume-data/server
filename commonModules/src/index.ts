@@ -1,3 +1,4 @@
+import 'express-async-errors';
 export * from './errors/bad-request-error';
 export * from './errors/custom-error';
 export * from './errors/database-connection-error';
