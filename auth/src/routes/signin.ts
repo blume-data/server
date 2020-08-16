@@ -7,17 +7,19 @@ import { Password } from '../services/password';
 
 import {signInUrl} from "../util/urls";
 import {ClientUser} from "../models/clientUser";
+import {InValidEmailMessage, InvalidLoginCredentialsMessage} from "../util/errorMessages";
+import {passwordLimitOptionErrorMessage, passwordLimitOptions} from "../util/constants";
 
 const router = express.Router();
 
 router.post(
     signInUrl,
   [
-    body('email').isEmail().withMessage('Email must be valid'),
+    body('email').isEmail().withMessage(InValidEmailMessage),
     body('password')
       .trim()
-      .notEmpty()
-      .withMessage('You must supply a password'),
+      .isLength(passwordLimitOptions)
+      .withMessage(passwordLimitOptionErrorMessage('password')),
   ],
   validateRequest,
   async (req: Request, res: Response) => {
@@ -25,7 +27,7 @@ router.post(
 
     const existingUser = await ClientUser.findOne({ email });
     if (!existingUser) {
-      throw new BadRequestError('Invalid credentials: Email/Password not valid');
+      throw new BadRequestError(InvalidLoginCredentialsMessage);
     }
 
     const passwordsMatch = await Password.compare(
@@ -33,7 +35,7 @@ router.post(
       password
     );
     if (!passwordsMatch) {
-      throw new BadRequestError('Invalid credentials: Email/Password not valid');
+      throw new BadRequestError(InvalidLoginCredentialsMessage);
     }
 
     const payload = {
