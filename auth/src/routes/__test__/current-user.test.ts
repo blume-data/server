@@ -1,26 +1,33 @@
 import request from 'supertest';
 import { app } from '../../app';
-import {currentUserUrl} from "../../util/urls";
-import {errorStatus, okayStatus} from "../../util/constants";
+import {currentUser, currentUserUrl, register} from "../../util/urls";
+import {errorStatus, okayStatus} from "@ranjodhbirkaur/common";
+import {clientUserType} from "../../middleware/userTypeCheck";
+import {rootUrl} from "../../util/constants";
 
-it('responds with details about the current user', async () => {
-  const cookie = await global.signin();
+describe('It returns cookie for authenticated user', () => {
+  const currentUserUrl = `${rootUrl}/${clientUserType}/${currentUser}`;
 
-  const response = await request(app)
-    .get(currentUserUrl)
-    .set('Cookie', cookie)
-    .send()
-    .expect(okayStatus);
+  it('responds with details about the current user', async () => {
 
-  expect(response.body.currentUser.email).toEqual('test@test.com');
-});
+    const cookie = await global.signIn(clientUserType, {email: `test@taranjeet.com`});
 
-it('responds with null if not authenticated', async () => {
-  const response = await request(app)
-    .get(currentUserUrl)
-    .send()
-    .expect(errorStatus);
+    const response = await request(app)
+        .get(currentUserUrl)
+        .set('Cookie', cookie)
+        .send()
+        .expect(okayStatus);
 
-  expect(response.body.currentUser).toEqual(undefined);
+    expect(response.body.currentUser.email).toEqual('test@taranjeet.com');
+  });
+
+  it('responds with null if not authenticated', async () => {
+    const response = await request(app)
+        .get(currentUserUrl)
+        .send()
+        .expect(errorStatus);
+
+    expect(response.body.currentUser).toEqual(undefined);
+  });
 });
 

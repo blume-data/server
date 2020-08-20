@@ -1,6 +1,6 @@
 import request from 'supertest';
 import { app } from '../../app';
-import {emailVerification, register, userNameValidationUrl} from "../../util/urls";
+import {register, userNameValidationUrl} from "../../util/urls";
 import {errorStatus, okayStatus} from "@ranjodhbirkaur/common";
 import {rootUrl} from "../../util/constants";
 import {clientUserType} from "../../middleware/userTypeCheck";

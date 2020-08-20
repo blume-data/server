@@ -1,7 +1,9 @@
 import request from 'supertest';
 import { app } from '../../app';
-import {emailVerificationUrl, signUp} from "../../util/urls";
-import {errorStatus, okayStatus} from "../../util/constants";
+import {emailVerification, register} from "../../util/urls";
+import {errorStatus, okayStatus} from "@ranjodhbirkaur/common";
+import {rootUrl} from "../../util/constants";
+import {clientUserType} from "../../middleware/userTypeCheck";
 
 const sampleData = {
     "email": "t@t.com",
@@ -11,25 +13,30 @@ const sampleData = {
     "userName": "taranjeet"
 };
 
-it('Client : Email verification', async (done) => {
-    const response = await request(app)
-        .post(signUp)
-        .send(sampleData)
-        .expect(okayStatus);
+describe('Email gets verified of client user', () => {
+    const registrationUrl = `${rootUrl}/${clientUserType}/${register}`;
+    const emailVerificationUrl = `${rootUrl}/${clientUserType}/${emailVerification}`;
 
-    await request(app)
-        .get(emailVerificationUrl)
-        .send({})
-        .expect(errorStatus);
+    it('Client : Email verification', async (done) => {
+        const response = await request(app)
+            .post(registrationUrl)
+            .send(sampleData)
+            .expect(okayStatus);
 
-    await request(app)
-        .get(`${emailVerificationUrl}?email=${response.body.email}&token=${response.body.verificationToken}`)
-        .expect(okayStatus);
+        await request(app)
+            .get(emailVerificationUrl)
+            .send({})
+            .expect(errorStatus);
+
+        await request(app)
+            .get(`${emailVerificationUrl}?email=${response.body.email}&token=${response.body.verificationToken}`)
+            .expect(okayStatus);
 
 
-    await request(app)
-        .get(`${emailVerificationUrl}?email=${response.body.email}&token=4324sdfssdf`)
-        .expect(errorStatus);
+        await request(app)
+            .get(`${emailVerificationUrl}?email=${response.body.email}&token=4324sdfssdf`)
+            .expect(errorStatus);
 
-    done();
+        done();
+    });
 });

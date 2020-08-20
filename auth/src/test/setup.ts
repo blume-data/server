@@ -1,8 +1,8 @@
-import { MongoMemoryServer } from 'mongodb-memory-server';
+import {MongoMemoryServer} from 'mongodb-memory-server';
 import mongoose from 'mongoose';
 import request from 'supertest';
-import { app } from '../app';
-import {emailVerification, logIn, register, signInUrl} from "../util/urls";
+import {app} from '../app';
+import {emailVerification, logIn, register} from "../util/urls";
 import {okayStatus} from "@ranjodhbirkaur/common";
 import {rootUrl} from "../util/constants";
 import {clientUserType} from "../middleware/userTypeCheck";
@@ -14,7 +14,7 @@ interface DataType {
 declare global {
   namespace NodeJS {
     interface Global {
-      signIn(userType: string): Promise<string[]>;
+      signIn(userType: string, data?: DataType): Promise<string[]>;
       signUp(userType: string, data?: DataType): Promise<{email: string, userName: string}>;
     }
   }
@@ -57,9 +57,25 @@ let sampleData = {
   "userName": "taranjeet"
 };
 
-global.signIn = async (userType: string) => {
+function getSampleData(data: DataType) {
+  return {
+    ...sampleData,
+    userName: data && data.userName ? data.userName : sampleData.userName,
+    firstName: data && data.firstName ? data.firstName : sampleData.firstName,
+    lastName: data && data.lastName ? data.lastName : sampleData.lastName,
+    email: data && data.email ? data.email : sampleData.email,
+    password: data && data.password ? data.password : sampleData.password,
+  };
+}
+
+global.signIn = async (userType: string, data?: DataType) => {
 
   const registrationUrl = `${rootUrl}/${userType}/${register}`;
+  const signInUrl = `${rootUrl}/${userType}/${logIn}`;
+
+  if (data) {
+    sampleData = getSampleData(data);
+  }
 
   const tempUser = await request(app)
       .post(registrationUrl)
@@ -71,28 +87,28 @@ global.signIn = async (userType: string) => {
       .expect(okayStatus);
 
   const response = await request(app)
-    .post(registrationUrl)
+    .post(signInUrl)
     .send({
       email: sampleData.email,
       password: sampleData.password
     })
     .expect(okayStatus);
 
-  const cookie = response.get('Set-Cookie');
-
-  return cookie;
+  return response.get('Set-Cookie');
 };
 
 global.signUp = async (userType: string, data?: DataType) => {
 
-  sampleData = {
-    ...sampleData,
-    userName: data && data.userName ? data.userName : sampleData.userName,
-    firstName: data && data.firstName ? data.firstName : sampleData.firstName,
-    lastName: data && data.lastName ? data.lastName : sampleData.lastName,
-    email: data && data.email ? data.email : sampleData.email,
-    password: data && data.password ? data.password : sampleData.password,
-  };
+  if (data) {
+    sampleData = {
+      ...sampleData,
+      userName: data && data.userName ? data.userName : sampleData.userName,
+      firstName: data && data.firstName ? data.firstName : sampleData.firstName,
+      lastName: data && data.lastName ? data.lastName : sampleData.lastName,
+      email: data && data.email ? data.email : sampleData.email,
+      password: data && data.password ? data.password : sampleData.password,
+    };
+  }
 
   const registrationUrl = `${rootUrl}/${userType}/${register}`;
   const signInUrl = `${rootUrl}/${userType}/${logIn}`;
