@@ -1,6 +1,6 @@
 import request from 'supertest';
 import { app } from '../../app';
-import {emailVerification, register, signInUrl} from "../../util/urls";
+import {emailVerification, logIn, register} from "../../util/urls";
 import {AUTH_TOKEN, errorStatus, okayStatus} from "@ranjodhbirkaur/common";
 import {rootUrl} from "../../util/constants";
 import {clientUserType} from "../../middleware/userTypeCheck";
@@ -29,6 +29,7 @@ async function beforeEach() {
 }
 
 describe('Logs in the client user', () => {
+    const signInUrl = `${rootUrl}/${clientUserType}/${logIn}`;
     it('fails when a email/password that does not exist is supplied', async () => {
 
         await request(app)

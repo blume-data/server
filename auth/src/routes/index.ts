@@ -10,8 +10,6 @@ const router = express.Router();
 router.post(userNameValidationUrl, [
         body('userName')
             .trim()
-            .notEmpty()
-            .withMessage('username is required')
             .isLength(stringLimitOptions)
             .withMessage(stringLimitOptionErrorMessage('username'))
     ],

@@ -4,6 +4,8 @@ import {BadRequestError, AUTH_TOKEN, okayStatus, USER_NAME} from "@ranjodhbirkau
 import {ClientTempUser} from "../models/clientTempUser";
 import {ClientUser} from "../models/clientUser";
 import jwt from "jsonwebtoken";
+import {clientUserType} from "../middleware/userTypeCheck";
+import {Model} from "mongoose";
 
 interface ReqIsUserNameAvailable extends Request{
     body: {
@@ -20,9 +22,17 @@ interface ReqValidateEmail extends Request{
 
 export const isUserNameAvailable = async function (req: ReqIsUserNameAvailable, res: Response) {
     const modelProps = req.body;
+    const userType = req.params.userType;
     
     if (modelProps) {
         if (modelProps.userName) {
+            let model;
+
+            switch (userType) {
+                case clientUserType: {
+                    model = ClientUser;
+                }
+            }
             const userExist = await ClientUser.findOne({userName: modelProps.userName});
             if (userExist) {
                 throw new BadRequestError('Username not available');

@@ -1,7 +1,9 @@
 import request from 'supertest';
 import { app } from '../../app';
-import {signUp, userNameValidationUrl} from "../../util/urls";
-import {errorStatus, okayStatus} from "../../util/constants";
+import {emailVerification, register, userNameValidationUrl} from "../../util/urls";
+import {errorStatus, okayStatus} from "@ranjodhbirkaur/common";
+import {rootUrl} from "../../util/constants";
+import {clientUserType} from "../../middleware/userTypeCheck";
 
 const sampleData = {
     "email": "t@t.com",
@@ -11,27 +13,33 @@ const sampleData = {
     "userName": "taranjeet"
 };
 
-it('Client username validation', async (done) => {
-    await request(app)
-        .post(signUp)
-        .send(sampleData)
-        .expect(okayStatus);
+describe('it validates username of client', () => {
 
-    await request(app)
-        .post(userNameValidationUrl)
-        .send({})
-        .expect(errorStatus);
+    const registrationUrl = `${rootUrl}/${clientUserType}/${register}`;
 
-    await request(app)
-        .post(userNameValidationUrl)
-        .send({userName: 'taranjeet'})
-        .expect(errorStatus);
+    it('Client username validation', async (done) => {
+        await request(app)
+            .post(registrationUrl)
+            .send(sampleData)
+            .expect(okayStatus);
 
+        await request(app)
+            .post(userNameValidationUrl)
+            .send({})
+            .expect(errorStatus);
 
-    await request(app)
-        .post(userNameValidationUrl)
-        .send({userName: 'sdfdsf'})
-        .expect(okayStatus);
+        const userData = await global.signUp(clientUserType, {userName: 'some-user-name'});
 
-    done();
+        await request(app)
+            .post(userNameValidationUrl)
+            .send({userName: userData.userName})
+            .expect(errorStatus);
+
+        await request(app)
+            .post(userNameValidationUrl)
+            .send({userName: 'sdfdsfdfdg354sfdsfds324324'})
+            .expect(okayStatus);
+
+        done();
+    });
 });

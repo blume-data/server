@@ -1,7 +1,9 @@
 import request from 'supertest';
 import { app } from '../../app';
-import {emailVerificationUrl, signIn, signOutUrl, signUp} from "../../util/urls";
-import {okayStatus} from "../../util/constants";
+import {emailVerification, logIn, logOut, register} from "../../util/urls";
+import {okayStatus} from "@ranjodhbirkaur/common";
+import {rootUrl} from "../../util/constants";
+import {clientUserType} from "../../middleware/userTypeCheck";
 
 const sampleData = {
     "email": "t@t.com",
@@ -12,8 +14,12 @@ const sampleData = {
 };
 
 async function beforeEach() {
+
+    const registrationUrl = `${rootUrl}/${clientUserType}/${register}`;
+    const emailVerificationUrl = `${rootUrl}/${clientUserType}/${emailVerification}`;
+
     const user = await request(app)
-        .post(signUp)
+        .post(registrationUrl)
         .send(sampleData)
         .expect(okayStatus);
 
@@ -22,24 +28,28 @@ async function beforeEach() {
         .expect(okayStatus);
 }
 
-it('clears the cookie after signing out', async () => {
+describe('Logs out the client user', () => {
+    it('clears the cookie after signing out', async () => {
 
-    await beforeEach();
+        await beforeEach();
+        const signInUrl = `${rootUrl}/${clientUserType}/${logIn}`;
+        const signOutUrl = `${rootUrl}/${clientUserType}/${logOut}`;
 
-    await request(app)
-        .post(signIn)
-        .send({
-            email: sampleData.email,
-            password: sampleData.password
-        })
-        .expect(okayStatus);
+        await request(app)
+            .post(signInUrl)
+            .send({
+                email: sampleData.email,
+                password: sampleData.password
+            })
+            .expect(okayStatus);
 
-  const response = await request(app)
-    .post(signOutUrl)
-    .send({})
-    .expect(okayStatus);
+        const response = await request(app)
+            .post(signOutUrl)
+            .send({})
+            .expect(okayStatus);
 
-  expect(response.get('Set-Cookie')[0]).toEqual(
-    'express:sess=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; httponly'
-  );
+        expect(response.get('Set-Cookie')[0]).toEqual(
+            'express:sess=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; httponly'
+        );
+    });
 });

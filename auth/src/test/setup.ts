@@ -2,15 +2,20 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
 import request from 'supertest';
 import { app } from '../app';
-import {emailVerification, register, signInUrl} from "../util/urls";
+import {emailVerification, logIn, register, signInUrl} from "../util/urls";
 import {okayStatus} from "@ranjodhbirkaur/common";
 import {rootUrl} from "../util/constants";
 import {clientUserType} from "../middleware/userTypeCheck";
+
+interface DataType {
+ userName?: string, email?: string, firstName?: string, lastName?: string, password?: string
+}
 
 declare global {
   namespace NodeJS {
     interface Global {
       signIn(userType: string): Promise<string[]>;
+      signUp(userType: string, data?: DataType): Promise<{email: string, userName: string}>;
     }
   }
 }
@@ -44,17 +49,17 @@ afterAll(async () => {
 
 const emailVerificationUrl = `${rootUrl}/${clientUserType}/${emailVerification}`;
 
+let sampleData = {
+  "email": "test@test.com",
+  "password": "testtest",
+  "firstName": "Taranjeet",
+  "lastName": "Singh",
+  "userName": "taranjeet"
+};
+
 global.signIn = async (userType: string) => {
 
   const registrationUrl = `${rootUrl}/${userType}/${register}`;
-
-  const sampleData = {
-    "email": "test@test.com",
-    "password": "testtest",
-    "firstName": "Taranjeet",
-    "lastName": "Singh",
-    "userName": "taranjeet"
-  };
 
   const tempUser = await request(app)
       .post(registrationUrl)
@@ -76,4 +81,42 @@ global.signIn = async (userType: string) => {
   const cookie = response.get('Set-Cookie');
 
   return cookie;
+};
+
+global.signUp = async (userType: string, data?: DataType) => {
+
+  sampleData = {
+    ...sampleData,
+    userName: data && data.userName ? data.userName : sampleData.userName,
+    firstName: data && data.firstName ? data.firstName : sampleData.firstName,
+    lastName: data && data.lastName ? data.lastName : sampleData.lastName,
+    email: data && data.email ? data.email : sampleData.email,
+    password: data && data.password ? data.password : sampleData.password,
+  };
+
+  const registrationUrl = `${rootUrl}/${userType}/${register}`;
+  const signInUrl = `${rootUrl}/${userType}/${logIn}`;
+
+  const tempUser = await request(app)
+      .post(registrationUrl)
+      .send({
+        ...sampleData,
+
+      })
+      .expect(okayStatus);
+
+  await request(app)
+      .get(`${emailVerificationUrl}?email=${sampleData.email}&token=${tempUser.body.verificationToken}`)
+      .expect(okayStatus);
+
+  const response = await request(app)
+      .post(signInUrl)
+      .send(sampleData)
+      .expect(okayStatus);
+
+  return {
+    email: response.body.email,
+    userName: response.body.userName
+  }
+
 };

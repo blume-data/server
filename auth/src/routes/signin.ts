@@ -9,13 +9,16 @@ import {signInUrl} from "../util/urls";
 import {ClientUser} from "../models/clientUser";
 import {InValidEmailMessage, InvalidLoginCredentialsMessage} from "../util/errorMessages";
 import {passwordLimitOptionErrorMessage, passwordLimitOptions} from "../util/constants";
+import {validateUserType} from "../middleware/userTypeCheck";
 
 const router = express.Router();
 
 router.post(
-    signInUrl,
+    signInUrl, validateUserType,
   [
-    body('email').isEmail().withMessage(InValidEmailMessage),
+    body('email')
+      .isEmail()
+      .withMessage(InValidEmailMessage),
     body('password')
       .trim()
       .isLength(passwordLimitOptions)
