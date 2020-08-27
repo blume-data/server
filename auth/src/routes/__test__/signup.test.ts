@@ -2,7 +2,7 @@ import request from 'supertest';
 import {app} from '../../app';
 import {errorStatus, okayStatus, clientUserType, adminUserType} from "@ranjodhbirkaur/common";
 import {passwordLimitOptionErrorMessage, stringLimitOptionErrorMessage} from "../../util/constants";
-import {EmailInUseMessage, InValidEmailMessage} from "../../util/errorMessages";
+import {EmailInUseMessage, InValidEmailMessage, UserNameNotAvailableMessage} from "../../util/errorMessages";
 import {getEmailVerificationUrl, getRegistrationUrl, SampleDataType} from "../../test/setup";
 
 let sampleData: SampleDataType = {
@@ -103,6 +103,18 @@ async function allowsDuplicateEmails(userType: string) {
     await testSignUp(userType);
 }
 
+async function doesNotAllowsDuplicateUserName(userType: string) {
+    await beforeEach(userType);
+    let data = {
+        ...sampleData,
+        email: 'somedsfds@gmail.com'
+    };
+    const response = await registerUser(clientUserType, data);
+    expect(response.status).toBe(errorStatus);
+    expect(response.body.errors[0].message).toBe(UserNameNotAvailableMessage);
+    expect(response.body.errors[0].field).toBe('userName');
+}
+
 describe('registers the client user', () => {
 
     it('returns a okay on successful sign-up', async () => {
@@ -131,6 +143,10 @@ describe('registers the client user', () => {
         expect(response.status).toBe(errorStatus);
         expect(response.body.errors[0].message).toBe(EmailInUseMessage);
         expect(response.body.errors[0].field).toBe('email');
+    });
+
+    it('Does not allows duplicate userName', async () => {
+        await doesNotAllowsDuplicateUserName(clientUserType);
     });
 });
 

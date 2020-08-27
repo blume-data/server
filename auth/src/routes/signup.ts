@@ -105,7 +105,7 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
         return res.status(errorStatus).send({
             errors: [{
                 message: UserNameNotAvailableMessage,
-                field: 'username'
+                field: 'userName'
             }]
         });
     }
