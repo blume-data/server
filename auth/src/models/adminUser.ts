@@ -1,11 +1,13 @@
 import mongoose from 'mongoose';
 import { Password } from '../services/password';
+import {adminUserType, supportUserType, superVisorUserType} from '@ranjodhbirkaur/common';
 
 interface AdminUserAttrs {
-  email?: string;
-  userName?: string;
+  email: string;
+  userName: string;
   password: string;
   isEnabled?: boolean;
+  type: string
 }
 
 interface AdminUserModel extends mongoose.Model<AdminUserDoc> {
@@ -13,19 +15,22 @@ interface AdminUserModel extends mongoose.Model<AdminUserDoc> {
 }
 
 interface AdminUserDoc extends mongoose.Document {
-    email?: string;
-    userName?: string;
+    email: string;
+    userName: string;
     password: string;
     isEnabled?: boolean;
+    type: string
 }
 
 const adminUserSchema = new mongoose.Schema(
   {
     email: {
-      type: String
+      type: String,
+        required: true
     },
     userName: {
-      type: String
+      type: String,
+        required: true
     },
     password: {
       type: String,
@@ -35,6 +40,10 @@ const adminUserSchema = new mongoose.Schema(
     type: Boolean,
     default: true
     },
+    type: {
+        type: String,
+        default: supportUserType
+    }
   },
   {
     toJSON: {

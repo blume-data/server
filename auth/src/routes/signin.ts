@@ -1,7 +1,6 @@
 import express, { Request, Response } from 'express';
 import { body } from 'express-validator';
-import jwt from 'jsonwebtoken';
-import {validateRequest, BadRequestError, okayStatus, AUTH_TOKEN, USER_NAME} from '@ranjodhbirkaur/common';
+import {validateRequest, BadRequestError} from '@ranjodhbirkaur/common';
 
 import { Password } from '../services/password';
 
@@ -10,6 +9,7 @@ import {ClientUser} from "../models/clientUser";
 import {InValidEmailMessage, InvalidLoginCredentialsMessage} from "../util/errorMessages";
 import {passwordLimitOptionErrorMessage, passwordLimitOptions} from "../util/constants";
 import {validateUserType} from "../middleware/userTypeCheck";
+import {generateJwt, sendJwtResponse} from "../util/methods";
 
 const router = express.Router();
 
@@ -46,18 +46,9 @@ router.post(
       email: existingUser.email,
       userName: existingUser.userName
     };
-    // Generate JWT
-    const userJwt = jwt.sign(
-      payload,
-      process.env.JWT_KEY!
-    );
+    const userJwt = generateJwt(payload, req);
 
-    // Store it on session object
-    req.session = {
-      jwt: userJwt,
-    };
-
-    res.status(okayStatus).send({...payload, [AUTH_TOKEN]: userJwt, [USER_NAME]: existingUser.userName});
+    return sendJwtResponse(res, payload, userJwt, existingUser);
   }
 );
 

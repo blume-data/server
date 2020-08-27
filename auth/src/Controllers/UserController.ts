@@ -1,11 +1,9 @@
 import {Request, Response} from 'express';
 
-import {BadRequestError, AUTH_TOKEN, okayStatus, USER_NAME} from "@ranjodhbirkaur/common";
+import {BadRequestError, AUTH_TOKEN, okayStatus, USER_NAME, clientUserType} from "@ranjodhbirkaur/common";
 import {ClientTempUser} from "../models/clientTempUser";
 import {ClientUser} from "../models/clientUser";
 import jwt from "jsonwebtoken";
-import {clientUserType} from "../middleware/userTypeCheck";
-import {Model} from "mongoose";
 
 interface ReqIsUserNameAvailable extends Request{
     body: {

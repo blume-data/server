@@ -3,9 +3,9 @@ import mongoose from 'mongoose';
 import request from 'supertest';
 import {app} from '../app';
 import {emailVerification, logIn, register} from "../util/urls";
-import {okayStatus} from "@ranjodhbirkaur/common";
+import {okayStatus, clientUserType} from "@ranjodhbirkaur/common";
 import {rootUrl} from "../util/constants";
-import {clientUserType} from "../middleware/userTypeCheck";
+
 
 interface DataType {
  userName?: string, email?: string, firstName?: string, lastName?: string, password?: string
@@ -20,9 +20,11 @@ declare global {
   }
 }
 jest.setTimeout(30000);
+
 let mongo: any;
+
 beforeAll(async () => {
-  process.env.JWT_KEY = 'asdfasdfjkkjjkhjkhjkhjkhjkhkjhkjhkjhkjhkjhkjhjkhkjhjkhkjhkjhkjhkjhjkhkjhkjhjkhjkhhkh';
+  process.env.JWT_KEY = 'asd';
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
   mongo = new MongoMemoryServer();
@@ -47,9 +49,28 @@ afterAll(async () => {
   await mongoose.connection.close();
 });
 
-const emailVerificationUrl = `${rootUrl}/${clientUserType}/${emailVerification}`;
+export function getEmailVerificationUrl(userType: string) {
+  return `${rootUrl}/${userType}/${emailVerification}`;
+}
 
-let sampleData = {
+export function getRegistrationUrl(userType: string) {
+  return `${rootUrl}/${userType}/${register}`;
+}
+
+export function getSignInUrl(userType: string) {
+  return `${rootUrl}/${userType}/${logIn}`;
+}
+
+export interface SampleDataType {
+  email: string;
+  password: string,
+  firstName: string;
+  lastName: string;
+  userName: string;
+  adminType?: string;
+}
+
+let sampleData: SampleDataType = {
   "email": "test@test.com",
   "password": "testtest",
   "firstName": "Taranjeet",
@@ -70,8 +91,8 @@ function getSampleData(data: DataType) {
 
 global.signIn = async (userType: string, data?: DataType) => {
 
-  const registrationUrl = `${rootUrl}/${userType}/${register}`;
-  const signInUrl = `${rootUrl}/${userType}/${logIn}`;
+  const registrationUrl = getRegistrationUrl(userType);
+  const signInUrl = getSignInUrl(userType);
 
   if (data) {
     sampleData = getSampleData(data);
@@ -83,7 +104,7 @@ global.signIn = async (userType: string, data?: DataType) => {
       .expect(okayStatus);
 
   await request(app)
-      .get(`${emailVerificationUrl}?email=${sampleData.email}&token=${tempUser.body.verificationToken}`)
+      .get(`${getEmailVerificationUrl(clientUserType)}?email=${sampleData.email}&token=${tempUser.body.verificationToken}`)
       .expect(okayStatus);
 
   const response = await request(app)
@@ -110,8 +131,8 @@ global.signUp = async (userType: string, data?: DataType) => {
     };
   }
 
-  const registrationUrl = `${rootUrl}/${userType}/${register}`;
-  const signInUrl = `${rootUrl}/${userType}/${logIn}`;
+  const registrationUrl = getRegistrationUrl(userType);
+  const signInUrl = getSignInUrl(userType);
 
   const tempUser = await request(app)
       .post(registrationUrl)
@@ -122,7 +143,7 @@ global.signUp = async (userType: string, data?: DataType) => {
       .expect(okayStatus);
 
   await request(app)
-      .get(`${emailVerificationUrl}?email=${sampleData.email}&token=${tempUser.body.verificationToken}`)
+      .get(`${getEmailVerificationUrl(clientUserType)}?email=${sampleData.email}&token=${tempUser.body.verificationToken}`)
       .expect(okayStatus);
 
   const response = await request(app)

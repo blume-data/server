@@ -1,6 +1,10 @@
 import express, { Request, Response } from 'express';
 import { body } from 'express-validator';
-import {validateRequest, BadRequestError, okayStatus, RANDOM_STRING, errorStatus} from '@ranjodhbirkaur/common';
+import {
+    validateRequest, okayStatus, RANDOM_STRING,
+    errorStatus, adminUserType, clientUserType,
+    freeUserType, supportUserType
+} from '@ranjodhbirkaur/common';
 import {
     passwordLimitOptionErrorMessage,
     passwordLimitOptions,
@@ -10,8 +14,10 @@ import {
 import {ClientTempUser} from "../models/clientTempUser";
 import {signUpUrl} from "../util/urls";
 import {ClientUser} from "../models/clientUser";
-import {adminUserType, clientUserType, freeUserType, validateUserType} from "../middleware/userTypeCheck";
+import {validateUserType} from "../middleware/userTypeCheck";
 import {EmailInUseMessage, InValidEmailMessage, UserNameNotAvailableMessage} from "../util/errorMessages";
+import {AdminUser} from "../models/adminUser";
+import {generateJwt, sendJwtResponse} from "../util/methods";
 
 const
     router = express.Router();
@@ -42,13 +48,13 @@ router.post(
 
         switch (userType) {
             case clientUserType: {
-                return await saveClientUser(req, res);
+                return await saveUser(req, res);
             }
             case freeUserType: {
                 break;
             }
             case adminUserType: {
-                break;
+                return await saveUser(req, res, adminUserType);
             }
         }
   }
@@ -59,13 +65,22 @@ export { router as signupRouter };
 /*
 * Register client user
 * */
-async function saveClientUser(req: Request, res: Response) {
+async function saveUser(req: Request, res: Response, type=clientUserType ) {
 
-    const { email, password, firstName, lastName, userName } = req.body;
+    const { email, password, firstName, lastName, userName, adminType=supportUserType } = req.body;
 
+    let existingUser;
     // Check if the email is not taken
-    let existingUser = await ClientUser.findOne({ email });
-
+    switch (type) {
+        case clientUserType: {
+            existingUser = await ClientUser.findOne({email});
+            break;
+        }
+        case adminUserType: {
+            existingUser = await AdminUser.findOne({email});
+            break;
+        }
+    }
     if (existingUser) {
         return res.status(errorStatus).send({
             errors: [{
@@ -74,8 +89,18 @@ async function saveClientUser(req: Request, res: Response) {
             }]
         });
     }
-    // check if the user name is not taken
-    existingUser = await ClientUser.findOne({ userName });
+
+    // check if the user name is not taken for client User
+    existingUser = null;
+    switch (type) {
+        case clientUserType: {
+            existingUser = await ClientUser.findOne({userName});
+            break;
+        }
+        case adminUserType: {
+            existingUser = await AdminUser.findOne({userName});
+        }
+    }
     if (existingUser) {
         return res.status(errorStatus).send({
             errors: [{
@@ -87,16 +112,33 @@ async function saveClientUser(req: Request, res: Response) {
 
     const verificationToken = RANDOM_STRING(4);
 
-    const user = ClientTempUser.build({ email, password, firstName, lastName, userName, verificationToken });
-    await user.save();
+    let user, payload;
 
-    const payload = {
-        id: user.id,
-        email: user.email,
-        userName: user.userName,
-        // TODO remove verification token later
-        verificationToken: user.verificationToken
-    };
+    switch (type) {
+        case adminUserType: {
+            user = AdminUser.build({ email, password, userName, type: adminType });
+            await user.save();
+            payload = {
+                id: user.id,
+                email: user.email,
+                userName: user.userName
+            };
+            break;
+        }
+        default : {
+            user = ClientTempUser.build({ email, password, firstName, lastName, userName, verificationToken });
+            await user.save();
+            payload = {
+                id: user.id,
+                email: user.email,
+                userName: user.userName,
+                // TODO remove verification token later
+                verificationToken: user.verificationToken
+            };
+            const userJwt = generateJwt(payload, req);
+            return sendJwtResponse(res, payload, userJwt, user);
+        }
+    }
 
     res.status(okayStatus).send({... payload});
 }

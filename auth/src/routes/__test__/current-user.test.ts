@@ -1,16 +1,17 @@
 import request from 'supertest';
 import { app } from '../../app';
-import {currentUser, currentUserUrl, register} from "../../util/urls";
-import {errorStatus, okayStatus} from "@ranjodhbirkaur/common";
-import {clientUserType} from "../../middleware/userTypeCheck";
+import {currentUser} from "../../util/urls";
+import {errorStatus, okayStatus, clientUserType} from "@ranjodhbirkaur/common";
 import {rootUrl} from "../../util/constants";
 
-describe('It returns cookie for authenticated user', () => {
+describe('ClientUser: It returns cookie for authenticated user', () => {
   const currentUserUrl = `${rootUrl}/${clientUserType}/${currentUser}`;
 
   it('responds with details about the current user', async () => {
 
-    const cookie = await global.signIn(clientUserType, {email: `test@taranjeet.com`});
+    const email = 'test@taranjeet.com';
+
+    const cookie = await global.signIn(clientUserType, {email});
 
     const response = await request(app)
         .get(currentUserUrl)
@@ -18,7 +19,7 @@ describe('It returns cookie for authenticated user', () => {
         .send()
         .expect(okayStatus);
 
-    expect(response.body.currentUser.email).toEqual('test@taranjeet.com');
+    expect(response.body.currentUser.email).toEqual(email);
   });
 
   it('responds with null if not authenticated', async () => {

@@ -1,9 +1,8 @@
 import request from 'supertest';
 import { app } from '../../app';
 import {emailVerification, register} from "../../util/urls";
-import {errorStatus, okayStatus} from "@ranjodhbirkaur/common";
+import {errorStatus, okayStatus, clientUserType} from "@ranjodhbirkaur/common";
 import {rootUrl} from "../../util/constants";
-import {clientUserType} from "../../middleware/userTypeCheck";
 
 const sampleData = {
     "email": "t@t.com",

@@ -1,9 +1,8 @@
 import request from 'supertest';
 import { app } from '../../app';
 import {emailVerification, logIn, register} from "../../util/urls";
-import {AUTH_TOKEN, errorStatus, okayStatus} from "@ranjodhbirkaur/common";
+import {AUTH_TOKEN, errorStatus, okayStatus, clientUserType} from "@ranjodhbirkaur/common";
 import {rootUrl} from "../../util/constants";
-import {clientUserType} from "../../middleware/userTypeCheck";
 import {InvalidLoginCredentialsMessage} from "../../util/errorMessages";
 
 const sampleData = {
