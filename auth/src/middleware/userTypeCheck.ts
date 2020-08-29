@@ -1,6 +1,6 @@
 import {Request, Response, NextFunction} from "express";
 import {BadRequestError, supportUserType, superVisorUserType,
-    clientUserType, freeUserType, SupportedUserType,
+    freeUserType, SupportedUserType,
     errorStatus, ErrorMessages, adminUserType, adminType} from "@ranjodhbirkaur/common";
 import {ADMIN_USER_TYPE_NOT_VALID} from "../util/errorMessages";
 
