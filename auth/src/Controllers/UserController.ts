@@ -4,6 +4,7 @@ import {BadRequestError, AUTH_TOKEN, okayStatus, USER_NAME, clientUserType} from
 import {ClientTempUser} from "../models/clientTempUser";
 import {ClientUser} from "../models/clientUser";
 import jwt from "jsonwebtoken";
+import {TOKEN_NOT_VALID, USER_NAME_NOT_AVAILABLE} from "../util/errorMessages";
 
 interface ReqIsUserNameAvailable extends Request{
     body: {
@@ -33,7 +34,7 @@ export const isUserNameAvailable = async function (req: ReqIsUserNameAvailable, 
             }
             const userExist = await ClientUser.findOne({userName: modelProps.userName});
             if (userExist) {
-                throw new BadRequestError('Username not available');
+                throw new BadRequestError(USER_NAME_NOT_AVAILABLE);
             }
             else {
                 res.status(okayStatus).send(true);
@@ -87,7 +88,7 @@ export const verifyEmailToken = async function (req: ReqValidateEmail, res: Resp
 
         }
         else {
-            throw new BadRequestError('Token not valid');
+            throw new BadRequestError(TOKEN_NOT_VALID);
         }
     }
 };

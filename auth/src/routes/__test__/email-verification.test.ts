@@ -1,41 +1,33 @@
 import request from 'supertest';
 import { app } from '../../app';
-import {emailVerification, register} from "../../util/urls";
-import {errorStatus, okayStatus, clientUserType} from "@ranjodhbirkaur/common";
-import {rootUrl} from "../../util/constants";
+import {errorStatus, clientUserType} from "@ranjodhbirkaur/common";
+import {getEmailVerificationUrl} from "../../test/setup";
+import {getSampleData} from "../../test/testHelpers";
+import {registerUser} from "./signup.test";
+import {TOKEN_NOT_VALID} from "../../util/errorMessages";
 
-const sampleData = {
-    "email": "t@t.com",
-    "password": "sddsdf",
-    "firstName": "Taranjeet",
-    "lastName": "Singh",
-    "userName": "taranjeet"
-};
+async function verifyEmailOfUser(userType: string) {
+    const data = getSampleData(userType);
+    await registerUser(userType);
 
-describe('Email gets verified of client user', () => {
-    const registrationUrl = `${rootUrl}/${clientUserType}/${register}`;
-    const emailVerificationUrl = `${rootUrl}/${clientUserType}/${emailVerification}`;
+    const response = await request(app)
+        .get(`${getEmailVerificationUrl(userType)}?email=${data.email}&token=sdffdsf`)
+        .expect(errorStatus);
 
-    it('Client : Email verification', async (done) => {
-        const response = await request(app)
-            .post(registrationUrl)
-            .send(sampleData)
-            .expect(okayStatus);
+    expect(response.body.errors[0].message).toBe(TOKEN_NOT_VALID);
+}
 
-        await request(app)
-            .get(emailVerificationUrl)
-            .send({})
-            .expect(errorStatus);
+describe('Test Email Verification', () => {
+    describe('Email gets verified of client user', () => {
 
-        await request(app)
-            .get(`${emailVerificationUrl}?email=${response.body.email}&token=${response.body.verificationToken}`)
-            .expect(okayStatus);
-
-
-        await request(app)
-            .get(`${emailVerificationUrl}?email=${response.body.email}&token=4324sdfssdf`)
-            .expect(errorStatus);
-
-        done();
+        it('ClientUser', async () => {
+            await global.signUp(clientUserType);
+        });
     });
+
+    describe('Returns Error on invalid email token', () => {
+        it('ClientUser', async () => {
+            await verifyEmailOfUser(clientUserType);
+        });
+    })
 });

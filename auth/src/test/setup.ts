@@ -143,7 +143,7 @@ global.signUp = async (userType: string, data?: DataType) => {
       .expect(okayStatus);
 
   await request(app)
-      .get(`${getEmailVerificationUrl(clientUserType)}?email=${sampleData.email}&token=${tempUser.body.verificationToken}`)
+      .get(`${getEmailVerificationUrl(userType)}?email=${sampleData.email}&token=${tempUser.body.verificationToken}`)
       .expect(okayStatus);
 
   const response = await request(app)

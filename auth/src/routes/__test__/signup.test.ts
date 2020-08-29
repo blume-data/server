@@ -6,7 +6,7 @@ import {EmailInUseMessage, InValidEmailMessage, UserNameNotAvailableMessage} fro
 import {getRegistrationUrl} from "../../test/setup";
 import {getSampleData, signUpAUser} from "../../test/testHelpers";
 
-async function registerUser(userType: string, sampleData?: object) {
+export async function registerUser(userType: string, sampleData?: object) {
     const registrationUrl = getRegistrationUrl(userType);
     const data = sampleData ? sampleData : getSampleData(userType);
     return request(app)
