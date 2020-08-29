@@ -1,13 +1,13 @@
 import mongoose from 'mongoose';
 import { Password } from '../services/password';
-import {adminUserType, supportUserType, superVisorUserType} from '@ranjodhbirkaur/common';
+import {supportUserType} from '@ranjodhbirkaur/common';
 
 interface AdminUserAttrs {
   email: string;
   userName: string;
   password: string;
   isEnabled?: boolean;
-  type: string
+  adminType: string
 }
 
 interface AdminUserModel extends mongoose.Model<AdminUserDoc> {
@@ -19,7 +19,7 @@ interface AdminUserDoc extends mongoose.Document {
     userName: string;
     password: string;
     isEnabled?: boolean;
-    type: string
+    adminType: string
 }
 
 const adminUserSchema = new mongoose.Schema(
@@ -40,7 +40,7 @@ const adminUserSchema = new mongoose.Schema(
     type: Boolean,
     default: true
     },
-    type: {
+      adminType: {
         type: String,
         default: supportUserType
     }

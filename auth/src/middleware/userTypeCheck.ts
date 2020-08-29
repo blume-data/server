@@ -1,7 +1,7 @@
 import {Request, Response, NextFunction} from "express";
 import {BadRequestError, supportUserType, superVisorUserType,
     clientUserType, freeUserType, SupportedUserType,
-    errorStatus, ErrorMessages, adminUserType} from "@ranjodhbirkaur/common";
+    errorStatus, ErrorMessages, adminUserType, adminType} from "@ranjodhbirkaur/common";
 import {ADMIN_USER_TYPE_NOT_VALID} from "../util/errorMessages";
 
 export async function validateUserType(req: Request, res: Response, next: NextFunction) {
@@ -46,11 +46,14 @@ export async function validateUserType(req: Request, res: Response, next: NextFu
                     break;
                 }
                 case adminUserType: {
-                    if(!reqBody.adminType
-                        || typeof reqBody.adminType !== 'string'
-                        || ![adminUserType, supportUserType, superVisorUserType].includes(reqBody.adminType)) {
+                    if(!reqBody[adminType]
+                        || typeof reqBody[adminType] !== 'string'
+                        || ![adminUserType, supportUserType, superVisorUserType].includes(reqBody[adminType])) {
                         return res.status(errorStatus).send({
-                            errors: [ADMIN_USER_TYPE_NOT_VALID]
+                            errors: [{
+                                message: ADMIN_USER_TYPE_NOT_VALID,
+                                field: adminType
+                            }]
                         });
                     }
                 }

@@ -1,15 +1,14 @@
 import express, { Request, Response } from 'express';
 import { body } from 'express-validator';
-import {validateRequest, BadRequestError} from '@ranjodhbirkaur/common';
-
+import {validateRequest, BadRequestError, clientUserType, adminUserType} from '@ranjodhbirkaur/common';
 import { Password } from '../services/password';
-
 import {signInUrl} from "../util/urls";
 import {ClientUser} from "../models/clientUser";
 import {InValidEmailMessage, InvalidLoginCredentialsMessage} from "../util/errorMessages";
 import {passwordLimitOptionErrorMessage, passwordLimitOptions} from "../util/constants";
 import {validateUserType} from "../middleware/userTypeCheck";
 import {generateJwt, sendJwtResponse} from "../util/methods";
+import {AdminUser} from "../models/adminUser";
 
 const router = express.Router();
 
@@ -27,8 +26,21 @@ router.post(
   validateRequest,
   async (req: Request, res: Response) => {
     const { email, password } = req.body;
+    const userType = req.params.userType;
+    let existingUser;
 
-    const existingUser = await ClientUser.findOne({ email });
+    switch (userType) {
+      case clientUserType: {
+        existingUser = await ClientUser.findOne({email});
+        break;
+      }
+      case adminUserType: {
+        existingUser = await AdminUser.findOne({email});
+        break;
+      }
+
+    }
+
     if (!existingUser) {
       throw new BadRequestError(InvalidLoginCredentialsMessage);
     }

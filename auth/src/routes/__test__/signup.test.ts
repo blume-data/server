@@ -3,47 +3,8 @@ import {app} from '../../app';
 import {errorStatus, okayStatus, clientUserType, adminUserType} from "@ranjodhbirkaur/common";
 import {passwordLimitOptionErrorMessage, stringLimitOptionErrorMessage} from "../../util/constants";
 import {EmailInUseMessage, InValidEmailMessage, UserNameNotAvailableMessage} from "../../util/errorMessages";
-import {getEmailVerificationUrl, getRegistrationUrl, SampleDataType} from "../../test/setup";
-
-let sampleData: SampleDataType = {
-    "email": "t@t.com",
-    "password": "some-password",
-    "firstName": "some-first-name",
-    "lastName": "some-last-name",
-    "userName": "some-user-name"
-};
-
-function getSampleData(userType: string) {
-    let sampleData: SampleDataType = {
-        "email": "t@t.com",
-        "password": "some-password",
-        "firstName": "some-first-name",
-        "lastName": "some-last-name",
-        "userName": "some-user-name"
-    };
-    if (userType === adminUserType) {
-        sampleData = {
-            ...sampleData,
-            adminType: adminUserType
-        }
-    }
-    return sampleData;
-}
-
-async function beforeEach(userType: string) {
-
-    const registrationUrl = getRegistrationUrl(userType);
-    const emailVerificationUrl = getEmailVerificationUrl(userType);
-
-    const user = await request(app)
-        .post(registrationUrl)
-        .send(getSampleData(userType))
-        .expect(okayStatus);
-
-    await request(app)
-        .get(`${emailVerificationUrl}?email=${sampleData.email}&token=${user.body.verificationToken}`)
-        .expect(okayStatus);
-}
+import {getRegistrationUrl} from "../../test/setup";
+import {getSampleData, signUpAUser} from "../../test/testHelpers";
 
 async function registerUser(userType: string, sampleData?: object) {
     const registrationUrl = getRegistrationUrl(userType);
@@ -54,6 +15,7 @@ async function registerUser(userType: string, sampleData?: object) {
 }
 
 async function testSignUp(userType: string) {
+    const sampleData = getSampleData(userType);
     const response = await registerUser(userType);
     expect(response.status).toBe(okayStatus);
     expect(response.body.id).toBeDefined();
@@ -104,7 +66,8 @@ async function allowsDuplicateEmails(userType: string) {
 }
 
 async function doesNotAllowsDuplicateUserName(userType: string) {
-    await beforeEach(userType);
+    await signUpAUser(userType);
+    const sampleData = getSampleData(userType);
     let data = {
         ...sampleData,
         email: 'somedsfds@gmail.com'
@@ -138,7 +101,7 @@ describe('registers the client user', () => {
     });
 
     it('Disallows verified users to sign up', async () => {
-        await beforeEach(clientUserType);
+        await signUpAUser(clientUserType);
         const response = await registerUser(clientUserType);
         expect(response.status).toBe(errorStatus);
         expect(response.body.errors[0].message).toBe(EmailInUseMessage);

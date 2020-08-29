@@ -67,7 +67,8 @@ export { router as signupRouter };
 * */
 async function saveUser(req: Request, res: Response, type=clientUserType ) {
 
-    const { email, password, firstName, lastName, userName, adminType=supportUserType } = req.body;
+    const { email, password, firstName, lastName, userName } = req.body;
+    const [adminType] = req.body;
 
     let existingUser;
     // Check if the email is not taken
@@ -116,7 +117,7 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
 
     switch (type) {
         case adminUserType: {
-            user = AdminUser.build({ email, password, userName, type: adminType });
+            user = AdminUser.build({ email, password, userName, adminType });
             await user.save();
             payload = {
                 id: user.id,
