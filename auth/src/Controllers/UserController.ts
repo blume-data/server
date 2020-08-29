@@ -1,10 +1,17 @@
 import {Request, Response} from 'express';
-
-import {BadRequestError, AUTH_TOKEN, okayStatus, USER_NAME, clientUserType} from "@ranjodhbirkaur/common";
+import {
+    BadRequestError,
+    AUTH_TOKEN,
+    okayStatus,
+    USER_NAME,
+    clientUserType,
+    adminUserType
+} from "@ranjodhbirkaur/common";
 import {ClientTempUser} from "../models/clientTempUser";
 import {ClientUser} from "../models/clientUser";
 import jwt from "jsonwebtoken";
 import {TOKEN_NOT_VALID, USER_NAME_NOT_AVAILABLE} from "../util/errorMessages";
+import {AdminUser} from "../models/adminUser";
 
 interface ReqIsUserNameAvailable extends Request{
     body: {
@@ -25,14 +32,18 @@ export const isUserNameAvailable = async function (req: ReqIsUserNameAvailable, 
     
     if (modelProps) {
         if (modelProps.userName) {
-            let model;
+            let userExist;
 
             switch (userType) {
                 case clientUserType: {
-                    model = ClientUser;
+                    userExist = await ClientUser.findOne({userName: modelProps.userName});
+                    break;
+                }
+                case adminUserType: {
+                    userExist = await AdminUser.findOne({userName: modelProps.userName});
+                    break;
                 }
             }
-            const userExist = await ClientUser.findOne({userName: modelProps.userName});
             if (userExist) {
                 throw new BadRequestError(USER_NAME_NOT_AVAILABLE);
             }

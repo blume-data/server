@@ -2,7 +2,7 @@ import {MongoMemoryServer} from 'mongodb-memory-server';
 import mongoose from 'mongoose';
 import request from 'supertest';
 import {app} from '../app';
-import {emailVerification, logIn, register} from "../util/urls";
+import {emailVerification, logIn, register, userNameValidation} from "../util/urls";
 import {okayStatus, clientUserType} from "@ranjodhbirkaur/common";
 import {rootUrl} from "../util/constants";
 
@@ -51,6 +51,10 @@ afterAll(async () => {
 
 export function getEmailVerificationUrl(userType: string) {
   return `${rootUrl}/${userType}/${emailVerification}`;
+}
+
+export function getUserNameValidationUrl(userType: string) {
+  return `${rootUrl}/${userType}/${userNameValidation}`;
 }
 
 export function getRegistrationUrl(userType: string) {
