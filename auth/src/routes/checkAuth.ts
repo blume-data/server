@@ -1,6 +1,6 @@
 import express from "express";
 import {clusterCheckUser } from "../util/urls";
-import {body, query} from "express-validator";
+import {body} from "express-validator";
 import {stringLimitOptionErrorMessage, stringLimitOptions} from "../util/constants";
 import {validateRequest} from "@ranjodhbirkaur/common";
 import {isUserEnabled} from "../Controllers/AuthController";

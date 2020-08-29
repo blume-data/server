@@ -1,0 +1,63 @@
+@import "src/assets/style/index.scss";
+.app-list-item {
+  .num-comments {
+    width: 75px;
+  }
+  .up-vote {
+    width: 60px;
+    min-width: 60px;
+    img {
+      width: 100%;
+    }
+  }
+  .new-details {
+    text-align: left;
+    width: auto;
+    padding-left: 5px;
+  }
+  td {
+    text-align: center;
+    span {
+      font-size: $font-size-primary;
+
+      a {
+        text-decoration: none;
+        color: $gray;
+      }
+    }
+    span.gray-font {
+      font-size: $font-size-secondary;
+      word-break: break-all;
+      color: $gray;
+    }
+    .small-font {
+      word-break: break-all;
+      font-size: $font-size-secondary;
+    }
+    button.accessibility {
+      padding: 0;
+      border: 0;
+      background: none;
+      cursor: pointer;
+    }
+  }
+}
+tr.app-list-item.loading {
+  pointer-events: none;
+  .accessibility {
+    display: none;
+  }
+  span {
+    background: $gray;
+    color: $gray;
+  }
+  .gray-font {
+    display: none;
+  }
+  .small-font {
+    display: none;
+  }
+}
+tr.app-list-item.hidden {
+  display: none;
+}

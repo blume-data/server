@@ -10,6 +10,7 @@ export const InvalidLoginCredentialsMessage = 'Login credentials are not valid';
 
 export const ADMIN_USER_TYPE_NOT_VALID = `${adminType} is not valid`;
 
+export const TOKEN_IS_REQUIRED_MESSAGE = 'token is required';
 export const TOKEN_NOT_VALID = 'Token not valid';
 
 export const USER_NAME_NOT_AVAILABLE = 'Username not available';
