@@ -11,7 +11,7 @@ describe('ClientUser: It returns cookie for authenticated user', () => {
 
     const email = 'test@taranjeet.com';
 
-    const cookie = await global.signIn(clientUserType, {email});
+    const {cookie} = await global.signUp(clientUserType, {email});
 
     const response = await request(app)
         .get(currentUserUrl)

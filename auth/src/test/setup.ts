@@ -14,7 +14,7 @@ interface DataType {
 declare global {
   namespace NodeJS {
     interface Global {
-      signUp(userType: string, data?: DataType): Promise<{email: string, userName: string}>;
+      signUp(userType: string, data?: DataType): Promise<{email: string, userName: string, cookie: any}>;
     }
   }
 }
@@ -119,7 +119,8 @@ global.signUp = async (userType: string, data?: DataType) => {
 
   return {
     email: response.body.email,
-    userName: response.body.userName
+    userName: response.body.userName,
+    cookie: response.get('Set-Cookie')
   }
 
 };
