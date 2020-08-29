@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import request from 'supertest';
 import {app} from '../app';
 import {emailVerification, logIn, register, userNameValidation} from "../util/urls";
-import {okayStatus, clientUserType} from "@ranjodhbirkaur/common";
+import {adminType, adminUserType, clientUserType, okayStatus} from "@ranjodhbirkaur/common";
 import {rootUrl} from "../util/constants";
 
 
@@ -14,7 +14,6 @@ interface DataType {
 declare global {
   namespace NodeJS {
     interface Global {
-      signIn(userType: string, data?: DataType): Promise<string[]>;
       signUp(userType: string, data?: DataType): Promise<{email: string, userName: string}>;
     }
   }
@@ -82,7 +81,7 @@ let sampleData: SampleDataType = {
   "userName": "taranjeet"
 };
 
-function getSampleData(data: DataType) {
+function getSampleData(data: DataType, userType: string) {
   return {
     ...sampleData,
     userName: data && data.userName ? data.userName : sampleData.userName,
@@ -90,50 +89,13 @@ function getSampleData(data: DataType) {
     lastName: data && data.lastName ? data.lastName : sampleData.lastName,
     email: data && data.email ? data.email : sampleData.email,
     password: data && data.password ? data.password : sampleData.password,
+    [adminType] : userType === adminUserType ? adminUserType : undefined
   };
 }
 
-global.signIn = async (userType: string, data?: DataType) => {
-
-  const registrationUrl = getRegistrationUrl(userType);
-  const signInUrl = getSignInUrl(userType);
-
-  if (data) {
-    sampleData = getSampleData(data);
-  }
-
-  const tempUser = await request(app)
-      .post(registrationUrl)
-      .send(sampleData)
-      .expect(okayStatus);
-
-  await request(app)
-      .get(`${getEmailVerificationUrl(clientUserType)}?email=${sampleData.email}&token=${tempUser.body.verificationToken}`)
-      .expect(okayStatus);
-
-  const response = await request(app)
-    .post(signInUrl)
-    .send({
-      email: sampleData.email,
-      password: sampleData.password
-    })
-    .expect(okayStatus);
-
-  return response.get('Set-Cookie');
-};
-
 global.signUp = async (userType: string, data?: DataType) => {
 
-  if (data) {
-    sampleData = {
-      ...sampleData,
-      userName: data && data.userName ? data.userName : sampleData.userName,
-      firstName: data && data.firstName ? data.firstName : sampleData.firstName,
-      lastName: data && data.lastName ? data.lastName : sampleData.lastName,
-      email: data && data.email ? data.email : sampleData.email,
-      password: data && data.password ? data.password : sampleData.password,
-    };
-  }
+  sampleData = getSampleData(data || {}, userType);
 
   const registrationUrl = getRegistrationUrl(userType);
   const signInUrl = getSignInUrl(userType);
@@ -142,13 +104,13 @@ global.signUp = async (userType: string, data?: DataType) => {
       .post(registrationUrl)
       .send({
         ...sampleData,
+      });
 
-      })
-      .expect(okayStatus);
-
-  await request(app)
-      .get(`${getEmailVerificationUrl(userType)}?email=${sampleData.email}&token=${tempUser.body.verificationToken}`)
-      .expect(okayStatus);
+  if (userType !== adminUserType) {
+    await request(app)
+        .get(`${getEmailVerificationUrl(userType)}?email=${sampleData.email}&token=${tempUser.body.verificationToken}`)
+        .expect(okayStatus);
+  }
 
   const response = await request(app)
       .post(signInUrl)

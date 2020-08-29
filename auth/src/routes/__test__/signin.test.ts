@@ -56,7 +56,7 @@ async function testUserLoginReturnsCookie(userType: string) {
 
 describe('Logs in the client user', () => {
 
-    describe('Logs in a valid user', async () => {
+    describe('Logs in a valid user',() => {
         it('ClientUser', async () => {
             await testUserLogin(clientUserType);
         });
@@ -66,7 +66,7 @@ describe('Logs in the client user', () => {
 
     });
 
-    describe('fails when a email/password that does not exist is supplied', async () => {
+    describe('fails when a email/password that does not exist is supplied',() => {
         it('clientUser', async () => {
             await testUserLoginWithInValidCredentials(clientUserType);
         });
@@ -75,7 +75,7 @@ describe('Logs in the client user', () => {
         })
     });
 
-    describe('SignIn: verification fails when wrong password provided', async () => {
+    describe('SignIn: verification fails when wrong password provided',() => {
         it('ClientUser', async () => {
             await testUserLoginFailsWIthInvalidPassword(clientUserType);
         });
@@ -84,7 +84,7 @@ describe('Logs in the client user', () => {
         });
     });
 
-    describe('responds with a cookie when given valid credentials', async () => {
+    describe('responds with a cookie when given valid credentials',() => {
         it('client user', async () => {
             await testUserLoginReturnsCookie(clientUserType);
         });

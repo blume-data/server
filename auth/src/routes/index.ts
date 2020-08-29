@@ -4,6 +4,7 @@ import {body, query} from "express-validator";
 import {validateRequest} from "@ranjodhbirkaur/common";
 import {isUserNameAvailable, verifyEmailToken} from "../Controllers/UserController";
 import {emailVerificationUrl, userNameValidationUrl} from "../util/urls";
+import {InValidEmailMessage} from "../util/errorMessages";
 
 const router = express.Router();
 
@@ -22,7 +23,7 @@ router.get(emailVerificationUrl, [
         .withMessage('token is required')
         .isLength(stringLimitOptions)
         .withMessage(stringLimitOptionErrorMessage('token')),
-    query('email').isEmail().withMessage('Email must be valid')
+    query('email').isEmail().withMessage(InValidEmailMessage)
     ],
     validateRequest, verifyEmailToken);
 
