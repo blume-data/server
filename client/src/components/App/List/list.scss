@@ -1,0 +1,28 @@
+@import "src/assets/style/index.scss";
+.app-list {
+  table {
+    width: 100%;
+  }
+
+  tr:nth-child(even) {
+    background-color: $light-gray;
+  }
+  span.action-button {
+    display: flex;
+    padding: 10px;
+    flex-direction: row;
+    justify-content: flex-end;
+    color: $primary;
+    .buttons {
+      margin: 0 5px;
+      font-weight: 600;
+      padding: 0;
+      border: 0;
+      background: none;
+      cursor: pointer;
+      color: $primary;
+    }
+  }
+
+  border-bottom: 3px solid $primary;
+}
