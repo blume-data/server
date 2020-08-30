@@ -1,5 +1,6 @@
 @import "src/assets/style/index";
 .appLayout {
-  margin: 0 5px;
+  max-width: 2560px;
+  margin: 0 auto;
   background-color: $app-background;
 }

@@ -1,6 +1,8 @@
 import React from 'react';
 import './index.scss'
-import Footer from '../Footer';
+import {Grid} from "@material-ui/core";
+import {Footer} from "../Footer";
+import {NavBar} from "../NavBar";
 
 export interface PropsType {
     rootClass?: string;
@@ -11,9 +13,10 @@ export interface PropsType {
 export default (props: PropsType) => {
     const {children} = props;
     return (
-        <div className="appLayout">
+        <Grid className="appLayout">
+            <NavBar />
             {children}
             <Footer />
-        </div>
+        </Grid>
     );
 }

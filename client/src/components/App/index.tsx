@@ -4,7 +4,6 @@ import './app.scss';
 import List from './List';
 import {RootState} from "../../rootReducer";
 import {fetchNewsData, syncData, updateVote, toggleHide} from "./actions";
-import AppChart from './Chart';
 import { Toast } from '../common/Toast';
 
 const mapState = (state: RootState) => ({
@@ -50,11 +49,7 @@ export const App = (props: AppProps) => {
                 page={page}
                 news={news}
                 fetchNews={fetchNews} />
-            {
-                news.length
-                ? <AppChart isLoading={isLoading} news={news} />
-                : null
-            }
+
             <Toast errors={errors || null} />
         </div>
     );

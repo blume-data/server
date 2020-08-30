@@ -1,7 +1,8 @@
 import React from 'react';
 import './footer.scss';
-export default () => {
+import {Grid} from "@material-ui/core";
+export const Footer = () => {
     return (
-        <div className="appFooter" />
+        <Grid className="appFooter" />
     );
-}
+};
