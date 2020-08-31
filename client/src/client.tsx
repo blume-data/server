@@ -36,11 +36,11 @@ const store = createStore(
 const root = document.getElementById('root');
 hydrate(<React.StrictMode>
     <Provider store={store}>
-        <Layout>
-            <BrowserRouter>
+        <BrowserRouter>
+            <Layout>
                 {renderRoutes(Routes)}
-            </BrowserRouter>
-        </Layout>
+            </Layout>
+        </BrowserRouter>
     </Provider>
 </React.StrictMode>, root);
 

@@ -40,11 +40,11 @@ const serverMiddleware = (webExtractor: ChunkExtractor) => {
             const content = renderToString(
                 <React.StrictMode>
                     <Provider store={store}>
-                        <Layout>
-                            <StaticRouter location={req.path} context={context}>
+                        <StaticRouter location={req.path} context={context}>
+                            <Layout>
                                 {renderRoutes(Routes)}
-                            </StaticRouter>
-                        </Layout>
+                            </Layout>
+                        </StaticRouter>
                     </Provider>
                 </React.StrictMode>
             );
