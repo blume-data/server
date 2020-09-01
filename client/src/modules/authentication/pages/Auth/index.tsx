@@ -69,16 +69,15 @@ export const Auth = () => {
     ];
 
     function onSubmit(values: any) {
-        console.log('submited', values);
+        console.log('submitted', values);
     }
 
     return (
         <Grid container direction={'row'} justify={'space-between'}>
-            <Grid item>
+            <Grid item lg={6} xl={6} md={6} sm={6} xs={12}>
                 welcome
-
             </Grid>
-            <Grid item>
+            <Grid item lg={6} xl={6} md={6} sm={6} xs={12}>
                 <Grid container justify={'center'}>
                     <Form onSubmit={onSubmit} fields={fields} className={'auth-form'} />
                 </Grid>

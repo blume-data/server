@@ -2,7 +2,7 @@ import React, {ChangeEvent, useEffect, useState} from "react";
 import {Grid, Button} from "@material-ui/core";
 import { TextBox } from "./TextBox";
 import {DropDown} from "./DropDown";
-import {ConfigField, FormType, TEXT, BIG_TEXT, DROPDOWN} from "./interface";
+import {ConfigField, FormType, TEXT, BIG_TEXT, DROPDOWN, FieldType} from "./interface";
 import './style.scss';
 
 interface FormState {
@@ -156,14 +156,54 @@ export const Form = (props: FormType) => {
     }
 
     function onClickSubmit() {
-        const values: {name: string; value: string}[] = [];
+        let isValid = true;
+        formState.forEach(item => {
+            const formItem = fields.find(field => field.name === item.name);
+            if (formItem && formItem.required && !item.value) {
+                isValid = false
+            }
+        });
+
+        if(isValid) {
+            const values: {name: string; value: string}[] = [];
+            formState.forEach(item => {
+                values.push({
+                    name: item.name,
+                    value: item.value
+                });
+            });
+            onSubmit(values);
+        }
+        else {
+            let newFormState: FormState[] = [];
+            formState.forEach(item => {
+                const formItem = fields.find(field => field.name === item.name);
+                if (formItem && formItem.required && !item.value) {
+                    newFormState.push({
+                        ...item,
+                        isTouched: true,
+                        helperText: getHelperText(item.name)
+                    })
+                }
+                else {
+                    newFormState.push(item);
+                }
+            });
+            setFormState(newFormState);
+        }
+    }
+
+    function clearForm() {
+        const values: FormState[] = [];
         formState.forEach(item => {
             values.push({
-                name: item.name,
-                value: item.value
+                ...item,
+                value: '',
+                helperText: '',
+                isTouched: false
             });
         });
-        onSubmit(values);
+        setFormState(values);
     }
 
     return (
@@ -171,10 +211,14 @@ export const Form = (props: FormType) => {
             {fields.map((option: ConfigField, index) => {
                 return renderFields(option, index);
             })}
-            <Grid item>
-                <Button variant="outlined"
-                        onClick={onClickSubmit}
-                        color={'primary'}>Submit</Button>
+
+            <Grid container justify={'space-between'}>
+                <Grid item >
+                    <Button variant="outlined" onClick={onClickSubmit} color={'primary'}>Submit</Button>
+                </Grid>
+                <Grid item >
+                    <Button variant="outlined" onClick={clearForm} color={'secondary'}>Clear</Button>
+                </Grid>
             </Grid>
         </Grid>
     );
