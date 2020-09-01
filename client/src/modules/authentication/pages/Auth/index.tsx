@@ -29,39 +29,39 @@ export const Auth = () => {
         {
             inputType: DROPDOWN,
             placeholder: 'First Name',
-            name: 'namedf',
+            label: 'age',
             required: true,
             value: '',
             className: 'dsf',
-            onChange: (event: ChangeEvent<any>) => {},
+            name: 'firstNameDropDown',
             options: [{label: 'df', value: 'a-drop-down-value'}]
         },
         {
             inputType: BIG_TEXT,
             placeholder: 'big text',
             name: 'some name big text',
+            label: 'some big text',
             required: false,
             value: 'sdf',
             className: 'dsf',
-            onChange: (event: ChangeEvent<any>) => {},
         },
         {
             inputType: TEXT,
             placeholder: 'First Name',
-            name: 'First Name',
+            label: 'First Name',
+            name: 'firstName',
             required: true,
             value: firstName,
             className: 'auth-text-box',
-            onChange: (event: ChangeEvent<any>) => {changeValue(event, FIRST_NAME)},
         },
         {
             inputType: TEXT,
             placeholder: 'Last Name',
             name: 'lastName',
+            label: 'Last Name',
             required: true,
             value: lastName,
-            className: 'auth-text-box',
-            onChange: (event: ChangeEvent<any>) => {changeValue(event, LAST_NAME)},
+            className: 'auth-text-box'
         },
     ];
 

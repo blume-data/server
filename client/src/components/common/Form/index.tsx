@@ -8,7 +8,7 @@ interface FormState {
     name: string;
     value: string;
     isTouched: boolean;
-    errorMessage: string;
+    helperText: string;
 }
 
 const SET_VALUE_ACTION = 'SET_VALUE_ACTION';
@@ -20,6 +20,10 @@ export const Form = (props: FormType) => {
     const [formState, setFormState] = useState<FormState[]>([]);
     const {className, fields} = props;
 
+    function setErrorMessage(name: string) {
+        return `${name} is required`;
+    }
+
     function changeValue(event: ChangeEvent<any>, field: string, action: string, actionValue?: string) {
         const value = event.target.value;
         let state: FormState[];
@@ -29,7 +33,7 @@ export const Form = (props: FormType) => {
                     return {
                         ...item,
                         value,
-                        errorMessage: (!value) ? `${item.name} is required` : '',
+                        helperText: (!value) ? setErrorMessage(field) : '',
                     }
                 }
                 return item;
@@ -41,7 +45,7 @@ export const Form = (props: FormType) => {
                 if (item.name === field) {
                     return {
                         ...item,
-                        errorMessage: `${actionValue}`
+                        helperText: `${actionValue}`
                     }
                 }
                 return item;
@@ -53,6 +57,7 @@ export const Form = (props: FormType) => {
                 if (item.name === field) {
                     return {
                         ...item,
+                        helperText: !item.value ? setErrorMessage(item.name) : '',
                         isTouched: true
                     }
                 }
@@ -68,7 +73,7 @@ export const Form = (props: FormType) => {
                 name: field.name,
                 [`value`]: field.value,
                 [`isTouched`]: false,
-                [`errorMessage`]: ''
+                [`helperText`]: ''
             };
         });
         setFormState(state);
@@ -90,18 +95,28 @@ export const Form = (props: FormType) => {
         return false;
     }
 
+    function getHelperText(name: string) {
+        const value = formState.find(item => item.name === name);
+        if (value) {
+            return value.helperText
+        }
+        return '';
+    }
+
     function renderFields(field: ConfigField, index: number) {
-        const {inputType, options, id, className, name, placeholder, required} = field;
+        const {inputType, options, id, className, name, placeholder, required, label} = field;
         if (inputType === TEXT) {
             return (
                 <TextBox
                     key={index}
+                    name={name}
                     error={hasError(name)}
                     required={required}
                     placeholder={placeholder}
+                    helperText={getHelperText(name)}
                     onChange={(e) => changeValue(e, name, SET_VALUE_ACTION)}
                     onBlur={(e) => changeValue(e, name, SET_IS_TOUCHED_ACTION)}
-                    label={name}
+                    label={label}
                     id={id}
                     value={getValue(name)}
                     className={'sddsfdsf'} />
@@ -110,22 +125,26 @@ export const Form = (props: FormType) => {
         if(inputType === DROPDOWN) {
             return (
                 <DropDown
+                    onBlur={(e) => changeValue(e, name, SET_IS_TOUCHED_ACTION)}
                     value={getValue(name)} options={options && options.length ? options : []}
                     onChange={(e) => changeValue(e, name, SET_VALUE_ACTION)}
                     placeholder={placeholder} required={required} index={index} name={name}
+                    label={label} error={hasError(name)} helperText={getHelperText(name)}
                     key={index} className={className} />
             );
         }
         if(inputType === BIG_TEXT) {
             return (
                 <TextBox
+                    name={name}
                     key={index}
                     multiline={true}
                     required={required}
                     placeholder={placeholder}
+                    helperText={getHelperText(name)}
                     onBlur={(e) => changeValue(e, name, SET_IS_TOUCHED_ACTION)}
                     onChange={(e) => changeValue(e, name, SET_VALUE_ACTION)}
-                    label={name}
+                    label={label}
                     id={id}
                     value={getValue(name)}
                     className={'text-asdfrea-form-control'}  />

@@ -1,23 +1,17 @@
 import React, {ChangeEvent} from "react";
 import {FormControl, Grid, TextField} from "@material-ui/core";
 import './style.scss';
+import {FieldType} from "../interface";
 
-interface TextBoxType {
-    id?: string;
-    className?: string;
-    error?: boolean;
-    label: string;
-    required: boolean;
-    onBlur: (event: ChangeEvent<any>) => void;
-    onChange: (event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => void;
-    value: string;
+interface TextBoxType extends FieldType{
     multiline?: boolean;
-    placeholder: string;
+    onChange: (event: ChangeEvent<any>) => void;
+    onBlur: (event: ChangeEvent<any>) => void;
     key: number;
 }
 export const TextBox = (props: TextBoxType) => {
     const {id, className, label, required=false,
-        onBlur,
+        onBlur, helperText,
         onChange, error=false, value='', placeholder='', multiline=false, key} = props;
     return (
         <Grid className={`${className} app-text-box`} key={key}>
@@ -26,6 +20,7 @@ export const TextBox = (props: TextBoxType) => {
                     placeholder={placeholder}
                     value={value}
                     error={error}
+                    helperText={helperText}
                     onBlur={onBlur}
                     multiline={multiline}
                     onChange={onChange}

@@ -15,14 +15,16 @@ export interface OptionsType {
 }
 
 export interface FieldType {
-    placeholder: string,
-    value: string,
+    placeholder: string;
+    value: string;
     id?: string;
-    onChange: (event: ChangeEvent<any>) => void;
-    options?: OptionsType[],
-    className: string,
-    required: boolean,
-    name: string,
+    options?: OptionsType[];
+    className: string;
+    required: boolean;
+    name: string;
+    label: string;
+    error?: boolean;
+    helperText?: string;
 }
 
 export interface ConfigField extends FieldType{
