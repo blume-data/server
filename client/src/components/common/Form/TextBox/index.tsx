@@ -5,8 +5,10 @@ import './style.scss';
 interface TextBoxType {
     id?: string;
     className?: string;
+    error?: boolean;
     label: string;
     required: boolean;
+    onBlur: (event: ChangeEvent<any>) => void;
     onChange: (event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => void;
     value: string;
     multiline?: boolean;
@@ -14,13 +16,17 @@ interface TextBoxType {
     key: number;
 }
 export const TextBox = (props: TextBoxType) => {
-    const {id, className, label, required=false, onChange, value='', placeholder='', multiline=false, key} = props;
+    const {id, className, label, required=false,
+        onBlur,
+        onChange, error=false, value='', placeholder='', multiline=false, key} = props;
     return (
         <Grid className={`${className} app-text-box`} key={key}>
             <FormControl className={'text-box-form-control'}>
                 <TextField
                     placeholder={placeholder}
                     value={value}
+                    error={error}
+                    onBlur={onBlur}
                     multiline={multiline}
                     onChange={onChange}
                     required={required}

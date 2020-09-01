@@ -20,7 +20,7 @@ export const Form = (props: FormType) => {
     const [formState, setFormState] = useState<FormState[]>([]);
     const {className, fields} = props;
 
-    function changeValue(event: ChangeEvent<any>, field: string, action: string, actionValue?: string | boolean) {
+    function changeValue(event: ChangeEvent<any>, field: string, action: string, actionValue?: string) {
         const value = event.target.value;
         let state: FormState[];
         if (action === SET_VALUE_ACTION) {
@@ -28,7 +28,8 @@ export const Form = (props: FormType) => {
                 if (item.name === field) {
                     return {
                         ...item,
-                        value
+                        value,
+                        errorMessage: (!value) ? `${item.name} is required` : '',
                     }
                 }
                 return item;
@@ -52,7 +53,7 @@ export const Form = (props: FormType) => {
                 if (item.name === field) {
                     return {
                         ...item,
-                        isTouched: !!actionValue
+                        isTouched: true
                     }
                 }
                 return item;
@@ -81,15 +82,25 @@ export const Form = (props: FormType) => {
         return '';
     }
 
+    function hasError(name: string) {
+        const value = formState.find(item => item.name === name);
+        if (value) {
+            return (!value.value && value.isTouched)
+        }
+        return false;
+    }
+
     function renderFields(field: ConfigField, index: number) {
         const {inputType, options, id, className, name, placeholder, required} = field;
         if (inputType === TEXT) {
             return (
                 <TextBox
                     key={index}
+                    error={hasError(name)}
                     required={required}
                     placeholder={placeholder}
                     onChange={(e) => changeValue(e, name, SET_VALUE_ACTION)}
+                    onBlur={(e) => changeValue(e, name, SET_IS_TOUCHED_ACTION)}
                     label={name}
                     id={id}
                     value={getValue(name)}
@@ -112,6 +123,7 @@ export const Form = (props: FormType) => {
                     multiline={true}
                     required={required}
                     placeholder={placeholder}
+                    onBlur={(e) => changeValue(e, name, SET_IS_TOUCHED_ACTION)}
                     onChange={(e) => changeValue(e, name, SET_VALUE_ACTION)}
                     label={name}
                     id={id}
@@ -120,6 +132,8 @@ export const Form = (props: FormType) => {
             );
         }
     }
+
+    console.log('value', formState);
 
     return (
         <Grid className={`${className} app-form`} container justify={'center'} direction={'column'}>
