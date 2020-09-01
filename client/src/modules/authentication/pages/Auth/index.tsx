@@ -1,7 +1,10 @@
 import React from "react";
 import {Grid} from "@material-ui/core";
-import {Form} from "../../../../components/common/Form";
 import {ConfigField, DROPDOWN, TEXT} from "../../../../components/common/Form/interface";
+import loadable from "@loadable/component";
+const Form = loadable(() => import("../../../../components/common/Form"), {
+    resolveComponent: (components) => components.Form
+});
 
 export const Auth = () => {
 

@@ -78,7 +78,7 @@ export const Form = (props: FormType) => {
             };
         });
         setFormState(state);
-    }, []);
+    }, [fields]);
 
     function getValue(name: string) {
         const value = formState.find(item => item.name === name);
@@ -173,6 +173,7 @@ export const Form = (props: FormType) => {
                 });
             });
             onSubmit(values);
+            clearForm();
         }
         else {
             let newFormState: FormState[] = [];
