@@ -3,27 +3,7 @@ import {Grid} from "@material-ui/core";
 import {Form} from "../../../../components/common/Form";
 import {BIG_TEXT, ConfigField, DROPDOWN, TEXT} from "../../../../components/common/Form/interface";
 
-const FIRST_NAME = 'firstName';
-const LAST_NAME = 'lastName';
-
 export const Auth = () => {
-
-    const [firstName, setFirstName] = useState<string>('');
-    const [lastName, setLastName] = useState<string>('');
-
-    function changeValue(event: ChangeEvent<any>, field: string) {
-        const value = event.target.value;
-        switch (field) {
-            case FIRST_NAME: {
-                setFirstName(value);
-                break;
-            }
-            case LAST_NAME: {
-                setLastName(value);
-            }
-        }
-
-    }
 
     const fields: ConfigField[] = [
         {
@@ -51,7 +31,7 @@ export const Auth = () => {
             label: 'First Name',
             name: 'firstName',
             required: true,
-            value: firstName,
+            value: '',
             className: 'auth-text-box',
         },
         {
@@ -60,7 +40,7 @@ export const Auth = () => {
             name: 'lastName',
             label: 'Last Name',
             required: true,
-            value: lastName,
+            value: '',
             className: 'auth-text-box'
         },
     ];
