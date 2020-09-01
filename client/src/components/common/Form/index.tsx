@@ -82,7 +82,7 @@ export const Form = (props: FormType) => {
     }
 
     function renderFields(field: ConfigField, index: number) {
-        const {inputType, options, id, className, name, onChange, placeholder, required, value} = field;
+        const {inputType, options, id, className, name, placeholder, required} = field;
         if (inputType === TEXT) {
             return (
                 <TextBox
@@ -120,8 +120,6 @@ export const Form = (props: FormType) => {
             );
         }
     }
-
-    console.log('form state', formState);
 
     return (
         <Grid className={`${className} app-form`} container justify={'center'} direction={'column'}>
