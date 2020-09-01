@@ -15,7 +15,7 @@ export const DropDown = (props: DropDownType) => {
     const {options, id, className, name, onChange, onBlur,
         error=false, helperText,
         placeholder='', required=false, value, index} = props;
-    const randomId = randomString();
+    const randomId = `${name.split(' ').join('-')}-${index}-drop-down-input-label`;
     return (
         <Grid key={index} className={`${className} app-drop-down`} id={id ? id : undefined}>
             <FormControl className={'app-drop-down-form-control'} error={error}>
@@ -35,7 +35,8 @@ export const DropDown = (props: DropDownType) => {
                     </MenuItem>
                     {
                         options &&
-                        options.map(option => <MenuItem
+                        options.map((option, index) => <MenuItem
+                            key={index}
                             className={'app-drop-down-menu-item'}
                             value={option.value}>{option.label}</MenuItem>)
                     }

@@ -136,8 +136,8 @@ export const Form = (props: FormType) => {
         if(inputType === BIG_TEXT) {
             return (
                 <TextBox
-                    name={name}
                     key={index}
+                    name={name}
                     multiline={true}
                     required={required}
                     placeholder={placeholder}
