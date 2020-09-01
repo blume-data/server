@@ -133,8 +133,6 @@ export const Form = (props: FormType) => {
         }
     }
 
-    console.log('value', formState);
-
     return (
         <Grid className={`${className} app-form`} container justify={'center'} direction={'column'}>
             {fields.map((option: ConfigField, index) => {

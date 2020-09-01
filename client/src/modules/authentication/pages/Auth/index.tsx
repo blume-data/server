@@ -48,7 +48,7 @@ export const Auth = () => {
         {
             inputType: TEXT,
             placeholder: 'First Name',
-            name: 'firstName',
+            name: 'First Name',
             required: true,
             value: firstName,
             className: 'auth-text-box',
