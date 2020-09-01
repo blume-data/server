@@ -215,10 +215,10 @@ export const Form = (props: FormType) => {
 
             <Grid container justify={'space-between'}>
                 <Grid item>
-                    <Button variant="outlined" onClick={onClickSubmit} color={'primary'}>Submit</Button>
+                    <Button variant="outlined" onClick={clearForm} color={'secondary'}>Clear</Button>
                 </Grid>
                 <Grid item>
-                    <Button variant="outlined" onClick={clearForm} color={'secondary'}>Clear</Button>
+                    <Button variant="outlined" onClick={onClickSubmit} color={'primary'}>Submit</Button>
                 </Grid>
             </Grid>
         </Grid>
