@@ -5,12 +5,13 @@ import {FieldType} from "../interface";
 
 interface TextBoxType extends FieldType{
     multiline?: boolean;
+    type: string;
     onChange: (event: ChangeEvent<any>) => void;
     onBlur: (event: ChangeEvent<any>) => void;
 }
 export const TextBox = (props: TextBoxType) => {
     const {id, className, label, required=false,
-        onBlur, helperText,
+        onBlur, helperText, type,
         onChange, error=false, value='', placeholder='', multiline=false} = props;
     return (
         <Grid className={`${className} app-text-box`}>
@@ -19,6 +20,7 @@ export const TextBox = (props: TextBoxType) => {
                     placeholder={placeholder}
                     value={value}
                     error={error}
+                    type={type}
                     helperText={helperText}
                     onBlur={onBlur}
                     multiline={multiline}

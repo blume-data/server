@@ -1,8 +1,9 @@
 import React, {ChangeEvent, useEffect, useState} from "react";
-import {Grid} from "@material-ui/core";
+import {Grid, Button} from "@material-ui/core";
 import { TextBox } from "./TextBox";
 import {DropDown} from "./DropDown";
 import {ConfigField, FormType, TEXT, BIG_TEXT, DROPDOWN} from "./interface";
+import './style.scss';
 
 interface FormState {
     name: string;
@@ -18,7 +19,7 @@ const SET_IS_TOUCHED_ACTION = 'SET_IS_TOUCHED_ACTION';
 export const Form = (props: FormType) => {
 
     const [formState, setFormState] = useState<FormState[]>([]);
-    const {className, fields} = props;
+    const {className, fields, onSubmit} = props;
 
     function setErrorMessage(name: string) {
         return `${name} is required`;
@@ -104,10 +105,11 @@ export const Form = (props: FormType) => {
     }
 
     function renderFields(field: ConfigField, index: number) {
-        const {inputType, options, id, className, name, placeholder, required, label} = field;
+        const {inputType, options, id, className, name, placeholder, required, type='text', label} = field;
         if (inputType === TEXT) {
             return (
                 <TextBox
+                    type={type}
                     key={index}
                     name={name}
                     error={hasError(name)}
@@ -136,6 +138,7 @@ export const Form = (props: FormType) => {
         if(inputType === BIG_TEXT) {
             return (
                 <TextBox
+                    type={type}
                     key={index}
                     name={name}
                     multiline={true}
@@ -152,11 +155,27 @@ export const Form = (props: FormType) => {
         }
     }
 
+    function onClickSubmit() {
+        const values: {name: string; value: string}[] = [];
+        formState.forEach(item => {
+            values.push({
+                name: item.name,
+                value: item.value
+            });
+        });
+        onSubmit(values);
+    }
+
     return (
         <Grid className={`${className} app-form`} container justify={'center'} direction={'column'}>
             {fields.map((option: ConfigField, index) => {
                 return renderFields(option, index);
             })}
+            <Grid item>
+                <Button variant="outlined"
+                        onClick={onClickSubmit}
+                        color={'primary'}>Submit</Button>
+            </Grid>
         </Grid>
     );
 };

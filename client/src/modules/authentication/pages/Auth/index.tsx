@@ -17,33 +17,60 @@ export const Auth = () => {
             options: [{label: 'df', value: 'a-drop-down-value'}]
         },
         {
-            inputType: BIG_TEXT,
-            placeholder: 'big text',
-            name: 'some name big text',
-            label: 'some big text',
-            required: false,
-            value: 'sdf',
-            className: 'dsf',
+            inputType: TEXT,
+            placeholder: 'Email',
+            label: 'Email',
+            name: 'email',
+            type: 'email',
+            required: true,
+            value: '',
+            className: 'auth-email-text-box',
         },
         {
             inputType: TEXT,
             placeholder: 'First Name',
             label: 'First Name',
             name: 'firstName',
+            type: 'text',
             required: true,
             value: '',
-            className: 'auth-text-box',
+            className: 'auth-first-name-text-box',
         },
         {
             inputType: TEXT,
             placeholder: 'Last Name',
-            name: 'lastName',
             label: 'Last Name',
+            name: 'lastName',
+            type: 'text',
             required: true,
             value: '',
-            className: 'auth-text-box'
+            className: 'auth-last-name-text-box',
+        },
+        {
+            inputType: TEXT,
+            placeholder: 'Username',
+            label: 'Username',
+            name: 'userName',
+            type: 'text',
+            required: true,
+            value: '',
+            className: 'auth-user-name-text-box',
+        },
+        {
+            inputType: TEXT,
+            placeholder: 'Password',
+            label: 'Password',
+            name: 'password',
+            type: 'password',
+            required: true,
+            value: '',
+            className: 'auth-password-text-box',
         },
     ];
+
+    function onSubmit(values: any) {
+        console.log('submited', values);
+    }
 
     return (
         <Grid container direction={'row'} justify={'space-between'}>
@@ -53,7 +80,7 @@ export const Auth = () => {
             </Grid>
             <Grid item>
                 <Grid container justify={'center'}>
-                    <Form fields={fields} className={'auth-form'} />
+                    <Form onSubmit={onSubmit} fields={fields} className={'auth-form'} />
                 </Grid>
             </Grid>
 
