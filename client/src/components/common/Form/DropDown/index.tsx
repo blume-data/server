@@ -1,5 +1,4 @@
 import React, {ChangeEvent} from "react";
-import {randomString} from "../../../../utils/tools";
 import {FormControl, Grid, InputLabel, MenuItem, Select, FormHelperText} from "@material-ui/core";
 import './style.scss';
 import {FieldType, OptionsType} from "../interface";

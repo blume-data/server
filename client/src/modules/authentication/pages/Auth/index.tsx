@@ -1,7 +1,7 @@
-import React, {ChangeEvent, useState} from "react";
+import React from "react";
 import {Grid} from "@material-ui/core";
 import {Form} from "../../../../components/common/Form";
-import {BIG_TEXT, ConfigField, DROPDOWN, TEXT} from "../../../../components/common/Form/interface";
+import {ConfigField, DROPDOWN, TEXT} from "../../../../components/common/Form/interface";
 
 export const Auth = () => {
 
