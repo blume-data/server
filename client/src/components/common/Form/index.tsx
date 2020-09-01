@@ -2,7 +2,7 @@ import React, {ChangeEvent, useEffect, useState} from "react";
 import {Grid, Button} from "@material-ui/core";
 import { TextBox } from "./TextBox";
 import {DropDown} from "./DropDown";
-import {ConfigField, FormType, TEXT, BIG_TEXT, DROPDOWN, FieldType} from "./interface";
+import {ConfigField, FormType, TEXT, BIG_TEXT, DROPDOWN} from "./interface";
 import './style.scss';
 
 interface FormState {
@@ -213,10 +213,10 @@ export const Form = (props: FormType) => {
             })}
 
             <Grid container justify={'space-between'}>
-                <Grid item >
+                <Grid item>
                     <Button variant="outlined" onClick={onClickSubmit} color={'primary'}>Submit</Button>
                 </Grid>
-                <Grid item >
+                <Grid item>
                     <Button variant="outlined" onClick={clearForm} color={'secondary'}>Clear</Button>
                 </Grid>
             </Grid>
