@@ -73,8 +73,8 @@ export const Form = (props: FormType) => {
             return {
                 name: field.name,
                 [`value`]: field.value,
-                [`isTouched`]: false,
-                [`helperText`]: ''
+                [`isTouched`]: !!field.helperText,
+                [`helperText`]: field.helperText || ''
             };
         });
         setFormState(state);

@@ -9,16 +9,17 @@ const Form = loadable(() => import("../../../../components/common/Form"), {
 export const Auth = () => {
 
     const fields: ConfigField[] = [
-        {
+        /*{
             inputType: DROPDOWN,
             placeholder: 'First Name',
             label: 'age',
             required: true,
             value: '',
             className: 'dsf',
+            helperText: '',
             name: 'firstNameDropDown',
             options: [{label: 'df', value: 'a-drop-down-value'}]
-        },
+        },*/
         {
             inputType: TEXT,
             placeholder: 'Email',
@@ -37,6 +38,7 @@ export const Auth = () => {
             type: 'text',
             required: true,
             value: '',
+            helperText: '',
             className: 'auth-first-name-text-box',
         },
         {
