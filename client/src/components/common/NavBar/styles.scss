@@ -6,5 +6,10 @@
   .menu-title {
     flex-grow: 1;
   }
+  li {
+    a {
+      text-decoration: none;
+    }
+  }
 
 }

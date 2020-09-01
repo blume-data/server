@@ -6,6 +6,8 @@ import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import {Grid, Menu, MenuItem} from "@material-ui/core";
 import {AccountCircle} from "@material-ui/icons";
+import {Link} from "react-router-dom";
+import './styles.scss'
 
 export const NavBar = () => {
 
@@ -33,7 +35,7 @@ export const NavBar = () => {
                     <Grid container justify={'flex-end'}>
                         <IconButton
                             aria-label="account of current user"
-                            aria-controls="menu-appbar"
+                            aria-controls="nav-bar-menu"
                             aria-haspopup="true"
                             onClick={handleMenu}
                             color="inherit"
@@ -41,7 +43,7 @@ export const NavBar = () => {
                         <AccountCircle />
                         </IconButton>
                         <Menu
-                            id="menu-appbar"
+                            id="nav-bar-menu"
                             anchorEl={anchorEl}
                             anchorOrigin={{vertical: 'top', horizontal: 'right',}}
                             keepMounted
@@ -50,6 +52,11 @@ export const NavBar = () => {
                             onClose={handleClose}>
                             <MenuItem onClick={handleClose}>Profile</MenuItem>
                             <MenuItem onClick={handleClose}>My account</MenuItem>
+                            <Link to={'/auth'}>
+                                <MenuItem onClick={handleClose}>
+                                    Log in
+                                </MenuItem>
+                            </Link>
                         </Menu>
                     </Grid>
                 </Toolbar>
