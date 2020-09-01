@@ -1,50 +1,85 @@
-import React, {ChangeEvent} from "react";
+import React, {ChangeEvent, useEffect, useState} from "react";
 import {Grid} from "@material-ui/core";
 import { TextBox } from "./TextBox";
 import {DropDown} from "./DropDown";
-import {ConfigField, FormType} from "./interface";
+import {ConfigField, FormType, TEXT, BIG_TEXT, DROPDOWN} from "./interface";
 
-const DROPDOWN = 'dropdown';
-const BIG_TEXT = 'bigText';
-const TEXT = 'text';
+interface FormState {
+    name: string;
+    value: string;
+    isTouched: boolean;
+    errorMessage: string;
+}
 
+const SET_VALUE_ACTION = 'SET_VALUE_ACTION';
+const SET_ERROR_MESSAGE_ACTION = 'SET_ERROR_MESSAGE_ACTION';
+const SET_IS_TOUCHED_ACTION = 'SET_IS_TOUCHED_ACTION';
 
 export const Form = (props: FormType) => {
 
-    const {className} = props;
+    const [formState, setFormState] = useState<FormState[]>([]);
+    const {className, fields} = props;
 
-    const config: {fields: ConfigField[]} = {
-        fields: [
-            {
-                inputType: DROPDOWN,
-                placeholder: 'any',
-                name: 'some name',
-                required: true,
-                value: 'sdf',
-                className: 'dsf',
-                onChange: (event: ChangeEvent<any>) => {},
-                options: [{label: 'df', value: 'dsfdsf'}]
-            },
-            {
-                inputType: BIG_TEXT,
-                placeholder: 'big text',
-                name: 'some name big text',
-                required: false,
-                value: 'sdf',
-                className: 'dsf',
-                onChange: (event: ChangeEvent<any>) => {},
-            },
-            {
-                inputType: TEXT,
-                placeholder: 'small text',
-                name: 'some name small text',
-                required: true,
-                value: 'sdf',
-                className: 'dsf',
-                onChange: (event: ChangeEvent<any>) => {},
-            },
-        ]
-    };
+    function changeValue(event: ChangeEvent<any>, field: string, action: string, actionValue?: string | boolean) {
+        const value = event.target.value;
+        let state: FormState[];
+        if (action === SET_VALUE_ACTION) {
+            state = formState.map((item) => {
+                if (item.name === field) {
+                    return {
+                        ...item,
+                        value
+                    }
+                }
+                return item;
+            });
+            setFormState(state);
+        }
+        if (action === SET_ERROR_MESSAGE_ACTION) {
+            state = formState.map((item) => {
+                if (item.name === field) {
+                    return {
+                        ...item,
+                        errorMessage: `${actionValue}`
+                    }
+                }
+                return item;
+            });
+            setFormState(state);
+        }
+        if (action === SET_IS_TOUCHED_ACTION) {
+            state = formState.map((item) => {
+                if (item.name === field) {
+                    return {
+                        ...item,
+                        isTouched: !!actionValue
+                    }
+                }
+                return item;
+            });
+            setFormState(state);
+        }
+    }
+
+    useEffect(() => {
+        const state = fields.map(field => {
+            return {
+                name: field.name,
+                [`value`]: field.value,
+                [`isTouched`]: false,
+                [`errorMessage`]: ''
+            };
+        });
+        setFormState(state);
+    }, []);
+
+    function getValue(name: string) {
+        const value = formState.find(item => item.name === name);
+        if (value) {
+            return value.value;
+        }
+        return '';
+    }
 
     function renderFields(field: ConfigField, index: number) {
         const {inputType, options, id, className, name, onChange, placeholder, required, value} = field;
@@ -54,18 +89,19 @@ export const Form = (props: FormType) => {
                     key={index}
                     required={required}
                     placeholder={placeholder}
-                    onChange={onChange}
+                    onChange={(e) => changeValue(e, name, SET_VALUE_ACTION)}
                     label={name}
                     id={id}
-                    value={value}
+                    value={getValue(name)}
                     className={'sddsfdsf'} />
             );
         }
         if(inputType === DROPDOWN) {
             return (
                 <DropDown
-                    value={value} options={options && options.length ? options : []}
-                    onChange={onChange} placeholder={placeholder} required={required} index={index} name={name}
+                    value={getValue(name)} options={options && options.length ? options : []}
+                    onChange={(e) => changeValue(e, name, SET_VALUE_ACTION)}
+                    placeholder={placeholder} required={required} index={index} name={name}
                     key={index} className={className} />
             );
         }
@@ -76,18 +112,20 @@ export const Form = (props: FormType) => {
                     multiline={true}
                     required={required}
                     placeholder={placeholder}
-                    onChange={onChange}
+                    onChange={(e) => changeValue(e, name, SET_VALUE_ACTION)}
                     label={name}
                     id={id}
-                    value={value}
+                    value={getValue(name)}
                     className={'text-asdfrea-form-control'}  />
             );
         }
     }
 
+    console.log('form state', formState);
+
     return (
-        <Grid className={className} container justify={'center'} direction={'column'}>
-            {config.fields.map((option: ConfigField, index) => {
+        <Grid className={`${className} app-form`} container justify={'center'} direction={'column'}>
+            {fields.map((option: ConfigField, index) => {
                 return renderFields(option, index);
             })}
         </Grid>

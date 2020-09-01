@@ -1,7 +1,12 @@
 import {ChangeEvent} from "react";
 
+export const DROPDOWN = 'dropdown';
+export const BIG_TEXT = 'bigText';
+export const TEXT = 'text';
+
 export interface FormType {
     className: string
+    fields: ConfigField[]
 }
 
 export interface OptionsType {
