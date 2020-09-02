@@ -1,6 +1,6 @@
 import {Request, Response} from 'express';
 import jwt from "jsonwebtoken";
-import {AUTH_TOKEN, okayStatus, USER_NAME} from "@ranjodhbirkaur/common";
+import {AUTH_TOKEN, okayStatus, USER_NAME} from "../../utils";
 
 interface userType {
     id?: string;

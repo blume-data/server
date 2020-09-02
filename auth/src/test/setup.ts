@@ -3,9 +3,8 @@ import mongoose from 'mongoose';
 import request from 'supertest';
 import {app} from '../app';
 import {adminType, adminUserType, clientUserType, okayStatus,
-  emailVerification, logIn, register, userNameValidation
+  emailVerification, logIn, register, userNameValidation, authRootUrl
 } from "@ranjodhbirkaur/common";
-import {rootUrl} from "../util/constants";
 
 
 interface DataType {
@@ -50,19 +49,19 @@ afterAll(async () => {
 });
 
 export function getEmailVerificationUrl(userType: string) {
-  return `${rootUrl}/${userType}/${emailVerification}`;
+  return `${authRootUrl}/${userType}/${emailVerification}`;
 }
 
 export function getUserNameValidationUrl(userType: string) {
-  return `${rootUrl}/${userType}/${userNameValidation}`;
+  return `${authRootUrl}/${userType}/${userNameValidation}`;
 }
 
 export function getRegistrationUrl(userType: string) {
-  return `${rootUrl}/${userType}/${register}`;
+  return `${authRootUrl}/${userType}/${register}`;
 }
 
 export function getSignInUrl(userType: string) {
-  return `${rootUrl}/${userType}/${logIn}`;
+  return `${authRootUrl}/${userType}/${logIn}`;
 }
 
 export interface SampleDataType {

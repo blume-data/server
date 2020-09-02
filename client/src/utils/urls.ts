@@ -1,2 +1,9 @@
-export const getNewsUrl = 'https://hn.algolia.com/api/v1/search?tags=story';
-export const AUTH_URL = '';
+import {authRootUrl} from "@ranjodhbirkaur/common";
+
+export function getBaseUrl() {
+    return `https://dev.blumedata.store`;
+}
+
+export function getAuthUrl(userType: string) {
+    return `${getBaseUrl()}${authRootUrl}/${userType}/`;
+}

@@ -3,20 +3,21 @@ import { body } from 'express-validator';
 import {
     validateRequest, okayStatus, RANDOM_STRING,
     errorStatus, adminUserType, clientUserType,
-    freeUserType, supportUserType, signUpUrl
+    freeUserType, supportUserType, signUpUrl,
+    stringLimitOptionErrorMessage,
+    stringLimitOptions,
+    generateJwt, sendJwtResponse
 } from '@ranjodhbirkaur/common';
 import {
     passwordLimitOptionErrorMessage,
     passwordLimitOptions,
-    stringLimitOptionErrorMessage,
-    stringLimitOptions
+
 } from "../util/constants";
 import {ClientTempUser} from "../models/clientTempUser";
 import {ClientUser} from "../models/clientUser";
 import {validateUserType} from "../middleware/userTypeCheck";
 import {EmailInUseMessage, InValidEmailMessage, UserNameNotAvailableMessage} from "../util/errorMessages";
 import {AdminUser} from "../models/adminUser";
-import {generateJwt, sendJwtResponse} from "../util/methods";
 
 const
     router = express.Router();

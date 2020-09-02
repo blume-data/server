@@ -1,7 +1,7 @@
 import express from 'express';
-import {rootUrl, stringLimitOptionErrorMessage, stringLimitOptions} from "../util/constants";
 import {body, query} from "express-validator";
-import {validateRequest, emailVerificationUrl, userNameValidationUrl} from "@ranjodhbirkaur/common";
+import {validateRequest, stringLimitOptionErrorMessage, stringLimitOptions,
+    emailVerificationUrl, userNameValidationUrl} from "@ranjodhbirkaur/common";
 import {isUserNameAvailable, verifyEmailToken} from "../Controllers/UserController";
 import {InValidEmailMessage, TOKEN_IS_REQUIRED_MESSAGE} from "../util/errorMessages";
 

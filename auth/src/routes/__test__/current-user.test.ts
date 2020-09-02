@@ -1,10 +1,9 @@
 import request from 'supertest';
 import { app } from '../../app';
-import {errorStatus, okayStatus, clientUserType, currentUser} from "@ranjodhbirkaur/common";
-import {rootUrl} from "../../util/constants";
+import {errorStatus, okayStatus, clientUserType, currentUser, authRootUrl} from "@ranjodhbirkaur/common";
 
 describe('ClientUser: It returns cookie for authenticated user', () => {
-  const currentUserUrl = `${rootUrl}/${clientUserType}/${currentUser}`;
+  const currentUserUrl = `${authRootUrl}/${clientUserType}/${currentUser}`;
 
   it('responds with details about the current user', async () => {
 

@@ -1,7 +1,7 @@
 import request from 'supertest';
 import {app} from '../../app';
-import {errorStatus, okayStatus, clientUserType, adminUserType} from "@ranjodhbirkaur/common";
-import {passwordLimitOptionErrorMessage, stringLimitOptionErrorMessage} from "../../util/constants";
+import {errorStatus, okayStatus, clientUserType, adminUserType, stringLimitOptionErrorMessage} from "@ranjodhbirkaur/common";
+import {passwordLimitOptionErrorMessage} from "../../util/constants";
 import {EmailInUseMessage, InValidEmailMessage, UserNameNotAvailableMessage} from "../../util/errorMessages";
 import {getRegistrationUrl} from "../../test/setup";
 import {getSampleData, signUpAUser} from "../../test/testHelpers";
