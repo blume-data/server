@@ -2,8 +2,9 @@ import {MongoMemoryServer} from 'mongodb-memory-server';
 import mongoose from 'mongoose';
 import request from 'supertest';
 import {app} from '../app';
-import {emailVerification, logIn, register, userNameValidation} from "../util/urls";
-import {adminType, adminUserType, clientUserType, okayStatus} from "@ranjodhbirkaur/common";
+import {adminType, adminUserType, clientUserType, okayStatus,
+  emailVerification, logIn, register, userNameValidation
+} from "@ranjodhbirkaur/common";
 import {rootUrl} from "../util/constants";
 
 

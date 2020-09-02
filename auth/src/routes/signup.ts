@@ -3,7 +3,7 @@ import { body } from 'express-validator';
 import {
     validateRequest, okayStatus, RANDOM_STRING,
     errorStatus, adminUserType, clientUserType,
-    freeUserType, supportUserType
+    freeUserType, supportUserType, signUpUrl
 } from '@ranjodhbirkaur/common';
 import {
     passwordLimitOptionErrorMessage,
@@ -12,7 +12,6 @@ import {
     stringLimitOptions
 } from "../util/constants";
 import {ClientTempUser} from "../models/clientTempUser";
-import {signUpUrl} from "../util/urls";
 import {ClientUser} from "../models/clientUser";
 import {validateUserType} from "../middleware/userTypeCheck";
 import {EmailInUseMessage, InValidEmailMessage, UserNameNotAvailableMessage} from "../util/errorMessages";

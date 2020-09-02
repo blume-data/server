@@ -1,6 +1,5 @@
 import express, {Request, Response} from 'express';
-import {signOutUrl} from "../util/urls";
-import {okayStatus} from "@ranjodhbirkaur/common";
+import {okayStatus, signOutUrl} from "@ranjodhbirkaur/common";
 
 const router = express.Router();
 

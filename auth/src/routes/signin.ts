@@ -1,8 +1,7 @@
 import express, { Request, Response } from 'express';
 import { body } from 'express-validator';
-import {validateRequest, BadRequestError, clientUserType, adminUserType} from '@ranjodhbirkaur/common';
+import {validateRequest, BadRequestError, clientUserType, adminUserType, signInUrl} from '@ranjodhbirkaur/common';
 import { Password } from '../services/password';
-import {signInUrl} from "../util/urls";
 import {ClientUser} from "../models/clientUser";
 import {InValidEmailMessage, InvalidLoginCredentialsMessage} from "../util/errorMessages";
 import {passwordLimitOptionErrorMessage, passwordLimitOptions} from "../util/constants";

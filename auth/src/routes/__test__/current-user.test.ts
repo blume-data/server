@@ -1,7 +1,6 @@
 import request from 'supertest';
 import { app } from '../../app';
-import {currentUser} from "../../util/urls";
-import {errorStatus, okayStatus, clientUserType} from "@ranjodhbirkaur/common";
+import {errorStatus, okayStatus, clientUserType, currentUser} from "@ranjodhbirkaur/common";
 import {rootUrl} from "../../util/constants";
 
 describe('ClientUser: It returns cookie for authenticated user', () => {
