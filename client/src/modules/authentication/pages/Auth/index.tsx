@@ -1,7 +1,10 @@
 import React from "react";
 import {Grid} from "@material-ui/core";
-import {ConfigField, DROPDOWN, TEXT} from "../../../../components/common/Form/interface";
+import {ConfigField, TEXT} from "../../../../components/common/Form/interface";
 import loadable from "@loadable/component";
+import {doPostRequest} from "../../../../utils/baseApi";
+import {clientUserType, register} from "@ranjodhbirkaur/common";
+import {getAuthUrl} from "../../../../utils/urls";
 const Form = loadable(() => import("../../../../components/common/Form"), {
     resolveComponent: (components) => components.Form
 });
@@ -9,17 +12,6 @@ const Form = loadable(() => import("../../../../components/common/Form"), {
 export const Auth = () => {
 
     const fields: ConfigField[] = [
-        /*{
-            inputType: DROPDOWN,
-            placeholder: 'First Name',
-            label: 'age',
-            required: true,
-            value: '',
-            className: 'dsf',
-            helperText: '',
-            name: 'firstNameDropDown',
-            options: [{label: 'df', value: 'a-drop-down-value'}]
-        },*/
         {
             inputType: TEXT,
             placeholder: 'Email',
@@ -75,6 +67,17 @@ export const Auth = () => {
 
     function onSubmit(values: any) {
         console.log('submitted', values);
+        let data: any = {};
+        values.forEach((value: any) => {
+            data[value.name] = value.value;
+        });
+        authUser(data);
+    }
+
+    async function authUser(values: any) {
+        const url = `${getAuthUrl(clientUserType)}/${register}`;
+        const response = await doPostRequest(url, values, false);
+        console.log('response', response);
     }
 
     return (

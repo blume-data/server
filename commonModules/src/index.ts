@@ -13,8 +13,6 @@ export * from './middlewares/validate-request';
 
 export * from './utils';
 
-export * from './serverApp';
-
 export * from './interface';
 
 export * from './tools';
