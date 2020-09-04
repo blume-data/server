@@ -1,10 +1,10 @@
 import request from 'supertest';
 import { app } from '../../app';
 import {okayStatus, clientUserType, adminUserType} from "@ranjodhbirkaur/common";
-import {authRootUrl, logOut} from "../../util/urls";
+import {authRootUrl, logOut, signOutUrl as getSignOutUrl} from "../../util/urls";
 
 async function signOutUser(userType: string) {
-    const signOutUrl = `${authRootUrl}/${userType}/${logOut}`;
+    const signOutUrl = getSignOutUrl(userType);
     await global.signUp(userType);
 
     const response = await request(app)

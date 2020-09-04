@@ -24,7 +24,7 @@ const
     router = express.Router();
 
 router.post(
-    signUpUrl, validateUserType,
+    signUpUrl(), validateUserType,
     [
         body('email').isEmail().withMessage(InValidEmailMessage),
         body('password')

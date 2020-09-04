@@ -4,7 +4,7 @@ import {signOutUrl} from "../util/urls";
 
 const router = express.Router();
 
-router.post(signOutUrl, (req: Request, res: Response) => {
+router.post(signOutUrl(), (req: Request, res: Response) => {
   req.session = null;
 
   res.status(okayStatus).send(true);

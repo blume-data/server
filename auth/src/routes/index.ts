@@ -7,7 +7,7 @@ import {emailVerificationUrl, userNameValidationUrl} from "../util/urls";
 
 const router = express.Router();
 
-router.post(userNameValidationUrl, [
+router.post(userNameValidationUrl(), [
         body('userName')
             .trim()
             .isLength(stringLimitOptions)
@@ -15,7 +15,7 @@ router.post(userNameValidationUrl, [
     ],
     validateRequest, isUserNameAvailable);
 
-router.get(emailVerificationUrl, [
+router.get(emailVerificationUrl(), [
     query('token')
         .trim()
         .notEmpty()

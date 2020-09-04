@@ -14,7 +14,7 @@ import {signInUrl} from "../util/urls";
 const router = express.Router();
 
 router.post(
-    signInUrl, validateUserType,
+    signInUrl(), validateUserType,
   [
     body('email')
       .isEmail()
