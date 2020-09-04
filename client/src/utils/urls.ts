@@ -1,6 +1,5 @@
-import {authRootUrl} from "@ranjodhbirkaur/common/build/urls/modules/auth";
-
 export const getNewsUrl = '';
+const authRootUrl = '';
 
 export function getBaseUrl() {
     return `https://dev.blumedata.store`;

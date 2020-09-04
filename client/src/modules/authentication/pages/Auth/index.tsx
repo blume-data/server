@@ -1,13 +1,16 @@
 import React from "react";
-import {Grid} from "@material-ui/core";
-import {ConfigField, TEXT} from "../../../../components/common/Form/interface";
-import loadable from "@loadable/component";
+import Grid from "@material-ui/core/Grid";
+import {ConfigField, DROPDOWN, TEXT} from "../../../../components/common/Form/interface";
+//import loadable from "@loadable/component";
 import {doPostRequest} from "../../../../utils/baseApi";
-import {clientUserType, register} from "@ranjodhbirkaur/common";
 import {getAuthUrl} from "../../../../utils/urls";
-const Form = loadable(() => import("../../../../components/common/Form"), {
+import { Form } from "../../../../components/common/Form";
+/*const Form = loadable(() => import("../../../../components/common/Form"), {
     resolveComponent: (components) => components.Form
-});
+});*/
+
+const clientUserType = 'client';
+const register = 'sign-up';
 
 export const Auth = () => {
 

@@ -1,5 +1,7 @@
 import React, {ChangeEvent} from "react";
-import {FormControl, Grid, TextField} from "@material-ui/core";
+import Grid from '@material-ui/core/Grid';
+import FormControl from '@material-ui/core/FormControl';
+import TextField from '@material-ui/core/TextField';
 import './style.scss';
 import {FieldType} from "../interface";
 
@@ -28,7 +30,7 @@ export const TextBox = (props: TextBoxType) => {
                     required={required}
                     id={id ? id : undefined}
                     label={label}
-                    variant="outlined" />
+                />
             </FormControl>
         </Grid>
     );

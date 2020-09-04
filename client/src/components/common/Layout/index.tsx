@@ -1,6 +1,6 @@
 import React from 'react';
 import './index.scss'
-import {Grid} from "@material-ui/core";
+import Grid from "@material-ui/core/Grid";
 import {Footer} from "../Footer";
 import {NavBar} from "../NavBar";
 

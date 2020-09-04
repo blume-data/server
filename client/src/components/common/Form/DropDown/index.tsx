@@ -1,5 +1,11 @@
 import React, {ChangeEvent} from "react";
-import {FormControl, Grid, InputLabel, MenuItem, Select, FormHelperText} from "@material-ui/core";
+//import {FormControl, Grid, InputLabel, MenuItem, Select, FormHelperText} from "@material-ui/core";
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import Select from '@material-ui/core/Select';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import Grid from '@material-ui/core/Grid';
+import FormControl from '@material-ui/core/FormControl';
 import './style.scss';
 import {FieldType, OptionsType} from "../interface";
 

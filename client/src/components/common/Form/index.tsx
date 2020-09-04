@@ -1,5 +1,6 @@
 import React, {ChangeEvent, useEffect, useState} from "react";
-import {Grid, Button} from "@material-ui/core";
+import Grid from '@material-ui/core/Grid';
+import Button from '@material-ui/core/Button';
 import { TextBox } from "./TextBox";
 import {DropDown} from "./DropDown";
 import {ConfigField, FormType, TEXT, BIG_TEXT, DROPDOWN} from "./interface";
