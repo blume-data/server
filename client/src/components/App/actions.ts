@@ -1,6 +1,6 @@
 import {AnyAction, Dispatch} from 'redux'
 import {getData} from "../../utils/httpRequests";
-import {getNewsUrl} from "../../utils/urls";
+import {getNewsUrl, getRouteAddressesUrl} from "../../utils/urls";
 import {cleanNewsData} from "../../utils/tools";
 import {
     ACTION_FETCH_NEWS, AppThunk, ERROR_NEWS_ACTION,
@@ -10,6 +10,7 @@ import {
     UPDATE_VOTE_ACTION
 } from "./types";
 import {ThunkDispatch} from "redux-thunk";
+import {doGetRequest} from "../../utils/baseApi";
 
 function setLoading(status: boolean, dispatch: Dispatch) {
     dispatch({

@@ -1,17 +1,26 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import './index.scss'
 import Grid from "@material-ui/core/Grid";
 import {Footer} from "../Footer";
 import {NavBar} from "../NavBar";
+import {connect, ConnectedProps} from "react-redux";
 
-export interface PropsType {
+import {RootState} from "../../../rootReducer";
+import {fetchRouteAddresses} from "./actions";
+
+type PropsFromRedux = ConnectedProps<typeof connector>;
+type AppProps = PropsFromRedux & {
     rootClass?: string;
     id?: string;
     children: JSX.Element;
 }
 
-export default (props: PropsType) => {
+const Layout = (props: AppProps) => {
     const {children} = props;
+    useEffect(() => {
+        props.fetchRouteAddresses()
+    }, []);
+
     return (
         <Grid className="appLayout">
             <NavBar />
@@ -19,4 +28,11 @@ export default (props: PropsType) => {
             <Footer />
         </Grid>
     );
-}
+};
+
+const mapState = (state: RootState) => ({
+    routeAddress: state.routeAddress
+});
+
+const connector = connect(mapState, {fetchRouteAddresses});
+export default connector(Layout);

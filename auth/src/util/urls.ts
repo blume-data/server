@@ -4,7 +4,7 @@ export const clusterCheckUser = `${clusterUrl}/check`;
 
 export const authRootUrl = `/auth`;
 
-export const addressUrls = 'auth-routes/sdfds';
+export const addressUrls = 'auth-routes';
 export const getAddressUrls = (userType?: string) => {
     if (!userType) {
         return `${authRootUrl}/:userType/${addressUrls}`
