@@ -2,13 +2,14 @@ import express, { Request, Response } from 'express';
 import { body } from 'express-validator';
 import {validateRequest, BadRequestError,
   generateJwt, sendJwtResponse,
-  clientUserType, adminUserType, signInUrl} from '@ranjodhbirkaur/common';
+  clientUserType, adminUserType} from '@ranjodhbirkaur/common';
 import { Password } from '../services/password';
 import {ClientUser} from "../models/clientUser";
 import {InValidEmailMessage, InvalidLoginCredentialsMessage} from "../util/errorMessages";
 import {passwordLimitOptionErrorMessage, passwordLimitOptions} from "../util/constants";
 import {validateUserType} from "../middleware/userTypeCheck";
 import {AdminUser} from "../models/adminUser";
+import {signInUrl} from "../util/urls";
 
 const router = express.Router();
 

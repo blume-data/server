@@ -2,9 +2,8 @@ import {MongoMemoryServer} from 'mongodb-memory-server';
 import mongoose from 'mongoose';
 import request from 'supertest';
 import {app} from '../app';
-import {adminType, adminUserType, clientUserType, okayStatus,
-  emailVerification, logIn, register, userNameValidation, authRootUrl
-} from "@ranjodhbirkaur/common";
+import {adminType, adminUserType, okayStatus,} from "@ranjodhbirkaur/common";
+import {emailVerification, logIn, register, userNameValidation, authRootUrl} from "../util/urls";
 
 
 interface DataType {

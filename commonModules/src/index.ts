@@ -11,10 +11,10 @@ export * from './middlewares/error-handler';
 export * from './middlewares/require-auth';
 export * from './middlewares/validate-request';
 
+export * from './serverApp';
+
 export * from './utils';
 
 export * from './interface';
 
 export * from './tools';
-
-export * from './urls';

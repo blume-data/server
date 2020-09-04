@@ -3,7 +3,7 @@ import { body } from 'express-validator';
 import {
     validateRequest, okayStatus, RANDOM_STRING,
     errorStatus, adminUserType, clientUserType,
-    freeUserType, supportUserType, signUpUrl,
+    freeUserType, supportUserType,
     stringLimitOptionErrorMessage,
     stringLimitOptions,
     generateJwt, sendJwtResponse
@@ -18,6 +18,7 @@ import {ClientUser} from "../models/clientUser";
 import {validateUserType} from "../middleware/userTypeCheck";
 import {EmailInUseMessage, InValidEmailMessage, UserNameNotAvailableMessage} from "../util/errorMessages";
 import {AdminUser} from "../models/adminUser";
+import {signUpUrl} from "../util/urls";
 
 const
     router = express.Router();

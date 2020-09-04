@@ -1,6 +1,7 @@
 import request from 'supertest';
 import { app } from '../../app';
-import {okayStatus, clientUserType, adminUserType, logOut, authRootUrl} from "@ranjodhbirkaur/common";
+import {okayStatus, clientUserType, adminUserType} from "@ranjodhbirkaur/common";
+import {authRootUrl, logOut} from "../../util/urls";
 
 async function signOutUser(userType: string) {
     const signOutUrl = `${authRootUrl}/${userType}/${logOut}`;
