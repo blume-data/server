@@ -4,7 +4,7 @@ export const clusterCheckUser = `${clusterUrl}/check`;
 
 export const authRootUrl = `/auth`;
 
-export const addressUrls = 'auth-routes';
+export const addressUrls = 'auth-routes/sdfds';
 export const addressUrlsUrl = `${authRootUrl}/${addressUrls}`;
 
 export const register = 'sign-up';
