@@ -7,24 +7,20 @@ import {applyMiddleware, createStore} from "redux";
 import thunk from "redux-thunk";
 import Layout from './components/common/Layout';
 import {Routes} from './Router';
-import {NewsDataType, NewsType} from "./components/App/interface";
-import {rootReducer} from './rootReducer';
+import {rootReducer, RouteAddressStateType} from './rootReducer';
 import {Provider} from "react-redux";
 
 declare global {
     interface Window {
         INITIAL_STATE: {
-            newsData: {
-                news: NewsType[],
-                page: number
-            }
+            routeAddress: RouteAddressStateType
         };
     }
 }
-let newsData: NewsDataType;
+let routeAddress: RouteAddressStateType;
 
-if (window.INITIAL_STATE && window.INITIAL_STATE.newsData) {
-    newsData = window.INITIAL_STATE.newsData;
+if (window.INITIAL_STATE && window.INITIAL_STATE.routeAddress) {
+    routeAddress = window.INITIAL_STATE.routeAddress;
 }
 
 const store = createStore(
