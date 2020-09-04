@@ -5,6 +5,12 @@ export const clusterCheckUser = `${clusterUrl}/check`;
 export const authRootUrl = `/auth`;
 
 export const addressUrls = 'auth-routes/sdfds';
+export const getAddressUrls = (userType?: string) => {
+    if (!userType) {
+        return `${authRootUrl}/:userType/${addressUrls}`
+    }
+    return `${authRootUrl}/${userType}/${addressUrls}`
+};
 export const addressUrlsUrl = `${authRootUrl}/${addressUrls}`;
 
 export const register = 'sign-up';
