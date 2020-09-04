@@ -4,8 +4,8 @@ import {ConfigField, TEXT} from "../../../../components/common/Form/interface";
 import {doPostRequest} from "../../../../utils/baseApi";
 import {getAuthUrl} from "../../../../utils/urls";
 import { Form } from "../../../../components/common/Form";
+import {clientUserType} from "@ranjodhbirkaur/constants";
 
-const clientUserType = 'client';
 const register = 'sign-up';
 
 export const Auth = () => {
