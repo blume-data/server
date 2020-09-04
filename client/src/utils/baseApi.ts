@@ -1,5 +1,5 @@
 import axios, {AxiosRequestConfig} from 'axios';
-import {isUserLoggedIn} from "./constants";
+import {isUserLoggedIn} from "./tools";
 
 const axiosInstance = axios.create({
     timeout: 30000

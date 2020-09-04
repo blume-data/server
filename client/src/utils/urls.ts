@@ -6,7 +6,7 @@ export function getBaseUrl() {
 }
 
 export function getRouteAddressesUrl() {
-    return `${getBaseUrl()}/auth/client/auth-routes/`
+    return `${getBaseUrl()}/auth/client/auth-routes/`;
 }
 
 export function getAuthUrl(userType: string) {
