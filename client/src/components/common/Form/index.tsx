@@ -177,12 +177,10 @@ export const Form = (props: FormType) => {
             const res = await onSubmit(values);
             if (typeof res === 'string') {
                 clearForm();
-
             }
             else if(res && res.length) {
                 setFormErrors(res);
             }
-
         }
         else {
             let newFormState: FormState[] = [];
@@ -192,8 +190,8 @@ export const Form = (props: FormType) => {
                     newFormState.push({
                         ...item,
                         isTouched: true,
-                        helperText: getHelperText(item.name)
-                    })
+                        helperText: setErrorMessage(item.name)
+                    });
                 }
                 else {
                     newFormState.push(item);
