@@ -2,13 +2,22 @@ import React from "react";
 import Grid from "@material-ui/core/Grid";
 import {ConfigField, TEXT} from "../../../../components/common/Form/interface";
 import {doPostRequest} from "../../../../utils/baseApi";
-import {getAuthUrl} from "../../../../utils/urls";
-import { Form } from "../../../../components/common/Form";
-import {clientUserType} from "@ranjodhbirkaur/constants";
+import {getBaseUrl} from "../../../../utils/urls";
+import {Form} from "../../../../components/common/Form";
+import {RootState} from "../../../../rootReducer";
+import {connect, ConnectedProps} from "react-redux";
+import {AUTH_TOKEN, ErrorMessagesType, USER_NAME} from "@ranjodhbirkaur/constants";
 
-const register = 'sign-up';
+type PropsFromRedux = ConnectedProps<typeof connector>;
+interface ResponseType {
+    errors?: ErrorMessagesType[];
+    email?: string;
+    id?: string;
+    [AUTH_TOKEN]?: string;
+    [USER_NAME]?: string;
+}
 
-export const Auth = () => {
+const AuthComponent = (props: PropsFromRedux) => {
 
     const fields: ConfigField[] = [
         {
@@ -64,19 +73,27 @@ export const Auth = () => {
         },
     ];
 
-    function onSubmit(values: any) {
+    async function onSubmit(values: any) {
         console.log('submitted', values);
         let data: any = {};
         values.forEach((value: any) => {
             data[value.name] = value.value;
         });
-        authUser(data);
+        return await authUser(data);
     }
 
-    async function authUser(values: any) {
-        const url = `${getAuthUrl(clientUserType)}/${register}`;
-        const response = await doPostRequest(url, values, false);
-        console.log('response', response);
+    async function authUser(values: any): Promise<string | ErrorMessagesType[]> {
+        const {routeAddress} = props;
+        const register = routeAddress && routeAddress.register;
+        const url = `${getBaseUrl()}${register}`;
+        const response: ResponseType = await doPostRequest(url, values, false);
+        if (response[AUTH_TOKEN]) {
+            return 'Done';
+        }
+        else if(response.errors && response.errors.length) {
+            return response.errors
+        }
+        return '';
     }
 
     return (
@@ -93,3 +110,10 @@ export const Auth = () => {
         </Grid>
     );
 };
+
+const mapState = (state: RootState) => ({
+    routeAddress: state.routeAddress.routes.auth
+});
+
+const connector = connect(mapState);
+export const Auth = connector(AuthComponent);

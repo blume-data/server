@@ -156,7 +156,7 @@ export const Form = (props: FormType) => {
         }
     }
 
-    function onClickSubmit() {
+    async function onClickSubmit() {
         let isValid = true;
         formState.forEach(item => {
             const formItem = fields.find(field => field.name === item.name);
@@ -173,8 +173,15 @@ export const Form = (props: FormType) => {
                     value: item.value
                 });
             });
-            onSubmit(values);
-            clearForm();
+            const res = await onSubmit(values);
+            if (res && typeof res === 'string') {
+                clearForm();
+                console.log(res);
+            }
+            else {
+                console.log(res);
+            }
+
         }
         else {
             let newFormState: FormState[] = [];

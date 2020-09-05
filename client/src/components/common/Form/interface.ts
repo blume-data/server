@@ -1,3 +1,5 @@
+import {ErrorMessagesType} from "@ranjodhbirkaur/constants";
+
 export const DROPDOWN = 'dropdown';
 export const BIG_TEXT = 'bigText';
 export const TEXT = 'text';
@@ -5,7 +7,7 @@ export const TEXT = 'text';
 export interface FormType {
     className: string
     fields: ConfigField[]
-    onSubmit: (values: object[]) => void;
+    onSubmit: (values: object[]) => Promise<string | ErrorMessagesType[]>;
 }
 
 export interface OptionsType {
