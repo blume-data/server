@@ -4,6 +4,7 @@ import {AUTH_TOKEN, okayStatus, clientUserType, adminUserType, adminType} from "
 import {InValidEmailMessage, InvalidLoginCredentialsMessage} from "../../util/errorMessages";
 import {getSampleData, signUpAUser} from "../../test/testHelpers";
 import {getSignInUrl} from "../../test/setup";
+import {passwordLimitOptionErrorMessage} from "../../util/constants";
 
 async function loginUser(userType: string, sampleData?: object) {
     const signInUrl = getSignInUrl(userType);
@@ -34,7 +35,7 @@ async function testUserLoginWithInValidCredentials(userType: string) {
         expect(response.body.errors[0].message).toBe(InValidEmailMessage);
         expect(response.body.errors[0].field).toBe('email');
 
-        expect(response.body.errors[1].message).toBe('password must be present');
+        expect(response.body.errors[1].message).toBe(passwordLimitOptionErrorMessage('password'));
         expect(response.body.errors[1].field).toBe('password');
     }
 }
