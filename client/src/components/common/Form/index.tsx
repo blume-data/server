@@ -1,10 +1,11 @@
 import React, {ChangeEvent, useEffect, useState} from "react";
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
-import { TextBox } from "./TextBox";
+import {TextBox} from "./TextBox";
 import {DropDown} from "./DropDown";
-import {ConfigField, FormType, TEXT, BIG_TEXT, DROPDOWN} from "./interface";
+import {BIG_TEXT, ConfigField, DROPDOWN, FormType, TEXT} from "./interface";
 import './style.scss';
+import {ErrorMessagesType, FIELD, MESSAGE} from "@ranjodhbirkaur/constants";
 
 interface FormState {
     name: string;
@@ -92,7 +93,7 @@ export const Form = (props: FormType) => {
     function hasError(name: string) {
         const value = formState.find(item => item.name === name);
         if (value) {
-            return (!value.value && value.isTouched)
+            return !!(value.helperText)
         }
         return false;
     }
@@ -174,12 +175,12 @@ export const Form = (props: FormType) => {
                 });
             });
             const res = await onSubmit(values);
-            if (res && typeof res === 'string') {
+            if (typeof res === 'string') {
                 clearForm();
-                console.log(res);
+
             }
-            else {
-                console.log(res);
+            else if(res && res.length) {
+                setFormErrors(res);
             }
 
         }
@@ -200,6 +201,28 @@ export const Form = (props: FormType) => {
             });
             setFormState(newFormState);
         }
+    }
+
+    function setFormErrors(errors?: ErrorMessagesType[]) {
+        const values: FormState[] = [];
+        formState.forEach(item => {
+            if (errors && errors.length) {
+                const error = errors.find(errorItem => errorItem[FIELD] === item.name);
+                if (error) {
+                    values.push({
+                        ...item,
+                        helperText: error[MESSAGE],
+                        isTouched: true
+                    });
+                }
+                else {
+                    values.push({
+                        ...item
+                    });
+                }
+            }
+        });
+        setFormState(values);
     }
 
     function clearForm() {
