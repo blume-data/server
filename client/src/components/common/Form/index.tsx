@@ -15,7 +15,6 @@ interface FormState {
 }
 
 const SET_VALUE_ACTION = 'SET_VALUE_ACTION';
-const SET_ERROR_MESSAGE_ACTION = 'SET_ERROR_MESSAGE_ACTION';
 const SET_IS_TOUCHED_ACTION = 'SET_IS_TOUCHED_ACTION';
 
 export const Form = (props: FormType) => {
@@ -37,18 +36,6 @@ export const Form = (props: FormType) => {
                         ...item,
                         value,
                         helperText: (!value) ? setErrorMessage(field) : '',
-                    }
-                }
-                return item;
-            });
-            setFormState(state);
-        }
-        if (action === SET_ERROR_MESSAGE_ACTION) {
-            state = formState.map((item) => {
-                if (item.name === field) {
-                    return {
-                        ...item,
-                        helperText: `${actionValue}`
                     }
                 }
                 return item;
