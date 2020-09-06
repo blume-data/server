@@ -10,6 +10,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import {Link} from "react-router-dom";
 import './styles.scss'
+import {SIGN_UP} from "../../../modules/authentication/pages/Auth";
 
 export const NavBar = () => {
 
@@ -54,7 +55,7 @@ export const NavBar = () => {
                             onClose={handleClose}>
                             <MenuItem onClick={handleClose}>Profile</MenuItem>
                             <MenuItem onClick={handleClose}>My account</MenuItem>
-                            <Link to={'/auth'}>
+                            <Link to={`/auth/${SIGN_UP}`}>
                                 <MenuItem onClick={handleClose}>
                                     Log in
                                 </MenuItem>

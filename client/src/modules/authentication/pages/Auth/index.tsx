@@ -1,14 +1,14 @@
 import React from "react";
 import Grid from "@material-ui/core/Grid";
-import {doPostRequest} from "../../../../utils/baseApi";
+import {doGetRequest, doPostRequest} from "../../../../utils/baseApi";
 import {getBaseUrl} from "../../../../utils/urls";
 import {RootState} from "../../../../rootReducer";
 import {connect, ConnectedProps} from "react-redux";
 import {AUTH_TOKEN, ErrorMessagesType, USER_NAME} from "@ranjodhbirkaur/constants";
 import {FORM_SUCCESSFULLY_SUBMITTED, REGISTRATION_TITLE} from "./constants";
 import './styles.scss';
-import {useParams} from "react-router";
-import {Register} from "./Register";
+import {useHistory, useParams} from "react-router";
+import {CardForm} from "./CardForm";
 import {getFieldConfiguration} from "./fieldConfiguration";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
@@ -26,6 +26,8 @@ export const VERIFY_EMAIL = 'verify-email';
 
 const AuthComponent = (props: PropsFromRedux) => {
 
+    const history = useHistory();
+
     async function onSubmit(values: object[]) {
         let data: any = {};
         values.forEach((value: any) => {
@@ -36,10 +38,44 @@ const AuthComponent = (props: PropsFromRedux) => {
 
     async function authUser(values: any): Promise<string | ErrorMessagesType[]> {
         const {routeAddress} = props;
-        const register = routeAddress && routeAddress.register;
-        const url = `${getBaseUrl()}${register}`;
-        const response: ResponseType = await doPostRequest(url, values, false);
+        const routeUrl = (() => {
+            switch (step) {
+                case SIGN_IN: {
+                    return routeAddress && routeAddress.logIn;
+                }
+                case SIGN_UP: {
+                    return routeAddress && routeAddress.register;
+                }
+                case VERIFY_EMAIL: {
+                    return routeAddress && routeAddress.emailVerification;
+                }
+
+            }
+        })();
+        const url = `${getBaseUrl()}${routeUrl}`;
+        let response: ResponseType;
+        if (step === VERIFY_EMAIL) {
+            const token = values.verificationToken ? values.verificationToken : '';
+            response = await doGetRequest(`${url}?token=${token}&email=${values.email}`, values, false);
+        }
+        else {
+            response = await doPostRequest(url, values, false);
+        }
         if (response && response[AUTH_TOKEN]) {
+            switch (step) {
+                case SIGN_UP: {
+                    history.push(`/auth/${VERIFY_EMAIL}`);
+                    break;
+                }
+                case SIGN_IN: {
+                    history.push(`/`);
+                    break;
+                }
+                case VERIFY_EMAIL: {
+                    history.push('/');
+                    break;
+                }
+            }
             return FORM_SUCCESSFULLY_SUBMITTED;
         }
         else if(response && response.errors && response.errors.length) {
@@ -58,13 +94,16 @@ const AuthComponent = (props: PropsFromRedux) => {
             <Grid item lg={6} xl={6} md={6} sm={6} xs={12}>
                 <Grid container justify={'center'}>
                     {step === SIGN_UP
-                    ? <Register fields={getFieldConfiguration(SIGN_UP)} onSubmit={onSubmit} title={REGISTRATION_TITLE} />
+                    ? <CardForm fields={getFieldConfiguration(SIGN_UP)}
+                                onSubmit={onSubmit} title={REGISTRATION_TITLE} />
                     : null}
                     {step === SIGN_IN
-                        ? <Register fields={getFieldConfiguration(SIGN_IN)} onSubmit={onSubmit} title={REGISTRATION_TITLE} />
+                        ? <CardForm fields={getFieldConfiguration(SIGN_IN)}
+                                    onSubmit={onSubmit} title={REGISTRATION_TITLE} />
                         : null}
                     {step === VERIFY_EMAIL
-                        ? <Register fields={getFieldConfiguration(VERIFY_EMAIL)} onSubmit={onSubmit} title={REGISTRATION_TITLE} />
+                        ? <CardForm fields={getFieldConfiguration(VERIFY_EMAIL)}
+                                    onSubmit={onSubmit} title={REGISTRATION_TITLE} />
                         : null}
                 </Grid>
             </Grid>

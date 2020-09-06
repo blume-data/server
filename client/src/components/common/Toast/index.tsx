@@ -8,5 +8,5 @@ export interface AlertType extends AlertProps{
 
 export const Alert = (props: AlertType) => {
     const {severity = 'success'} = props;
-    return <MuiAlert elevation={6} severity={severity} variant="outlined" {...props}>{props.message}</MuiAlert>;
+    return <MuiAlert elevation={6} severity={severity} {...props}>{props.message}</MuiAlert>;
 };

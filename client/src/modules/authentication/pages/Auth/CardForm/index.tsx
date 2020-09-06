@@ -12,7 +12,7 @@ interface RegisterType {
     title: string;
 }
 
-export const Register = (props: RegisterType) => {
+export const CardForm = (props: RegisterType) => {
     const {onSubmit, fields, title} = props;
     return (
         <Card className={'auth-page-form-card'}>

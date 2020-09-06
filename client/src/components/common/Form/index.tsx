@@ -187,7 +187,12 @@ export const Form = (props: FormType) => {
             }
             else if(res && res.length) {
                 setFormErrors(res);
-                showAlert({message: PLEASE_PROVIDE_VALID_VALUES, severity: "error"});
+                if (res.length === 1 && !res[0][FIELD] && res[0][MESSAGE]) {
+                    showAlert({message: res[0][MESSAGE], severity: "error"});
+                }
+                else {
+                    showAlert({message: PLEASE_PROVIDE_VALID_VALUES, severity: "error"});
+                }
             }
         }
         else {
