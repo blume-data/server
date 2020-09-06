@@ -31,6 +31,7 @@ interface ResponseType {
     [USER_NAME]?: string;
 }
 
+export const AUTH_ROOT = 'auth';
 export const SIGN_UP = 'register';
 export const SIGN_IN = 'log-in';
 export const VERIFY_EMAIL = 'verify-email';
