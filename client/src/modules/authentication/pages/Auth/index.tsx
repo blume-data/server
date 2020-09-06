@@ -1,13 +1,15 @@
 import React from "react";
 import Grid from "@material-ui/core/Grid";
-import {ConfigField, TEXT} from "../../../../components/common/Form/interface";
 import {doPostRequest} from "../../../../utils/baseApi";
 import {getBaseUrl} from "../../../../utils/urls";
-import {Form} from "../../../../components/common/Form";
 import {RootState} from "../../../../rootReducer";
 import {connect, ConnectedProps} from "react-redux";
 import {AUTH_TOKEN, ErrorMessagesType, USER_NAME} from "@ranjodhbirkaur/constants";
-import {FORM_SUCCESSFULLY_SUBMITTED} from "./constants";
+import {FORM_SUCCESSFULLY_SUBMITTED, REGISTRATION_TITLE} from "./constants";
+import './styles.scss';
+import {useParams} from "react-router";
+import {Register} from "./Register";
+import {getFieldConfiguration} from "./fieldConfiguration";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 interface ResponseType {
@@ -18,61 +20,11 @@ interface ResponseType {
     [USER_NAME]?: string;
 }
 
-const AuthComponent = (props: PropsFromRedux) => {
+export const SIGN_UP = 'register';
+export const SIGN_IN = 'log-in';
+export const VERIFY_EMAIL = 'verify-email';
 
-    const fields: ConfigField[] = [
-        {
-            inputType: TEXT,
-            placeholder: 'Email',
-            label: 'Email',
-            name: 'email',
-            type: 'email',
-            required: true,
-            value: '',
-            className: 'auth-email-text-box',
-        },
-        {
-            inputType: TEXT,
-            placeholder: 'First Name',
-            label: 'First Name',
-            name: 'firstName',
-            type: 'text',
-            required: true,
-            value: '',
-            helperText: '',
-            className: 'auth-first-name-text-box',
-        },
-        {
-            inputType: TEXT,
-            placeholder: 'Last Name',
-            label: 'Last Name',
-            name: 'lastName',
-            type: 'text',
-            required: true,
-            value: '',
-            className: 'auth-last-name-text-box',
-        },
-        {
-            inputType: TEXT,
-            placeholder: 'Username',
-            label: 'Username',
-            name: 'userName',
-            type: 'text',
-            required: true,
-            value: '',
-            className: 'auth-user-name-text-box',
-        },
-        {
-            inputType: TEXT,
-            placeholder: 'Password',
-            label: 'Password',
-            name: 'password',
-            type: 'password',
-            required: true,
-            value: '',
-            className: 'auth-password-text-box',
-        },
-    ];
+const AuthComponent = (props: PropsFromRedux) => {
 
     async function onSubmit(values: object[]) {
         let data: any = {};
@@ -96,14 +48,24 @@ const AuthComponent = (props: PropsFromRedux) => {
         return '';
     }
 
+    const {step} = useParams();
+
     return (
-        <Grid container direction={'row'} justify={'space-between'}>
+        <Grid container className={'auth-page'} direction={'row'} justify={'space-between'}>
             <Grid item lg={6} xl={6} md={6} sm={6} xs={12}>
                 welcome
             </Grid>
             <Grid item lg={6} xl={6} md={6} sm={6} xs={12}>
                 <Grid container justify={'center'}>
-                    <Form onSubmit={onSubmit} fields={fields} className={'auth-form'} />
+                    {step === SIGN_UP
+                    ? <Register fields={getFieldConfiguration(SIGN_UP)} onSubmit={onSubmit} title={REGISTRATION_TITLE} />
+                    : null}
+                    {step === SIGN_IN
+                        ? <Register fields={getFieldConfiguration(SIGN_IN)} onSubmit={onSubmit} title={REGISTRATION_TITLE} />
+                        : null}
+                    {step === VERIFY_EMAIL
+                        ? <Register fields={getFieldConfiguration(VERIFY_EMAIL)} onSubmit={onSubmit} title={REGISTRATION_TITLE} />
+                        : null}
                 </Grid>
             </Grid>
 

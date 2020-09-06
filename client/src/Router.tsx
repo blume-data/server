@@ -9,7 +9,7 @@ export const Routes = [
         exact: true
     },
     {
-        path: '/auth',
+        path: '/auth/:step',
         component: Auth,
         exact: true
     },
