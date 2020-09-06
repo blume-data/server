@@ -7,6 +7,8 @@ import {connect, ConnectedProps} from "react-redux";
 
 import {RootState} from "../../../rootReducer";
 import {fetchRouteAddresses} from "./actions";
+import {checkAuthentication} from "../../../modules/authentication/pages/Auth/methods";
+import {setAuthentication} from "../../../modules/authentication/pages/Auth/actions";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type AppProps = PropsFromRedux & {
@@ -16,9 +18,11 @@ type AppProps = PropsFromRedux & {
 }
 
 const Layout = (props: AppProps) => {
-    const {children} = props;
+    const {children, setAuthentication} = props;
     useEffect(() => {
-        props.fetchRouteAddresses()
+        props.fetchRouteAddresses();
+        const isAuthenticated = checkAuthentication();
+        setAuthentication(isAuthenticated);
     }, []);
 
     return (
@@ -34,5 +38,5 @@ const mapState = (state: RootState) => ({
     routeAddress: state.routeAddress
 });
 
-const connector = connect(mapState, {fetchRouteAddresses});
+const connector = connect(mapState, {fetchRouteAddresses, setAuthentication});
 export default connector(Layout);
