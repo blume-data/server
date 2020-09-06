@@ -10,14 +10,14 @@ import MenuItem from '@material-ui/core/MenuItem';
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import {Link} from "react-router-dom";
 import './styles.scss'
-import {SIGN_OUT, SIGN_UP} from "../../../modules/authentication/pages/Auth";
+import {SIGN_IN, SIGN_OUT} from "../../../modules/authentication/pages/Auth";
 import {connect, ConnectedProps} from "react-redux";
 import {RootState} from "../../../rootReducer";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 export const NavBarComponent = (props: PropsFromRedux) => {
 
-    const {isAuth,routeAddress} = props;
+    const {isAuth} = props;
 
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
@@ -65,7 +65,7 @@ export const NavBarComponent = (props: PropsFromRedux) => {
                                         <MenuItem onClick={handleClose}>My account</MenuItem>
                                         <Link to={`/auth/${SIGN_OUT}`}><MenuItem>Log out</MenuItem></Link>
                                     </Grid>
-                                    : <Link to={`/auth/${SIGN_UP}`}>
+                                    : <Link to={`/auth/${SIGN_IN}`}>
                                         <MenuItem onClick={handleClose}>
                                             Log in
                                         </MenuItem>
@@ -80,8 +80,7 @@ export const NavBarComponent = (props: PropsFromRedux) => {
 };
 
 const mapState = (state: RootState) => ({
-    isAuth: state.authentication.isAuth,
-    routeAddress: state.routeAddress
+    isAuth: state.authentication.isAuth
 });
 const connector = connect(mapState);
 export const NavBar = connector(NavBarComponent);

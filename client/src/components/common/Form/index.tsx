@@ -6,8 +6,7 @@ import {DropDown} from "./DropDown";
 import {BIG_TEXT, ConfigField, DROPDOWN, FormType, TEXT} from "./interface";
 import './style.scss';
 import {ErrorMessagesType, FIELD, MESSAGE} from "@ranjodhbirkaur/constants";
-import Snackbar from "@material-ui/core/Snackbar";
-import {Alert, AlertType} from "../Toast";
+import {Alert} from "../Toast";
 import {PLEASE_PROVIDE_VALID_VALUES} from "../../../modules/authentication/pages/Auth/constants";
 
 interface FormState {
@@ -20,15 +19,15 @@ interface FormState {
 const SET_VALUE_ACTION = 'SET_VALUE_ACTION';
 const SET_IS_TOUCHED_ACTION = 'SET_IS_TOUCHED_ACTION';
 
+export interface AlertType {
+    message: string;
+    severity?: 'success' | 'error' | 'info'
+}
+
 export const Form = (props: FormType) => {
 
     const [isAlertOpen, setIsAlertOpen] = React.useState<boolean>(false);
     const [alert, setAlertMessage] = React.useState<AlertType>({message: ''});
-
-    const handleAlertClose = (event?: React.SyntheticEvent, reason?: string) => {
-        if (reason === 'clickaway') return;
-        setIsAlertOpen(false);
-    };
 
     const [formState, setFormState] = useState<FormState[]>([]);
     const {className, fields, onSubmit} = props;
@@ -182,7 +181,6 @@ export const Form = (props: FormType) => {
             });
             const res = await onSubmit(values);
             if (typeof res === 'string') {
-                showAlert({message: res, severity: "success"});
                 clearForm();
             }
             else if(res && res.length) {
@@ -263,9 +261,11 @@ export const Form = (props: FormType) => {
                     <Button variant="outlined" onClick={onClickSubmit} color={'primary'}>Submit</Button>
                 </Grid>
             </Grid>
-            <Snackbar open={isAlertOpen} autoHideDuration={6000} onClose={handleAlertClose}>
-                <Alert onClose={handleAlertClose} severity={alert?.severity} message={alert.message} />
-            </Snackbar>
+            <Alert
+                isAlertOpen={isAlertOpen}
+                onAlertClose={setIsAlertOpen}
+                severity={alert.severity}
+                message={alert.message} />
         </Grid>
     );
 };

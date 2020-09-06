@@ -5,7 +5,12 @@ import {getBaseUrl} from "../../../../utils/urls";
 import {RootState} from "../../../../rootReducer";
 import {connect, ConnectedProps} from "react-redux";
 import {AUTH_TOKEN, ErrorMessagesType, USER_NAME} from "@ranjodhbirkaur/constants";
-import {FORM_SUCCESSFULLY_SUBMITTED, REGISTRATION_TITLE} from "./constants";
+import {
+    FORM_SUCCESSFULLY_SUBMITTED,
+    LOGGED_IN_SUCCESSFULLY,
+    PLEASE_PROVIDE_VALID_VALUES,
+    REGISTRATION_TITLE
+} from "./constants";
 import './styles.scss';
 import {useHistory, useParams} from "react-router";
 import {CardForm} from "./CardForm";
@@ -14,6 +19,8 @@ import Typography from "@material-ui/core/Typography";
 import { Link } from "react-router-dom";
 import {clearAuthentication, saveAuthentication} from "./methods";
 import {setAuthentication} from "./actions";
+import {Alert} from "../../../../components/common/Toast";
+import {AlertType} from "../../../../components/common/Form";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 interface ResponseType {
@@ -30,6 +37,9 @@ export const VERIFY_EMAIL = 'verify-email';
 export const SIGN_OUT = 'sign-out';
 
 const AuthComponent = (props: PropsFromRedux) => {
+
+    const [isAlertOpen, setIsAlertOpen] = React.useState<boolean>(false);
+    const [alert, setAlertMessage] = React.useState<AlertType>({message: ''});
 
     const history = useHistory();
 
@@ -77,14 +87,15 @@ const AuthComponent = (props: PropsFromRedux) => {
         if (response && response[AUTH_TOKEN]) {
             switch (step) {
                 case SIGN_UP: {
+                    showAlert({message: FORM_SUCCESSFULLY_SUBMITTED});
                     history.push(`/auth/${VERIFY_EMAIL}`);
                     break;
                 }
                 case SIGN_IN: {
-                    history.push(`/`);
                     if (response[AUTH_TOKEN] && response[USER_NAME]) {
                         saveAuthentication(response);
                         setAuthentication(true);
+                        history.push(`/`);
                     }
                     break;
                 }
@@ -99,6 +110,14 @@ const AuthComponent = (props: PropsFromRedux) => {
             return response.errors
         }
         return '';
+    }
+
+    function showAlert(alertParam: AlertType) {
+        setIsAlertOpen(true);
+        setAlertMessage({
+            message: alertParam.message,
+            severity: alertParam.severity
+        });
     }
 
     const {step} = useParams();
@@ -140,6 +159,11 @@ const AuthComponent = (props: PropsFromRedux) => {
                         : null}
                 </Grid>
             </Grid>
+            <Alert
+                isAlertOpen={isAlertOpen}
+                onAlertClose={setIsAlertOpen}
+                severity={alert.severity}
+                message={alert.message} />
 
         </Grid>
     );
