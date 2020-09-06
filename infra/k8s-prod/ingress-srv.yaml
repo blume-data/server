@@ -6,7 +6,7 @@ metadata:
 spec:
   acme:
     server: https://acme-v02.api.letsencrypt.org/directory
-    email: taranjeet.singh.family@gmail.com
+    email: taranjeetplay@gmail.com
     privateKeySecretRef:
       name: letsencrypt-prod
     solvers:
@@ -39,4 +39,8 @@ spec:
           - path: /data/?(.*)
             backend:
               serviceName: data-srv
+              servicePort: 3000
+          - path: /?(.*)
+            backend:
+              serviceName: client-srv
               servicePort: 3000

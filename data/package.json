@@ -14,7 +14,7 @@
     "ingress": "kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/cloud/deploy.yaml",
     "clear-pods": "kubectl delete deployment auth-depl && kubectl delete deployment auth-mongo-depl",
     "jwt": "kubectl create secret generic jwt-secret --from-literal=JWT_KEY=sdjfksdjfdskfjdsk",
-    "DO:pods": "kubectl --kubeconfig=\".kube/api-cluster-kubeconfig.yaml\" get pods"
+    "DO:pods": "kubectl --kubeconfig=\".kube/api-kubeconfig.yaml\" get pods"
   },
   "jest": {
     "preset": "ts-jest",
@@ -27,7 +27,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@ranjodhbirkaur/common": "^1.0.12",
+    "@ranjodhbirkaur/common": "^1.0.20",
     "@types/compression": "^1.7.0",
     "@types/cookie-session": "2.0.39",
     "@types/cors": "^2.8.6",
@@ -35,7 +35,6 @@
     "@types/jest": "^25.2.1",
     "@types/jsonwebtoken": "^8.3.8",
     "@types/lodash": "^4.14.157",
-    "@types/moment": "^2.13.0",
     "@types/mongoose": "^5.7.8",
     "@types/supertest": "^2.0.8",
     "axios": "^0.19.2",

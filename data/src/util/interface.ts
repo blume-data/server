@@ -12,8 +12,3 @@ export interface ErrorMessages {
     field?: string;
     message: string;
 }
-
-export interface DbConnectionModel {
-    model: any;
-    dbConnection?: any;
-}

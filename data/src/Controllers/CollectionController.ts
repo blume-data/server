@@ -1,61 +1,36 @@
 import {Request, Response} from 'express';
 import {BadRequestError} from "@ranjodhbirkaur/common";
 import {
-    ALL_CONNECTIONS_AND_DB_CAPACITY_FULL, COLLECTION_TYPES, DATA_COLLECTION,
-    errorStatus,
-    MAX_COLLECTION_LIMIT,
-    MAX_DB_LIMIT,
-    MONGO_DB_DATA_CONNECTIONS_AVAILABLE, okayStatus,
-    SUPPORTED_DATA_TYPES, USER_COLLECTION
+    ALL_CONNECTIONS_AND_DB_CAPACITY_FULL, DATA_COLLECTION, MAX_COLLECTION_LIMIT,
+    MAX_USER_LIMIT, MONGO_DB_DATA_CONNECTIONS_AVAILABLE,
+    okayStatus, USER_COLLECTION
 } from "../util/constants";
 import _ from 'lodash';
 import {CollectionModel} from "../models/Collection";
-import {
-    COLLECTION_ALREADY_EXIST,
-    DEFAULT_VALUE_SHOULD_BE_OF_SPECIFIED_TYPE, EMAIL_PROPERTY_IN_RULES_SHOULD_BE_STRING,
-    INVALID_RULES_MESSAGE,
-    IS_EMAIL_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN,
-    IS_PASSWORD_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN, PASSWORD_PROPERTY_IN_RULES_SHOULD_BE_STRING,
-    REQUIRED_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN,
-    UNIQUE_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN
-} from "./Messages";
+import {CANNOT_CREATE_COLLECTIONS_MORE_THAN_LIMIT, COLLECTION_ALREADY_EXIST} from "./Messages";
 import {ConnectionModel} from "../models/Connections";
-import {DbsModel} from "../models/Dbs";
+import {UserConnectionModel} from "../models/UserConnection";
 import {RuleType} from "../util/interface";
 
 export async function createCollectionSchema(req: Request, res: Response) {
 
     const userName  = req.params && req.params.userName;
     const language = req.params && req.params.language;
+    const env = req.params && req.params.env;
 
     const reqBody = req.body;
 
-    let isValidBody = true;
-    let isUserCollection = false;
+    const isInLimit = await CollectionModel.find({
+        clientUserName: userName
+    },'name');
+    if ((isInLimit && isInLimit.length) > MAX_COLLECTION_LIMIT) {
+        throw new BadRequestError(CANNOT_CREATE_COLLECTIONS_MORE_THAN_LIMIT);
+    }
 
     // the name of the custom schema collection should not contain any space
     if (reqBody && reqBody.name && typeof reqBody.name === 'string') {
         const name = reqBody.name.split(' ').join('_');
         if (reqBody.collectionType && reqBody.collectionType === USER_COLLECTION) {
-            isUserCollection = true;
-        }
-        reqBody.name = name;
-    }
-
-    // Check if there is not other collection with same name and user_id
-    const alreadyExist = await CollectionModel.findOne({
-        userName: userName, name: reqBody.name
-    }, 'id');
-    if (alreadyExist) {
-        throw new BadRequestError(COLLECTION_ALREADY_EXIST);
-    }
-
-    let inValidMessage = [];
-
-    // Validate Rules
-    if (reqBody.rules && typeof reqBody.rules === 'object' && reqBody.rules.length) {
-        // Validations specific to user collection
-        if (isUserCollection) {
             const hasEmail = reqBody.rules.find((rule: RuleType) => rule.name === 'email');
             if (!hasEmail) {
                 reqBody.rules.push({
@@ -76,147 +51,51 @@ export async function createCollectionSchema(req: Request, res: Response) {
                 });
             }
         }
-        else if (reqBody.collectionType && !COLLECTION_TYPES.includes(reqBody.collectionType)) {
-            isValidBody = false;
-            inValidMessage.push({
-                message: `${reqBody.collectionType} is not a valid collectionType`,
-                field: 'collectionType'
-            });
-        }
+        reqBody.name = name;
+    }
 
-        reqBody.rules.forEach((rule: RuleType) => {
+    // Check if there is not other collection with same name and user_id
+    const alreadyExist = await CollectionModel.findOne({
+        clientUserName: userName, name: reqBody.name, env
+    }, 'id');
 
-            // Check required property
-            if (rule.required !== undefined && typeof rule.required !== 'boolean') {
-                isValidBody = false;
-                inValidMessage.push({
-                    message: `${rule.name}: ${REQUIRED_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN}`,
-                    field: 'rules'
-                });
-            }
+    if (alreadyExist) {
+        throw new BadRequestError(COLLECTION_ALREADY_EXIST);
+    }
 
-            // Check unique property
-            if (rule.unique !== undefined && typeof rule.unique !== 'boolean') {
-                isValidBody = false;
-                inValidMessage.push({
-                    message: `${rule.name}: ${UNIQUE_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN}`,
-                    field: 'rules'
-                });
-            }
+    const newDbConnection: {connectionName: string} = await assignConnection(userName);
 
-            // Check ifEmail property
-            if (rule.isEmail !== undefined && typeof rule.isEmail !== 'boolean') {
-                isValidBody = false;
-                inValidMessage.push({
-                    message: `${rule.name}: ${IS_EMAIL_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN}`,
-                    field: 'rules'
-                });
-            }
-            else if(rule.isEmail && typeof rule.isEmail === 'boolean' && rule.type !== 'string') {
-                isValidBody = false;
-                inValidMessage.push({
-                    message: `${rule.name}: ${EMAIL_PROPERTY_IN_RULES_SHOULD_BE_STRING}`,
-                    field: 'rules'
-                })
-            }
-
-            // Check isPassword property
-            if (rule.isPassword !== undefined && typeof rule.isPassword !== 'boolean') {
-                isValidBody = false;
-                inValidMessage.push({
-                    message: `${rule.name}: ${IS_PASSWORD_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN}`,
-                    field: 'rules'
-                });
-            }
-            else if(rule.isPassword && typeof rule.isPassword === 'boolean' && rule.type !== 'string') {
-                isValidBody = false;
-                inValidMessage.push({
-                    message: `${rule.name}: ${PASSWORD_PROPERTY_IN_RULES_SHOULD_BE_STRING}`,
-                    field: 'rules'
-                })
-            }
-
-            // check default property
-            if (rule.default && typeof rule.default !== rule.type) {
-                isValidBody = false;
-                inValidMessage.push({
-                    message: `${rule.name}: ${DEFAULT_VALUE_SHOULD_BE_OF_SPECIFIED_TYPE}${rule.type}`,
-                    field: 'rules'
-                });
-            }
-
-            // Validate rule type
-            if (typeof rule.type === 'string' && SUPPORTED_DATA_TYPES.includes(rule.type)) {
-                // remove all the spaces from name
-                rule.name = rule.name.split(' ').join('_');
-            }
-
-            else {
-                isValidBody = false;
-                inValidMessage.push({
-                    message: `${rule.name} is of invalid type ${rule.type}`,
-                    field: 'rules'
-                });
-            }
+    if (newDbConnection) {
+        const newCollection = CollectionModel.build({
+            clientUserName: userName,
+            isPublic: false,
+            applicationName: 'some name',
+            rules: JSON.stringify(reqBody.rules),
+            name: reqBody.name,
+            env,
+            connectionName: newDbConnection.connectionName,
+            collectionType: (reqBody.collectionType ? reqBody.collectionType : DATA_COLLECTION),
+            language
         });
+
+        await newCollection.save();
+
+        res.status(okayStatus).send(newCollection);
     }
     else {
-        isValidBody = false;
-        inValidMessage.push({
-            message: INVALID_RULES_MESSAGE,
-            field: 'rules'
-        })
+        res.status(500).send('Db capacity full');
     }
-
-    // Validate unique name in the rules
-    if (reqBody.rules && typeof reqBody.rules === 'object' && reqBody.rules.length) {
-        const names: string[] = [];
-        reqBody.rules.forEach((rule: RuleType) => {
-            const exist = names.find(item => item === rule.name);
-            if (exist) {
-                isValidBody = false;
-                inValidMessage.push({
-                    message: `${rule.name} is already present in rules`,
-                    field: 'rules'
-                })
-            }
-            else {
-                names.push(rule.name);
-            }
-        });
-    }
-
-    if (!isValidBody) {
-        return res.status(errorStatus).send({
-            errors: inValidMessage
-        });
-    }
-
-    const newDbConnection = await assignConnectionAndDb();
-
-    const newCollection = CollectionModel.build({
-        userName: userName,
-        rules: JSON.stringify(reqBody.rules),
-        name: reqBody.name,
-        dbName: newDbConnection.name,
-        connectionName: newDbConnection.connectionName,
-        collectionType: (reqBody.collectionType ? reqBody.collectionType : DATA_COLLECTION),
-        language
-    });
-
-    await newCollection.save();
-
-    res.status(okayStatus).send(newCollection);
 }
 
 export async function deleteCollectionSchema(req: Request, res: Response) {
     const userName  = req.params && req.params.userName;
     const language = req.params && req.params.language;
+    const env = req.params && req.params.env;
 
     const reqBody = req.body;
 
     const itemSchema = await CollectionModel.findOne({
-        userName: userName,
+        clientUserName: userName,
         name: reqBody.name,
         language
     });
@@ -226,23 +105,12 @@ export async function deleteCollectionSchema(req: Request, res: Response) {
             userName: userName,
             name: reqBody.name
         });
+        /*await DbsModel.deleteOne({
+            name: userName
+        });
         // calculate the exact length of the dbs
         const dbs = await DbsModel.find({connectionName: itemSchema.connectionName}, 'id');
-        await ConnectionModel.updateOne({name: itemSchema.connectionName}, {count: dbs.length});
-        // update the count on db
-        const db = await DbsModel.findOne({
-            connectionName: itemSchema.connectionName,
-            name: itemSchema.dbName
-        }, 'count');
-        if (db) {
-            await DbsModel.updateOne({
-                connectionName: itemSchema.connectionName,
-                name: itemSchema.dbName
-            }, {
-                count: db.count - 1
-            });
-        }
-
+        await ConnectionModel.updateOne({name: itemSchema.connectionName}, {count: dbs.length});*/
     }
     else {
         throw new BadRequestError('Collection not found');
@@ -261,62 +129,62 @@ export async function getCollectionSchema(req: Request, res: Response) {
     res.status(okayStatus).send(collections);
 }
 
-async function assignConnectionAndDb() : Promise<any> {
+async function assignConnection(clientUserName: string) : Promise<any> {
 
-    const connections = await ConnectionModel.findOne({count: {$lte: MAX_DB_LIMIT}}, ['name', 'count']);
-    const allConnections = await ConnectionModel.find({}, 'id');
+    const userConnectionExist = await UserConnectionModel.findOne({
+        clientUserName: clientUserName
+    }, ['connectionName', 'clientUserName']);
 
-    if (!connections && !allConnections.length) {
-        // create a new connection
-        return await createNewConnection(allConnections.length);
-    }
-    else if(connections) {
-        const dbs = await DbsModel.findOne({connectionName: connections.name, count: {$lte: MAX_COLLECTION_LIMIT}});
-        const allDbs = await DbsModel.find({connectionName: connections.name}, 'id');
-        if(!dbs && !allDbs.length) {
-            // create new db here
-            await incrementConnectionCount(connections.name, connections.count);
-            const newDb = DbsModel.build({connectionName: connections.name, count: 1, name: '_1' });
-            return await newDb.save();
-        }
-        else if (!dbs) {
-            // all dbs capacity is full create a new db
-            if (allDbs.length === MAX_DB_LIMIT) {
-                // HACK HACK HACK
-                // on delete of any collection: update the count of connection to the length of dbs
-                await incrementConnectionCount(connections.name, connections.count);
-                return await createNewConnection(allConnections.length);
-            }
-            else{
-                await incrementConnectionCount(connections.name, connections.count);
-                const newDb = DbsModel.build({connectionName: connections.name, count: 1, name: `_${allDbs.length + 1}` });
-                return await newDb.save();
-            }
-        }
-        else if(dbs) {
-            await DbsModel.updateOne({connectionName:dbs.connectionName, name: dbs.name}, {count: dbs.count + 1});
-            return dbs;
-        }
-    }
-    else if(allConnections.length <= MONGO_DB_DATA_CONNECTIONS_AVAILABLE.length) {
-        return await createNewConnection(allConnections.length);
+    if(userConnectionExist) {
+        return {
+            connectionName: userConnectionExist.connectionName
+        };
     }
     else {
-        throw new Error(ALL_CONNECTIONS_AND_DB_CAPACITY_FULL+' : while creating DB');
+        // Search a connection with count less the max users per connection
+        const availableConnection = await ConnectionModel.findOne({count: {$lte: MAX_USER_LIMIT}}, ['name', 'count']);
+        const allConnections = await ConnectionModel.find({});
+        if (!availableConnection && !allConnections.length) {
+            // create a new connection
+            return await createNewConnection(allConnections.length, clientUserName);
+        }
+        else if(availableConnection) {
+            // assign a new connection and increase count
+            return await incrementConnectionCount(availableConnection.name, availableConnection.count, clientUserName);
+        }
+        else if(allConnections.length <= MONGO_DB_DATA_CONNECTIONS_AVAILABLE.length) {
+            // create a new connection
+            return await createNewConnection(allConnections.length, clientUserName);
+        }
+        else {
+            throw new Error(ALL_CONNECTIONS_AND_DB_CAPACITY_FULL+' : while creating a new connection');
+        }
     }
 }
 
-async function incrementConnectionCount(connectionName: string, count: number) {
+async function incrementConnectionCount(connectionName: string, count: number, clientUserName: string) {
+    const newUserConnection = UserConnectionModel.build({
+        clientUserName: clientUserName, connectionName
+    });
+    await newUserConnection.save();
     await ConnectionModel.updateOne({name: connectionName}, {count: count + 1});
+    return {
+        connectionName
+    };
 }
 
-async function createNewConnection(allConnectionsLength: number) {
+async function createNewConnection(allConnectionsLength: number, clientUserName: string) {
     const connectionName = MONGO_DB_DATA_CONNECTIONS_AVAILABLE[allConnectionsLength];
     if (connectionName) {
-        const newConnection = ConnectionModel.build({ name: connectionName, count: 1 });
+        const newUserConnection = UserConnectionModel.build({
+            clientUserName: clientUserName, connectionName
+        });
+        await newUserConnection.save();
+        const newConnection = ConnectionModel.build({ name: connectionName, count: 1, type: 'connection_type' });
         await newConnection.save();
-        const newDb = DbsModel.build({ connectionName, name: '_1', count: 1 });
-        return await newDb.save();
+        return {
+            connectionName: newConnection.name
+        }
     }
     else {
         throw new Error(ALL_CONNECTIONS_AND_DB_CAPACITY_FULL);

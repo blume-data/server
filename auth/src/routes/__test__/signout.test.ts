@@ -1,45 +1,29 @@
 import request from 'supertest';
 import { app } from '../../app';
-import {emailVerificationUrl, signIn, signOutUrl, signUp} from "../../util/urls";
-import {okayStatus} from "../../util/constants";
+import {okayStatus, clientUserType, adminUserType} from "@ranjodhbirkaur/common";
+import {authRootUrl, logOut, signOutUrl as getSignOutUrl} from "../../util/urls";
 
-const sampleData = {
-    "email": "t@t.com",
-    "password": "sddsdf",
-    "firstName": "Taranjeet",
-    "lastName": "Singh",
-    "userName": "taranjeet"
-};
+async function signOutUser(userType: string) {
+    const signOutUrl = getSignOutUrl(userType);
+    await global.signUp(userType);
 
-async function beforeEach() {
-    const user = await request(app)
-        .post(signUp)
-        .send(sampleData)
-        .expect(okayStatus);
+    const response = await request(app)
+        .post(signOutUrl)
+        .send({});
 
-    await request(app)
-        .get(`${emailVerificationUrl}?email=${sampleData.email}&token=${user.body.verificationToken}`)
-        .expect(okayStatus);
+    expect(response.get('Set-Cookie')[0]).toEqual(
+        'express:sess=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; httponly'
+    );
 }
 
-it('clears the cookie after signing out', async () => {
+describe('Logs out the client user', () => {
+    describe('Clears the cookie after signing out',() => {
+        it('client User', async () => {
+            await signOutUser(clientUserType);
+        });
 
-    await beforeEach();
-
-    await request(app)
-        .post(signIn)
-        .send({
-            email: sampleData.email,
-            password: sampleData.password
-        })
-        .expect(okayStatus);
-
-  const response = await request(app)
-    .post(signOutUrl)
-    .send({})
-    .expect(okayStatus);
-
-  expect(response.get('Set-Cookie')[0]).toEqual(
-    'express:sess=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; httponly'
-  );
+        it('Admin User', async () => {
+            await signOutUser(adminUserType);
+        });
+    });
 });

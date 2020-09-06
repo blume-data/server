@@ -1,16 +1,17 @@
 import request from 'supertest';
 import { app } from '../../../app';
-import {errorStatus, okayStatus, rootUrl, USER_COLLECTION} from "../../../util/constants";
+import {DATA_COLLECTION, errorStatus, okayStatus, rootUrl, USER_COLLECTION} from "../../../util/constants";
 import {RANDOM_STRING} from "../../../util/methods";
 import {
-    EMAIL_PROPERTY_IN_RULES_SHOULD_BE_STRING, INVALID_RULES_MESSAGE,
+    EMAIL_PROPERTY_IN_RULES_SHOULD_BE_STRING, ENV_IS_NOT_SUPPORTED, INVALID_RULES_MESSAGE,
     IS_EMAIL_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN,
     IS_PASSWORD_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN,
     PASSWORD_PROPERTY_IN_RULES_SHOULD_BE_STRING
 } from "../../../Controllers/Messages";
+import {PRODUCTION_ENV} from "../../../util/enviornmentTypes";
 
 const sampleUserName = RANDOM_STRING(10);
-const collectionUrl = `${rootUrl}/en/${sampleUserName}/collection`;
+const collectionUrl = `/data/${PRODUCTION_ENV}/en/${sampleUserName}/collection`;
 
 const sampleData = {
     "name": RANDOM_STRING(6),
@@ -41,11 +42,10 @@ describe('Collection:Create', () => {
 
         expect(response.body.isEnabled).toEqual(true);
         expect(response.body.language).toEqual('en');
-        expect(response.body.userName).toEqual(sampleUserName);
+        expect(response.body.clientUserName).toEqual(sampleUserName);
         expect(response.body.name).toEqual(sampleData.name);
         expect(response.body.rules).toEqual(JSON.stringify(sampleData.rules));
         expect(response.body.id).toBeDefined();
-        expect(response.body.dbName).toBeDefined();
         expect(response.body.connectionName).toBeDefined();
         expect(response.body.collectionType).toBeDefined();
         expect(response.body.created_at).toBeDefined();
@@ -314,6 +314,29 @@ describe('Collection:Create', () => {
                 type: "string"
             }
         ]))
+    });
+
+    it('User Collection: Check ENV type is valid', async () => {
+        const response = await request(app)
+            .post(`/data/hjhjh/en/${sampleUserName}/collection`)
+            .send({
+                ...sampleData,
+                rules: [
+                    ...sampleData.rules,
+                    {
+                        name: "email",
+                        type: "string"
+                    },
+                    {
+                        name: "password",
+                        type: "string"
+                    }
+                ]
+            })
+            .expect(errorStatus);
+
+        expect(response.body.errors[0].message).toContain(ENV_IS_NOT_SUPPORTED);
+        expect(response.body.errors[0].field).toEqual('env');
     });
 });
 

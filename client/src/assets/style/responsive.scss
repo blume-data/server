@@ -1,0 +1,64 @@
+$mobiles: 'screen and (max-width: 640px)'; // till Mobile View
+$tablets: 'screen and (min-width: 641px) and (max-width: 1024px)'; // Tablet view
+$desktops: 'screen and (min-width: 1025px)'; // Desktop view and higher
+$mobileAndTablet: 'screen and (max-width: 1024px)'; // Cover all devices upto tablet
+
+$tablets-up: 'screen and (min-width: 641px)'; // If Required for tablets and higher
+$tablets-portrait: 'screen and (min-width: 641px) and (max-width: 960px)'; // If Required for tablets-Portrait
+$tablets-landscape: 'screen and (min-width: 961px) and (max-width: 1024px)'; // If Required for tablets-landscape
+
+$desktops-md: 'screen and (min-width: 1025px) and (max-width: 1440px)'; // If Required for desktops-medium [HD Devices]
+$desktops-lg: 'screen and (min-width: 1441px) and (max-width: 1920px)'; // If Required for desktops-large [FHD Devices]
+$desktops-xl: 'screen and (min-width: 1921px)'; // If Required for desktops-extralarge [4k resolution devices]
+
+@mixin mobiles {
+  @media #{$mobiles} {
+    @content;
+  }
+}
+@mixin desktops {
+  @media #{$desktops} {
+    @content;
+  }
+}
+@mixin tablets {
+  @media #{$tablets} {
+    @content;
+  }
+}
+@mixin tablets-up {
+  @media #{$tablets-up} {
+    @content;
+  }
+}
+@mixin tablets-portrait {
+  @media #{$tablets-portrait} {
+    @content;
+  }
+}
+@mixin tablets-landscape {
+  @media #{$tablets-landscape} {
+    @content;
+  }
+}
+@mixin desktops-md {
+  @media #{$desktops-md} {
+    @content;
+  }
+}
+@mixin desktops-lg {
+  @media #{$desktops-lg} {
+    @content;
+  }
+}
+@mixin desktops-xl {
+  @media #{$desktops-xl} {
+    @content;
+  }
+}
+@mixin mobileAndTablet {
+  @media #{$mobileAndTablet} {
+    @content;
+  }
+}
+

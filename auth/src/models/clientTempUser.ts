@@ -1,32 +1,30 @@
 import mongoose from 'mongoose';
 import { Password } from '../services/password';
 
-interface TempUserAttrs {
+interface ClientTempUserAttrs {
     email: string;
     password: string;
     firstName: string;
     lastName: string;
     verificationToken: string,
     userName: string;
-    role: string;
 }
 
-interface TempUserModel extends mongoose.Model<TempUserDoc> {
-    build(attrs: TempUserAttrs): TempUserDoc;
+interface ClientTempUserModel extends mongoose.Model<ClientTempUserDoc> {
+    build(attrs: ClientTempUserAttrs): ClientTempUserDoc;
 }
 
-interface TempUserDoc extends mongoose.Document {
+interface ClientTempUserDoc extends mongoose.Document {
     email: string;
     password: string;
     firstName: string;
     lastName: string;
     verificationToken: string,
     userName: string;
-    role: string;
     created_at: string;
 }
 
-const tempUserSchema = new mongoose.Schema(
+const clientTempUserSchema = new mongoose.Schema(
     {
         email: {
             type: String,
@@ -53,10 +51,6 @@ const tempUserSchema = new mongoose.Schema(
             type: String,
             required: true
         },
-        role : {
-            type: String,
-            required: true
-        },
         created_at : { type: Date, default: Date.now }
     },
     {
@@ -71,7 +65,7 @@ const tempUserSchema = new mongoose.Schema(
     }
 );
 
-tempUserSchema.pre('save', async function(done) {
+clientTempUserSchema.pre('save', async function(done) {
     if (this.isModified('password')) {
         const hashed = await Password.toHash(this.get('password'));
 
@@ -80,10 +74,10 @@ tempUserSchema.pre('save', async function(done) {
     done();
 });
 
-tempUserSchema.statics.build = (attrs: TempUserAttrs) => {
-    return new TempUser(attrs);
+clientTempUserSchema.statics.build = (attrs: ClientTempUserAttrs) => {
+    return new ClientTempUser(attrs);
 };
 
-const TempUser = mongoose.model<TempUserDoc, TempUserModel>('TempUser', tempUserSchema);
+const ClientTempUser = mongoose.model<ClientTempUserDoc, ClientTempUserModel>('ClientTempUser', clientTempUserSchema);
 
-export { TempUser };
+export { ClientTempUser };

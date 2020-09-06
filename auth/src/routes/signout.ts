@@ -1,13 +1,13 @@
-import express from 'express';
+import express, {Request, Response} from 'express';
+import {okayStatus} from "@ranjodhbirkaur/common";
 import {signOutUrl} from "../util/urls";
-import {okayStatus} from "../util/constants";
 
 const router = express.Router();
 
-router.post(signOutUrl, (req, res) => {
+router.post(signOutUrl(), (req: Request, res: Response) => {
   req.session = null;
 
-  res.status(okayStatus).send({});
+  res.status(okayStatus).send(true);
 });
 
 export { router as signoutRouter };

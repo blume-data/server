@@ -1,10 +1,17 @@
 import {Request, Response} from 'express';
-
-import {BadRequestError} from "@ranjodhbirkaur/common";
-import {TempUser} from "../models/tempUser";
+import {
+    BadRequestError,
+    AUTH_TOKEN,
+    okayStatus,
+    USER_NAME,
+    clientUserType,
+    adminUserType
+} from "@ranjodhbirkaur/common";
+import {ClientTempUser} from "../models/clientTempUser";
 import {ClientUser} from "../models/clientUser";
 import jwt from "jsonwebtoken";
-import {AUTH_TOKEN, okayStatus, USER_NAME} from "../util/constants";
+import {TOKEN_NOT_VALID, USER_NAME_NOT_AVAILABLE} from "../util/errorMessages";
+import {AdminUser} from "../models/adminUser";
 
 interface ReqIsUserNameAvailable extends Request{
     body: {
@@ -21,12 +28,24 @@ interface ReqValidateEmail extends Request{
 
 export const isUserNameAvailable = async function (req: ReqIsUserNameAvailable, res: Response) {
     const modelProps = req.body;
+    const userType = req.params.userType;
     
     if (modelProps) {
         if (modelProps.userName) {
-            const userExist = await TempUser.findOne({userName: modelProps.userName});
+            let userExist;
+
+            switch (userType) {
+                case clientUserType: {
+                    userExist = await ClientUser.findOne({userName: modelProps.userName});
+                    break;
+                }
+                case adminUserType: {
+                    userExist = await AdminUser.findOne({userName: modelProps.userName});
+                    break;
+                }
+            }
             if (userExist) {
-                throw new BadRequestError('Username not available');
+                throw new BadRequestError(USER_NAME_NOT_AVAILABLE);
             }
             else {
                 res.status(okayStatus).send(true);
@@ -43,7 +62,7 @@ export const verifyEmailToken = async function (req: ReqValidateEmail, res: Resp
         throw new BadRequestError('Invalid Request');
     }
     else {
-        const userExist = await TempUser.findOne({email: modelProps.email, verificationToken: modelProps.token});
+        const userExist = await ClientTempUser.findOne({email: modelProps.email, verificationToken: modelProps.token});
 
         if (userExist) {
 
@@ -53,7 +72,6 @@ export const verifyEmailToken = async function (req: ReqValidateEmail, res: Resp
                 firstName: userExist.firstName,
                 lastName: userExist.lastName,
                 userName: userExist.userName,
-                role: userExist.role
             });
 
             await newUser.save();
@@ -77,11 +95,11 @@ export const verifyEmailToken = async function (req: ReqValidateEmail, res: Resp
 
             res.status(okayStatus).send({... payload, [AUTH_TOKEN]: userJwt, [USER_NAME]: newUser.userName});
 
-            TempUser.deleteMany({email: modelProps.email}).then(() => {});
+            ClientTempUser.deleteMany({email: modelProps.email}).then(() => {});
 
         }
         else {
-            throw new BadRequestError('Token not valid');
+            throw new BadRequestError(TOKEN_NOT_VALID);
         }
     }
 };

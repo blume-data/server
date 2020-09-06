@@ -2,6 +2,10 @@ import mongoose from 'mongoose';
 
 interface ConnectionAttrs {
     count: number;
+    // type of connection
+    // for free users
+    // for client users
+    type: string;
     name: string;
 }
 
@@ -12,6 +16,7 @@ interface ConnectionModel extends mongoose.Model<ConnectionDoc> {
 interface ConnectionDoc extends mongoose.Document {
     count: number;
     name: string;
+    type: string;
     created_at?: string;
 }
 
@@ -22,6 +27,10 @@ const Connection = new mongoose.Schema(
             required: true
         },
         name: {
+            type: String,
+            required: true
+        },
+        type: {
             type: String,
             required: true
         },

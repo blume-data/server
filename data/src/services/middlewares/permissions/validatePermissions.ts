@@ -25,12 +25,15 @@ export async function validatePermission(req: Request, res: Response, next: Next
                 else if(permission !== '*') {
                     isValid = true;
                     errorMessages.push({
-                        message: 'permission should be an array of collection names'
+                        message: 'permission should be an array of collection names',
+                        field: 'permissions'
                     });
                 }
             }
             if (!isValid) {
-                res.status(errorStatus).send(errorMessages);
+                res.status(errorStatus).send({
+                    errors: errorMessages
+                });
             }
             else {
                 next();

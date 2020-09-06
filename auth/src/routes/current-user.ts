@@ -1,8 +1,7 @@
 import express, {Response, Request, NextFunction} from 'express';
-import {BadRequestError, currentUser} from '@ranjodhbirkaur/common';
-import {currentUserUrl} from "../util/urls";
-import {okayStatus} from "../util/constants";
+import {BadRequestError, getCurrentUser, okayStatus} from '@ranjodhbirkaur/common';
 import {ClientUser} from "../models/clientUser";
+import {currentUserUrl} from "../util/urls";
 
 const router = express.Router();
 
@@ -19,7 +18,7 @@ async function checkIsEnabled(req: Request, res: Response, next: NextFunction) {
   next();
 }
 
-router.get(currentUserUrl, currentUser, checkIsEnabled, (req, res) => {
+router.get(currentUserUrl(), getCurrentUser, checkIsEnabled, (req: Request, res: Response) => {
   if (req.currentUser) {
     res.status(okayStatus).send({ currentUser: req.currentUser });
   }

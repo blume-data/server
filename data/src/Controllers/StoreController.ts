@@ -4,7 +4,7 @@ import {BadRequestError} from "@ranjodhbirkaur/common";
 import {createModel} from "../util/methods";
 import {errorStatus, okayStatus, PER_PAGE} from "../util/constants";
 import {COLLECTION_NOT_FOUND, PARAM_SHOULD_BE_UNIQUE} from "./Messages";
-import {DbConnectionModel, RuleType} from "../util/interface";
+import {RuleType} from "../util/interface";
 import {Model} from "mongoose";
 import moment from 'moment';
 
@@ -17,20 +17,19 @@ export async function createStoreRecord(req: Request, res: Response) {
         const rules = JSON.parse(collection.rules);
         let body = checkBodyAndRules(rules, req, res);
 
-        const model: DbConnectionModel = createModel({
+        const model: any = createModel({
             rules,
             connectionName: collection.connectionName,
-            dbName: collection.dbName,
             name: collection.name
         });
 
-        const hasError = await validateUniqueParam(model.model, rules, body);
+        const hasError = await validateUniqueParam(model, rules, body);
 
         if (!hasError) {
-            const item = new model.model(body);
+            const item = new model(body);
             await item.save();
             // close db connection
-            await model.dbConnection.close();
+            //await model.dbConnection.close();
             res.status(okayStatus).send(item);
         }
         else {
@@ -49,21 +48,24 @@ export async function getStoreRecord(req: Request, res: Response) {
 
     // get collection
     const collection = await getCollection(req);
-    const {pageNo, perPage=PER_PAGE} = req.query;
+    const {perPage=PER_PAGE} = req.query;
+    let pageNo: number = (req.query && Number(req.query.pageNo)) || 1;
+    if (pageNo) {
+        --pageNo;
+    }
+
     if (collection) {
         const rules = JSON.parse(collection.rules);
 
         if (validateParams(req, res, rules)) {
             const {where, getOnly} = req.body;
-            const model: DbConnectionModel = createModel({
+            const model: any = createModel({
                 rules,
                 connectionName: collection.connectionName,
-                dbName: collection.dbName,
                 name: collection.name
             });
 
-            const collections = await model.model.find(where, getOnly);
-            await model.dbConnection.close();
+            const collections = await model.find(where, getOnly).skip(pageNo*10).limit(perPage);
             res.status(okayStatus).send(collections);
         }
     }
@@ -82,7 +84,7 @@ async function getCollection(req: Request) {
     const language = req.params && req.params.language;
     const collectionName = req.params && req.params.collectionName;
 
-    return CollectionModel.findOne({userName, name: collectionName, language});
+    return CollectionModel.findOne({clientUserName: userName, name: collectionName, language});
 }
 
 function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {

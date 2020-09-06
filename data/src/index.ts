@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 
 import { app } from './app';
 import {MONGO_DB_DATA_CONNECTIONS_AVAILABLE} from "./util/constants";
+import {initClientDbConnection} from "./util/connections";
 
 const start = async () => {
   if (!process.env.JWT_KEY) {
@@ -22,6 +23,9 @@ const start = async () => {
       useCreateIndex: true
     });
     console.log('Data Service: Connected to MongoDb');
+    await initClientDbConnection(() => {
+      console.log('all connections were created');
+    });
   } catch (err) {
     console.error(err);
   }
@@ -31,4 +35,4 @@ const start = async () => {
   });
 };
 
-start();
+start().then(() => console.log('started Everything'));
