@@ -89,7 +89,7 @@ const AuthComponent = (props: PropsFromRedux) => {
     return (
         <Grid container className={'auth-page'} direction={'row'} justify={'space-between'}>
             <Grid item lg={6} xl={6} md={6} sm={6} xs={12}>
-                welcome
+                welcome 
             </Grid>
             <Grid item lg={6} xl={6} md={6} sm={6} xs={12}>
                 <Grid container justify={'center'}>
