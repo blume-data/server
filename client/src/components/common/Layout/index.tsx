@@ -28,7 +28,9 @@ const Layout = (props: AppProps) => {
     return (
         <Grid className="appLayout">
             <NavBar />
-            {children}
+            <Grid className="app-child-container">
+                {children}
+            </Grid>
             <Footer />
         </Grid>
     );

@@ -2,4 +2,7 @@
 .appLayout {
   max-width: 2560px;
   margin: 0 auto;
+  .app-child-container {
+    min-height: calc(100vh);
+  }
 }
