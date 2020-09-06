@@ -1,23 +1,12 @@
-import React, {useEffect, useState} from "react";
-import './toast.scss';
-import Paper from "@material-ui/core/Paper";
-import Typography from "@material-ui/core/Typography";
-export const Toast = (props: { errors: string | null }) => {
+import React from "react";
+import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 
-    const [hasErrors, setHasErrors] = useState<boolean>(true);
+export interface AlertType extends AlertProps{
+    message: string;
+    severity?: 'success' | 'error' | 'info'
+}
 
-    useEffect(() => {
-        setHasErrors(!!props.errors);
-    }, [props.errors]);
-
-    if (props.errors) {
-        return (
-            <Paper elevation={3} className={`${hasErrors ? 'show' : ''} app-toast`} >
-                <Typography variant="subtitle2">
-                    {props.errors}
-                </Typography>
-            </Paper>
-        );
-    }
-    else return null;
+export const Alert = (props: AlertType) => {
+    const {severity = 'success'} = props;
+    return <MuiAlert elevation={6} severity={severity} variant="outlined" {...props}>{props.message}</MuiAlert>;
 };

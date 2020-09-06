@@ -14,8 +14,10 @@ function setLoading(status: boolean, dispatch: Dispatch) {
 export const fetchRouteAddresses = (): AppThunk => async (dispatch: ThunkDispatch<any, any, AnyAction>) => {
     setLoading(true, dispatch);
     const response = await doGetRequest(getRouteAddressesUrl(), {userType: 'clientUserType'}, false);
-    dispatch({
-        type: ACTION_FETCH_ADDRESS_ROUTES,
-        auth: response.auth
-    });
+    if (response && response.auth) {
+        dispatch({
+            type: ACTION_FETCH_ADDRESS_ROUTES,
+            auth: response.auth
+        });
+    }
 };

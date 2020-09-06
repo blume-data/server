@@ -7,6 +7,7 @@ import {Form} from "../../../../components/common/Form";
 import {RootState} from "../../../../rootReducer";
 import {connect, ConnectedProps} from "react-redux";
 import {AUTH_TOKEN, ErrorMessagesType, USER_NAME} from "@ranjodhbirkaur/constants";
+import {FORM_SUCCESSFULLY_SUBMITTED} from "./constants";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 interface ResponseType {
@@ -73,8 +74,7 @@ const AuthComponent = (props: PropsFromRedux) => {
         },
     ];
 
-    async function onSubmit(values: any) {
-        console.log('submitted', values);
+    async function onSubmit(values: object[]) {
         let data: any = {};
         values.forEach((value: any) => {
             data[value.name] = value.value;
@@ -87,10 +87,10 @@ const AuthComponent = (props: PropsFromRedux) => {
         const register = routeAddress && routeAddress.register;
         const url = `${getBaseUrl()}${register}`;
         const response: ResponseType = await doPostRequest(url, values, false);
-        if (response[AUTH_TOKEN]) {
-            return 'Done';
+        if (response && response[AUTH_TOKEN]) {
+            return FORM_SUCCESSFULLY_SUBMITTED;
         }
-        else if(response.errors && response.errors.length) {
+        else if(response && response.errors && response.errors.length) {
             return response.errors
         }
         return '';

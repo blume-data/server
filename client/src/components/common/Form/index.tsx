@@ -6,6 +6,9 @@ import {DropDown} from "./DropDown";
 import {BIG_TEXT, ConfigField, DROPDOWN, FormType, TEXT} from "./interface";
 import './style.scss';
 import {ErrorMessagesType, FIELD, MESSAGE} from "@ranjodhbirkaur/constants";
+import Snackbar from "@material-ui/core/Snackbar";
+import {Alert, AlertType} from "../Toast";
+import {PLEASE_PROVIDE_VALID_VALUES} from "../../../modules/authentication/pages/Auth/constants";
 
 interface FormState {
     name: string;
@@ -19,6 +22,14 @@ const SET_IS_TOUCHED_ACTION = 'SET_IS_TOUCHED_ACTION';
 
 export const Form = (props: FormType) => {
 
+    const [isAlertOpen, setIsAlertOpen] = React.useState<boolean>(false);
+    const [alert, setAlertMessage] = React.useState<AlertType>({message: ''});
+
+    const handleAlertClose = (event?: React.SyntheticEvent, reason?: string) => {
+        if (reason === 'clickaway') return;
+        setIsAlertOpen(false);
+    };
+
     const [formState, setFormState] = useState<FormState[]>([]);
     const {className, fields, onSubmit} = props;
 
@@ -26,7 +37,7 @@ export const Form = (props: FormType) => {
         return `${name} is required`;
     }
 
-    function changeValue(event: ChangeEvent<any>, field: string, action: string, actionValue?: string) {
+    function changeValue(event: ChangeEvent<any>, field: string, action: string) {
         const value = event.target.value;
         let state: FormState[];
         if (action === SET_VALUE_ACTION) {
@@ -91,6 +102,14 @@ export const Form = (props: FormType) => {
             return value.helperText
         }
         return '';
+    }
+
+    function showAlert(alertParam: AlertType) {
+        setIsAlertOpen(true);
+        setAlertMessage({
+            message: alertParam.message,
+            severity: alertParam.severity
+        });
     }
 
     function renderFields(field: ConfigField, index: number) {
@@ -163,10 +182,12 @@ export const Form = (props: FormType) => {
             });
             const res = await onSubmit(values);
             if (typeof res === 'string') {
+                showAlert({message: res, severity: "success"});
                 clearForm();
             }
             else if(res && res.length) {
                 setFormErrors(res);
+                showAlert({message: PLEASE_PROVIDE_VALID_VALUES, severity: "error"});
             }
         }
         else {
@@ -237,6 +258,9 @@ export const Form = (props: FormType) => {
                     <Button variant="outlined" onClick={onClickSubmit} color={'primary'}>Submit</Button>
                 </Grid>
             </Grid>
+            <Snackbar open={isAlertOpen} autoHideDuration={6000} onClose={handleAlertClose}>
+                <Alert onClose={handleAlertClose} severity={alert?.severity} message={alert.message} />
+            </Snackbar>
         </Grid>
     );
 };
