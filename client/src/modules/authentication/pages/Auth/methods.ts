@@ -11,9 +11,14 @@ export function saveAuthentication(response: SaveAuthenticationType) {
 }
 
 export function checkAuthentication(): boolean {
-    const authToken = localStorage.getItem(AUTH_TOKEN);
-    const userName = localStorage.getItem(USER_NAME);
-    return !!(authToken && userName);
+    try {
+        const authToken = localStorage.getItem(AUTH_TOKEN);
+        const userName = localStorage.getItem(USER_NAME);
+        return !!(authToken && userName);
+    }
+    catch (e) {
+        return true;
+    }
 }
 
 export function clearAuthentication() {

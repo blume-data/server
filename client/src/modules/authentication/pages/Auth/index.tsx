@@ -21,6 +21,7 @@ import {clearAuthentication, saveAuthentication} from "./methods";
 import {setAuthentication} from "./actions";
 import {Alert} from "../../../../components/common/Toast";
 import {AlertType} from "../../../../components/common/Form";
+import { TopLink } from "./TopLink";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 interface ResponseType {
@@ -139,13 +140,7 @@ const AuthComponent = (props: PropsFromRedux) => {
             </Grid>
             <Grid item lg={6} xl={6} md={6} sm={6} xs={12}>
                 <Grid container justify={'center'}>
-                    {
-                        step === SIGN_UP
-                        ? <Typography>
-                                Already have an account? <Link to={`/auth/${SIGN_IN}`}>Login</Link>
-                          </Typography>
-                        : null
-                    }
+                    <TopLink step={step}/>
                     {step === SIGN_UP
                     ? <CardForm fields={getFieldConfiguration(SIGN_UP)}
                                 onSubmit={onSubmit} title={REGISTRATION_TITLE} />
