@@ -7,16 +7,13 @@ import {connect, ConnectedProps} from "react-redux";
 import {AUTH_TOKEN, ErrorMessagesType, USER_NAME} from "@ranjodhbirkaur/constants";
 import {
     FORM_SUCCESSFULLY_SUBMITTED,
-    LOGGED_IN_SUCCESSFULLY,
-    PLEASE_PROVIDE_VALID_VALUES,
+    LOGGED_IN_SUCCESSFULLY, LOGIN_TITLE,
     REGISTRATION_TITLE
 } from "./constants";
 import './styles.scss';
 import {useHistory, useParams} from "react-router";
 import {CardForm} from "./CardForm";
 import {getFieldConfiguration} from "./fieldConfiguration";
-import Typography from "@material-ui/core/Typography";
-import { Link } from "react-router-dom";
 import {clearAuthentication, saveAuthentication} from "./methods";
 import {setAuthentication} from "./actions";
 import {Alert} from "../../../../components/common/Toast";
@@ -95,6 +92,7 @@ const AuthComponent = (props: PropsFromRedux) => {
                 }
                 case SIGN_IN: {
                     if (response[AUTH_TOKEN] && response[USER_NAME]) {
+                        showAlert({message: LOGGED_IN_SUCCESSFULLY});
                         saveAuthentication(response);
                         setAuthentication(true);
                         history.push(`/`);
@@ -147,7 +145,7 @@ const AuthComponent = (props: PropsFromRedux) => {
                     : null}
                     {step === SIGN_IN
                         ? <CardForm fields={getFieldConfiguration(SIGN_IN)}
-                                    onSubmit={onSubmit} title={REGISTRATION_TITLE} />
+                                    onSubmit={onSubmit} title={LOGIN_TITLE} />
                         : null}
                     {step === VERIFY_EMAIL
                         ? <CardForm fields={getFieldConfiguration(VERIFY_EMAIL)}
