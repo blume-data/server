@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: database-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: database
+  template:
+    metadata:
+      labels:
+        app: database
+    spec:
+      containers:
+        - name: database
+          image: taranjeetsingh/database
+          env:
+            - name: MONGO_URI
+              value: 'mongodb://data-mongo-srv:27017/data'
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_KEY
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: database-srv
+spec:
+  selector:
+    app: database
+  ports:
+    - name: database
+      protocol: TCP
+      port: 3000
+      targetPort: 3000
+

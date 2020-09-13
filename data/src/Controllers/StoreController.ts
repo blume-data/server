@@ -7,6 +7,7 @@ import {COLLECTION_NOT_FOUND, PARAM_SHOULD_BE_UNIQUE} from "./Messages";
 import {RuleType} from "../util/interface";
 import {Model} from "mongoose";
 import moment from 'moment';
+//import {RanjodhbirSchema} from "../ranjodhbirDb";
 
 // Create Record
 export async function createStoreRecord(req: Request, res: Response) {
@@ -26,10 +27,15 @@ export async function createStoreRecord(req: Request, res: Response) {
         const hasError = await validateUniqueParam(model, rules, body);
 
         if (!hasError) {
+            const bodyData = body ? body : {};
+            /*const dbData = new RanjodhbirSchema(collection.name, [{name: 'age', type: "number"}]);
+            const ranjodhModel = await dbData.createSchema();
+            setTimeout(async () => {
+                await dbData.storeData(bodyData);
+            }, 3000);*/
             const item = new model(body);
             await item.save();
-            // close db connection
-            //await model.dbConnection.close();
+
             res.status(okayStatus).send(item);
         }
         else {
