@@ -1,22 +1,38 @@
-import express, {Response, Request} from "express";
+import express, {Response, Request, NextFunction} from "express";
 import {RanjodhbirModel} from "../ranjodhbirDb/model";
-import {okayStatus, validateRequest} from "@ranjodhbirkaur/common";
+import {errorStatus, FIELD, MESSAGE, okayStatus} from "@ranjodhbirkaur/common";
 import {rootUrl} from "../utils/constants";
 import {addDataUrl, getDataUrl, schemaUrl} from "../utils/urls";
-import {body} from "express-validator";
 
 const route = express.Router();
 
+function validateStoreRequest(req: Request, res: Response, next: NextFunction) {
+    const {modelName='', clientUserName=''} = req.body;
+    if (!modelName) {
+        return res.status(errorStatus).send({
+            errors: [{
+                [FIELD]: 'modelName',
+                [MESSAGE]: 'modelName is required'
+            }]
+        });
+    }
+    else if(!clientUserName) {
+        return res.status(errorStatus).send({
+            errors: [{
+                [FIELD]: 'clientUserName',
+                [MESSAGE]: 'clientUserName is required'
+            }]
+        });
+    }
+    else {
+        next();
+    }
+
+}
+
 route.post(`${rootUrl}/${schemaUrl}`,
-    [
-        body('modelName')
-            .trim()
-            .withMessage('modelName is required'),
-        body('clientUserName')
-            .trim()
-            .withMessage('clientUserName is required'),
-    ],
-    validateRequest,
+
+    validateStoreRequest,
 
     async (req: Request, res: Response) => {
 
@@ -28,15 +44,7 @@ route.post(`${rootUrl}/${schemaUrl}`,
 });
 
 route.post(`${rootUrl}/${getDataUrl}`,
-    [
-        body('modelName')
-            .trim()
-            .withMessage('modelName is required'),
-        body('clientUserName')
-            .trim()
-            .withMessage('clientUserName is required')
-    ],
-    validateRequest,
+    validateStoreRequest,
 
     async (req: Request, res: Response) => {
 
@@ -49,15 +57,7 @@ route.post(`${rootUrl}/${getDataUrl}`,
 
 route.post(`${rootUrl}/${addDataUrl}`,
 
-    [
-        body('modelName')
-            .trim()
-            .withMessage('modelName is required'),
-        body('clientUserName')
-            .trim()
-            .withMessage('clientUserName is required')
-    ],
-    validateRequest,
+    validateStoreRequest,
 
     async (req: Request, res: Response) => {
 
