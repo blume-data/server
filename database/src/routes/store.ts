@@ -48,10 +48,11 @@ route.post(`${rootUrl}/${getDataUrl}`,
 
     async (req: Request, res: Response) => {
 
-    const {modelName='', where={}, getOnly={}, clientUserName='', skip=0, perPage=10} = req.body;
+    const {modelName='', clientUserName='', conditions={}} = req.body;
+    const {skip=0, perPage=10, where={}, getOnly={}} = conditions;
     const db = new RanjodhbirModel(modelName, clientUserName);
     const data = await db.readData({skip, perPage, where , getOnly });
-    res.status(okayStatus).send({data});
+    res.status(okayStatus).send(data);
 
 });
 
@@ -64,7 +65,7 @@ route.post(`${rootUrl}/${addDataUrl}`,
     const {modelName='', data={}, clientUserName=''} = req.body;
     const db = new RanjodhbirModel(modelName, clientUserName);
     await db.storeData(data);
-    res.status(okayStatus).send({data});
+    res.status(okayStatus).send(data);
 
 });
 

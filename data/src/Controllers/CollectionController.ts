@@ -11,6 +11,7 @@ import {CANNOT_CREATE_COLLECTIONS_MORE_THAN_LIMIT, COLLECTION_ALREADY_EXIST} fro
 import {ConnectionModel} from "../models/Connections";
 import {UserConnectionModel} from "../models/UserConnection";
 import {RuleType} from "../util/interface";
+import {storeSchema} from "../util/databaseApi";
 
 export async function createCollectionSchema(req: Request, res: Response) {
 
@@ -78,6 +79,7 @@ export async function createCollectionSchema(req: Request, res: Response) {
             language
         });
 
+        await storeSchema(reqBody.name, userName, []);
         await newCollection.save();
 
         res.status(okayStatus).send(newCollection);

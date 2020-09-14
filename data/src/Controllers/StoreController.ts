@@ -1,13 +1,12 @@
 import {Request, Response} from 'express';
 import {CollectionModel} from "../models/Collection";
 import {BadRequestError} from "@ranjodhbirkaur/common";
-import {createModel} from "../util/methods";
 import {errorStatus, okayStatus, PER_PAGE} from "../util/constants";
 import {COLLECTION_NOT_FOUND, PARAM_SHOULD_BE_UNIQUE} from "./Messages";
 import {RuleType} from "../util/interface";
 import {Model} from "mongoose";
 import moment from 'moment';
-//import {RanjodhbirSchema} from "../ranjodhbirDb";
+import {getRanjodhBirData, writeRanjodhBirData} from "../util/databaseApi";
 
 // Create Record
 export async function createStoreRecord(req: Request, res: Response) {
@@ -16,28 +15,10 @@ export async function createStoreRecord(req: Request, res: Response) {
     const collection = await getCollection(req);
     if (collection) {
         const rules = JSON.parse(collection.rules);
-        let body = checkBodyAndRules(rules, req, res);
-
-        const model: any = createModel({
-            rules,
-            connectionName: collection.connectionName,
-            name: collection.name
-        });
-
-        const hasError = await validateUniqueParam(model, rules, body);
-
-        if (!hasError) {
-
-            const item = new model(body);
-            await item.save();
-
-            res.status(okayStatus).send(item);
-        }
-        else {
-            res.status(errorStatus).send({
-                errors: [hasError]
-            });
-        }
+        const body = checkBodyAndRules(rules, req, res);
+        // add some alternate for unique params here
+        const response = await writeRanjodhBirData(collection.name, collection.clientUserName, body);
+        res.status(okayStatus).send(response);
     }
     else {
         throw new BadRequestError(COLLECTION_NOT_FOUND);
@@ -50,7 +31,8 @@ export async function getStoreRecord(req: Request, res: Response) {
     // get collection
     const collection = await getCollection(req);
     const {perPage=PER_PAGE} = req.query;
-    let pageNo: number = (req.query && Number(req.query.pageNo)) || 1;
+    let pageNo: number = (req.query && Number(req.query.pageNo)) ? Number(req.query.pageNo) : 1;
+
     if (pageNo) {
         --pageNo;
     }
@@ -60,14 +42,13 @@ export async function getStoreRecord(req: Request, res: Response) {
 
         if (validateParams(req, res, rules)) {
             const {where, getOnly} = req.body;
-            const model: any = createModel({
-                rules,
-                connectionName: collection.connectionName,
-                name: collection.name
+            const response = await getRanjodhBirData(collection.name, collection.clientUserName, {
+                skip: Number(pageNo*10),
+                perPage: Number(perPage),
+                where,
+                getOnly
             });
-
-            const collections = await model.find(where, getOnly).skip(pageNo*10).limit(perPage);
-            res.status(okayStatus).send(collections);
+            res.status(okayStatus).send(response);
         }
     }
     else {
@@ -216,28 +197,37 @@ function validateParams(req: Request, res: Response, rules: RuleType[]) {
         // Iterate where
         for(const condition in reqBody.where) {
             if (reqBody.where.hasOwnProperty(condition)) {
-                const ruleExist = rules.find(rule => rule.name === condition);
-                if (ruleExist) {
-                    if (typeof reqBody.where[condition] !== ruleExist.type) {
-                        isValid = false;
-                        errorMessages.push({
-                            field: ruleExist.name,
-                            message: `${ruleExist.name} should be of type ${ruleExist.type}`
-                        });
-                    }
-                    else {
-                        where = {
-                            ...where,
-                            [condition]: reqBody.where[condition]
-                        }
-                    }
+                // add id in where as it is not in the schema
+                if (condition === 'id') {
+                    where = {
+                        ...where,
+                        [condition]: reqBody.where[condition]
+                    };
                 }
                 else {
-                    isValid = false;
-                    errorMessages.push({
-                        field: 'where',
-                        message: `${condition} does not exist in schema`
-                    })
+                    const ruleExist = rules.find(rule => rule.name === condition);
+                    if (ruleExist) {
+                        if (typeof reqBody.where[condition] !== ruleExist.type) {
+                            isValid = false;
+                            errorMessages.push({
+                                field: ruleExist.name,
+                                message: `${ruleExist.name} should be of type ${ruleExist.type}`
+                            });
+                        }
+                        else {
+                            where = {
+                                ...where,
+                                [condition]: reqBody.where[condition]
+                            }
+                        }
+                    }
+                    else {
+                        isValid = false;
+                        errorMessages.push({
+                            field: 'where',
+                            message: `${condition} does not exist in schema`
+                        })
+                    }
                 }
             }
         }
