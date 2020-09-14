@@ -27,12 +27,7 @@ export async function createStoreRecord(req: Request, res: Response) {
         const hasError = await validateUniqueParam(model, rules, body);
 
         if (!hasError) {
-            const bodyData = body ? body : {};
-            /*const dbData = new RanjodhbirSchema(collection.name, [{name: 'age', type: "number"}]);
-            const ranjodhModel = await dbData.createSchema();
-            setTimeout(async () => {
-                await dbData.storeData(bodyData);
-            }, 3000);*/
+
             const item = new model(body);
             await item.save();
 

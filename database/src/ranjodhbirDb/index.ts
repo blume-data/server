@@ -1,10 +1,10 @@
 import fs  from 'fs';
-import {RanjodhbirModel} from "./model";
 
 export interface RuleType {
     name: string;
     type: 'string' | 'boolean' | 'number' | null;
-    default?: 'string' | 'boolean' | 'number' | null
+    default?: 'string' | 'boolean' | 'number' | null;
+    required?: false;
 }
 
 export interface MetaDataType {
@@ -15,15 +15,17 @@ export interface MetaDataType {
 export class RanjodhbirSchema {
 
     name: string;
-    schema: RuleType[];
+    private readonly clientUserName: string;
+    schema: RuleType[] | [];
     private readonly dataBaseDirectory: string;
     private readonly metaFile: string;
 
-    constructor(name: string, schema: RuleType[]) {
+    constructor(name: string, clientUserName: string, schema?: RuleType[] | []) {
         this.name = name;
-        this.schema = schema;
+        this.schema = schema ? schema : [];
         this.dataBaseDirectory = 'database';
         this.metaFile = 'meta.txt';
+        this.clientUserName = clientUserName;
     }
 
     getMetaFileName() {
@@ -31,7 +33,7 @@ export class RanjodhbirSchema {
     }
 
     getModelPath(): string {
-        return `${this.dataBaseDirectory}/${this.name}`;
+        return `${this.dataBaseDirectory}/${this.clientUserName}/${this.name}`;
     }
 
     async writeFile(data: string, fileName: string) {
@@ -39,8 +41,6 @@ export class RanjodhbirSchema {
         const path = `${this.getModelPath()}/${fileName}`;
 
         return new Promise(function(resolve, reject) {
-            console.log('data', data);
-
             fs.writeFile(path, data, (err) => {
                 if (err) reject(err);
                 resolve(data);
@@ -67,6 +67,9 @@ export class RanjodhbirSchema {
                                 numberOfRecords: 0,
                                 schema: this.schema
                             };
+                            for(let i=0;i<=9;i++) {
+                                await this.writeFile(JSON.stringify([]), `${i}.txt`);
+                            }
                             await this.writeFile(JSON.stringify(metaData), this.metaFile);
                             resolve();
                         }
