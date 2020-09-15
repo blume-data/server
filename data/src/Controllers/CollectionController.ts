@@ -12,6 +12,7 @@ import {ConnectionModel} from "../models/Connections";
 import {UserConnectionModel} from "../models/UserConnection";
 import {RuleType} from "../util/interface";
 import {storeSchema} from "../util/databaseApi";
+import {RANDOM_COLLECTION_NAME} from "../util/methods";
 
 export async function createCollectionSchema(req: Request, res: Response) {
 
@@ -64,29 +65,23 @@ export async function createCollectionSchema(req: Request, res: Response) {
         throw new BadRequestError(COLLECTION_ALREADY_EXIST);
     }
 
-    const newDbConnection: {connectionName: string} = await assignConnection(userName);
+    const connectionName = `${RANDOM_COLLECTION_NAME(1, 1000)}`;
+    const newCollection = CollectionModel.build({
+        clientUserName: userName,
+        isPublic: false,
+        applicationName: 'some name',
+        rules: JSON.stringify(reqBody.rules),
+        name: reqBody.name,
+        env,
+        connectionName,
+        collectionType: (reqBody.collectionType ? reqBody.collectionType : DATA_COLLECTION),
+        language
+    });
 
-    if (newDbConnection) {
-        const newCollection = CollectionModel.build({
-            clientUserName: userName,
-            isPublic: false,
-            applicationName: 'some name',
-            rules: JSON.stringify(reqBody.rules),
-            name: reqBody.name,
-            env,
-            connectionName: newDbConnection.connectionName,
-            collectionType: (reqBody.collectionType ? reqBody.collectionType : DATA_COLLECTION),
-            language
-        });
+    await storeSchema(reqBody.name, userName, connectionName);
+    await newCollection.save();
 
-        await storeSchema(reqBody.name, userName, []);
-        await newCollection.save();
-
-        res.status(okayStatus).send(newCollection);
-    }
-    else {
-        res.status(500).send('Db capacity full');
-    }
+    res.status(okayStatus).send(newCollection);
 }
 
 export async function deleteCollectionSchema(req: Request, res: Response) {
@@ -129,67 +124,5 @@ export async function getCollectionSchema(req: Request, res: Response) {
 
     const collections = await CollectionModel.find({userName, language});
     res.status(okayStatus).send(collections);
-}
-
-async function assignConnection(clientUserName: string) : Promise<any> {
-
-    const userConnectionExist = await UserConnectionModel.findOne({
-        clientUserName: clientUserName
-    }, ['connectionName', 'clientUserName']);
-
-    if(userConnectionExist) {
-        return {
-            connectionName: userConnectionExist.connectionName
-        };
-    }
-    else {
-        // Search a connection with count less the max users per connection
-        const availableConnection = await ConnectionModel.findOne({count: {$lte: MAX_USER_LIMIT}}, ['name', 'count']);
-        const allConnections = await ConnectionModel.find({});
-        if (!availableConnection && !allConnections.length) {
-            // create a new connection
-            return await createNewConnection(allConnections.length, clientUserName);
-        }
-        else if(availableConnection) {
-            // assign a new connection and increase count
-            return await incrementConnectionCount(availableConnection.name, availableConnection.count, clientUserName);
-        }
-        else if(allConnections.length <= MONGO_DB_DATA_CONNECTIONS_AVAILABLE.length) {
-            // create a new connection
-            return await createNewConnection(allConnections.length, clientUserName);
-        }
-        else {
-            throw new Error(ALL_CONNECTIONS_AND_DB_CAPACITY_FULL+' : while creating a new connection');
-        }
-    }
-}
-
-async function incrementConnectionCount(connectionName: string, count: number, clientUserName: string) {
-    const newUserConnection = UserConnectionModel.build({
-        clientUserName: clientUserName, connectionName
-    });
-    await newUserConnection.save();
-    await ConnectionModel.updateOne({name: connectionName}, {count: count + 1});
-    return {
-        connectionName
-    };
-}
-
-async function createNewConnection(allConnectionsLength: number, clientUserName: string) {
-    const connectionName = MONGO_DB_DATA_CONNECTIONS_AVAILABLE[allConnectionsLength];
-    if (connectionName) {
-        const newUserConnection = UserConnectionModel.build({
-            clientUserName: clientUserName, connectionName
-        });
-        await newUserConnection.save();
-        const newConnection = ConnectionModel.build({ name: connectionName, count: 1, type: 'connection_type' });
-        await newConnection.save();
-        return {
-            connectionName: newConnection.name
-        }
-    }
-    else {
-        throw new Error(ALL_CONNECTIONS_AND_DB_CAPACITY_FULL);
-    }
 }
 

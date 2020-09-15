@@ -36,8 +36,8 @@ route.post(`${rootUrl}/${schemaUrl}`,
 
     async (req: Request, res: Response) => {
 
-    const {modelName='', clientUserName='', schema} = req.body;
-    const db = new RanjodhbirModel(modelName, clientUserName, schema);
+    const {modelName='', clientUserName='', connectionName} = req.body;
+    const db = new RanjodhbirModel(modelName, clientUserName, connectionName);
     await db.createSchema();
     res.status(okayStatus).send(true);
 
@@ -48,10 +48,10 @@ route.post(`${rootUrl}/${getDataUrl}`,
 
     async (req: Request, res: Response) => {
 
-    const {modelName='', clientUserName='', conditions={}} = req.body;
-    const {skip=0, perPage=10, where={}, getOnly={}} = conditions;
-    const db = new RanjodhbirModel(modelName, clientUserName);
-    const data = await db.readData({skip, perPage, where , getOnly });
+    const {modelName='', clientUserName='', connectionName, conditions={}} = req.body;
+    const {pageNo=1, perPage=10, where={}, getOnly={}} = conditions;
+    const db = new RanjodhbirModel(modelName, clientUserName, connectionName);
+    const data = await db.readData({pageNo, perPage, where ,getOnly});
     res.status(okayStatus).send(data);
 
 });
@@ -62,8 +62,8 @@ route.post(`${rootUrl}/${addDataUrl}`,
 
     async (req: Request, res: Response) => {
 
-    const {modelName='', data={}, clientUserName=''} = req.body;
-    const db = new RanjodhbirModel(modelName, clientUserName);
+    const {modelName='', data={}, clientUserName='', connectionName} = req.body;
+    const db = new RanjodhbirModel(modelName, clientUserName, connectionName);
     await db.storeData(data);
     res.status(okayStatus).send(data);
 

@@ -1,10 +1,10 @@
-import {RanjodhbirSchema, RuleType} from "./index";
+import {RanjodhbirSchema} from "./index";
 import {Data} from "./data";
 import {randomNumber} from "../utils/methods";
 import {RANDOM_STRING} from "@ranjodhbirkaur/common";
 
 interface ReadDataType {
-    skip?: number;
+    pageNo?: number;
     perPage?: number;
     where?: any | null;
     getOnly?: string[] | null;
@@ -12,8 +12,8 @@ interface ReadDataType {
 
 export class RanjodhbirModel extends RanjodhbirSchema {
 
-    constructor(name: string, clientUserName: string, schema?: RuleType[] | []) {
-        super(name,clientUserName, schema ? schema : []);
+    constructor(name: string, clientUserName: string, connectionName: string) {
+        super(name, clientUserName, connectionName);
     }
 
     async storeData(item: object) {
@@ -33,10 +33,11 @@ export class RanjodhbirModel extends RanjodhbirSchema {
 
     async readData(conditions: ReadDataType) {
 
-        const {skip=0, perPage=10, getOnly=null, where=null} = conditions;
+        const {pageNo=1, perPage=10, getOnly=null, where=null} = conditions;
         let data: any = [];
         let count = 0;
         const readFile = this.readFile.bind(this);
+        let isFull = false;
 
         function pushData(item: any) {
             if (getOnly && getOnly.length) {
@@ -50,6 +51,9 @@ export class RanjodhbirModel extends RanjodhbirSchema {
                 data.push(item);
             }
             count++;
+            if (count == (pageNo * perPage)) {
+                isFull = true;
+            }
         }
 
         function whereCondition(item: any) {
@@ -71,22 +75,23 @@ export class RanjodhbirModel extends RanjodhbirSchema {
                 if (typeof content === "string") {
                     const parsedContent = JSON.parse(content);
                     parsedContent.map((item: any) => {
-                        if (item && data.length<=perPage) {
-                            // If there is where condition
-                            if (where && typeof where === 'object') {
-                                whereCondition(item);
-                            }
-                            // There is no where condition
-                            else {
-                                pushData(item);
-                            }
-                        }
-                        else {
-                            // if the data is full
-                            // check if its required to skip some content
-                            if (count<=skip) {
-                                // empty the data
-                                data = [];
+                        if (!isFull) {
+                            if (item && data.length<=perPage) {
+                                if (data.length === perPage) {
+                                    // empty the data
+                                    data = [];
+                                    pushData(item);
+                                }
+                                else {
+                                    // If there is where condition
+                                    if (where && typeof where === 'object') {
+                                        whereCondition(item);
+                                    }
+                                    // There is no where condition
+                                    else {
+                                        pushData(item);
+                                    }
+                                }
                             }
                         }
                     });
@@ -94,17 +99,6 @@ export class RanjodhbirModel extends RanjodhbirSchema {
             }
             return data;
         }
-
-        /*return new Promise((resolve, reject) => {
-            fs.readdir(`${this.getModelPath()}`, async (err, files) => {
-                if (err) reject(err);
-                else {
-                    const response = await iterateFile();
-                    resolve(response);
-                    return;
-                }
-            });
-        });*/
         return await iterateFile();
     }
 }

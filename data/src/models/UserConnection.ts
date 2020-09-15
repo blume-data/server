@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 interface UserConnectionAttrs {
     clientUserName: string;
-    connectionName: string;
+    connectionName: number;
 }
 
 interface UserConnectionModel extends mongoose.Model<UserConnectionDoc> {
@@ -11,7 +11,7 @@ interface UserConnectionModel extends mongoose.Model<UserConnectionDoc> {
 
 export interface UserConnectionDoc extends mongoose.Document {
     clientUserName: string;
-    connectionName: string;
+    connectionName: number;
     created_at?: string;
 }
 
@@ -23,7 +23,7 @@ const UserConnection = new mongoose.Schema(
             unique: true
         },
         connectionName: {
-            type: String,
+            type: Number,
             required: true
         },
         created_at : { type: Date, default: Date.now }

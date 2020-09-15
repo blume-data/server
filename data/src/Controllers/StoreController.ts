@@ -17,7 +17,7 @@ export async function createStoreRecord(req: Request, res: Response) {
         const rules = JSON.parse(collection.rules);
         const body = checkBodyAndRules(rules, req, res);
         // add some alternate for unique params here
-        const response = await writeRanjodhBirData(collection.name, collection.clientUserName, body);
+        const response = await writeRanjodhBirData(collection.name, collection.clientUserName, collection.connectionName, body);
         res.status(okayStatus).send(response);
     }
     else {
@@ -33,17 +33,13 @@ export async function getStoreRecord(req: Request, res: Response) {
     const {perPage=PER_PAGE} = req.query;
     let pageNo: number = (req.query && Number(req.query.pageNo)) ? Number(req.query.pageNo) : 1;
 
-    if (pageNo) {
-        --pageNo;
-    }
-
     if (collection) {
         const rules = JSON.parse(collection.rules);
 
         if (validateParams(req, res, rules)) {
             const {where, getOnly} = req.body;
-            const response = await getRanjodhBirData(collection.name, collection.clientUserName, {
-                skip: Number(pageNo*10),
+            const response = await getRanjodhBirData(collection.name, collection.clientUserName, collection.connectionName,{
+                pageNo: Number(pageNo),
                 perPage: Number(perPage),
                 where,
                 getOnly
@@ -66,7 +62,8 @@ async function getCollection(req: Request) {
     const language = req.params && req.params.language;
     const collectionName = req.params && req.params.collectionName;
 
-    return CollectionModel.findOne({clientUserName: userName, name: collectionName, language});
+    return CollectionModel.findOne({clientUserName: userName, name: collectionName, language},
+        ['clientUserName', 'connectionName', 'name', 'rules']);
 }
 
 function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
