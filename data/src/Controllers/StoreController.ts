@@ -282,6 +282,7 @@ function validateParams(req: Request, res: Response, rules: RuleType[]) {
     return true;
 }
 
+// TODO
 async function validateUniqueParam(model: Model<any>, rules: RuleType[], reqBody: any) {
     let errorMessage: string | null = null;
     let field: string = '';

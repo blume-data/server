@@ -1,15 +1,12 @@
 import {Request, Response} from 'express';
 import {BadRequestError} from "@ranjodhbirkaur/common";
 import {
-    ALL_CONNECTIONS_AND_DB_CAPACITY_FULL, DATA_COLLECTION, MAX_COLLECTION_LIMIT,
-    MAX_USER_LIMIT, MONGO_DB_DATA_CONNECTIONS_AVAILABLE,
+    DATA_COLLECTION, MAX_COLLECTION_LIMIT,
     okayStatus, USER_COLLECTION
 } from "../util/constants";
 import _ from 'lodash';
 import {CollectionModel} from "../models/Collection";
 import {CANNOT_CREATE_COLLECTIONS_MORE_THAN_LIMIT, COLLECTION_ALREADY_EXIST} from "./Messages";
-import {ConnectionModel} from "../models/Connections";
-import {UserConnectionModel} from "../models/UserConnection";
 import {RuleType} from "../util/interface";
 import {storeSchema} from "../util/databaseApi";
 import {RANDOM_COLLECTION_NAME} from "../util/methods";
@@ -102,12 +99,7 @@ export async function deleteCollectionSchema(req: Request, res: Response) {
             userName: userName,
             name: reqBody.name
         });
-        /*await DbsModel.deleteOne({
-            name: userName
-        });
-        // calculate the exact length of the dbs
-        const dbs = await DbsModel.find({connectionName: itemSchema.connectionName}, 'id');
-        await ConnectionModel.updateOne({name: itemSchema.connectionName}, {count: dbs.length});*/
+
     }
     else {
         throw new BadRequestError('Collection not found');

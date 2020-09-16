@@ -13,11 +13,7 @@ export const DATE_TYPE = 'date';
 export const HTML_TYPE = 'html';
 export const SUPPORTED_DATA_TYPES = ['string', 'boolean', 'number', 'date', 'html'];
 
-export const MONGO_DB_DATA_CONNECTIONS_AVAILABLE = ['one','two'];
-export const MAX_USER_LIMIT = 1000;
-export const MAX_COLLECTION_LIMIT = 1000;
-
-export const ALL_CONNECTIONS_AND_DB_CAPACITY_FULL = 'All connections and db capacity is full';
+export const MAX_COLLECTION_LIMIT = 50;
 
 export const PER_PAGE = 10;
 
