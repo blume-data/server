@@ -4,10 +4,12 @@ export class RanjodhbirSchema {
 
     name: string;
     readonly clientUserName: string;
+    readonly connectionName: string;
     private readonly dataBaseDirectory: string;
 
     constructor(name: string, clientUserName: string, connectionName: string) {
         this.name = name;
+        this.connectionName = connectionName;
         this.dataBaseDirectory = `database/${connectionName}`;
         this.clientUserName = clientUserName;
     }

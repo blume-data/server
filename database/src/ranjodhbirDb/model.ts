@@ -4,6 +4,8 @@ import {randomNumber} from "../utils/methods";
 import {RANDOM_STRING} from "@ranjodhbirkaur/common";
 import {DataBaseModelsModel} from "../models/models";
 import {TasksModel} from "../models/tasks";
+import {eventEmitter} from "../worker";
+import {START_TASK} from "../utils/constants";
 
 interface ReadDataType {
     pageNo?: number;
@@ -12,16 +14,23 @@ interface ReadDataType {
     getOnly?: string[] | null;
 }
 
+interface MutateType {
+    action: 'Put' | 'post' | 'delete',
+    item: object
+}
+
 export class RanjodhbirModel extends RanjodhbirSchema {
 
     constructor(name: string, clientUserName: string, connectionName: string) {
         super(name, clientUserName, connectionName);
     }
 
-    private async addTask(item: object) {
+    private async addTask(actionType: 'put' | 'post' | 'delete', item: object) {
         const task = TasksModel.build({
             clientUserName: this.clientUserName,
             modelName: this.name,
+            connectionName: this.connectionName,
+            action: actionType,
             query: JSON.stringify(item)
         });
         await task.save();
@@ -37,7 +46,7 @@ export class RanjodhbirModel extends RanjodhbirSchema {
     /*
     * Check if the model is writable then store data
     * */
-    async mutateData(item: object) {
+    async mutateData(type: 'put' | 'post' | 'delete',item: object) {
         // check if this model is not under write mode
         const isWritable = await this.checkIsModelWritable();
         if (isWritable) {
@@ -45,10 +54,16 @@ export class RanjodhbirModel extends RanjodhbirSchema {
                 clientUserName: this.clientUserName,
                 modelName: this.name
             }, {isWritable: false});
-            await this.storeData(item);
+            switch (type) {
+                case "post": {
+                    await this.storeData(item);
+                    break;
+                }
+            }
         }
         else {
-            await this.addTask(item);
+            await this.addTask(type, item);
+            eventEmitter.emit(START_TASK);
         }
     }
 

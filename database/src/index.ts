@@ -26,11 +26,4 @@ const start = async () => {
     });
 };
 
-
-
-
-
-
-
-
 start().then(() => console.log('DataBase started Everything'));

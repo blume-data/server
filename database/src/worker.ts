@@ -1,18 +1,42 @@
+import {TasksAttrs, TasksModel} from "./models/tasks";
+import {RanjodhbirModel} from "./ranjodhbirDb/model";
 import events from "events";
-import fs from "fs";
-import {ADD_TASK} from "./utils/constants";
+import {START_TASK} from "./utils/constants";
 
-export const emitter = new events.EventEmitter();
+export const eventEmitter = new events.EventEmitter();
 
-emitter.on(ADD_TASK, async function (data=[], path) {
+let isTasksRunning = false;
 
+async function completeTasks(tasks: TasksAttrs[]) {
 
-    return new Promise(function(resolve, reject) {
-        fs.writeFile(path, JSON.stringify(data), (err) => {
-            if (err) reject(err);
-            resolve(data);
-        });
-    });
+    if (tasks && tasks.length) {
+        for(let i=0; i<tasks.length;i++) {
+            const {modelName, clientUserName, connectionName, query, action} = tasks[i];
+            const newModel = new RanjodhbirModel(modelName, clientUserName, connectionName);
+            switch (action) {
+                case "post": {
+                    await newModel.storeData(JSON.parse(query));
+                    break;
+                }
+            }
+        }
+    }
+}
+
+async function getTasks() {
+    const tasks = await TasksModel.find({}).limit(1000).sort('created_at');
+    if (!tasks.length) {
+        isTasksRunning = false;
+    }
+    return tasks;
+}
+
+eventEmitter.on(START_TASK, async () => {
+    if (!isTasksRunning) {
+        const tasks = await getTasks();
+        if (tasks.length) {
+            isTasksRunning = true;
+            await completeTasks(tasks);
+        }
+    }
 });
-
-emitter.emit('Add_Task');
