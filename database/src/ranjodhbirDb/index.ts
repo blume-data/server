@@ -1,22 +1,15 @@
 import fs  from 'fs';
 
-interface MetaDataType {
-    isUnderWrite: boolean;
-    tasks: [];
-}
-
 export class RanjodhbirSchema {
 
     name: string;
-    private readonly clientUserName: string;
+    readonly clientUserName: string;
     private readonly dataBaseDirectory: string;
-    private readonly metaFileName: string;
 
     constructor(name: string, clientUserName: string, connectionName: string) {
         this.name = name;
         this.dataBaseDirectory = `database/${connectionName}`;
         this.clientUserName = clientUserName;
-        this.metaFileName = 'meta.txt';
     }
 
     getModelPath(): string {
@@ -53,11 +46,6 @@ export class RanjodhbirSchema {
                             for(let i=0;i<=9;i++) {
                                 await this.writeFile(JSON.stringify([]), `${i}.txt`);
                             }
-                            const metaData: MetaDataType = {
-                                isUnderWrite: false,
-                                tasks: []
-                            };
-                            await this.writeFile(JSON.stringify(metaData), this.metaFileName);
                             resolve();
                         }
                     });
@@ -67,22 +55,6 @@ export class RanjodhbirSchema {
                 }
             }
         });
-    }
-
-    async getMetaData(): Promise<MetaDataType | null> {
-        const metaData = await this.readFile(this.metaFileName);
-        if (metaData && typeof metaData === 'string') {
-            return JSON.parse(metaData);
-        }
-        return null;
-    }
-
-    async setWritable(status: boolean) {
-        const metaData = await this.getMetaData();
-        if (metaData) {
-            metaData.isUnderWrite = status;
-            await this.writeFile(JSON.stringify(metaData), this.metaFileName);
-        }
     }
 
     async readFile(fileName: string) {

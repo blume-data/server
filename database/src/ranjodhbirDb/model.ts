@@ -2,7 +2,8 @@ import {RanjodhbirSchema} from "./index";
 import {Data} from "./data";
 import {randomNumber} from "../utils/methods";
 import {RANDOM_STRING} from "@ranjodhbirkaur/common";
-import * as fs from "fs";
+import {DataBaseModelsModel} from "../models/models";
+import {TasksModel} from "../models/tasks";
 
 interface ReadDataType {
     pageNo?: number;
@@ -17,53 +18,33 @@ export class RanjodhbirModel extends RanjodhbirSchema {
         super(name, clientUserName, connectionName);
     }
 
-    private async waitToStore(item: object) {
-        return new Promise((resolve, reject) => {
-            fs.readdir(`${this.getModelPath()}`, (err, files) => {
-
-                const tasks = files.filter(file => {
-                    const fileName = file.split('.');
-                    if (fileName.length && fileName[0].length !== 1) {
-                        return file;
-                    }
-                });
-
-                let smallest = new Date().getTime();
-                files.forEach(file => {
-                    const fileName = file.split('.');
-                    if (fileName.length && fileName[0].length !== 1) {
-                        if (smallest < Number(fileName[0])) {
-                            smallest = Number(fileName[0]);
-                        }
-                    }
-                });
-            });
-        });
-    }
-
     private async addTask(item: object) {
-        const date = new Date();
-        const time = date.getTime();
-        await this.writeFile(JSON.stringify(item), `${time}.txt`);
-    }
-
-    private async checkIsModelWritable(): Promise<boolean> {
-        return new Promise(async (resolve) => {
-            const res = await this.getMetaData();
-            if (res && !res.isUnderWrite) {
-                await this.setWritable(true);
-                resolve(true);
-            }
-            else {
-                resolve(false);
-            }
+        const task = TasksModel.build({
+            clientUserName: this.clientUserName,
+            modelName: this.name,
+            query: JSON.stringify(item)
         });
+        await task.save();
     }
 
+    private async checkIsModelWritable() {
+        return DataBaseModelsModel.findOne({
+            clientUserName: this.clientUserName,
+            modelName: this.name
+        }, 'isWritable');
+    }
+
+    /*
+    * Check if the model is writable then store data
+    * */
     async mutateData(item: object) {
         // check if this model is not under write mode
         const isWritable = await this.checkIsModelWritable();
         if (isWritable) {
+            await DataBaseModelsModel.updateOne({
+                clientUserName: this.clientUserName,
+                modelName: this.name
+            }, {isWritable: false});
             await this.storeData(item);
         }
         else {
@@ -71,6 +52,9 @@ export class RanjodhbirModel extends RanjodhbirSchema {
         }
     }
 
+    /*
+    * Write data to actual file
+    * */
     async storeData(item: object) {
         const containerNumber = randomNumber(10);
         // ids first number is container number

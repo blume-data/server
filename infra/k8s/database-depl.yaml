@@ -17,7 +17,7 @@ spec:
           image: taranjeetsingh/database
           env:
             - name: MONGO_URI
-              value: 'mongodb://data-mongo-srv:27017/data'
+              value: 'mongodb://database-mongo-srv:27017/tasks'
             - name: JWT_KEY
               valueFrom:
                 secretKeyRef:
