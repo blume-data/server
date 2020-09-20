@@ -5,7 +5,7 @@ import {
     okayStatus,
     USER_NAME,
     clientUserType,
-    adminUserType
+    adminUserType, RANDOM_STRING
 } from "@ranjodhbirkaur/common";
 import {ClientTempUser} from "../models/clientTempUser";
 import {ClientUser} from "../models/clientUser";
@@ -66,8 +66,13 @@ export const verifyEmailToken = async function (req: ReqValidateEmail, res: Resp
 
         if (userExist) {
 
+            const jwtId = RANDOM_STRING(10);
+            const created_at = `${new Date()}`;
+
             const newUser = await ClientUser.build({
                 email: userExist.email,
+                jwtId,
+                created_at,
                 password: userExist.password,
                 firstName: userExist.firstName,
                 lastName: userExist.lastName,

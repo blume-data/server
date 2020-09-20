@@ -1,77 +1,40 @@
 import mongoose from 'mongoose';
 import { Password } from '../services/password';
+import {getRootUserSchema, RootUserAttrs, RootUserDoc} from "./adminUser";
 
-interface ClientUserAttrs {
+interface ClientUserAttrs extends RootUserAttrs{
     email: string;
     password: string;
     firstName: string;
     lastName: string;
-    userName: string;
-    metaData?: string;
-    isEnabled?: boolean;
-    created_at?: string;
 }
 
 interface ClientUserModel extends mongoose.Model<ClientUserDoc> {
     build(attrs: ClientUserAttrs): ClientUserDoc;
 }
 
-interface ClientUserDoc extends mongoose.Document {
+interface ClientUserDoc extends RootUserDoc {
     email: string;
-    password: string;
     firstName: string;
     lastName: string;
-    userName: string;
-    metaData?: string;
-    isEnabled?: boolean;
-    created_at: string;
 }
 
-const clientUserSchema = new mongoose.Schema(
-    {
-        email: {
-            type: String,
-            required: true,
-            unique:true,
-            lowercase:true
-        },
-        password: {
-            type: String,
-            required: true
-        },
-        firstName : {
-            type: String,
-            required: true
-        },
-        lastName : {
-            type: String,
-            required: true
-        },
-        userName: {
-            type: String,
-            required: true
-        },
-        metaData : {
-            type: String
-        },
-        isEnabled : {
-            type: Boolean,
-            required: true,
-            default: true
-        },
-        created_at : { type: Date, default: Date.now }
+const clientUserSchema = getRootUserSchema({
+    email: {
+        type: String,
+        required: true,
+        unique:true,
+        lowercase:true
     },
-    {
-        toJSON: {
-            transform(doc, ret) {
-                ret.id = ret._id;
-                delete ret._id;
-                delete ret.password;
-                delete ret.__v;
-            }
-        }
+    firstName : {
+        type: String,
+        required: true
+    },
+    lastName : {
+        type: String,
+        required: true
     }
-);
+});
 
 clientUserSchema.pre('save', async function(done) {
     if (this.isModified('password')) {

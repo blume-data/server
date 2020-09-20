@@ -10,3 +10,6 @@ export const SupportedUserType = [adminUserType, clientUserType, freeUserType, s
 
 // used to define the type of admin a mongoose model property
 export const adminType = 'adminType';
+
+export const EVENTS_ROUTE = 'events';
+export const EVENT_AUTH_NEW_JWT = 'EVENT_AUTH_NEW_JWT';

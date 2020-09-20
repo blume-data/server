@@ -60,3 +60,11 @@ export const userNameValidationUrl = (userType?: string) => {
     }
     return `${authRootUrl}/${userType}/${userNameValidation}`
 };
+
+export const roleRoute = 'role';
+export const roleUrl = (userName?: string) => {
+    if (!userName) {
+        return `${authRootUrl}/:userName/${roleRoute}`
+    }
+    return `${authRootUrl}/${userName}/${roleRoute}`
+};

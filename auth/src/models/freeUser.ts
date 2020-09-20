@@ -1,16 +1,14 @@
 import mongoose from 'mongoose';
 import { Password } from '../services/password';
+import {getRootUserSchema, RootUserAttrs, RootUserDoc} from "./adminUser";
 
 // An interface that describes the properties
 // that are required to create a new User
-interface FreeUserAttrs {
+interface FreeUserAttrs extends RootUserAttrs{
   email?: string;
-  userName?: string;
   clientUserName: string;
   applicationName: string;
   env: string;
-  password: string;
-  isEnabled?: boolean;
 }
 
 // An interface that describes the properties
@@ -21,55 +19,29 @@ interface FreeUserModel extends mongoose.Model<FreeUserDoc> {
 
 // An interface that describes the properties
 // that a User Document has
-interface FreeUserDoc extends mongoose.Document {
+interface FreeUserDoc extends RootUserDoc {
   email?: string;
-  userName?: string;
   clientUserName: string;
   applicationName: string;
   env: string;
-  password: string;
-  isEnabled?: boolean;
 }
 
-const freeUserSchema = new mongoose.Schema(
-  {
+const freeUserSchema = getRootUserSchema({
     email: {
-      type: String
-    },
-    userName: {
-      type: String
+        type: String
     },
     clientUserName: {
-      type: String,
-      required: true
+        type: String,
+        required: true
     },
     applicationName: {
-      type: String,
-      required: true
+        type: String,
+        required: true
     },
     env: {
-      type: String
-    },
-    password: {
-      type: String,
-      required: true
-    },
-    isEnabled : {
-    type: Boolean,
-    default: true
-    },
-  },
-  {
-    toJSON: {
-      transform(doc, ret) {
-        ret.id = ret._id;
-        delete ret._id;
-        delete ret.password;
-        delete ret.__v;
-      }
+        type: String
     }
-  }
-);
+});
 
 freeUserSchema.pre('save', async function(done) {
   if (this.isModified('password')) {

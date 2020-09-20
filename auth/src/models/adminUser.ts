@@ -1,12 +1,63 @@
-import mongoose from 'mongoose';
-import { Password } from '../services/password';
+import mongoose, {SchemaDefinition} from 'mongoose';
+import {Password} from '../services/password';
 import {supportUserType} from '@ranjodhbirkaur/common';
 
-interface AdminUserAttrs {
+export interface RootUserAttrs {
+    userName: string;
+    jwtId: string;
+    password: string;
+    isEnabled?: boolean;
+    created_at?: string;
+}
+
+export interface RootUserDoc extends mongoose.Document {
+    userName: string;
+    jwtId: string;
+    password: string;
+    isEnabled?: boolean;
+    created_at: string;
+}
+
+export function getRootUserSchema(properties: SchemaDefinition) {
+    return new mongoose.Schema(
+        {
+            ...properties,
+            userName: {
+                type: String,
+                required: true
+            },
+            jwtId: {
+                type: String,
+                required: true
+            },
+            password: {
+                type: String,
+                required: true
+            },
+            isEnabled: {
+                type: Boolean,
+                default: true
+            },
+            created_at: {
+                type: String,
+                default: new Date()
+            }
+        },
+        {
+            toJSON: {
+                transform(doc, ret) {
+                    ret.id = ret._id;
+                    delete ret._id;
+                    delete ret.password;
+                    delete ret.__v;
+                }
+            }
+        }
+    );
+}
+
+interface AdminUserAttrs extends RootUserAttrs{
   email: string;
-  userName: string;
-  password: string;
-  isEnabled?: boolean;
   adminType: string
 }
 
@@ -14,48 +65,21 @@ interface AdminUserModel extends mongoose.Model<AdminUserDoc> {
   build(attrs: AdminUserAttrs): AdminUserDoc;
 }
 
-interface AdminUserDoc extends mongoose.Document {
+interface AdminUserDoc extends RootUserDoc {
     email: string;
-    userName: string;
-    password: string;
-    isEnabled?: boolean;
     adminType: string
 }
 
-const adminUserSchema = new mongoose.Schema(
-  {
+const adminUserSchema = getRootUserSchema({
     email: {
-      type: String,
+        type: String,
         required: true
     },
-    userName: {
-      type: String,
-        required: true
-    },
-    password: {
-      type: String,
-      required: true
-    },
-    isEnabled : {
-    type: Boolean,
-    default: true
-    },
-      adminType: {
+    adminType: {
         type: String,
         default: supportUserType
     }
-  },
-  {
-    toJSON: {
-      transform(doc, ret) {
-        ret.id = ret._id;
-        delete ret._id;
-        delete ret.password;
-        delete ret.__v;
-      }
-    }
-  }
-);
+});
 
 adminUserSchema.pre('save', async function(done) {
   if (this.isModified('password')) {

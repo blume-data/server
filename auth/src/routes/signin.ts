@@ -57,7 +57,8 @@ router.post(
     const payload = {
       id: existingUser.id,
       email: existingUser.email,
-      userName: existingUser.userName
+      userName: existingUser.userName,
+      jwtId: existingUser.jwtId
     };
     const userJwt = generateJwt(payload, req);
 

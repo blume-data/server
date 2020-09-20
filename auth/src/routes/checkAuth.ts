@@ -1,10 +1,10 @@
-import express from "express";
+import {Router} from "express";
 import {clusterCheckUser } from "../util/urls";
 import {body} from "express-validator";
 import {validateRequest,stringLimitOptionErrorMessage,stringLimitOptions} from "@ranjodhbirkaur/common";
 import {isUserEnabled} from "../Controllers/AuthController";
 
-const router = express.Router();
+const router = Router();
 
 router.post(clusterCheckUser, [
         body('userName')

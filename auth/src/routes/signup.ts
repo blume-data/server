@@ -3,7 +3,7 @@ import { body } from 'express-validator';
 import {
     validateRequest, okayStatus, RANDOM_STRING,
     errorStatus, adminUserType, clientUserType,
-    freeUserType, supportUserType,
+    freeUserType,
     stringLimitOptionErrorMessage,
     stringLimitOptions,
     generateJwt, sendJwtResponse
@@ -118,7 +118,9 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
 
     switch (type) {
         case adminUserType: {
-            user = AdminUser.build({ email, password, userName, adminType });
+            const jwtId = RANDOM_STRING(10);
+            const created_at = `${new Date()}`;
+            user = AdminUser.build({ email, password, userName, adminType, jwtId, created_at });
             await user.save();
             payload = {
                 id: user.id,

@@ -1,9 +1,9 @@
-import express from "express";
+import {Router} from "express";
 import {getAddressUrls} from "../util/urls";
 import {getAddressUrl} from "../Controllers/AddressUrlsContoller";
 import {validateUserType} from "../middleware/userTypeCheck";
 
-const router = express.Router();
+const router = Router();
 
 router.get(getAddressUrls(), validateUserType, getAddressUrl);
 

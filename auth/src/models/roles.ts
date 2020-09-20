@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 interface RolesAttrs {
     // delete-comment
     // all-comment
-    permissions: string[];
+    permissions: string;
     name: string;
     // all means can access all languages
     language: string;
@@ -17,7 +17,7 @@ interface RolesModel extends mongoose.Model<RolesDoc> {
 }
 
 interface RolesDoc extends mongoose.Document {
-    permissions: string[];
+    permissions: string;
     name: string;
     language: string;
     clientUserName: string;
@@ -48,9 +48,10 @@ const Roles = new mongoose.Schema(
             type: String,
             required: true
         },
-        permissions: [{
-            type: String
-        }],
+        permissions: {
+            type: String,
+            required: true
+        },
         created_at : { type: Date, default: Date.now }
     },
     {
