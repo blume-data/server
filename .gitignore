@@ -9,7 +9,7 @@ lerna-debug.log*
 auth/src/auth-test
 build
 .kube
-skaffold.yaml
+#skaffold.yaml
 infra/k8s-dev/ingress-srv.yaml
 .kube
 # Diagnostic reports (https://nodejs.org/api/report.html)

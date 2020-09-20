@@ -1,0 +1,44 @@
+apiVersion: skaffold/v2alpha3
+kind: Config
+deploy:
+  kubectl:
+    manifests:
+      - ./infra/k8s/*
+      - ./infra/k8s-dev/*
+build:
+  local:
+    push: false
+  artifacts:
+    - image: taranjeetsingh/auth
+      context: auth
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.ts'
+            dest: .
+    - image: taranjeetsingh/data
+      context: data
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.ts'
+            dest: .
+    - image: taranjeetsingh/event-bus
+      context: event-bus
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.ts'
+            dest: .
+
+#    - image: taranjeetsingh/client
+#      context: client
+#      docker:
+#        dockerfile: Dockerfile
+#      sync:
+#        manual:
+#          - src: 'src/**/*.{ts,tsx,js}'
+#            dest: .
