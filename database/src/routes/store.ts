@@ -64,7 +64,10 @@ route.post(`${rootUrl}/${addDataUrl}`,
 
     const {modelName='', data={}, clientUserName='', connectionName} = req.body;
     const db = new RanjodhbirModel(modelName, clientUserName, connectionName);
-    await db.storeData(data);
+    await db.mutateData({
+        action: "post",
+        item: data
+    });
     res.status(okayStatus).send(data);
 
 });

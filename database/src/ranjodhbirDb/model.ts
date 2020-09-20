@@ -4,7 +4,7 @@ import {randomNumber} from "../utils/methods";
 import {RANDOM_STRING} from "@ranjodhbirkaur/common";
 import {DataBaseModelsModel} from "../models/models";
 import {TasksModel} from "../models/tasks";
-import {eventEmitter} from "../worker";
+import {eventEmitter, setWritable} from "../worker";
 import {START_TASK} from "../utils/constants";
 
 interface ReadDataType {
@@ -15,7 +15,7 @@ interface ReadDataType {
 }
 
 interface MutateType {
-    action: 'Put' | 'post' | 'delete',
+    action: 'put' | 'post' | 'delete',
     item: object
 }
 
@@ -25,12 +25,13 @@ export class RanjodhbirModel extends RanjodhbirSchema {
         super(name, clientUserName, connectionName);
     }
 
-    private async addTask(actionType: 'put' | 'post' | 'delete', item: object) {
+    private async addTask(params: MutateType) {
+        const {action,item} = params;
         const task = TasksModel.build({
             clientUserName: this.clientUserName,
             modelName: this.name,
             connectionName: this.connectionName,
-            action: actionType,
+            action,
             query: JSON.stringify(item)
         });
         await task.save();
@@ -46,15 +47,13 @@ export class RanjodhbirModel extends RanjodhbirSchema {
     /*
     * Check if the model is writable then store data
     * */
-    async mutateData(type: 'put' | 'post' | 'delete',item: object) {
+    async mutateData(params: MutateType) {
+        const {action,item} = params;
         // check if this model is not under write mode
         const isWritable = await this.checkIsModelWritable();
         if (isWritable) {
-            await DataBaseModelsModel.updateOne({
-                clientUserName: this.clientUserName,
-                modelName: this.name
-            }, {isWritable: false});
-            switch (type) {
+            await setWritable(this.clientUserName, this.name, false);
+            switch (action) {
                 case "post": {
                     await this.storeData(item);
                     break;
@@ -62,8 +61,7 @@ export class RanjodhbirModel extends RanjodhbirSchema {
             }
         }
         else {
-            await this.addTask(type, item);
-            eventEmitter.emit(START_TASK);
+            await this.addTask({action, item});
         }
     }
 

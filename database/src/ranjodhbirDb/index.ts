@@ -1,4 +1,5 @@
 import fs  from 'fs';
+import {DataBaseModelsModel} from "../models/models";
 
 export class RanjodhbirSchema {
 
@@ -48,6 +49,12 @@ export class RanjodhbirSchema {
                             for(let i=0;i<=9;i++) {
                                 await this.writeFile(JSON.stringify([]), `${i}.txt`);
                             }
+                            const mongoModel = DataBaseModelsModel.build({
+                                clientUserName: this.clientUserName,
+                                modelName: this.name,
+                                isWritable: true
+                            });
+                            await mongoModel.save();
                             resolve();
                         }
                     });

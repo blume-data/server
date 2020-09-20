@@ -12,7 +12,7 @@ interface TasksModel extends mongoose.Model<TasksDoc> {
     build(attrs: TasksAttrs): TasksDoc;
 }
 
-interface TasksDoc extends mongoose.Document {
+export interface TasksDoc extends mongoose.Document {
     modelName: string;
     clientUserName: string;
     connectionName: string;
