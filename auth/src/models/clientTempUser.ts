@@ -1,11 +1,13 @@
 import mongoose from 'mongoose';
 import { Password } from '../services/password';
+import {supportUserType} from '@ranjodhbirkaur/common';
 
 interface ClientTempUserAttrs {
     email: string;
     password: string;
     firstName: string;
     lastName: string;
+    clientType?: string;
     verificationToken: string,
     userName: string;
 }
@@ -19,6 +21,7 @@ interface ClientTempUserDoc extends mongoose.Document {
     password: string;
     firstName: string;
     lastName: string;
+    clientType: string;
     verificationToken: string,
     userName: string;
     created_at: string;
@@ -50,6 +53,10 @@ const clientTempUserSchema = new mongoose.Schema(
         userName: {
             type: String,
             required: true
+        },
+        clientType: {
+            type: String,
+            default: supportUserType,
         },
         created_at : { type: Date, default: Date.now }
     },

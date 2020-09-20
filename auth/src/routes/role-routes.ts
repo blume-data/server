@@ -12,6 +12,7 @@ import {createRole, updateRole} from "../Controllers/RoleController";
 import {validateRolePermissions} from "../middleware/validatePermissions";
 import {AUTHORIZATION_TOKEN} from "../../../data/src/util/constants";
 import jwt from 'jsonwebtoken';
+import {ClientUser} from "../models/clientUser";
 
 const router = Router();
 
@@ -40,7 +41,7 @@ function RoleValidations() {
     ]
 }
 
-function checkUserType(req: Request, res: Response, next: NextFunction) {
+async function checkUserType(req: Request, res: Response, next: NextFunction) {
 
     if (process.env.NODE_ENV === 'test') {
         return next();
@@ -49,6 +50,7 @@ function checkUserType(req: Request, res: Response, next: NextFunction) {
     const userName  = req.params && req.params.userName;
     try {
         const headers: any = req.headers;
+
         let payload: any;
 
         if (headers[AUTHORIZATION_TOKEN]) {
@@ -67,11 +69,19 @@ function checkUserType(req: Request, res: Response, next: NextFunction) {
         // check the payload
         if (payload && payload.userName && payload.userName === userName) {
 
-            next();
+            const user = await ClientUser.findOne({
+                userName,
+            }, 'jwtId');
+
+            if (user && user.jwtId && user.jwtId === payload.jwtId) {
+                next();
+            }
+            else {
+                throw new Error();
+            }
         }
         else {
-            next();
-            //throw new Error();
+            throw new Error();
         }
     }
     catch (e) {
@@ -80,22 +90,6 @@ function checkUserType(req: Request, res: Response, next: NextFunction) {
         }
         throw new NotAuthorizedError();
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    next();
 }
 
 router.post(roleUrl(), checkUserType, RoleValidations(), validateRolePermissions, createRole);

@@ -1,8 +1,10 @@
 import {Request, Response, NextFunction} from "express";
-import {BadRequestError, supportUserType, superVisorUserType,
-    freeUserType, SupportedUserType,
-    errorStatus, ErrorMessages, adminUserType, adminType} from "@ranjodhbirkaur/common";
-import {ADMIN_USER_TYPE_NOT_VALID} from "../util/errorMessages";
+import {
+    BadRequestError, supportUserType, superVisorUserType, sendSingleError,
+    freeUserType, SupportedUserType, clientType, SUPPORTED_CLIENT_USER_TYPE,
+    errorStatus, ErrorMessages, adminUserType, adminType, clientUserType
+} from "@ranjodhbirkaur/common";
+import {ADMIN_USER_TYPE_NOT_VALID, CLIENT_USER_TYPE_NOT_VALID} from "../util/errorMessages";
 
 export async function validateUserType(req: Request, res: Response, next: NextFunction) {
 
@@ -14,6 +16,17 @@ export async function validateUserType(req: Request, res: Response, next: NextFu
             let isValid = true;
             let errorMessages: ErrorMessages[] = [];
             switch (userType) {
+                case clientUserType: {
+                    if (reqBody[clientType]) {
+                        reqBody[clientType] = supportUserType;
+                    }
+                    if(!reqBody[clientType]
+                        || typeof reqBody[clientType] !== 'string'
+                        || !SUPPORTED_CLIENT_USER_TYPE.includes(reqBody[clientType])) {
+                        return sendSingleError(res, CLIENT_USER_TYPE_NOT_VALID, clientType);
+                    }
+                    break;
+                }
                 case freeUserType: {
                     if (!reqBody.email && !reqBody.userName) {
                         isValid = false;
@@ -49,12 +62,8 @@ export async function validateUserType(req: Request, res: Response, next: NextFu
                     if(!reqBody[adminType]
                         || typeof reqBody[adminType] !== 'string'
                         || ![adminUserType, supportUserType, superVisorUserType].includes(reqBody[adminType])) {
-                        return res.status(errorStatus).send({
-                            errors: [{
-                                message: ADMIN_USER_TYPE_NOT_VALID,
-                                field: adminType
-                            }]
-                        });
+
+                        return sendSingleError(res, ADMIN_USER_TYPE_NOT_VALID, adminType);
                     }
                 }
             }

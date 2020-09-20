@@ -4,8 +4,8 @@ import {
     AUTH_TOKEN,
     okayStatus,
     USER_NAME,
-    clientUserType,
-    adminUserType, RANDOM_STRING
+    clientUserType, JwtPayloadType, JWT_ID,
+    adminUserType, RANDOM_STRING, ROLE, PERMISSIONS, CLIENT_USER_NAME, APPLICATION_NAME, generateJwt, sendJwtResponse
 } from "@ranjodhbirkaur/common";
 import {ClientTempUser} from "../models/clientTempUser";
 import {ClientUser} from "../models/clientUser";
@@ -73,6 +73,7 @@ export const verifyEmailToken = async function (req: ReqValidateEmail, res: Resp
                 email: userExist.email,
                 jwtId,
                 created_at,
+                clientType: userExist.clientType,
                 password: userExist.password,
                 firstName: userExist.firstName,
                 lastName: userExist.lastName,
@@ -81,26 +82,23 @@ export const verifyEmailToken = async function (req: ReqValidateEmail, res: Resp
 
             await newUser.save();
 
-            const payload = {
-                id: newUser.id,
-                email: newUser.email,
-                userName: newUser.userName
+            const payload: JwtPayloadType = {
+                [JWT_ID]: jwtId,
+                [ROLE]: newUser.clientType,
+                [PERMISSIONS]: [''],
+                [CLIENT_USER_NAME]: '',
+                [APPLICATION_NAME]: '',
+                [USER_NAME]: newUser.userName
             };
 
             // Generate JWT
-            const userJwt = jwt.sign(
-                payload,
-                process.env.JWT_KEY!
-            );
+            const userJwt = generateJwt(payload, req);
 
-            // Store it on session object
-            req.session = {
-                jwt: userJwt,
-            };
-
-            res.status(okayStatus).send({... payload, [AUTH_TOKEN]: userJwt, [USER_NAME]: newUser.userName});
+            sendJwtResponse(res, payload, userJwt, newUser);
 
             ClientTempUser.deleteMany({email: modelProps.email}).then(() => {});
+
+            return res.status(okayStatus).send({... payload, [AUTH_TOKEN]: userJwt, [USER_NAME]: newUser.userName});
 
         }
         else {

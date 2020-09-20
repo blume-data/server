@@ -3,10 +3,10 @@ import { body } from 'express-validator';
 import {
     validateRequest, okayStatus, RANDOM_STRING,
     errorStatus, adminUserType, clientUserType,
-    freeUserType,
+    freeUserType, clientType,
     stringLimitOptionErrorMessage,
     stringLimitOptions,
-    generateJwt, sendJwtResponse
+    generateJwt, sendJwtResponse, sendSingleError
 } from '@ranjodhbirkaur/common';
 import {
     passwordLimitOptionErrorMessage,
@@ -70,6 +70,7 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
 
     const { email, password, firstName, lastName, userName } = req.body;
     const [adminType] = req.body;
+    const [clientType] = req.body;
 
     let existingUser;
     // Check if the email is not taken
@@ -84,12 +85,7 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
         }
     }
     if (existingUser) {
-        return res.status(errorStatus).send({
-            errors: [{
-                message: EmailInUseMessage,
-                field: 'email'
-            }]
-        });
+        return sendSingleError(res, EmailInUseMessage, 'email');
     }
 
     // check if the user name is not taken for client User
@@ -104,12 +100,7 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
         }
     }
     if (existingUser) {
-        return res.status(errorStatus).send({
-            errors: [{
-                message: UserNameNotAvailableMessage,
-                field: 'userName'
-            }]
-        });
+        return sendSingleError(res, UserNameNotAvailableMessage, 'userName');
     }
 
     const verificationToken = RANDOM_STRING(4);
@@ -127,10 +118,11 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
                 email: user.email,
                 userName: user.userName
             };
-            break;
+            const userJwt = generateJwt(payload, req);
+            return sendJwtResponse(res, payload, userJwt, user);
         }
         default : {
-            user = ClientTempUser.build({ email, password, firstName, lastName, userName, verificationToken });
+            user = ClientTempUser.build({ email, password, firstName, lastName, userName, verificationToken, clientType });
             await user.save();
             payload = {
                 id: user.id,
@@ -139,8 +131,6 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
                 // TODO remove verification token later
                 verificationToken: user.verificationToken
             };
-            const userJwt = generateJwt(payload, req);
-            return sendJwtResponse(res, payload, userJwt, user);
         }
     }
 
