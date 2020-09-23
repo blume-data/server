@@ -1,13 +1,11 @@
 import mongoose from 'mongoose';
 import { Password } from '../services/password';
 import {getRootUserSchema, RootUserAttrs, RootUserDoc} from "./adminUser";
-import {supportUserType} from "@ranjodhbirkaur/common";
 
 interface ClientUserAttrs extends RootUserAttrs{
     email: string;
     password: string;
     firstName: string;
-    clientType?: string;
     lastName: string;
 }
 
@@ -18,8 +16,7 @@ interface ClientUserModel extends mongoose.Model<ClientUserDoc> {
 interface ClientUserDoc extends RootUserDoc {
     email: string;
     firstName: string;
-    lastName: string;
-    clientType: string;
+    lastName: string
 }
 
 const clientUserSchema = getRootUserSchema({
@@ -36,11 +33,7 @@ const clientUserSchema = getRootUserSchema({
     lastName : {
         type: String,
         required: true
-    },
-    clientType: {
-        type: String,
-        default: supportUserType,
-    },
+    }
 });
 
 clientUserSchema.pre('save', async function(done) {

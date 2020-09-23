@@ -4,15 +4,23 @@ import {checkAuth} from "../services/checkAuth";
 import {validatePermission} from "../services/middlewares/permissions/validatePermissions";
 import {CreateRole, GetRoles} from "../Controllers/RoleController";
 import {body} from "express-validator";
-import {validateRequest} from "@ranjodhbirkaur/common";
+import {stringLimitOptionErrorMessage, stringLimitOptions, validateRequest,
+
+    } from "@ranjodhbirkaur/common";
 import {validateLanguage} from "../util/laguage";
 
 const router = express.Router();
 
 router.post(RoleUrl, checkAuth, validatePermission,
     [
-        body('name').trim().notEmpty().withMessage('name is required'),
-        body('language').trim().notEmpty().withMessage('language is required'),
+        body('name')
+            .trim()
+            .isLength(stringLimitOptions)
+            .withMessage(stringLimitOptionErrorMessage('name')),
+        body('language')
+            .trim()
+            .isLength(stringLimitOptions)
+            .withMessage(stringLimitOptionErrorMessage('language')),
     ],
     validateRequest, validateLanguage,
     CreateRole);

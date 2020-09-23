@@ -1,63 +1,50 @@
 import {Request, Response, NextFunction} from "express";
 import {
     BadRequestError, supportUserType, superVisorUserType, sendSingleError,
-    freeUserType, SupportedUserType, clientType, SUPPORTED_CLIENT_USER_TYPE,
-    errorStatus, ErrorMessages, adminUserType, adminType, clientUserType
+    freeUserType, SupportedUserType,
+    ErrorMessages, adminUserType, adminType, clientUserType, CLIENT_USER_NAME, APPLICATION_NAME, ENV,
+    FIRST_NAME, LAST_NAME, EMAIL, pushErrors, sendErrors, USER_NAME, PASSWORD
 } from "@ranjodhbirkaur/common";
-import {ADMIN_USER_TYPE_NOT_VALID, CLIENT_USER_TYPE_NOT_VALID} from "../util/errorMessages";
+import {ADMIN_USER_TYPE_NOT_VALID} from "../util/errorMessages";
 
 export async function validateUserType(req: Request, res: Response, next: NextFunction) {
 
     const userType = req.params && req.params.userType;
     const reqBody = req.body;
+    let errorMessages: ErrorMessages[] = [];
+    let isValid = true;
 
     if (userType) {
         if (SupportedUserType.includes(userType)) {
-            let isValid = true;
-            let errorMessages: ErrorMessages[] = [];
+
+            if(!reqBody.userName) {
+                isValid=false;
+                pushErrors(errorMessages, 'userName is required', USER_NAME);
+            }
+            if (!reqBody.password) {
+                isValid=false;
+                pushErrors(errorMessages, 'password is required', PASSWORD);
+            }
+
             switch (userType) {
                 case clientUserType: {
-                    if (reqBody[clientType]) {
-                        reqBody[clientType] = supportUserType;
+                    // user who own the whole application
+                    if (!reqBody[FIRST_NAME]) {
+                        isValid=false;
+                        pushErrors(errorMessages, `${FIRST_NAME} is required`, FIRST_NAME);
                     }
-                    if(!reqBody[clientType]
-                        || typeof reqBody[clientType] !== 'string'
-                        || !SUPPORTED_CLIENT_USER_TYPE.includes(reqBody[clientType])) {
-                        return sendSingleError(res, CLIENT_USER_TYPE_NOT_VALID, clientType);
+                    if (!reqBody[LAST_NAME]) {
+                        isValid=false;
+                        pushErrors(errorMessages, `${LAST_NAME} is required`, LAST_NAME);
                     }
-                    break;
-                }
-                case freeUserType: {
-                    if (!reqBody.email && !reqBody.userName) {
-                        isValid = false;
-                        errorMessages.push({
-                            message: 'email or username is required'
-                        });
-                    }
-                    if (!reqBody.password) {
-                        isValid = false;
-                        errorMessages.push({
-                            message: 'password is required',
-                            field: 'password'
-                        });
-                    }
-                    if (!isValid) {
-                        return res.status(errorStatus).send({
-                            errors: errorMessages
-                        });
-                    }
-                    else {
-                        reqBody.firstName= 'taranjeet';
-                        reqBody.lastName = 'singh';
-                        if(reqBody.email && !reqBody.userName) {
-                            reqBody.userName = 'taranjeetsingh';
-                        }
-                        else if(reqBody.userName && !reqBody.email) {
-                            reqBody.email = 'taranjeetplay@gmail.com';
-                        }
+                    if (!reqBody[EMAIL]) {
+                        isValid=false;
+                        pushErrors(errorMessages, `${EMAIL} is required`, EMAIL);
                     }
                     break;
                 }
+                // TODO
+                // Take a look at admin type sign-up
                 case adminUserType: {
                     if(!reqBody[adminType]
                         || typeof reqBody[adminType] !== 'string'
@@ -65,15 +52,38 @@ export async function validateUserType(req: Request, res: Response, next: NextFu
 
                         return sendSingleError(res, ADMIN_USER_TYPE_NOT_VALID, adminType);
                     }
+                    break;
+                }
+                default: {
+                    // requires user to be authenticated
+                    if ((userType === freeUserType || userType === supportUserType || userType === superVisorUserType)) {
+                        if (!reqBody[CLIENT_USER_NAME]) {
+                            isValid=false;
+                            pushErrors(errorMessages, `${CLIENT_USER_NAME} is required`, CLIENT_USER_NAME);
+                        }
+                        if (!reqBody[APPLICATION_NAME] && userType !== superVisorUserType) {
+                            isValid=false;
+                            pushErrors(errorMessages, `${APPLICATION_NAME} is required`, APPLICATION_NAME);
+                        }
+                        if (!reqBody[ENV] && userType !== superVisorUserType && userType !== supportUserType) {
+                            isValid=false;
+                            pushErrors(errorMessages, `${ENV} is required`, ENV);
+                        }
+                    }
                 }
             }
-            next();
+            if (!isValid) {
+                return sendErrors(res, errorMessages);
+            }
+            else {
+                next();
+            }
         }
         else {
-            throw new BadRequestError(`User type: ${userType} is not supported`);
+            throw new BadRequestError(`userType: ${userType} is not supported`);
         }
     }
     else {
-        throw new BadRequestError('User type is not valid');
+        throw new BadRequestError('userType is not valid');
     }
 }

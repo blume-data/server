@@ -4,12 +4,20 @@ import {
     AUTH_TOKEN,
     okayStatus,
     USER_NAME,
-    clientUserType, JwtPayloadType, JWT_ID,
-    adminUserType, RANDOM_STRING, ROLE, PERMISSIONS, CLIENT_USER_NAME, APPLICATION_NAME, generateJwt, sendJwtResponse
+    clientUserType,
+    JwtPayloadType,
+    JWT_ID,
+    adminUserType,
+    RANDOM_STRING,
+    ROLE,
+    PERMISSIONS,
+    CLIENT_USER_NAME,
+    APPLICATION_NAME,
+    generateJwt,
+    sendJwtResponse
 } from "@ranjodhbirkaur/common";
 import {ClientTempUser} from "../models/clientTempUser";
 import {ClientUser} from "../models/clientUser";
-import jwt from "jsonwebtoken";
 import {TOKEN_NOT_VALID, USER_NAME_NOT_AVAILABLE} from "../util/errorMessages";
 import {AdminUser} from "../models/adminUser";
 
@@ -73,7 +81,6 @@ export const verifyEmailToken = async function (req: ReqValidateEmail, res: Resp
                 email: userExist.email,
                 jwtId,
                 created_at,
-                clientType: userExist.clientType,
                 password: userExist.password,
                 firstName: userExist.firstName,
                 lastName: userExist.lastName,
@@ -84,15 +91,14 @@ export const verifyEmailToken = async function (req: ReqValidateEmail, res: Resp
 
             const payload: JwtPayloadType = {
                 [JWT_ID]: jwtId,
-                [ROLE]: newUser.clientType,
-                [PERMISSIONS]: [''],
-                [CLIENT_USER_NAME]: '',
-                [APPLICATION_NAME]: '',
                 [USER_NAME]: newUser.userName
             };
 
             // Generate JWT
             const userJwt = generateJwt(payload, req);
+
+            // TODO
+            // Send a request data srv to create a relationship between user and jwt
 
             sendJwtResponse(res, payload, userJwt, newUser);
 

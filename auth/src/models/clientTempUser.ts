@@ -7,7 +7,7 @@ interface ClientTempUserAttrs {
     password: string;
     firstName: string;
     lastName: string;
-    clientType?: string;
+    clientType: string;
     verificationToken: string,
     userName: string;
 }

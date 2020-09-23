@@ -1,15 +1,15 @@
-import {APPLICATION_NAME, CLIENT_USER_NAME, PERMISSIONS, USER_NAME, ROLE, JWT_ID, FIELD, MESSAGE} from "../utils";
-
 export interface ErrorMessages {
-    [FIELD]?: string;
-    [MESSAGE]: string;
+    field?: string;
+    message: string;
 }
 
 export interface JwtPayloadType {
-    [JWT_ID]: string;
-    [USER_NAME]: string;
-    [ROLE]: string;
-    [PERMISSIONS]: string[];
-    [CLIENT_USER_NAME]: string;
-    [APPLICATION_NAME]: string;
+    userName: string;
+    jwtId: string;
+}
+
+export interface ClientUserJwtPayloadType extends JwtPayloadType{
+    clientUserName: string;
+    applicationName: string;
+    clientType: string;
 }

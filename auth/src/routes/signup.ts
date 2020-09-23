@@ -1,12 +1,24 @@
 import express, { Request, Response } from 'express';
 import { body } from 'express-validator';
 import {
-    validateRequest, okayStatus, RANDOM_STRING,
-    errorStatus, adminUserType, clientUserType,
-    freeUserType, clientType,
+    validateRequest,
+    okayStatus,
+    RANDOM_STRING,
+    errorStatus,
+    adminUserType,
+    clientUserType,
+    freeUserType,
+    clientType,
     stringLimitOptionErrorMessage,
     stringLimitOptions,
-    generateJwt, sendJwtResponse, sendSingleError
+    generateJwt,
+    sendJwtResponse,
+    sendSingleError,
+    superVisorUserType,
+    CLIENT_USER_NAME,
+    supportUserType,
+    EMAIL,
+    USER_NAME
 } from '@ranjodhbirkaur/common';
 import {
     passwordLimitOptionErrorMessage,
@@ -19,6 +31,8 @@ import {validateUserType} from "../middleware/userTypeCheck";
 import {EmailInUseMessage, InValidEmailMessage, UserNameNotAvailableMessage} from "../util/errorMessages";
 import {AdminUser} from "../models/adminUser";
 import {signUpUrl} from "../util/urls";
+import {FreeUser} from "../models/freeUser";
+import {ClientUserJwtPayloadType} from "@ranjodhbirkaur/common/build/interface";
 
 const
     router = express.Router();
@@ -26,15 +40,19 @@ const
 router.post(
     signUpUrl(), validateUserType,
     [
-        body('email').isEmail().withMessage(InValidEmailMessage),
+        body('email')
+            .optional()
+            .isEmail().withMessage(InValidEmailMessage),
         body('password')
             .trim()
             .isLength(passwordLimitOptions)
             .withMessage(passwordLimitOptionErrorMessage('password')),
         body('firstName')
+            .optional()
             .isLength(stringLimitOptions)
             .withMessage(stringLimitOptionErrorMessage('first name')),
         body('lastName')
+            .optional()
             .isLength(stringLimitOptions)
             .withMessage(stringLimitOptionErrorMessage('last name')),
         body('userName')
@@ -52,9 +70,11 @@ router.post(
                 return await saveUser(req, res);
             }
             case freeUserType: {
+
                 break;
             }
             case adminUserType: {
+                // needs to be looked again
                 return await saveUser(req, res, adminUserType);
             }
         }
@@ -68,9 +88,8 @@ export { router as signupRouter };
 * */
 async function saveUser(req: Request, res: Response, type=clientUserType ) {
 
-    const { email, password, firstName, lastName, userName } = req.body;
+    const { email, password, firstName, lastName, userName, clientUserName, applicationName, env } = req.body;
     const [adminType] = req.body;
-    const [clientType] = req.body;
 
     let existingUser;
     // Check if the email is not taken
@@ -83,9 +102,16 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
             existingUser = await AdminUser.findOne({email});
             break;
         }
+        default: {
+            if (type === freeUserType || type === superVisorUserType || type === supportUserType) {
+                if (email) {
+                    existingUser = await FreeUser.find({email});
+                }
+            }
+        }
     }
     if (existingUser) {
-        return sendSingleError(res, EmailInUseMessage, 'email');
+        return sendSingleError(res, EmailInUseMessage, EMAIL);
     }
 
     // check if the user name is not taken for client User
@@ -97,19 +123,25 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
         }
         case adminUserType: {
             existingUser = await AdminUser.findOne({userName});
+            break;
+        }
+        default: {
+            if (type === freeUserType || type === superVisorUserType || type === supportUserType) {
+                existingUser = await FreeUser.find({userName});
+            }
         }
     }
     if (existingUser) {
-        return sendSingleError(res, UserNameNotAvailableMessage, 'userName');
+        return sendSingleError(res, UserNameNotAvailableMessage, USER_NAME);
     }
 
     const verificationToken = RANDOM_STRING(4);
 
     let user, payload;
+    const jwtId = RANDOM_STRING(10);
 
     switch (type) {
         case adminUserType: {
-            const jwtId = RANDOM_STRING(10);
             const created_at = `${new Date()}`;
             user = AdminUser.build({ email, password, userName, adminType, jwtId, created_at });
             await user.save();
@@ -121,9 +153,11 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
             const userJwt = generateJwt(payload, req);
             return sendJwtResponse(res, payload, userJwt, user);
         }
-        default : {
-            user = ClientTempUser.build({ email, password, firstName, lastName, userName, verificationToken, clientType });
+        case clientUserType: {
+
+            user = ClientTempUser.build({ email, password, firstName, lastName, userName, verificationToken, clientType: clientUserType });
             await user.save();
+
             payload = {
                 id: user.id,
                 email: user.email,
@@ -131,6 +165,40 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
                 // TODO remove verification token later
                 verificationToken: user.verificationToken
             };
+            break;
+        }
+        case freeUserType: {
+            user = ClientTempUser.build({ email, password, firstName, lastName, userName, verificationToken, clientType: freeUserType });
+            await user.save();
+            payload = {
+                userName: user.userName,
+                verificationToken: user.verificationToken
+            };
+            break;
+        }
+        case superVisorUserType: {
+            user = FreeUser.build({ email, password, userName, clientType: superVisorUserType, jwtId, clientUserName });
+            await user.save();
+            const jwt: ClientUserJwtPayloadType = {
+                clientUserName,
+                jwtId,
+                applicationName,
+                userName
+            };
+            const userJwt = generateJwt(jwt, req);
+            return sendJwtResponse(res, {userName, clientUserName}, userJwt, user);
+        }
+        case supportUserType: {
+            user = FreeUser.build({ email, password, userName, clientType: supportUserType, jwtId, clientUserName, applicationName });
+            await user.save();
+            const jwt: ClientUserJwtPayloadType = {
+                clientUserName,
+                jwtId,
+                applicationName,
+                userName
+            };
+            const userJwt = generateJwt(jwt, req);
+            return sendJwtResponse(res, {userName, clientUserName}, userJwt, user);
         }
     }
 

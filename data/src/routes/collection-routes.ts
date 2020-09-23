@@ -1,7 +1,6 @@
 import express from 'express';
-import {stringLimitOptionErrorMessage, stringLimitOptions} from "../util/constants";
 import {body} from "express-validator";
-import {validateRequest} from "@ranjodhbirkaur/common";
+import {validateRequest, stringLimitOptionErrorMessage, stringLimitOptions} from "@ranjodhbirkaur/common";
 import {CollectionUrl} from "../util/urls";
 import {createCollectionSchema, deleteCollectionSchema, getCollectionSchema} from "../Controllers/CollectionController";
 import {validateCollections} from "../services/middlewares/collections/validateCollections";

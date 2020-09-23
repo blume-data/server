@@ -7,8 +7,9 @@ import {getRootUserSchema, RootUserAttrs, RootUserDoc} from "./adminUser";
 interface FreeUserAttrs extends RootUserAttrs{
   email?: string;
   clientUserName: string;
-  applicationName: string;
-  env: string;
+  applicationName?: string;
+  env?: string;
+  clientType: string;
 }
 
 // An interface that describes the properties
@@ -24,6 +25,7 @@ interface FreeUserDoc extends RootUserDoc {
   clientUserName: string;
   applicationName: string;
   env: string;
+  clientType: string;
 }
 
 const freeUserSchema = getRootUserSchema({
@@ -36,10 +38,13 @@ const freeUserSchema = getRootUserSchema({
     },
     applicationName: {
         type: String,
-        required: true
     },
     env: {
         type: String
+    },
+    clientType: {
+        type: String,
+        required: true
     }
 });
 
