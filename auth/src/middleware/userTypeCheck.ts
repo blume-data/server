@@ -81,7 +81,7 @@ export async function validateUserType(req: Request, res: Response, next: NextFu
                                 pushErrors(errorMessages, CLIENT_USER_NAME_NOT_VALID, CLIENT_USER_NAME);
                             }
                             else {
-                                if (userExist[USER_NAME] || userExist[USER_NAME] !== reqBody[CLIENT_USER_NAME]) {
+                                if (!userExist[USER_NAME] || userExist[USER_NAME] !== reqBody[CLIENT_USER_NAME]) {
                                     isValid=false;
                                     pushErrors(errorMessages, CLIENT_USER_NAME_NOT_VALID, CLIENT_USER_NAME);
                                 }

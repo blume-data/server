@@ -71,6 +71,12 @@ router.post(
 
                 break;
             }
+            case supportUserType: {
+                return await saveUser(req, res, supportUserType);
+            }
+            case superVisorUserType: {
+                return await saveUser(req, res, superVisorUserType);
+            }
             case adminUserType: {
                 // needs to be looked again
                 return await saveUser(req, res, adminUserType);
@@ -103,7 +109,7 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
         default: {
             if (type === freeUserType || type === superVisorUserType || type === supportUserType) {
                 if (email) {
-                    existingUser = await FreeUser.find({email});
+                    existingUser = await FreeUser.findOne({email});
                 }
             }
         }
@@ -125,7 +131,7 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
         }
         default: {
             if (type === freeUserType || type === superVisorUserType || type === supportUserType) {
-                existingUser = await FreeUser.find({userName});
+                existingUser = await FreeUser.findOne({userName});
             }
         }
     }
@@ -163,7 +169,7 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
                 // TODO remove verification token later
                 verificationToken: user.verificationToken
             };
-            if (isTestEnv) {
+            if (isTestEnv()) {
                 payload = {
                     ...payload,
                     verificationToken: user.verificationToken
@@ -178,7 +184,7 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
                 userName: user.userName,
                 verificationToken: user.verificationToken
             };
-            if (isTestEnv) {
+            if (isTestEnv()) {
                 payload = {
                     ...payload,
                     verificationToken: user.verificationToken
@@ -197,6 +203,7 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
                 userName
             };
             const userJwt = generateJwt(jwt, req);
+            console.log('user jwt', user);
             return sendJwtResponse(res, {userName, clientUserName}, userJwt, user);
         }
         case supportUserType: {
