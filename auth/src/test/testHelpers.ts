@@ -1,5 +1,5 @@
 import {getEmailVerificationUrl, getRegistrationUrl, SampleDataType} from "./setup";
-import {adminUserType, okayStatus} from "@ranjodhbirkaur/common";
+import {adminUserType, freeUserType, okayStatus} from "@ranjodhbirkaur/common";
 import request from "supertest";
 import {app} from "../app";
 
@@ -16,6 +16,12 @@ export function getSampleData(userType: string) {
         sampleData = {
             ...sampleData,
             adminType: adminUserType
+        }
+    }
+    if (userType === freeUserType) {
+        sampleData = {
+            ...sampleData,
+
         }
     }
     return sampleData;

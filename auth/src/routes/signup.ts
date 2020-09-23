@@ -4,21 +4,19 @@ import {
     validateRequest,
     okayStatus,
     RANDOM_STRING,
-    errorStatus,
     adminUserType,
     clientUserType,
     freeUserType,
-    clientType,
     stringLimitOptionErrorMessage,
     stringLimitOptions,
     generateJwt,
     sendJwtResponse,
     sendSingleError,
     superVisorUserType,
-    CLIENT_USER_NAME,
     supportUserType,
     EMAIL,
-    USER_NAME
+    USER_NAME,
+    isTestEnv
 } from '@ranjodhbirkaur/common';
 import {
     passwordLimitOptionErrorMessage,
@@ -165,6 +163,12 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
                 // TODO remove verification token later
                 verificationToken: user.verificationToken
             };
+            if (isTestEnv) {
+                payload = {
+                    ...payload,
+                    verificationToken: user.verificationToken
+                }
+            }
             break;
         }
         case freeUserType: {
@@ -174,6 +178,12 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
                 userName: user.userName,
                 verificationToken: user.verificationToken
             };
+            if (isTestEnv) {
+                payload = {
+                    ...payload,
+                    verificationToken: user.verificationToken
+                }
+            }
             break;
         }
         case superVisorUserType: {
