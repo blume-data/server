@@ -10,3 +10,6 @@ export const FIRST_NAME = 'firstName';
 export const LAST_NAME = 'lastName';
 export const EMAIL = 'email';
 export const PASSWORD = 'password';
+
+// array of application names of the client user
+export const APPLICATION_NAMES = 'applicationNames';

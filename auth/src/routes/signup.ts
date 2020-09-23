@@ -183,6 +183,7 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
                 clientUserName,
                 jwtId,
                 applicationName,
+                clientType: superVisorUserType,
                 userName
             };
             const userJwt = generateJwt(jwt, req);
@@ -195,6 +196,7 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
                 clientUserName,
                 jwtId,
                 applicationName,
+                clientType: supportUserType,
                 userName
             };
             const userJwt = generateJwt(jwt, req);

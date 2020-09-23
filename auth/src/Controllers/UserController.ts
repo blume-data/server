@@ -14,12 +14,13 @@ import {
     CLIENT_USER_NAME,
     APPLICATION_NAME,
     generateJwt,
-    sendJwtResponse
+    sendJwtResponse, clientType
 } from "@ranjodhbirkaur/common";
 import {ClientTempUser} from "../models/clientTempUser";
 import {ClientUser} from "../models/clientUser";
 import {TOKEN_NOT_VALID, USER_NAME_NOT_AVAILABLE} from "../util/errorMessages";
 import {AdminUser} from "../models/adminUser";
+import {ClientUserJwtPayloadType} from "@ranjodhbirkaur/common/build/interface";
 
 interface ReqIsUserNameAvailable extends Request{
     body: {
@@ -81,6 +82,7 @@ export const verifyEmailToken = async function (req: ReqValidateEmail, res: Resp
                 email: userExist.email,
                 jwtId,
                 created_at,
+                applicationNames: JSON.stringify([]),
                 password: userExist.password,
                 firstName: userExist.firstName,
                 lastName: userExist.lastName,
@@ -89,8 +91,11 @@ export const verifyEmailToken = async function (req: ReqValidateEmail, res: Resp
 
             await newUser.save();
 
-            const payload: JwtPayloadType = {
+            const payload: ClientUserJwtPayloadType ={
                 [JWT_ID]: jwtId,
+                [CLIENT_USER_NAME]: '',
+                [APPLICATION_NAME]: '',
+                [clientType]: clientUserType,
                 [USER_NAME]: newUser.userName
             };
 
