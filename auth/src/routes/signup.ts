@@ -16,7 +16,7 @@ import {
     supportUserType,
     EMAIL,
     USER_NAME,
-    isTestEnv
+    isTestEnv, APPLICATION_NAMES, CLIENT_USER_NAME, pushErrors, APPLICATION_NAME, sendErrors
 } from '@ranjodhbirkaur/common';
 import {
     passwordLimitOptionErrorMessage,
@@ -26,11 +26,11 @@ import {
 import {ClientTempUser} from "../models/clientTempUser";
 import {ClientUser} from "../models/clientUser";
 import {validateUserType} from "../middleware/userTypeCheck";
-import {EmailInUseMessage, InValidEmailMessage, UserNameNotAvailableMessage} from "../util/errorMessages";
+import {APPLICATION_NAME_NOT_VALID, CLIENT_USER_NAME_NOT_VALID, EmailInUseMessage, InValidEmailMessage, UserNameNotAvailableMessage} from "../util/errorMessages";
 import {AdminUser} from "../models/adminUser";
 import {signUpUrl} from "../util/urls";
 import {FreeUser} from "../models/freeUser";
-import {ClientUserJwtPayloadType} from "@ranjodhbirkaur/common/build/interface";
+import {ClientUserJwtPayloadType, ErrorMessages} from "@ranjodhbirkaur/common/build/interface";
 
 const
     router = express.Router();
@@ -87,6 +87,41 @@ router.post(
 
 export { router as signupRouter };
 
+
+async function validateCientUserName(req: Request): Promise<{isValid: boolean; errorMessages: ErrorMessages[]}> {
+
+    let isValid = true;
+    const reqBody = req.body;
+    const userType = req.params.userType;
+    let errorMessages: ErrorMessages[] = [];
+    
+    const userExist = await ClientUser.findOne({
+        userName: reqBody[CLIENT_USER_NAME]
+    }, [USER_NAME, APPLICATION_NAMES]);
+    
+    if (!userExist) {
+        isValid=false;
+        pushErrors(errorMessages, CLIENT_USER_NAME_NOT_VALID, CLIENT_USER_NAME);
+    }
+    else {
+        if (!userExist[USER_NAME] || userExist[USER_NAME] !== reqBody[CLIENT_USER_NAME]) {
+            isValid=false;
+            pushErrors(errorMessages, CLIENT_USER_NAME_NOT_VALID, CLIENT_USER_NAME);
+        }
+        if (userType === supportUserType) {
+            const applicationNames = JSON.parse(userExist[APPLICATION_NAMES]);
+            if(!applicationNames.includes(reqBody[APPLICATION_NAME])) {
+                isValid=false;
+                pushErrors(errorMessages, APPLICATION_NAME_NOT_VALID, APPLICATION_NAME);
+            }
+        }
+    }
+    return {
+        isValid,
+        errorMessages
+    };
+}
+
 /*
 * Register client user
 * */
@@ -95,6 +130,11 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
     const { email, password, firstName, lastName, userName, clientUserName, applicationName, env } = req.body;
     const [adminType] = req.body;
 
+    const resp = await validateCientUserName(req);
+    if(!resp.isValid) {
+        return sendErrors(res, resp.errorMessages);
+    }
+    
     let existingUser;
     // Check if the email is not taken
     switch (type) {
@@ -198,7 +238,7 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
             const jwt: ClientUserJwtPayloadType = {
                 clientUserName,
                 jwtId,
-                applicationName,
+                applicationName: '',
                 clientType: superVisorUserType,
                 userName
             };

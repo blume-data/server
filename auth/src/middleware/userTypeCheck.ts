@@ -71,29 +71,6 @@ export async function validateUserType(req: Request, res: Response, next: NextFu
                             isValid=false;
                             pushErrors(errorMessages, `${ENV} is required`, ENV);
                         }
-
-                        if (isValid) {
-                            const userExist = await ClientUser.findOne({
-                                userName: reqBody[CLIENT_USER_NAME]
-                            }, [USER_NAME, APPLICATION_NAMES]);
-                            if (!userExist) {
-                                isValid=false;
-                                pushErrors(errorMessages, CLIENT_USER_NAME_NOT_VALID, CLIENT_USER_NAME);
-                            }
-                            else {
-                                if (!userExist[USER_NAME] || userExist[USER_NAME] !== reqBody[CLIENT_USER_NAME]) {
-                                    isValid=false;
-                                    pushErrors(errorMessages, CLIENT_USER_NAME_NOT_VALID, CLIENT_USER_NAME);
-                                }
-                                if (userType === supportUserType) {
-                                    const applicationNames = JSON.parse(userExist[APPLICATION_NAMES]);
-                                    if(!applicationNames.includes(reqBody[APPLICATION_NAME])) {
-                                        isValid=false;
-                                        pushErrors(errorMessages, APPLICATION_NAME_NOT_VALID, APPLICATION_NAME);
-                                    }
-                                }
-                            }
-                        }
                     }
                 }
             }

@@ -14,13 +14,14 @@ import {
     CLIENT_USER_NAME,
     APPLICATION_NAME,
     generateJwt,
-    sendJwtResponse, clientType
+    sendJwtResponse, clientType, freeUserType, superVisorUserType, LAST_NAME, FIRST_NAME, PASSWORD, EMAIL
 } from "@ranjodhbirkaur/common";
 import {ClientTempUser} from "../models/clientTempUser";
 import {ClientUser} from "../models/clientUser";
 import {TOKEN_NOT_VALID, USER_NAME_NOT_AVAILABLE} from "../util/errorMessages";
 import {AdminUser} from "../models/adminUser";
 import {ClientUserJwtPayloadType} from "@ranjodhbirkaur/common/build/interface";
+import { FreeUser } from '../models/freeUser';
 
 interface ReqIsUserNameAvailable extends Request{
     body: {
@@ -77,27 +78,60 @@ export const verifyEmailToken = async function (req: ReqValidateEmail, res: Resp
 
             const jwtId = RANDOM_STRING(10);
             const created_at = `${new Date()}`;
+            const userType = userExist.clientType;
+            let payload = {};
+            let existingUsersUserName = '';
+        
 
-            const newUser = await ClientUser.build({
-                email: userExist.email,
-                jwtId,
-                created_at,
-                applicationNames: JSON.stringify([]),
-                password: userExist.password,
-                firstName: userExist.firstName,
-                lastName: userExist.lastName,
-                userName: userExist.userName,
-            });
 
-            await newUser.save();
+            if(userType === freeUserType) {
+                const newUser = FreeUser.build({
+                    email: userExist[EMAIL],
+                    jwtId,
+                    created_at,
+                    [CLIENT_USER_NAME]: userExist[CLIENT_USER_NAME] || '',
+                    applicationName: '',
+                    password: userExist[PASSWORD],
+                    userName: userExist[USER_NAME],
+                    clientType: freeUserType
+                });
+    
+                await newUser.save();
 
-            const payload: ClientUserJwtPayloadType ={
+                payload = {
+                    ...payload,
+                    [USER_NAME]: newUser[USER_NAME]
+                };
+                existingUsersUserName = newUser[USER_NAME];
+            }
+            else if(userType === clientUserType) {
+                const newUser = ClientUser.build({
+                    email: userExist[EMAIL],
+                    jwtId,
+                    created_at,
+                    applicationNames: JSON.stringify([]),
+                    password: userExist[PASSWORD],
+                    firstName: userExist[FIRST_NAME],
+                    lastName: userExist[LAST_NAME],
+                    userName: userExist[USER_NAME],
+                });
+    
+                await newUser.save();
+    
+                payload = {
+                    ...payload,
+                    [USER_NAME]: newUser[USER_NAME]
+                };
+                existingUsersUserName = newUser[USER_NAME];
+            }
+
+            payload = {
+                ...payload,
                 [JWT_ID]: jwtId,
-                [CLIENT_USER_NAME]: '',
-                [APPLICATION_NAME]: '',
-                [clientType]: clientUserType,
-                [USER_NAME]: newUser.userName
-            };
+                [CLIENT_USER_NAME]: userExist[CLIENT_USER_NAME] || '',
+                [APPLICATION_NAME]: userExist[APPLICATION_NAME] || '',
+                [clientType]: freeUserType,
+            }
 
             // Generate JWT
             const userJwt = generateJwt(payload, req);
@@ -105,11 +139,9 @@ export const verifyEmailToken = async function (req: ReqValidateEmail, res: Resp
             // TODO
             // Send a request data srv to create a relationship between user and jwt
 
-            sendJwtResponse(res, payload, userJwt, newUser);
-
             ClientTempUser.deleteMany({email: modelProps.email}).then(() => {});
 
-            return res.status(okayStatus).send({... payload, [AUTH_TOKEN]: userJwt, [USER_NAME]: newUser.userName});
+            return sendJwtResponse(res, payload, userJwt, {userName: existingUsersUserName || ''});
 
         }
         else {
