@@ -25,7 +25,7 @@ import {
 } from "../util/constants";
 import {ClientTempUser} from "../models/clientTempUser";
 import {ClientUser} from "../models/clientUser";
-import {validateUserType} from "../middleware/userTypeCheck";
+import {validateUserTypeSignUp} from "../middleware/userTypeCheck-Signup";
 import {APPLICATION_NAME_NOT_VALID, CLIENT_USER_NAME_NOT_VALID, EmailInUseMessage, InValidEmailMessage, UserNameNotAvailableMessage} from "../util/errorMessages";
 import {AdminUser} from "../models/adminUser";
 import {signUpUrl} from "../util/urls";
@@ -36,7 +36,7 @@ const
     router = express.Router();
 
 router.post(
-    signUpUrl(), validateUserType,
+    signUpUrl(), validateUserTypeSignUp,
     [
         body('email')
             .optional()

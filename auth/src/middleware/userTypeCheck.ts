@@ -27,53 +27,6 @@ export async function validateUserType(req: Request, res: Response, next: NextFu
                 isValid=false;
                 pushErrors(errorMessages, 'password is required', PASSWORD);
             }
-
-            switch (userType) {
-                case clientUserType: {
-                    // user who own the whole application
-                    if (!reqBody[FIRST_NAME]) {
-                        isValid=false;
-                        pushErrors(errorMessages, `${FIRST_NAME} is required`, FIRST_NAME);
-                    }
-                    if (!reqBody[LAST_NAME]) {
-                        isValid=false;
-                        pushErrors(errorMessages, `${LAST_NAME} is required`, LAST_NAME);
-                    }
-                    if (!reqBody[EMAIL]) {
-                        isValid=false;
-                        pushErrors(errorMessages, `${EMAIL} is required`, EMAIL);
-                    }
-                    break;
-                }
-                // TODO
-                // Take a look at admin type sign-up
-                case adminUserType: {
-                    if(!reqBody[adminType]
-                        || typeof reqBody[adminType] !== 'string'
-                        || ![adminUserType, supportUserType, superVisorUserType].includes(reqBody[adminType])) {
-
-                        return sendSingleError(res, ADMIN_USER_TYPE_NOT_VALID, adminType);
-                    }
-                    break;
-                }
-                default: {
-                    // requires user to be authenticated
-                    if ((userType === freeUserType || userType === supportUserType || userType === superVisorUserType)) {
-                        if (!reqBody[CLIENT_USER_NAME]) {
-                            isValid=false;
-                            pushErrors(errorMessages, `${CLIENT_USER_NAME} is required`, CLIENT_USER_NAME);
-                        }
-                        if (!reqBody[APPLICATION_NAME] && userType !== superVisorUserType) {
-                            isValid=false;
-                            pushErrors(errorMessages, `${APPLICATION_NAME} is required`, APPLICATION_NAME);
-                        }
-                        if (!reqBody[ENV] && userType !== superVisorUserType && userType !== supportUserType) {
-                            isValid=false;
-                            pushErrors(errorMessages, `${ENV} is required`, ENV);
-                        }
-                    }
-                }
-            }
             if (!isValid) {
                 return sendErrors(res, errorMessages);
             }
