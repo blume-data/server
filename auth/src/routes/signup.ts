@@ -243,7 +243,7 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
                 userName
             };
             const userJwt = generateJwt(jwt, req);
-            console.log('user jwt', user);
+            
             return sendJwtResponse(res, {userName, clientUserName}, userJwt, user);
         }
         case supportUserType: {
