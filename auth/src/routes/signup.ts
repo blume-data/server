@@ -130,9 +130,11 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
     const { email, password, firstName, lastName, userName, clientUserName, applicationName, env } = req.body;
     const [adminType] = req.body;
 
-    const resp = await validateCientUserName(req);
-    if(!resp.isValid) {
-        return sendErrors(res, resp.errorMessages);
+    if(type !== clientUserType && type !== adminUserType) {
+        const resp = await validateCientUserName(req);
+        if(!resp.isValid) {
+            return sendErrors(res, resp.errorMessages);
+        }
     }
     
     let existingUser;

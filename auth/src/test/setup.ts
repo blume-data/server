@@ -67,12 +67,15 @@ export function getSignInUrl(userType: string) {
 }
 
 export interface SampleDataType {
-  email: string;
+  email?: string;
   password: string,
-  firstName: string;
-  lastName: string;
+  firstName?: string;
+  lastName?: string;
   userName: string;
   adminType?: string;
+  clientType?: string;
+  clientUserName?: string;
+  applicationName?: string;
 }
 
 let sampleData: SampleDataType = {

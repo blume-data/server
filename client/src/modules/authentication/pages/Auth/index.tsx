@@ -4,7 +4,7 @@ import {doGetRequest, doPostRequest} from "../../../../utils/baseApi";
 import {getBaseUrl} from "../../../../utils/urls";
 import {RootState} from "../../../../rootReducer";
 import {connect, ConnectedProps} from "react-redux";
-import {AUTH_TOKEN, ErrorMessagesType, USER_NAME} from "@ranjodhbirkaur/constants";
+import {AUTH_TOKEN, clientUserType, ErrorMessagesType, USER_NAME} from "@ranjodhbirkaur/constants";
 import {
     FORM_SUCCESSFULLY_SUBMITTED,
     LOGGED_IN_SUCCESSFULLY, LOGIN_TITLE,
@@ -53,21 +53,30 @@ const AuthComponent = (props: PropsFromRedux) => {
     async function authUser(values: any): Promise<string | ErrorMessagesType[]> {
         const {routeAddress, setAuthentication} = props;
         const routeUrl = (() => {
-            switch (step) {
-                case SIGN_IN: {
-                    return routeAddress && routeAddress.logIn;
+            let urlName = '';
+            if (routeAddress) {
+                
+                switch (step) {
+                    case SIGN_IN: {
+                        urlName = routeAddress.logIn;
+                        break;
+                    }
+                    case SIGN_UP: {
+                        urlName = routeAddress.register;
+                        break;
+                    }
+                    case VERIFY_EMAIL: {
+                        urlName = routeAddress.emailVerification;
+                        break;
+                    }
+                    case SIGN_OUT: {
+                        urlName = routeAddress.logOut;
+                        break;
+                    }
                 }
-                case SIGN_UP: {
-                    return routeAddress && routeAddress.register;
-                }
-                case VERIFY_EMAIL: {
-                    return routeAddress && routeAddress.emailVerification;
-                }
-                case SIGN_OUT: {
-                    return routeAddress && routeAddress.logOut;
-                }
-
+                return `${routeAddress.authRootUrl}/${clientUserType}/${urlName}`;
             }
+            return '';
         })();
         const url = `${getBaseUrl()}${routeUrl}`;
         let response: ResponseType;

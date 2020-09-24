@@ -15,7 +15,7 @@ import { FreeUser } from '../models/freeUser';
 const router = express.Router();
 
 router.post(
-    signInUrl(), validateUserType,
+    signInUrl(),
   [
     body('userName')
       .optional()
@@ -25,10 +25,6 @@ router.post(
       .optional()
       .isEmail()
       .withMessage(InValidEmailMessage),
-    body('clientUserName')
-      .optional()
-      .isLength(stringLimitOptions)
-      .withMessage(stringLimitOptionErrorMessage('clientUserName')),
     body('password')
       .trim()
       .isLength(passwordLimitOptions)
