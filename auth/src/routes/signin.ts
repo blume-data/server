@@ -9,11 +9,12 @@ import {InValidEmailMessage, InvalidLoginCredentialsMessage} from "../util/error
 import {passwordLimitOptionErrorMessage, passwordLimitOptions} from "../util/constants";
 
 import {signInUrl} from "../util/urls";
+import {validateUserType} from "../middleware/userTypeCheck";
 
 const router = express.Router();
 
 router.post(
-    signInUrl(),
+    signInUrl(), validateUserType,
   [
     body('userName')
       .optional()

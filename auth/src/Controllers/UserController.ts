@@ -93,6 +93,7 @@ export const verifyEmailToken = async function (req: ReqValidateEmail, res: Resp
 
                 payload = {
                     ...payload,
+                    [clientType]: freeUserType,
                     [USER_NAME]: newUser[USER_NAME]
                 };
                 existingUsersUserName = newUser[USER_NAME];
@@ -113,6 +114,7 @@ export const verifyEmailToken = async function (req: ReqValidateEmail, res: Resp
     
                 payload = {
                     ...payload,
+                    [clientType]: clientUserType,
                     [USER_NAME]: newUser[USER_NAME]
                 };
                 existingUsersUserName = newUser[USER_NAME];
@@ -122,15 +124,11 @@ export const verifyEmailToken = async function (req: ReqValidateEmail, res: Resp
                 ...payload,
                 [JWT_ID]: jwtId,
                 [CLIENT_USER_NAME]: userExist[CLIENT_USER_NAME] || '',
-                [APPLICATION_NAME]: userExist[APPLICATION_NAME] || '',
-                [clientType]: freeUserType,
+                [APPLICATION_NAME]: userExist[APPLICATION_NAME] || ''
             }
 
             // Generate JWT
             const userJwt = generateJwt(payload, req);
-
-            // TODO
-            // Send a request data srv to create a relationship between user and jwt
 
             ClientTempUser.deleteMany({email: modelProps.email}).then(() => {});
 

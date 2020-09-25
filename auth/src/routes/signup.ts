@@ -66,8 +66,7 @@ router.post(
                 return await saveUser(req, res);
             }
             case freeUserType: {
-
-                break;
+                return await saveUser(req, res, freeUserType);
             }
             case supportUserType: {
                 return await saveUser(req, res, supportUserType);
@@ -86,7 +85,7 @@ router.post(
 export { router as signupRouter };
 
 
-async function validateCientUserName(req: Request): Promise<{isValid: boolean; errorMessages: ErrorMessages[]}> {
+async function validateClientUserName(req: Request): Promise<{isValid: boolean; errorMessages: ErrorMessages[]}> {
 
     let isValid = true;
     const reqBody = req.body;
@@ -129,7 +128,7 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
     const [adminType] = req.body;
 
     if(type !== clientUserType && type !== adminUserType) {
-        const resp = await validateCientUserName(req);
+        const resp = await validateClientUserName(req);
         if(!resp.isValid) {
             return sendErrors(res, resp.errorMessages);
         }
