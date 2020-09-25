@@ -1,13 +1,11 @@
 import {Request, Response, NextFunction} from "express";
 import {
-    BadRequestError, supportUserType, superVisorUserType, sendSingleError,
-    freeUserType, SupportedUserType,
-    ErrorMessages, adminUserType, adminType, clientUserType, CLIENT_USER_NAME, APPLICATION_NAME, ENV,
-    FIRST_NAME, LAST_NAME, EMAIL, pushErrors, sendErrors, USER_NAME, PASSWORD, APPLICATION_NAMES
+    BadRequestError,
+    SupportedUserType,
+    ErrorMessages,
+    pushErrors, sendErrors, USER_NAME, PASSWORD
 } from "@ranjodhbirkaur/common";
-import {ADMIN_USER_TYPE_NOT_VALID, APPLICATION_NAME_NOT_VALID, CLIENT_USER_NAME_NOT_VALID} from "../util/errorMessages";
-import {FreeUser} from "../models/freeUser";
-import {ClientUser} from "../models/clientUser";
+
 
 export async function validateUserType(req: Request, res: Response, next: NextFunction) {
 

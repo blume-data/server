@@ -15,7 +15,7 @@ import {
     superVisorUserType,
     supportUserType,
     EMAIL,
-    USER_NAME,
+    USER_NAME, ClientUser, AdminUser, FreeUser,
     isTestEnv, APPLICATION_NAMES, CLIENT_USER_NAME, pushErrors, APPLICATION_NAME, sendErrors
 } from '@ranjodhbirkaur/common';
 import {
@@ -24,12 +24,10 @@ import {
 
 } from "../util/constants";
 import {ClientTempUser} from "../models/clientTempUser";
-import {ClientUser} from "../models/clientUser";
+
 import {validateUserTypeSignUp} from "../middleware/userTypeCheck-Signup";
 import {APPLICATION_NAME_NOT_VALID, CLIENT_USER_NAME_NOT_VALID, EmailInUseMessage, InValidEmailMessage, UserNameNotAvailableMessage} from "../util/errorMessages";
-import {AdminUser} from "../models/adminUser";
 import {signUpUrl} from "../util/urls";
-import {FreeUser} from "../models/freeUser";
 import {ClientUserJwtPayloadType, ErrorMessages} from "@ranjodhbirkaur/common/build/interface";
 
 const

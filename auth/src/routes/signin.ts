@@ -1,16 +1,14 @@
 import express, { Request, Response } from 'express';
 import { body } from 'express-validator';
 import {validateRequest, BadRequestError,
-  generateJwt, sendJwtResponse,
+  generateJwt, sendJwtResponse, ClientUser, AdminUser, FreeUser,
   clientUserType, adminUserType, freeUserType, superVisorUserType, supportUserType, stringLimitOptionErrorMessage, stringLimitOptions, ClientUserJwtPayloadType, JWT_ID, USER_NAME, CLIENT_USER_NAME, clientType, APPLICATION_NAME} from '@ranjodhbirkaur/common';
 import { Password } from '../services/password';
-import {ClientUser} from "../models/clientUser";
+
 import {InValidEmailMessage, InvalidLoginCredentialsMessage} from "../util/errorMessages";
 import {passwordLimitOptionErrorMessage, passwordLimitOptions} from "../util/constants";
-import {validateUserType} from "../middleware/userTypeCheck";
-import {AdminUser} from "../models/adminUser";
+
 import {signInUrl} from "../util/urls";
-import { FreeUser } from '../models/freeUser';
 
 const router = express.Router();
 

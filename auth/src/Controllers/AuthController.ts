@@ -1,7 +1,6 @@
 import {Request, Response} from 'express';
 
-import {BadRequestError, okayStatus} from "@ranjodhbirkaur/common";
-import {ClientUser} from "../models/clientUser";
+import {BadRequestError, okayStatus, ClientUser} from "@ranjodhbirkaur/common";
 
 interface ReqIsUserEnabled extends Request{
     body: {

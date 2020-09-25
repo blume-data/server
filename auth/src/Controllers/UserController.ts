@@ -1,27 +1,20 @@
 import {Request, Response} from 'express';
 import {
     BadRequestError,
-    AUTH_TOKEN,
     okayStatus,
     USER_NAME,
     clientUserType,
-    JwtPayloadType,
     JWT_ID,
     adminUserType,
-    RANDOM_STRING,
-    ROLE,
-    PERMISSIONS,
+    RANDOM_STRING, ClientUser, AdminUser, FreeUser,
     CLIENT_USER_NAME,
     APPLICATION_NAME,
     generateJwt,
-    sendJwtResponse, clientType, freeUserType, superVisorUserType, LAST_NAME, FIRST_NAME, PASSWORD, EMAIL
+    sendJwtResponse, clientType, freeUserType, LAST_NAME, FIRST_NAME, PASSWORD, EMAIL
 } from "@ranjodhbirkaur/common";
 import {ClientTempUser} from "../models/clientTempUser";
-import {ClientUser} from "../models/clientUser";
+
 import {TOKEN_NOT_VALID, USER_NAME_NOT_AVAILABLE} from "../util/errorMessages";
-import {AdminUser} from "../models/adminUser";
-import {ClientUserJwtPayloadType} from "@ranjodhbirkaur/common/build/interface";
-import { FreeUser } from '../models/freeUser';
 
 interface ReqIsUserNameAvailable extends Request{
     body: {
