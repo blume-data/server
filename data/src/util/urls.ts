@@ -1,10 +1,11 @@
+import { serverApp } from "@ranjodhbirkaur/common";
 import {rootUrl, serviceName} from "./constants";
 
 export const dataRouteUrls = `${serviceName}/routes`;
 
 export const RoleUrl = `${rootUrl}/:userName/role/:roleName?`;
 
-export const ApplicationNameUrl = `${rootUrl}/:userName/application-name/:applicationName?`;
+export const ApplicationNameUrl = `${serviceName}/:clientUserName/application-name/:applicationName?`;
 
 export const PermissionUrl = `${rootUrl}/:userName/permission/:permissionName?`;
 

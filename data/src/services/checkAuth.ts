@@ -1,15 +1,16 @@
 import axios from 'axios';
 import {Request, Response, NextFunction} from 'express';
 import {AUTH_SRV_URL} from "../util/urls";
-import {NotAuthorizedError} from "@ranjodhbirkaur/common";
+import {clientType, ClientUser, clientUserType, NotAuthorizedError} from "@ranjodhbirkaur/common";
 import jwt from 'jsonwebtoken';
 import {AUTHORIZATION_TOKEN} from "../util/constants";
+import { authMongoConnection } from '../authMongoConnection';
 
 /*
 * This route requires the root client auth
 * */
 export async function checkAuth(req: Request, res: Response, next: NextFunction ) {
-    const userName  = req.params && req.params.userName;
+    const clientUserName  = req.params && req.params.clientUserName;
 
     try {
         const headers: any = req.headers;
@@ -29,11 +30,12 @@ export async function checkAuth(req: Request, res: Response, next: NextFunction 
             )
         }
         // check the payload
-        if (payload && payload.userName && payload.userName === userName) {
-            /*await axios.post(`${AUTH_SRV_URL}/check`,{
-                userName
-            });*/
-            next();
+        if (payload && payload[clientType] && (payload.userName === clientUserName || payload.clientUserName === clientUserName)) {
+            switch(payload[clientType]) {
+                case clientUserType: {
+                    const exist = ClientUser.findOne({userName: clientUserName});
+                }
+            }
         }
         else {
             next();
