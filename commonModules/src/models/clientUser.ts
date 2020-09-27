@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose, { Connection } from 'mongoose';
 import { Password } from '../services/password';
 import {getRootUserSchema, RootUserAttrs, RootUserDoc} from "./adminUser";
 
@@ -55,5 +55,10 @@ clientUserSchema.statics.build = (attrs: ClientUserAttrs) => {
 };
 
 const ClientUser = mongoose.model<ClientUserDoc, ClientUserModel>('ClientUser', clientUserSchema);
+
+export function getClientUserModel(connection: Connection) {
+    return connection.model<ClientUserDoc, ClientUserModel>('ClientUser', clientUserSchema);
+
+}
 
 export { ClientUser };
