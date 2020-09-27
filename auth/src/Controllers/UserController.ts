@@ -15,6 +15,7 @@ import {
 import {ClientTempUser} from "../models/clientTempUser";
 
 import {TOKEN_NOT_VALID, USER_NAME_NOT_AVAILABLE} from "../util/errorMessages";
+import {EXAMPLE_APPLICATION_NAME} from "../util/constants";
 
 interface ReqIsUserNameAvailable extends Request{
     body: {
@@ -103,7 +104,7 @@ export const verifyEmailToken = async function (req: ReqValidateEmail, res: Resp
                     email: userExist[EMAIL],
                     jwtId,
                     created_at,
-                    applicationNames: JSON.stringify([]),
+                    applicationNames: JSON.stringify([EXAMPLE_APPLICATION_NAME]),
                     password: userExist[PASSWORD],
                     firstName: userExist[FIRST_NAME],
                     lastName: userExist[LAST_NAME],

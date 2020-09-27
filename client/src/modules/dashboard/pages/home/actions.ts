@@ -24,3 +24,7 @@ export const fetchDataRouteAddresses = (): AppThunk => async (dispatch: ThunkDis
         });
     }
 };
+
+export const fetchApplicationNames = () => {
+
+}

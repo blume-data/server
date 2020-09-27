@@ -1,8 +1,28 @@
 import express, { Request, Response } from 'express';
 import { body } from 'express-validator';
-import {validateRequest, BadRequestError,
-  generateJwt, sendJwtResponse, ClientUser, AdminUser, FreeUser,
-  clientUserType, adminUserType, freeUserType, superVisorUserType, supportUserType, stringLimitOptionErrorMessage, stringLimitOptions, ClientUserJwtPayloadType, JWT_ID, USER_NAME, CLIENT_USER_NAME, clientType, APPLICATION_NAME} from '@ranjodhbirkaur/common';
+import {
+  validateRequest,
+  BadRequestError,
+  generateJwt,
+  sendJwtResponse,
+  ClientUser,
+  AdminUser,
+  FreeUser,
+  clientUserType,
+  adminUserType,
+  freeUserType,
+  superVisorUserType,
+  supportUserType,
+  stringLimitOptionErrorMessage,
+  stringLimitOptions,
+  ClientUserJwtPayloadType,
+  JWT_ID,
+  USER_NAME,
+  CLIENT_USER_NAME,
+  clientType,
+  APPLICATION_NAME,
+  APPLICATION_NAMES
+} from '@ranjodhbirkaur/common';
 import { Password } from '../services/password';
 
 import {InValidEmailMessage, InvalidLoginCredentialsMessage} from "../util/errorMessages";
@@ -35,10 +55,17 @@ router.post(
     const userType = req.params.userType;
     let existingUser;
     let payload = {};
+    let responseData = {};
 
     switch (userType) {
       case clientUserType: {
         existingUser = await ClientUser.findOne({email});
+        if(existingUser) {
+          responseData = {
+            ...responseData,
+            [APPLICATION_NAMES]: JSON.parse(existingUser[APPLICATION_NAMES])
+        }
+        }
         break;
       }
       case adminUserType: {
@@ -58,6 +85,10 @@ router.post(
             payload = {
               ...payload,
               [CLIENT_USER_NAME]: existingUser[CLIENT_USER_NAME],
+              [APPLICATION_NAME]: existingUser[APPLICATION_NAME]
+            };
+            responseData = {
+              ...responseData,
               [APPLICATION_NAME]: existingUser[APPLICATION_NAME]
             }
           }
@@ -88,7 +119,7 @@ router.post(
     
     const userJwt = generateJwt(payload, req);
 
-    return sendJwtResponse(res, payload, userJwt, existingUser);
+    return sendJwtResponse(res, responseData, userJwt, existingUser);
   }
 );
 

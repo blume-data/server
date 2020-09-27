@@ -1,9 +1,8 @@
 import { clientType, verifyJwt, clientUserType, NotAuthorizedError, JWT_ID, APPLICATION_NAME, stringLimitOptionErrorMessage, stringLimitOptions, APPLICATION_NAMES, USER_NAME } from '@ranjodhbirkaur/common';
 import express, {Request, Response, NextFunction} from 'express';
 import { body } from 'express-validator';
-import jwt from 'jsonwebtoken';
-import {authMongoConnection, ClientUserModel} from '../authMongoConnection';
-import { createApplicationName } from '../Controllers/ApplicationNameController';
+import {ClientUserModel} from '../authMongoConnection';
+import { createApplicationName, getApplicationName } from '../Controllers/ApplicationNameController';
 import { ApplicationNameUrl } from '../util/urls';
 
 const router = express.Router();
@@ -45,5 +44,8 @@ router.post(ApplicationNameUrl, AuthClientUser, [
             .withMessage(stringLimitOptionErrorMessage(APPLICATION_NAME))
     ],
     createApplicationName);
+
+
+router.get(ApplicationNameUrl, AuthClientUser, getApplicationName);
 
 export { router as ApplicationNameRoutes };
