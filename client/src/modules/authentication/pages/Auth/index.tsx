@@ -92,7 +92,7 @@ const AuthComponent = (props: PropsFromRedux) => {
             clearAuthentication();
             return '';
         }
-        if (response && response[AUTH_TOKEN]) {
+        if (response && !response.errors) {
             switch (step) {
                 case SIGN_UP: {
                     showAlert({message: FORM_SUCCESSFULLY_SUBMITTED});
@@ -109,7 +109,7 @@ const AuthComponent = (props: PropsFromRedux) => {
                     break;
                 }
                 case VERIFY_EMAIL: {
-                    history.push('/');
+                    history.push('/dashboard/home');
                     break;
                 }
             }

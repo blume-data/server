@@ -1,6 +1,6 @@
 {
   "name": "@ranjodhbirkaur/common",
-  "version": "1.0.84",
+  "version": "1.0.86",
   "description": "",
   "main": "./build/index.js",
   "types": "./build/index.d.ts",
@@ -10,7 +10,7 @@
   "scripts": {
     "clean": "del ./build/*",
     "build": "tsc",
-    "pub": "git add . && git commit -m \"Updates\" && npm version patch && npm run build && npm publish && npm run update-auth && npm run update-data && npm run update-database && npm run update-event-bus",
+    "pub": "git add . && git commit -m \"Updates\" && npm version patch && npm run build && npm publish",
     "update-auth": "cd .. && cd auth && npm update @ranjodhbirkaur/common@latest",
     "update-data": "cd .. && cd data && npm update @ranjodhbirkaur/common@latest",
     "update-database": "cd .. && cd database && npm update @ranjodhbirkaur/common@latest",

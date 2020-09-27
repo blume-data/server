@@ -8,8 +8,10 @@ export const MESSAGE = 'message';
 
 export function sendSingleError(res: Response, message: string, field?: string) {
     return res.status(errorStatus).send({
-        [MESSAGE]: message,
-        [FIELD]: field ? field : undefined
+        errors: [{
+            [MESSAGE]: message,
+            [FIELD]: field ? field : undefined
+        }]
     })
 }
 

@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose, {Connection} from 'mongoose';
 import { Password } from '../services/password';
 import {getRootUserSchema, RootUserAttrs, RootUserDoc} from "./adminUser";
 
@@ -61,5 +61,9 @@ freeUserSchema.statics.build = (attrs: FreeUserAttrs) => {
 };
 
 const FreeUser = mongoose.model<FreeUserDoc, FreeUserModel>('FreeUser', freeUserSchema);
+
+export function getFreeUserModel(connection: Connection) {
+    return connection.model<FreeUserDoc, FreeUserModel>('FreeUser', freeUserSchema);
+}
 
 export { FreeUser };

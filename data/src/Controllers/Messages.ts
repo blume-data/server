@@ -28,3 +28,5 @@ export const PERMISSION_NAME_EXIST = 'permission with same name and type exist';
 /*ENV*/
 
 export const ENV_IS_NOT_SUPPORTED = 'env is not supported';
+
+export const APPLICATION_NAME_ALREADY_EXIST = 'Application name already exist';

@@ -58,7 +58,6 @@ const ClientUser = mongoose.model<ClientUserDoc, ClientUserModel>('ClientUser', 
 
 export function getClientUserModel(connection: Connection) {
     return connection.model<ClientUserDoc, ClientUserModel>('ClientUser', clientUserSchema);
-
 }
 
 export { ClientUser };
