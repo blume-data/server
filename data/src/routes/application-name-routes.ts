@@ -21,7 +21,7 @@ async function AuthClientUser(req: Request, res: Response, next: NextFunction) {
 
         const exist = await ClientUserModel.findOne({userName: clientUserName},
             [JWT_ID, 'isEnabled', [APPLICATION_NAMES], [USER_NAME]]);
-        if (exist[JWT_ID] === payload[JWT_ID] && exist.isEnabled) {
+        if (exist && exist[JWT_ID] === payload[JWT_ID] && exist.isEnabled) {
             req.currentUser = exist;
             next();
         }
