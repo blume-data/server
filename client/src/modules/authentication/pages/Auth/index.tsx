@@ -50,6 +50,15 @@ const AuthComponent = (props: PropsFromRedux) => {
         return await authUser(data);
     }
 
+    /*
+    * Redirect To Url
+    * */
+    function redirectToUrl(url: string) {
+        setTimeout(() => {
+            history.push(url);
+        });
+    }
+
     async function authUser(values: any): Promise<string | ErrorMessagesType[]> {
         const {routeAddress, setAuthentication} = props;
         const routeUrl = (() => {
@@ -96,7 +105,7 @@ const AuthComponent = (props: PropsFromRedux) => {
             switch (step) {
                 case SIGN_UP: {
                     showAlert({message: FORM_SUCCESSFULLY_SUBMITTED});
-                    history.push(`/auth/${VERIFY_EMAIL}`);
+                    redirectToUrl(`/auth/${VERIFY_EMAIL}`);
                     break;
                 }
                 case SIGN_IN: {
@@ -104,7 +113,7 @@ const AuthComponent = (props: PropsFromRedux) => {
                         showAlert({message: LOGGED_IN_SUCCESSFULLY});
                         saveAuthentication(response);
                         setAuthentication(true);
-                        history.push(dashboardHomeUrl);
+                        redirectToUrl(dashboardHomeUrl);
                     }
                     break;
                 }
@@ -112,7 +121,7 @@ const AuthComponent = (props: PropsFromRedux) => {
                     showAlert({message: LOGGED_IN_SUCCESSFULLY});
                     saveAuthentication(response);
                     setAuthentication(true);
-                    history.push(dashboardHomeUrl);
+                    redirectToUrl(dashboardHomeUrl);
                     break;
                 }
             }
