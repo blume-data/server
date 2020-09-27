@@ -1,11 +1,12 @@
 import {
     RouteAddressesInitialStateType,
-    AuthActionType,
-    ACTION_FETCH_ADDRESS_ROUTES, ACTION_ADDRESS_ROUTES_LOADING
+    RouteActionType, ACTION_ADDRESS_ROUTES_LOADING, ACTION_FETCH_DATA_ADDRESS_ROUTES,
+    ACTION_FETCH_AUTH_ADDRESS_ROUTES,
 } from './types'
 
 const initialState: RouteAddressesInitialStateType = {
     routes: {
+        data: null,
         auth: null,
         loading: false
     }
@@ -13,17 +14,27 @@ const initialState: RouteAddressesInitialStateType = {
 
 export function routeAddressReducer(
     state = initialState,
-    action: AuthActionType
+    action: RouteActionType
 ): RouteAddressesInitialStateType {
 
     switch (action.type) {
 
-        case ACTION_FETCH_ADDRESS_ROUTES: {
+        case ACTION_FETCH_AUTH_ADDRESS_ROUTES: {
             return {
                 ...state,
                 routes: {
                     ...state.routes,
                     auth: action.auth ? action.auth : null
+                }
+            }
+        }
+
+        case ACTION_FETCH_DATA_ADDRESS_ROUTES: {
+            return {
+                ...state,
+                routes: {
+                    ...state.routes,
+                    data: action.data ? action.data : null
                 }
             }
         }

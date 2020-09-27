@@ -6,7 +6,7 @@ import {NavBar} from "../NavBar";
 import {connect, ConnectedProps} from "react-redux";
 
 import {RootState} from "../../../rootReducer";
-import {fetchRouteAddresses} from "./actions";
+import {fetchAuthRouteAddresses} from "./actions";
 import {checkAuthentication} from "../../../modules/authentication/pages/Auth/methods";
 import {setAuthentication} from "../../../modules/authentication/pages/Auth/actions";
 
@@ -20,7 +20,7 @@ type AppProps = PropsFromRedux & {
 const Layout = (props: AppProps) => {
     const {children, setAuthentication} = props;
     useEffect(() => {
-        props.fetchRouteAddresses();
+        props.fetchAuthRouteAddresses();
         const isAuthenticated = checkAuthentication();
         setAuthentication(isAuthenticated);
     }, []);
@@ -40,5 +40,5 @@ const mapState = (state: RootState) => ({
     routeAddress: state.routeAddress
 });
 
-const connector = connect(mapState, {fetchRouteAddresses, setAuthentication});
+const connector = connect(mapState, {fetchAuthRouteAddresses, setAuthentication});
 export default connector(Layout);

@@ -1,19 +1,22 @@
 import React, {useEffect} from "react";
 import Grid from "@material-ui/core/Grid";
-import {doGetRequest, doPostRequest} from "../../../../utils/baseApi";
-import {getDataRoutes} from '../../../../utils/urls'
+import {RootState} from "../../../../rootReducer";
+import {connect, ConnectedProps} from "react-redux";
+import {fetchDataRouteAddresses} from "./actions";
 
-export const Home = () => {
+type PropsFromRedux = ConnectedProps<typeof connector>;
 
-    async function fetchDataRoutes() {
-        const reponse = await doGetRequest(`${getDataRoutes()}`);
-        console.log('resp', reponse);
-    }
+const Home = (props: PropsFromRedux) => {
+
+    const {fetchDataRouteAddresses, dataRoutes} = props;
 
     // fetch the data routes
     useEffect(() => {
-        fetchDataRoutes();
-    })
+        console.log('props', props);
+        fetchDataRouteAddresses();
+    });
+
+    console.log('data', dataRoutes);
 
 
     return (
@@ -22,3 +25,10 @@ export const Home = () => {
         </Grid>
     );
 };
+
+const mapState = (state: RootState) => ({
+    dataRoutes: state.routeAddress.routes.data
+});
+
+const connector = connect(mapState, {fetchDataRouteAddresses});
+export default connector(Home);
