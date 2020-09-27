@@ -28,11 +28,21 @@ export function sendJwtResponse(res: Response, payload: object, userJwt: string,
 
 export function verifyJwt(req: Request) {
     const headers: any = req.headers;
+    let payload: any;
     try {
-        const payload = jwt.verify(
-            headers[AUTHORIZATION_TOKEN],
-            process.env.JWT_KEY!
-        );
+        if(headers[AUTHORIZATION_TOKEN]) {
+            payload = jwt.verify(
+                headers[AUTHORIZATION_TOKEN],
+                process.env.JWT_KEY!
+            );
+
+        }
+        else if(req.session && req.session.jwt) {
+            payload = jwt.verify(
+                req.session.jwt,
+                process.env.JWT_KEY!
+            )
+        }
         return payload;
     } catch (error) {
         return false;
