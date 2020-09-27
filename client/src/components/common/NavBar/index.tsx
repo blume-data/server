@@ -18,6 +18,7 @@ type PropsFromRedux = ConnectedProps<typeof connector>;
 export const NavBarComponent = (props: PropsFromRedux) => {
 
     const {isAuth} = props;
+    console.log('is Uath', isAuth);
 
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);

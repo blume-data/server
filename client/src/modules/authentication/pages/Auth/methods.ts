@@ -6,8 +6,10 @@ interface SaveAuthenticationType {
 }
 
 export function saveAuthentication(response: SaveAuthenticationType) {
-    localStorage.setItem(AUTH_TOKEN, response[AUTH_TOKEN] || '');
-    localStorage.setItem(USER_NAME, response[USER_NAME] || '');
+    setTimeout(() => {
+        localStorage.setItem(AUTH_TOKEN, response[AUTH_TOKEN] || '');
+        localStorage.setItem(USER_NAME, response[USER_NAME] || '');
+    });
 }
 
 export function checkAuthentication(): boolean {

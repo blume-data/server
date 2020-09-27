@@ -1,7 +1,7 @@
 import React, {useEffect} from "react";
 import Grid from "@material-ui/core/Grid";
 import {doGetRequest, doPostRequest} from "../../../../utils/baseApi";
-import {getBaseUrl} from "../../../../utils/urls";
+import {dashboardHomeUrl, getBaseUrl} from "../../../../utils/urls";
 import {RootState} from "../../../../rootReducer";
 import {connect, ConnectedProps} from "react-redux";
 import {AUTH_TOKEN, clientUserType, ErrorMessagesType, USER_NAME} from "@ranjodhbirkaur/constants";
@@ -104,12 +104,15 @@ const AuthComponent = (props: PropsFromRedux) => {
                         showAlert({message: LOGGED_IN_SUCCESSFULLY});
                         saveAuthentication(response);
                         setAuthentication(true);
-                        history.push(`/`);
+                        history.push(dashboardHomeUrl);
                     }
                     break;
                 }
                 case VERIFY_EMAIL: {
-                    history.push('/dashboard/home');
+                    showAlert({message: LOGGED_IN_SUCCESSFULLY});
+                    saveAuthentication(response);
+                    setAuthentication(true);
+                    history.push(dashboardHomeUrl);
                     break;
                 }
             }

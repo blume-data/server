@@ -9,3 +9,6 @@ export function getAuthRoutes() {
 export function getDataRoutes() {
     return `${getBaseUrl()}/data/routes/`;
 }
+
+export const dashboardHomeUrl = '/dashboard/home';
+export const authUrl = '/auth';
