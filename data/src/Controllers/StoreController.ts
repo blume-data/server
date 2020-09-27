@@ -1,6 +1,6 @@
 import {Request, Response} from 'express';
 import {CollectionModel} from "../models/Collection";
-import {BadRequestError} from "@ranjodhbirkaur/common";
+import {BadRequestError, CLIENT_USER_NAME} from "@ranjodhbirkaur/common";
 import {errorStatus, okayStatus, PER_PAGE} from "../util/constants";
 import {COLLECTION_NOT_FOUND, PARAM_SHOULD_BE_UNIQUE} from "./Messages";
 import {RuleType} from "../util/interface";
@@ -17,7 +17,7 @@ export async function createStoreRecord(req: Request, res: Response) {
         const rules = JSON.parse(collection.rules);
         const body = checkBodyAndRules(rules, req, res);
         // add some alternate for unique params here
-        const response = await writeRanjodhBirData(collection.name, collection.clientUserName, collection.connectionName, body);
+        const response = await writeRanjodhBirData(collection.name, collection.clientUserName, collection.connectionName, collection.containerName, body);
         res.status(okayStatus).send(response);
     }
     else {
@@ -38,7 +38,7 @@ export async function getStoreRecord(req: Request, res: Response) {
 
         if (validateParams(req, res, rules)) {
             const {where, getOnly} = req.body;
-            const response = await getRanjodhBirData(collection.name, collection.clientUserName, collection.connectionName,{
+            const response = await getRanjodhBirData(collection.name, collection.clientUserName, collection.connectionName, collection.containerName,{
                 pageNo: Number(pageNo),
                 perPage: Number(perPage),
                 where,
@@ -63,7 +63,7 @@ async function getCollection(req: Request) {
     const collectionName = req.params && req.params.collectionName;
 
     return CollectionModel.findOne({clientUserName: userName, name: collectionName, language},
-        ['clientUserName', 'connectionName', 'name', 'rules']);
+        [CLIENT_USER_NAME, 'connectionName', 'name', 'rules', 'connectionName', 'containerName']);
 }
 
 function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {

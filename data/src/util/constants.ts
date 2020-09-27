@@ -17,6 +17,13 @@ export const MAX_COLLECTION_LIMIT = 50;
 
 export const PER_PAGE = 10;
 
+const dataBaseSrvOne = 'dataBaseSrvOne';
+
+export const STORE_CONNECTIONS = [{
+    name: dataBaseSrvOne,
+    url: 'http://database-srv:3000/store'
+}];
+
 export const USER_COLLECTION = 'user_collection';
 export const DATA_COLLECTION = 'data_collection';
 export const COLLECTION_TYPES = [USER_COLLECTION, DATA_COLLECTION];

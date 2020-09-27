@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 export interface TasksAttrs {
     modelName: string;
     clientUserName: string;
-    connectionName: string;
+    containerName: string;
     action: 'put' | 'post' | 'delete';
     query: string;
 }
@@ -15,7 +15,7 @@ interface TasksModel extends mongoose.Model<TasksDoc> {
 export interface TasksDoc extends mongoose.Document {
     modelName: string;
     clientUserName: string;
-    connectionName: string;
+    containerName: string;
     action: 'put' | 'post' | 'delete';
     query: string;
     created_at: string;
@@ -35,7 +35,7 @@ const Tasks = new mongoose.Schema(
             type: String,
             required: true
         },
-        connectionName: {
+        containerName: {
             type: String,
             required: true
         },

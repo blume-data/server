@@ -10,12 +10,12 @@ async function completeTasks(tasks: TasksAttrs[], modelName: string, clientUserN
 
     if (tasks && tasks.length) {
         for(let i=0; i<tasks.length;i++) {
-            const {modelName, clientUserName, connectionName, query, action} = tasks[i];
-            const newModel = new RanjodhbirModel(modelName, clientUserName, connectionName);
+            const {modelName, clientUserName, containerName, query, action} = tasks[i];
+            const newModel = new RanjodhbirModel(modelName, clientUserName, containerName);
             switch (action) {
                 case "post": {
                     await newModel.storeData(JSON.parse(query));
-                    await TasksModel.deleteOne({modelName, clientUserName, connectionName, action});
+                    await TasksModel.deleteOne({modelName, clientUserName, containerName, action});
                     break;
                 }
             }

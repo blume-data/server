@@ -21,8 +21,8 @@ interface MutateType {
 
 export class RanjodhbirModel extends RanjodhbirSchema {
 
-    constructor(name: string, clientUserName: string, connectionName: string) {
-        super(name, clientUserName, connectionName);
+    constructor(name: string, clientUserName: string, containerName: string) {
+        super(name, clientUserName, containerName);
     }
 
     private async addTask(params: MutateType) {
@@ -30,7 +30,7 @@ export class RanjodhbirModel extends RanjodhbirSchema {
         const task = TasksModel.build({
             clientUserName: this.clientUserName,
             modelName: this.name,
-            connectionName: this.connectionName,
+            containerName: this.containerName,
             action,
             query: JSON.stringify(item)
         });

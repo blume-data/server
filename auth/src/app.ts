@@ -8,13 +8,14 @@ import {checkAuthRoutes} from "./routes/checkAuth";
 import {serverApp} from "@ranjodhbirkaur/common";
 import {addressRoutes} from "./routes/addresses";
 
+serverApp.use(addressRoutes);
 serverApp.use(checkAuthRoutes);
 serverApp.use(currentUserRouter);
 serverApp.use(signinRouter);
 serverApp.use(signoutRouter);
 serverApp.use(signupRouter);
 serverApp.use(routes);
-serverApp.use(addressRoutes);
+
 
 serverApp.all('*', async () => {
   throw new NotFoundError();

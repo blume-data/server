@@ -2,7 +2,7 @@ import {Request, Response} from 'express';
 import {BadRequestError} from "@ranjodhbirkaur/common";
 import {
     DATA_COLLECTION, MAX_COLLECTION_LIMIT,
-    okayStatus, USER_COLLECTION
+    okayStatus, STORE_CONNECTIONS, USER_COLLECTION
 } from "../util/constants";
 import _ from 'lodash';
 import {CollectionModel} from "../models/Collection";
@@ -62,7 +62,9 @@ export async function createCollectionSchema(req: Request, res: Response) {
         throw new BadRequestError(COLLECTION_ALREADY_EXIST);
     }
 
-    const connectionName = `${RANDOM_COLLECTION_NAME(1, 1000)}`;
+    const containerName = `${RANDOM_COLLECTION_NAME(1, 1000)}`;
+    const storeConnection = _.sample(STORE_CONNECTIONS);
+    const connectionName = (storeConnection && storeConnection.url) ? storeConnection.url : '';
     const newCollection = CollectionModel.build({
         clientUserName: userName,
         isPublic: false,
@@ -71,11 +73,12 @@ export async function createCollectionSchema(req: Request, res: Response) {
         name: reqBody.name,
         env,
         connectionName,
+        containerName,
         collectionType: (reqBody.collectionType ? reqBody.collectionType : DATA_COLLECTION),
         language
     });
 
-    await storeSchema(reqBody.name, userName, connectionName);
+    await storeSchema(reqBody.name, userName, connectionName, containerName);
     await newCollection.save();
 
     res.status(okayStatus).send(newCollection);

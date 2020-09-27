@@ -1,34 +1,35 @@
 import axios from 'axios';
 import {addDataBaseUrl, dataBaseRootUrl, getDataBaseUrl, schemaDataBaseUrl} from "./urls";
 
-export const storeSchema = async (modelName: string, clientUserName: string, connectionName: string) => {
+export const storeSchema = async (modelName: string, clientUserName: string, connectionName: string, containerName: string) => {
     const data = {
         modelName,
         clientUserName,
-        connectionName
+        containerName
     };
-    const response = await axios.post(`${dataBaseRootUrl}/${schemaDataBaseUrl}`, data);
+    const response = await axios.post(`${connectionName}/${schemaDataBaseUrl}`, data);
     return response.data;
 };
 
 export const writeRanjodhBirData = async (modelName: string, clientUserName: string,
-                                          connectionName: string, storeData: any) => {
+                                          connectionName: string, containerName: string, storeData: any) => {
 
-    const data = {modelName, clientUserName, connectionName, data: storeData};
-    const response = await axios.post(`${dataBaseRootUrl}/${addDataBaseUrl}`, data);
+    const data = {modelName, clientUserName, containerName, data: storeData};
+    const response = await axios.post(`${connectionName}/${addDataBaseUrl}`, data);
     return response.data;
 };
 
 export const getRanjodhBirData = async (modelName: string,
                                         clientUserName: string,
                                         connectionName: string,
+                                        containerName: string,
                                         conditions?: { where?: any; getOnly?: string[]; pageNo: number; perPage: number }) => {
     const data = {
         modelName,
         clientUserName,
-        connectionName,
+        containerName,
         conditions
     };
-    const response = await axios.post(`${dataBaseRootUrl}/${getDataBaseUrl}`, data);
+    const response = await axios.post(`${connectionName}/${getDataBaseUrl}`, data);
     return response.data;
 };

@@ -9,6 +9,7 @@ interface CollectionAttrs {
     rules: string;
     name: string;
     connectionName: string;
+    containerName: string;
     collectionType?: string;
     isPublic: boolean;
     isEnabled?: boolean;
@@ -29,6 +30,7 @@ interface CollectionDoc extends mongoose.Document {
     rules: string;
     name: string;
     connectionName: string;
+    containerName: string;
     collectionType?: string;
     isPublic: boolean;
     isEnabled?: boolean;
@@ -64,6 +66,10 @@ const Collection = new mongoose.Schema(
             required: true
         },
         connectionName: {
+            type: String,
+            required: true
+        },
+        containerName: {
             type: String,
             required: true
         },
