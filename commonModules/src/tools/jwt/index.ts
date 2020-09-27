@@ -1,6 +1,6 @@
 import {Request, Response} from 'express';
 import jwt from "jsonwebtoken";
-import {AUTH_TOKEN, okayStatus, USER_NAME} from "../../utils";
+import {AUTHORIZATION_TOKEN, AUTH_TOKEN, okayStatus, USER_NAME} from "../../utils";
 
 interface userType {
     id?: string;
@@ -24,4 +24,17 @@ export function generateJwt(payload: object, req: Request) {
 
 export function sendJwtResponse(res: Response, payload: object, userJwt: string, existingUser: userType) {
     return res.status(okayStatus).send({...payload, [AUTH_TOKEN]: userJwt, [USER_NAME]: existingUser.userName});
+}
+
+export function verifyJwt(req: Request) {
+    const headers: any = req.headers;
+    try {
+        const payload = jwt.verify(
+            headers[AUTHORIZATION_TOKEN],
+            process.env.JWT_KEY!
+        );
+        return payload;
+    } catch (error) {
+        return false;
+    }
 }

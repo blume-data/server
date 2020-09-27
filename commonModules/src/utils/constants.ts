@@ -1,4 +1,5 @@
 export const AUTH_TOKEN = 'AUTH_TOKEN';
+export const AUTHORIZATION_TOKEN = 'authorization';
 export const USER_NAME = 'userName';
 
 export const adminUserType = 'admin';
