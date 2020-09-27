@@ -1,5 +1,6 @@
-import { APPLICATION_NAMES, ClientUser, okayStatus } from '@ranjodhbirkaur/common';
+import {APPLICATION_NAMES, okayStatus, USER_NAME} from '@ranjodhbirkaur/common';
 import {Request, Response} from 'express';
+import {ClientUserModel} from "../authMongoConnection";
 
 export async function createApplicationName(req: Request, res: Response) {
     const {applicationName} = req.body;
@@ -8,11 +9,13 @@ export async function createApplicationName(req: Request, res: Response) {
         const applicationNames = JSON.parse(req.currentUser[APPLICATION_NAMES]);
         applicationNames.push(applicationName);
 
-        await ClientUser.findOneAndUpdate({
-            userName: req.currentUser.userName
+        const updated = await ClientUserModel.updateOne({
+            [USER_NAME]: req.currentUser[USER_NAME]
         }, {
             [APPLICATION_NAMES]: JSON.stringify(applicationNames)
         });
+
+        console.log('updated', updated)
 
         return res.status(okayStatus).send(true);
 
