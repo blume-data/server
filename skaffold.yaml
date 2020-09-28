@@ -25,14 +25,7 @@ build:
         manual:
           - src: 'src/**/*.ts'
             dest: .
-    - image: taranjeetsingh/database
-      context: database
-      docker:
-        dockerfile: Dockerfile
-      sync:
-        manual:
-          - src: 'src/**/*.ts'
-            dest: .
+
 
 #    - image: taranjeetsingh/client
 #      context: client
