@@ -7,12 +7,12 @@ import {Redirect} from "react-router-dom";
 import {checkAuthentication} from "./modules/authentication/pages/Auth/methods";
 import {authUrl, dashboardHomeUrl} from "./utils/urls";
 
-function PrivateRoute(component: any) {
+function PrivateRoute(Component: any) {
     const isAuth = checkAuthentication();
     if (!isAuth) {
         return () => <Redirect to={`/${AUTH_ROOT}/${SIGN_IN}`} />
     }
-    return component;
+    return () => <Component />;
 }
 
 export const Routes = [
@@ -28,7 +28,7 @@ export const Routes = [
     },
     {
         path: dashboardHomeUrl,
-        component: PrivateRoute(Home),
+        render: () => checkAuthentication() ? <Home/> : <Redirect to={`/${AUTH_ROOT}/${SIGN_IN}`}/>,
         exact: true
     },
     {

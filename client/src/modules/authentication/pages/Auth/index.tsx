@@ -52,6 +52,13 @@ const AuthComponent = (props: PropsFromRedux) => {
         return await authUser(data);
     }
 
+    function timeOut(callBack: () => void) {
+        setTimeout(() => {
+            setIsLoading(false);
+            callBack();
+        });
+    }
+
     /*
     * Redirect To Url
     * */
@@ -68,7 +75,7 @@ const AuthComponent = (props: PropsFromRedux) => {
         const routeUrl = (() => {
             let urlName = '';
             if (routeAddress) {
-                
+
                 switch (step) {
                     case SIGN_IN: {
                         urlName = routeAddress.logIn;
@@ -103,14 +110,18 @@ const AuthComponent = (props: PropsFromRedux) => {
         if (step === SIGN_OUT && response) {
             setAuthentication(false);
             clearAuthentication();
-            history.push(`/auth/${SIGN_IN}`)
+            timeOut(() => {
+                history.push(`/auth/${SIGN_IN}`);
+            });
             return '';
         }
         if (response && !response.errors) {
             switch (step) {
                 case SIGN_UP: {
                     showAlert({message: FORM_SUCCESSFULLY_SUBMITTED});
-                    redirectToUrl(`/auth/${VERIFY_EMAIL}`);
+                    timeOut(() => {
+                        redirectToUrl(`/auth/${VERIFY_EMAIL}`);
+                    });
                     break;
                 }
                 case SIGN_IN: {
@@ -118,7 +129,9 @@ const AuthComponent = (props: PropsFromRedux) => {
                         showAlert({message: LOGGED_IN_SUCCESSFULLY});
                         saveAuthentication(response);
                         setAuthentication(true);
-                        redirectToUrl(dashboardHomeUrl);
+                        timeOut(() => {
+                            redirectToUrl(dashboardHomeUrl);
+                        });
                     }
                     break;
                 }
@@ -126,7 +139,9 @@ const AuthComponent = (props: PropsFromRedux) => {
                     showAlert({message: LOGGED_IN_SUCCESSFULLY});
                     saveAuthentication(response);
                     setAuthentication(true);
-                    redirectToUrl(dashboardHomeUrl);
+                    timeOut(() => {
+                        redirectToUrl(dashboardHomeUrl);
+                    });
                     break;
                 }
             }
@@ -154,7 +169,7 @@ const AuthComponent = (props: PropsFromRedux) => {
         }
     },[props.routeAddress]);
 
-    if(true) {
+    if(isLoading) {
         return <Loader />
     }
     if(SIGN_OUT === step) return null;
@@ -162,15 +177,15 @@ const AuthComponent = (props: PropsFromRedux) => {
     return (
         <Grid container className={'auth-page'} direction={'row'} justify={'space-between'}>
             <Grid item lg={6} xl={6} md={6} sm={6} xs={12}>
-                welcome 
+                welcome
             </Grid>
             <Grid item lg={6} xl={6} md={6} sm={6} xs={12}>
                 <Grid container justify={'center'}>
                     <TopLink step={step}/>
                     {step === SIGN_UP
-                    ? <CardForm fields={getFieldConfiguration(SIGN_UP)}
-                                onSubmit={onSubmit} title={REGISTRATION_TITLE} />
-                    : null}
+                        ? <CardForm fields={getFieldConfiguration(SIGN_UP)}
+                                    onSubmit={onSubmit} title={REGISTRATION_TITLE} />
+                        : null}
                     {step === SIGN_IN
                         ? <CardForm fields={getFieldConfiguration(SIGN_IN)}
                                     onSubmit={onSubmit} title={LOGIN_TITLE} />
