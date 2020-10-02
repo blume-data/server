@@ -27,5 +27,6 @@ export const STORE_CONNECTIONS = [{
 export const USER_COLLECTION = 'user_collection';
 export const DATA_COLLECTION = 'data_collection';
 export const COLLECTION_TYPES = [USER_COLLECTION, DATA_COLLECTION];
+export const MONGO_DB_DATA_CONNECTIONS_AVAILABLE = ['one','two'];
 
 export const AUTHORIZATION_TOKEN = 'authorization';
