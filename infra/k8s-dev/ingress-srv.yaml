@@ -8,7 +8,7 @@ metadata:
     nginx.ingress.kubernetes.io/enable-cors: "true"
 spec:
   rules:
-    - host: dev.blumedata.store
+    - host: dev.ranjod.com
       http:
         paths:
           - path: /auth/?(.*)
