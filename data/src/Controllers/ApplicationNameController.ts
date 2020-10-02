@@ -9,6 +9,8 @@ export async function createApplicationName(req: Request, res: Response) {
     if(req.currentUser && req.currentUser[APPLICATION_NAMES] && typeof req.currentUser[APPLICATION_NAMES]) {
         const applicationNames = JSON.parse(req.currentUser[APPLICATION_NAMES]);
 
+        console.log('application names', applicationNames);
+
         if (!applicationNames.includes(applicationName)) {
             applicationNames.push(applicationName);
 
