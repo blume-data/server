@@ -1,3 +1,3 @@
 export function getBaseUrl() {
-    return `https://dev.blumedata.store`;
+    return `https://dev.ranjod.com`;
 }
