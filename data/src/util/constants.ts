@@ -13,7 +13,8 @@ export const DATE_TYPE = 'date';
 export const HTML_TYPE = 'html';
 export const SUPPORTED_DATA_TYPES = ['string', 'boolean', 'number', 'date', 'html'];
 
-export const MAX_COLLECTION_LIMIT = 50;
+export const MAX_USER_LIMIT = 1000;
+export const MAX_COLLECTION_LIMIT = 1000;
 
 export const PER_PAGE = 10;
 

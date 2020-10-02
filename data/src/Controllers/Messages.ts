@@ -12,6 +12,7 @@ export const DEFAULT_VALUE_SHOULD_BE_OF_SPECIFIED_TYPE = 'default value should b
 export const CANNOT_CREATE_COLLECTIONS_MORE_THAN_LIMIT = 'cannot create more than '+MAX_COLLECTION_LIMIT+' collections';
 
 export const COLLECTION_NOT_FOUND = 'Collection not found';
+export const ALL_CONNECTIONS_AND_DB_CAPACITY_FULL = 'ALL CONNECTIONS AND DB CAPACITY FULL';
 
 export const PARAM_SHOULD_BE_UNIQUE = 'should be unique';
 

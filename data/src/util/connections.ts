@@ -8,7 +8,7 @@ const availableConnection: {name: string, dbConnection: Connection}[] = [];
 export async function initClientDbConnection(callBack: () => void) {
 
     for (const connectionName of MONGO_DB_DATA_CONNECTIONS_AVAILABLE) {
-        const dbConnection = await mongoose.createConnection(`mongodb://data-mongo-${connectionName}-srv/${connectionName}`, {
+        const dbConnection = await mongoose.createConnection(`mongodb://store-mongo-${connectionName}-srv/${connectionName}`, {
             useNewUrlParser: true,
             useUnifiedTopology: true,
             useCreateIndex: true
