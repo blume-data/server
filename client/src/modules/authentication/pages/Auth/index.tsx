@@ -148,7 +148,8 @@ const AuthComponent = (props: PropsFromRedux) => {
             return FORM_SUCCESSFULLY_SUBMITTED;
         }
         else if(response && response.errors && response.errors.length) {
-            return response.errors
+            setIsLoading(false);
+            return response.errors;
         }
         return '';
     }
@@ -170,8 +171,9 @@ const AuthComponent = (props: PropsFromRedux) => {
     },[props.routeAddress]);
 
     if(isLoading) {
-        return <Loader />
+        return <Loader />;
     }
+
     if(SIGN_OUT === step) return null;
 
     return (
