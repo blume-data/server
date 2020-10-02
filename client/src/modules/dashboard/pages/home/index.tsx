@@ -12,9 +12,8 @@ const Home = (props: PropsFromRedux) => {
 
     // fetch the data routes
     useEffect(() => {
-        console.log('props', props);
         fetchDataRouteAddresses();
-    });
+    },[]);
 
     console.log('data', dataRoutes);
 

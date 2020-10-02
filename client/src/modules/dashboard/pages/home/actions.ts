@@ -17,10 +17,10 @@ function setLoading(status: boolean, dispatch: Dispatch) {
 export const fetchDataRouteAddresses = (): AppThunk => async (dispatch: ThunkDispatch<any, any, AnyAction>) => {
     setLoading(true, dispatch);
     const response = await doGetRequest(getDataRoutes(), {userType: 'clientUserType'}, false);
-    if (response && response.auth) {
+    if (response && !response.errors) {
         dispatch({
             type: ACTION_FETCH_DATA_ADDRESS_ROUTES,
-            auth: response.auth
+            data: response
         });
     }
 };

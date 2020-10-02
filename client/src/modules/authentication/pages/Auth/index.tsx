@@ -61,6 +61,7 @@ const AuthComponent = (props: PropsFromRedux) => {
 
     async function authUser(values: any): Promise<string | ErrorMessagesType[]> {
         const {routeAddress, setAuthentication} = props;
+        // set route url according to step
         const routeUrl = (() => {
             let urlName = '';
             if (routeAddress) {
@@ -99,6 +100,7 @@ const AuthComponent = (props: PropsFromRedux) => {
         if (step === SIGN_OUT && response) {
             setAuthentication(false);
             clearAuthentication();
+            history.push(`/auth/${SIGN_IN}`)
             return '';
         }
         if (response && !response.errors) {
@@ -146,7 +148,6 @@ const AuthComponent = (props: PropsFromRedux) => {
     useEffect(() => {
         if (step === SIGN_OUT && props.routeAddress && props.routeAddress.logOut) {
             authUser({});
-            history.push(`/auth/${SIGN_UP}`)
         }
     },[props.routeAddress]);
 
