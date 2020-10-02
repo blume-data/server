@@ -39,7 +39,6 @@ export const SIGN_OUT = 'sign-out';
 const AuthComponent = (props: PropsFromRedux) => {
 
     const [isAlertOpen, setIsAlertOpen] = React.useState<boolean>(false);
-    const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [alert, setAlertMessage] = React.useState<AlertType>({message: ''});
 
     const history = useHistory();
@@ -54,7 +53,6 @@ const AuthComponent = (props: PropsFromRedux) => {
 
     function timeOut(callBack: () => void) {
         setTimeout(() => {
-            setIsLoading(false);
             callBack();
         });
     }
@@ -70,7 +68,7 @@ const AuthComponent = (props: PropsFromRedux) => {
 
     async function authUser(values: any): Promise<string | ErrorMessagesType[]> {
         const {routeAddress, setAuthentication} = props;
-        setIsLoading(true);
+        //setIsLoading(true);
         // set route url according to step
         const routeUrl = (() => {
             let urlName = '';
@@ -148,7 +146,7 @@ const AuthComponent = (props: PropsFromRedux) => {
             return FORM_SUCCESSFULLY_SUBMITTED;
         }
         else if(response && response.errors && response.errors.length) {
-            setIsLoading(false);
+
             return response.errors;
         }
         return '';
@@ -170,9 +168,6 @@ const AuthComponent = (props: PropsFromRedux) => {
         }
     },[props.routeAddress]);
 
-    if(isLoading) {
-        return <Loader />;
-    }
 
     if(SIGN_OUT === step) return null;
 
