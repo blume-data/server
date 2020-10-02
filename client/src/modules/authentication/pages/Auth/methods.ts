@@ -19,7 +19,6 @@ export function checkAuthentication(): boolean {
     try {
         const authToken = localStorage.getItem(AUTH_TOKEN);
         const userName = localStorage.getItem(USER_NAME);
-        debugger
         return !!(authToken && userName);
     }
     catch (e) {

@@ -19,6 +19,7 @@ import {setAuthentication} from "./actions";
 import {Alert} from "../../../../components/common/Toast";
 import {AlertType} from "../../../../components/common/Form";
 import { TopLink } from "./TopLink";
+import Loader from "../../../../components/common/Loader";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 interface ResponseType {
@@ -38,6 +39,7 @@ export const SIGN_OUT = 'sign-out';
 const AuthComponent = (props: PropsFromRedux) => {
 
     const [isAlertOpen, setIsAlertOpen] = React.useState<boolean>(false);
+    const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [alert, setAlertMessage] = React.useState<AlertType>({message: ''});
 
     const history = useHistory();
@@ -61,6 +63,7 @@ const AuthComponent = (props: PropsFromRedux) => {
 
     async function authUser(values: any): Promise<string | ErrorMessagesType[]> {
         const {routeAddress, setAuthentication} = props;
+        setIsLoading(true);
         // set route url according to step
         const routeUrl = (() => {
             let urlName = '';
@@ -151,6 +154,9 @@ const AuthComponent = (props: PropsFromRedux) => {
         }
     },[props.routeAddress]);
 
+    if(true) {
+        return <Loader />
+    }
     if(SIGN_OUT === step) return null;
 
     return (
