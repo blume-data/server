@@ -50,7 +50,6 @@ interface ModalDialogType {
     title: string;
     children: JSX.Element;
     handleClose: () => void;
-    onSubmit: () => void;
     isOpen: boolean;
 }
 
