@@ -16,7 +16,7 @@ import {
     supportUserType,
     EMAIL,
     USER_NAME, ClientUser, AdminUser, FreeUser,
-    isTestEnv, APPLICATION_NAMES, CLIENT_USER_NAME, pushErrors, APPLICATION_NAME, sendErrors
+    isTestEnv, APPLICATION_NAMES, CLIENT_USER_NAME, pushErrors, APPLICATION_NAME, sendErrors, clientType, JWT_ID
 } from '@ranjodhbirkaur/common';
 import {
     passwordLimitOptionErrorMessage,
@@ -234,12 +234,11 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
         case superVisorUserType: {
             user = FreeUser.build({ email, password, userName, clientType: superVisorUserType, jwtId, clientUserName });
             await user.save();
-            const jwt: ClientUserJwtPayloadType = {
-                clientUserName,
-                jwtId,
-                applicationName: '',
-                clientType: superVisorUserType,
-                userName
+            // TODO CHeck jwt payload from signin
+            const jwt = {
+                [clientType]: type,
+                [USER_NAME]: user.userName,
+                [JWT_ID]: user.jwtId
             };
             const userJwt = generateJwt(jwt, req);
             

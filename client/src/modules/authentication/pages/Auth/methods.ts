@@ -1,15 +1,22 @@
-import {AUTH_TOKEN, USER_NAME} from "@ranjodhbirkaur/constants";
-import {APPLICATION_NAMES} from "../../../../utils/constants";
+import {AUTH_TOKEN, USER_NAME, APPLICATION_NAMES, APPLICATION_NAME, clientType} from "@ranjodhbirkaur/constants";
 
 interface SaveAuthenticationType {
     [AUTH_TOKEN]?: string;
     [USER_NAME]?: string;
     [APPLICATION_NAMES]?: string;
+    [APPLICATION_NAME]?: string;
+    [clientType]?: string;
 }
 
 export function saveAuthentication(response: SaveAuthenticationType) {
     if(response[APPLICATION_NAMES]) {
         localStorage.setItem(APPLICATION_NAMES, JSON.stringify(response[APPLICATION_NAMES]) || JSON.stringify(['']));
+    }
+    if(response[APPLICATION_NAME]) {
+        localStorage.setItem(APPLICATION_NAME, response[APPLICATION_NAME] || '');
+    }
+    if(response[clientType]) {
+        localStorage.setItem(clientType, response[clientType] || '');
     }
     localStorage.setItem(AUTH_TOKEN, response[AUTH_TOKEN] || '');
     localStorage.setItem(USER_NAME, response[USER_NAME] || '');

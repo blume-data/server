@@ -10,7 +10,7 @@ import {
     CLIENT_USER_NAME,
     APPLICATION_NAME,
     generateJwt,
-    sendJwtResponse, clientType, freeUserType, LAST_NAME, FIRST_NAME, PASSWORD, EMAIL
+    sendJwtResponse, clientType, freeUserType, LAST_NAME, FIRST_NAME, PASSWORD, EMAIL, APPLICATION_NAMES
 } from "@ranjodhbirkaur/common";
 import {ClientTempUser} from "../models/clientTempUser";
 
@@ -74,7 +74,7 @@ export const verifyEmailToken = async function (req: ReqValidateEmail, res: Resp
             const created_at = `${new Date()}`;
             const userType = userExist.clientType;
             let payload = {};
-            let existingUsersUserName = '';
+            let response = {};
         
 
 
@@ -92,19 +92,26 @@ export const verifyEmailToken = async function (req: ReqValidateEmail, res: Resp
     
                 await newUser.save();
 
+                response = {
+                    ...response,
+                    [APPLICATION_NAME]: '',
+                    [USER_NAME]: userExist[USER_NAME]
+                };
+
                 payload = {
                     ...payload,
                     [clientType]: freeUserType,
                     [USER_NAME]: newUser[USER_NAME]
                 };
-                existingUsersUserName = newUser[USER_NAME];
             }
             else if(userType === clientUserType) {
+                const applicationName = [EXAMPLE_APPLICATION_NAME];
+                const applicationNames = JSON.stringify(applicationName);
                 const newUser = ClientUser.build({
                     email: userExist[EMAIL],
                     jwtId,
                     created_at,
-                    applicationNames: JSON.stringify([EXAMPLE_APPLICATION_NAME]),
+                    [APPLICATION_NAMES]: applicationNames,
                     password: userExist[PASSWORD],
                     firstName: userExist[FIRST_NAME],
                     lastName: userExist[LAST_NAME],
@@ -112,28 +119,29 @@ export const verifyEmailToken = async function (req: ReqValidateEmail, res: Resp
                 });
     
                 await newUser.save();
-    
-                payload = {
-                    ...payload,
-                    [clientType]: clientUserType,
-                    [USER_NAME]: newUser[USER_NAME]
+
+                // Pass application names in response
+                response = {
+                    ...response,
+                    [clientType]: userType,
+                    [APPLICATION_NAMES]: applicationName,
+                    [USER_NAME]: userExist[USER_NAME]
                 };
-                existingUsersUserName = newUser[USER_NAME];
             }
 
             payload = {
                 ...payload,
                 [JWT_ID]: jwtId,
-                [CLIENT_USER_NAME]: userExist[CLIENT_USER_NAME] || '',
-                [APPLICATION_NAME]: userExist[APPLICATION_NAME] || ''
-            }
+                [USER_NAME]: userExist[USER_NAME] || '',
+                [clientType]: userExist[clientType] || ''
+            };
 
             // Generate JWT
             const userJwt = generateJwt(payload, req);
 
             ClientTempUser.deleteMany({email: modelProps.email}).then(() => {});
 
-            return sendJwtResponse(res, payload, userJwt, {userName: existingUsersUserName || ''});
+            return sendJwtResponse(res, response, userJwt, response);
 
         }
         else {

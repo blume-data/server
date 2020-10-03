@@ -8,11 +8,13 @@ import {checkAuthentication} from "./modules/authentication/pages/Auth/methods";
 import {authUrl, dashboardHomeUrl} from "./utils/urls";
 
 function PrivateRoute(Component: any) {
-    const isAuth = checkAuthentication();
-    if (!isAuth) {
-        return () => <Redirect to={`/${AUTH_ROOT}/${SIGN_IN}`} />
+    return () => {
+        const isAuth = checkAuthentication();
+        if (!isAuth) {
+            return <Redirect to={`/${AUTH_ROOT}/${SIGN_IN}`} />
+        }
+        return <Component />
     }
-    return () => <Component />;
 }
 
 export const Routes = [
@@ -28,7 +30,7 @@ export const Routes = [
     },
     {
         path: dashboardHomeUrl,
-        render: () => checkAuthentication() ? <Home/> : <Redirect to={`/${AUTH_ROOT}/${SIGN_IN}`}/>,
+        render: PrivateRoute(Home),
         exact: true
     },
     {

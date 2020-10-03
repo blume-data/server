@@ -82,11 +82,6 @@ router.post(
             existingUser = await FreeUser.findOne({email, clientType: userType});
           }
           if (existingUser) {
-            payload = {
-              ...payload,
-              [CLIENT_USER_NAME]: existingUser[CLIENT_USER_NAME],
-              [APPLICATION_NAME]: existingUser[APPLICATION_NAME]
-            };
             responseData = {
               ...responseData,
               [APPLICATION_NAME]: existingUser[APPLICATION_NAME]
@@ -115,6 +110,12 @@ router.post(
       [clientType]: userType,
       [USER_NAME]: existingUser.userName,
       [JWT_ID]: existingUser.jwtId
+    };
+
+    responseData = {
+      ...responseData,
+      [CLIENT_USER_NAME]: existingUser[USER_NAME],
+      [clientType]: userType
     };
     
     const userJwt = generateJwt(payload, req);
