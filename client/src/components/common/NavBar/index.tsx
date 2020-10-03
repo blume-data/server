@@ -13,15 +13,47 @@ import './styles.scss'
 import {SIGN_IN, SIGN_OUT} from "../../../modules/authentication/pages/Auth";
 import {connect, ConnectedProps} from "react-redux";
 import {RootState} from "../../../rootReducer";
+import clsx from 'clsx';
+import { makeStyles } from '@material-ui/core/styles';
+import Drawer from '@material-ui/core/Drawer';
+import Button from '@material-ui/core/Button';
+import List from '@material-ui/core/List';
+import Divider from '@material-ui/core/Divider';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import InboxIcon from '@material-ui/icons/MoveToInbox';
+import MailIcon from '@material-ui/icons/Mail';
+import { LeftDrawerList } from './LeftDrawerList';
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
+
+const useStyles = makeStyles({
+    list: {
+        width: 250,
+    },
+    fullList: {
+        width: 'auto',
+    },
+});
+
+export type Anchor = 'top' | 'left' | 'bottom' | 'right';
+
 export const NavBarComponent = (props: PropsFromRedux) => {
 
     const {isAuth} = props;
-    console.log('is Uath', isAuth);
+    const LEFT_ANCHOR = 'left';
 
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
+
+    const classes = useStyles();
+    const [state, setState] = React.useState({
+        top: false,
+        left: false,
+        bottom: false,
+        right: false,
+    });
 
     const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
@@ -31,11 +63,40 @@ export const NavBarComponent = (props: PropsFromRedux) => {
         setAnchorEl(null);
     };
 
+    const toggleDrawer = (anchor: Anchor, open: boolean) => (
+        event: React.KeyboardEvent | React.MouseEvent,
+    ) => {
+        if (
+            event.type === 'keydown' &&
+            ((event as React.KeyboardEvent).key === 'Tab' ||
+                (event as React.KeyboardEvent).key === 'Shift')
+        ) {
+            return;
+        }
+
+        setState({ ...state, [anchor]: open });
+    };
+
+    const list = (anchor: Anchor) => (
+        <div
+            className={clsx(classes.list, {
+                [classes.fullList]: anchor === 'top' || anchor === 'bottom',
+            })}
+            role="presentation"
+            onClick={toggleDrawer(anchor, false)}
+            onKeyDown={toggleDrawer(anchor, false)}
+        >
+            <LeftDrawerList />
+        </div>
+    );
+
     return (
         <Grid id={'nav-bar-container'} >
             <AppBar position="static">
                 <Toolbar>
-                    <IconButton edge="start" color="inherit" aria-label="menu">
+                    <IconButton
+                        onClick={toggleDrawer(LEFT_ANCHOR, true)}
+                        edge="start" color="inherit" aria-label="menu">
                         <MenuIcon />
                     </IconButton>
                     <Typography variant="h6" className={'menu-title'}>
@@ -76,6 +137,11 @@ export const NavBarComponent = (props: PropsFromRedux) => {
                     </Grid>
                 </Toolbar>
             </AppBar>
+            <Grid className="left-drawer-container">
+                <Drawer anchor={LEFT_ANCHOR} open={state[LEFT_ANCHOR]} onClose={toggleDrawer(LEFT_ANCHOR, false)}>
+                    {list(LEFT_ANCHOR)}
+                </Drawer>
+            </Grid>
         </Grid>
     );
 };
