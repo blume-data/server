@@ -11,7 +11,7 @@ build:
 #  googleCloudBuild:
 #    projectId: ranjod-dev
   artifacts:
-    - image: taranjeetsingh/auth
+    - image: us.gcr.io/ranjod-dev/auth
       context: auth
       docker:
         dockerfile: Dockerfile
@@ -19,7 +19,7 @@ build:
         manual:
           - src: 'src/**/*.ts'
             dest: .
-    - image: taranjeetsingh/data
+    - image: us.gcr.io/ranjod-dev/data
       context: data
       docker:
         dockerfile: Dockerfile

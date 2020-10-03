@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: data
-          image: taranjeetsingh/data
+          image: us.gcr.io/ranjod-dev/data
           env:
             - name: MONGO_URI
               value: 'mongodb://data-mongo-srv:27017/data'
