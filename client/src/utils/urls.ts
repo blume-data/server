@@ -11,5 +11,6 @@ export function getDataRoutes() {
 }
 
 export const dashboardHomeUrl = '/dashboard/home';
-export const dashboardApplicationNamesUrl = '/dashboard/application-names/:application-name?';
+export const dashboardApplicationNamesUrl = '/dashboard/application-names';
+export const applicationNameUrl = '/dashboard/:applicationName';
 export const authUrl = '/auth';

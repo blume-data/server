@@ -6,7 +6,7 @@ import Home from "./modules/dashboard/pages/home";
 import {Redirect} from "react-router-dom";
 import {checkAuthentication} from "./modules/authentication/pages/Auth/methods";
 import {authUrl, dashboardApplicationNamesUrl, dashboardHomeUrl} from "./utils/urls";
-import {ApplicationNames} from "./modules/dashboard/pages/applicationNames";
+import ApplicationNames from "./modules/dashboard/pages/applicationNames";
 
 function PrivateRoute(Component: any) {
     return () => {

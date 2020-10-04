@@ -15,7 +15,6 @@ import {
   supportUserType,
   stringLimitOptionErrorMessage,
   stringLimitOptions,
-  ClientUserJwtPayloadType,
   JWT_ID,
   USER_NAME,
   CLIENT_USER_NAME,
