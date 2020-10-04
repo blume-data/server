@@ -37,9 +37,9 @@ const Home = (props: PropsFromRedux) => {
     return (
         <Grid>
 
-                <Typography variant={"h3"}>
-                    Following are your Application Spaces:
-                </Typography>
+            <Typography variant={"h3"}>
+                Following are your Application Spaces:
+            </Typography>
 
             <Paper elevation={3}>
                 <List>

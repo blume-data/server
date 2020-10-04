@@ -6,10 +6,10 @@ deploy:
       - ./infra/k8s/*
       - ./infra/k8s-dev/*
 build:
-  local:
-    push: false
-#  googleCloudBuild:
-#    projectId: ranjod-dev
+#  local:
+#    push: false
+  googleCloudBuild:
+    projectId: ranjod-dev
   artifacts:
     - image: us.gcr.io/ranjod-dev/auth
       context: auth
