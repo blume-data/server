@@ -6,12 +6,12 @@ deploy:
       - ./infra/k8s/*
       - ./infra/k8s-dev/*
 build:
-#  local:
-#    push: false
-  googleCloudBuild:
-    projectId: ranjod-dev
+  local:
+    push: false
+#  googleCloudBuild:
+#    projectId: ranjod-dev
   artifacts:
-    - image: us.gcr.io/ranjod-dev/auth
+    - image: taranjeetsingh/auth
       context: auth
       docker:
         dockerfile: Dockerfile
@@ -19,7 +19,7 @@ build:
         manual:
           - src: 'src/**/*.ts'
             dest: .
-    - image: us.gcr.io/ranjod-dev/data
+    - image: taranjeetsingh/data
       context: data
       docker:
         dockerfile: Dockerfile
