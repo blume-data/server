@@ -1,12 +1,13 @@
 import {Request, Response} from 'express';
 import {CollectionModel} from "../models/Collection";
 import {BadRequestError} from "@ranjodhbirkaur/common";
-import {createModel} from "../util/methods";
+
 import {errorStatus, okayStatus, PER_PAGE} from "../util/constants";
 import {COLLECTION_NOT_FOUND, PARAM_SHOULD_BE_UNIQUE} from "./Messages";
 import {RuleType} from "../util/interface";
 import {Model} from "mongoose";
 import moment from 'moment';
+import {getRanjodhBirData, writeRanjodhBirData} from "../util/databaseApi";
 
 // Create Record
 export async function createStoreRecord(req: Request, res: Response) {
@@ -17,26 +18,9 @@ export async function createStoreRecord(req: Request, res: Response) {
         const rules = JSON.parse(collection.rules);
         let body = checkBodyAndRules(rules, req, res);
 
-        const model: any = createModel({
-            rules,
-            connectionName: collection.connectionName,
-            name: collection.name
-        });
-
-        const hasError = await validateUniqueParam(model, rules, body);
-
-        if (!hasError) {
-            const item = new model(body);
-            await item.save();
-            // close db connection
-            //await model.dbConnection.close();
-            res.status(okayStatus).send(item);
-        }
-        else {
-            res.status(errorStatus).send({
-                errors: [hasError]
-            });
-        }
+        // add some alternate for unique params here
+        const response = await writeRanjodhBirData(collection.name, collection.clientUserName, collection.connectionName, collection.containerName, body);
+        res.status(okayStatus).send(response);
     }
     else {
         throw new BadRequestError(COLLECTION_NOT_FOUND);
@@ -59,14 +43,13 @@ export async function getStoreRecord(req: Request, res: Response) {
 
         if (validateParams(req, res, rules)) {
             const {where, getOnly} = req.body;
-            const model: any = createModel({
-                rules,
-                connectionName: collection.connectionName,
-                name: collection.name
+            const response = await getRanjodhBirData(collection.name, collection.clientUserName, collection.connectionName, collection.containerName,{
+                pageNo: Number(pageNo),
+                perPage: Number(perPage),
+                where,
+                getOnly
             });
-
-            const collections = await model.find(where, getOnly).skip(pageNo*10).limit(perPage);
-            res.status(okayStatus).send(collections);
+            res.status(okayStatus).send(response);
         }
     }
     else {
@@ -294,6 +277,7 @@ function validateParams(req: Request, res: Response, rules: RuleType[]) {
     return true;
 }
 
+// To be deleted
 async function validateUniqueParam(model: Model<any>, rules: RuleType[], reqBody: any) {
     let errorMessage: string | null = null;
     let field: string = '';
