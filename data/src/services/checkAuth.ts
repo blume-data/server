@@ -12,7 +12,8 @@ import { authMongoConnection } from '../authMongoConnection';
 export async function checkAuth(req: Request, res: Response, next: NextFunction ) {
     const clientUserName  = req.params && req.params.clientUserName;
 
-    try {
+    next()
+    /*try {
         const headers: any = req.headers;
         let payload: any;
 
@@ -29,6 +30,9 @@ export async function checkAuth(req: Request, res: Response, next: NextFunction 
                 process.env.JWT_KEY!
             )
         }
+        else {
+            throw new Error();
+        }
         // check the payload
         if (payload && payload[clientType] && (payload.userName === clientUserName || payload.clientUserName === clientUserName)) {
             switch(payload[clientType]) {
@@ -36,6 +40,7 @@ export async function checkAuth(req: Request, res: Response, next: NextFunction 
                     const exist = ClientUser.findOne({userName: clientUserName});
                 }
             }
+            next();
         }
         else {
             next();
@@ -47,5 +52,5 @@ export async function checkAuth(req: Request, res: Response, next: NextFunction 
             return next();
         }
         throw new NotAuthorizedError();
-    }
+    }*/
 }

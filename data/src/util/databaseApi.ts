@@ -8,7 +8,6 @@ export const storeSchema = async (modelName: string, clientUserName: string, con
         containerName
     };
     const response = await axios.post(`${connectionName}/${schemaDataBaseUrl}`, data);
-    console.log('respose', response);
     return response.data;
 };
 
