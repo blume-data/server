@@ -66,8 +66,9 @@ export async function createCollectionSchema(req: Request, res: Response) {
         throw new BadRequestError(COLLECTION_ALREADY_EXIST);
     }
 
-    const newDbConnection: {connectionName: string} = await assignConnection(userName);
-
+    const containerName = `${RANDOM_COLLECTION_NAME(1, 1000)}`;
+    const storeConnection = _.sample(STORE_CONNECTIONS);
+    const connectionName = (storeConnection && storeConnection.url) ? storeConnection.url : '';
     const newCollection = CollectionModel.build({
         clientUserName: userName,
         isPublic: false,
@@ -75,11 +76,13 @@ export async function createCollectionSchema(req: Request, res: Response) {
         rules: JSON.stringify(reqBody.rules),
         name: reqBody.name,
         env,
-        connectionName: newDbConnection.connectionName,
+        connectionName,
+        containerName,
         collectionType: (reqBody.collectionType ? reqBody.collectionType : DATA_COLLECTION),
         language
     });
 
+    await storeSchema(reqBody.name, userName, connectionName, containerName);
     await newCollection.save();
 
     res.status(okayStatus).send(newCollection);
