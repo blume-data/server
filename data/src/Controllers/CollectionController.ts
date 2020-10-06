@@ -12,6 +12,7 @@ import {storeSchema} from "../util/databaseApi";
 import {RANDOM_COLLECTION_NAME} from "../util/methods";
 
 export async function createCollectionSchema(req: Request, res: Response) {
+    console.log('hello')
 
     const userName  = req.params && req.params.userName;
     const language = req.params && req.params.language;

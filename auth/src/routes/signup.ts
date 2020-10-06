@@ -15,8 +15,20 @@ import {
     superVisorUserType,
     supportUserType,
     EMAIL,
-    USER_NAME, ClientUser, AdminUser, FreeUser,
-    isTestEnv, APPLICATION_NAMES, CLIENT_USER_NAME, pushErrors, APPLICATION_NAME, sendErrors, clientType, JWT_ID
+    USER_NAME,
+    ClientUser,
+    AdminUser,
+    FreeUser,
+    ErrorMessages,
+    isTestEnv,
+    APPLICATION_NAMES,
+    CLIENT_USER_NAME,
+    pushErrors,
+    APPLICATION_NAME,
+    sendErrors,
+    clientType,
+    JWT_ID,
+    JwtPayloadType
 } from '@ranjodhbirkaur/common';
 import {
     passwordLimitOptionErrorMessage,
@@ -28,7 +40,6 @@ import {ClientTempUser} from "../models/clientTempUser";
 import {validateUserTypeSignUp} from "../middleware/userTypeCheck-Signup";
 import {APPLICATION_NAME_NOT_VALID, CLIENT_USER_NAME_NOT_VALID, EmailInUseMessage, InValidEmailMessage, UserNameNotAvailableMessage} from "../util/errorMessages";
 import {signUpUrl} from "../util/urls";
-import {ClientUserJwtPayloadType, ErrorMessages} from "@ranjodhbirkaur/common/build/interface";
 
 const
     router = express.Router();
@@ -247,10 +258,8 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
         case supportUserType: {
             user = FreeUser.build({ email, password, userName, clientType: supportUserType, jwtId, clientUserName, applicationName });
             await user.save();
-            const jwt: ClientUserJwtPayloadType = {
-                clientUserName,
+            const jwt: JwtPayloadType = {
                 jwtId,
-                applicationName,
                 clientType: supportUserType,
                 userName
             };

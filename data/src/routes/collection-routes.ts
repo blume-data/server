@@ -19,7 +19,7 @@ router.post(CollectionUrl, [
             .isLength(stringLimitOptions)
             .withMessage(stringLimitOptionErrorMessage('name'))
     ],
-    validateRequest, validateEnvType, checkAuth, validateCollections, createCollectionSchema);
+    validateRequest, /*validateEnvType, checkAuth, validateCollections,*/ createCollectionSchema);
 
 // Delete Item Schema
 router.delete(CollectionUrl, [
