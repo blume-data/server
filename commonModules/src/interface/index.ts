@@ -1,15 +1,20 @@
+import {AUTH_TOKEN, clientType, JWT_ID, USER_NAME} from "../utils";
+
 export interface ErrorMessages {
     field?: string;
     message: string;
 }
 
-export interface JwtPayloadType {
-    userName: string;
-    jwtId: string;
+export interface JwtPayloadType{
+    [clientType]: string;
+    [USER_NAME]: string;
+    [JWT_ID]: string;
 }
 
-export interface ClientUserJwtPayloadType extends JwtPayloadType{
+export interface PayloadResponseType {
     clientUserName: string;
-    applicationName: string;
+    [AUTH_TOKEN]: string;
+    [USER_NAME]: string;
     clientType: string;
+    applicationNames: string;
 }
