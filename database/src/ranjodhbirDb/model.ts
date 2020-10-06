@@ -5,7 +5,7 @@ import {RANDOM_STRING} from "@ranjodhbirkaur/common";
 import {DataBaseModelsModel} from "../models/models";
 import {TasksModel} from "../models/tasks";
 import {eventEmitter, setWritable} from "../worker";
-import {START_TASK} from "../utils/constants";
+import {NUMBER_OF_CONTAINERS, START_TASK} from "../utils/constants";
 
 interface ReadDataType {
     pageNo?: number;
@@ -69,7 +69,7 @@ export class RanjodhbirModel extends RanjodhbirSchema {
     * Write data to actual file
     * */
     async storeData(item: object) {
-        const containerNumber = randomNumber(10);
+        const containerNumber = randomNumber(NUMBER_OF_CONTAINERS);
         // ids first number is container number
         const id = `${containerNumber}${RANDOM_STRING(10)}`;
         const containerData = await this.readFile(`${containerNumber}.txt`);
@@ -122,7 +122,7 @@ export class RanjodhbirModel extends RanjodhbirSchema {
         }
 
         async function iterateFile() {
-            for(let index=0; index <= 9; index++) {
+            for(let index=0; index <= (NUMBER_OF_CONTAINERS -1); index++) {
                 const content = await readFile(`${index}.txt`);
                 if (typeof content === "string") {
                     const parsedContent = JSON.parse(content);

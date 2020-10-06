@@ -45,7 +45,6 @@
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.20",
     "moment": "^2.27.0",
-    "mongodb-memory-server": "^6.5.1",
     "mongoose": "^5.9.7",
     "supertest": "^4.0.2",
     "ts-jest": "^25.3.1",

@@ -1,5 +1,6 @@
 import fs  from 'fs';
 import {DataBaseModelsModel} from "../models/models";
+import {NUMBER_OF_CONTAINERS} from "../utils/constants";
 
 export class RanjodhbirSchema {
 
@@ -46,7 +47,7 @@ export class RanjodhbirSchema {
                         }
                         else {
                             // create a file
-                            for(let i=0;i<=9;i++) {
+                            for(let i=0;i<=(NUMBER_OF_CONTAINERS -1);i++) {
                                 await this.writeFile(JSON.stringify([]), `${i}.txt`);
                             }
                             const mongoModel = DataBaseModelsModel.build({
