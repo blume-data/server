@@ -6,6 +6,8 @@ import {DataBaseModelsModel} from "../models/models";
 import {TasksModel} from "../models/tasks";
 import {eventEmitter, setWritable} from "../worker";
 import {NUMBER_OF_CONTAINERS, START_TASK} from "../utils/constants";
+import fs from 'fs';
+import es from 'event-stream';
 
 interface ReadDataType {
     pageNo?: number;
@@ -69,18 +71,22 @@ export class RanjodhbirModel extends RanjodhbirSchema {
     * Write data to actual file
     * */
     async storeData(item: object) {
-        const containerNumber = randomNumber(NUMBER_OF_CONTAINERS);
+        const containerNumber = 0;
         // ids first number is container number
         const id = `${containerNumber}${RANDOM_STRING(10)}`;
-        const containerData = await this.readFile(`${containerNumber}.txt`);
+        /*const containerData = await this.readFile(`${containerNumber}.txt`);
 
         if (containerData !== undefined && typeof containerData === 'string') {
             const parsedData = JSON.parse(containerData);
             const newData = new Data(id);
             const data = Object.assign(item, newData);
             parsedData.push(data);
-            await this.writeFile(JSON.stringify(parsedData), `${containerNumber}.txt`);
-        }
+            await this.writeFile(JSON.stringify(parsedData), `${0}.txt`);
+        }*/
+
+        const newData = new Data(id);
+        const data = Object.assign(item, newData);
+        await this.writeFile(JSON.stringify(data)+'\n', `${0}.txt`);
     }
 
     async readData(conditions: ReadDataType) {
@@ -88,7 +94,7 @@ export class RanjodhbirModel extends RanjodhbirSchema {
         const {pageNo=1, perPage=10, getOnly=null, where=null} = conditions;
         let data: any = [];
         let count = 0;
-        const readFile = this.readFile.bind(this);
+        const rootPath = this.getModelPath();
         let isFull = false;
 
         function pushData(item: any) {
@@ -121,34 +127,64 @@ export class RanjodhbirModel extends RanjodhbirSchema {
             }
         }
 
-        async function iterateFile() {
-            for(let index=0; index <= (NUMBER_OF_CONTAINERS -1); index++) {
-                const content = await readFile(`${index}.txt`);
-                if (typeof content === "string") {
-                    const parsedContent = JSON.parse(content);
-                    parsedContent.map((item: any) => {
-                        if (!isFull) {
-                            if (item && data.length<=perPage) {
-                                if (data.length === perPage) {
-                                    // empty the data
-                                    data = [];
-                                    pushData(item);
+        function processFileLine(content: string) {
+            if (typeof content === "string") {
+                try {
+                    const item = JSON.parse(content);
+                    if (!isFull) {
+                        if (item && data.length<=perPage) {
+                            if (data.length === perPage) {
+                                // empty the data
+                                data = [];
+                                pushData(item);
+                            }
+                            else {
+                                // If there is where condition
+                                if (where && typeof where === 'object') {
+                                    whereCondition(item);
                                 }
+                                // There is no where condition
                                 else {
-                                    // If there is where condition
-                                    if (where && typeof where === 'object') {
-                                        whereCondition(item);
-                                    }
-                                    // There is no where condition
-                                    else {
-                                        pushData(item);
-                                    }
+                                    pushData(item);
                                 }
                             }
                         }
-                    });
+                    }
+                }
+                catch (e) {
+
                 }
             }
+        }
+
+        async function bufferFile(index: number) {
+
+            const path = `${rootPath}/${index}.txt`;
+
+            return new Promise((resolve, reject) => {
+                const s = fs
+                    .createReadStream(path)
+                    .pipe(es.split())
+                    .pipe(es.mapSync(function(line: any){
+                            s.pause();
+                            processFileLine(line);
+                            s.resume();
+                        })
+                            .on('error', function(err){
+                                console.log('Error while reading file.', err);
+                            })
+                            .on('end', function(){
+                                console.log('Read entire file.');
+                                resolve(true);
+                            })
+                    );
+            })
+
+        }
+
+        async function iterateFile() {
+            await bufferFile(0);
+            console.log('data length', data.length);
             return data;
         }
         return await iterateFile();

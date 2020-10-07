@@ -25,7 +25,7 @@ export class RanjodhbirSchema {
         const path = `${this.getModelPath()}/${fileName}`;
 
         return new Promise(function(resolve, reject) {
-            fs.writeFile(path, data, (err) => {
+            fs.appendFile(path, data, (err) => {
                 if (err) reject(err);
                 resolve(data);
             });
@@ -47,9 +47,8 @@ export class RanjodhbirSchema {
                         }
                         else {
                             // create a file
-                            for(let i=0;i<=(NUMBER_OF_CONTAINERS -1);i++) {
-                                await this.writeFile(JSON.stringify([]), `${i}.txt`);
-                            }
+                            await this.writeFile(JSON.stringify(''), `${0}.txt`);
+
                             const mongoModel = DataBaseModelsModel.build({
                                 clientUserName: this.clientUserName,
                                 modelName: this.name,
