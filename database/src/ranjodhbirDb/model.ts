@@ -71,8 +71,19 @@ export class RanjodhbirModel extends RanjodhbirSchema {
     * Write data to actual file
     * */
     async storeData(item: object) {
+        const containerNumber = 0;
+        // ids first number is container number
+        const id = `${containerNumber}${RANDOM_STRING(10)}`;
+        /*const containerData = await this.readFile(`${containerNumber}.txt`);
 
-        const id = `${RANDOM_STRING(10)}`;
+        if (containerData !== undefined && typeof containerData === 'string') {
+            const parsedData = JSON.parse(containerData);
+            const newData = new Data(id);
+            const data = Object.assign(item, newData);
+            parsedData.push(data);
+            await this.writeFile(JSON.stringify(parsedData), `${0}.txt`);
+        }*/
+
         const newData = new Data(id);
         const data = Object.assign(item, newData);
         await this.writeFile(JSON.stringify(data)+'\n', `${0}.txt`);
@@ -163,7 +174,8 @@ export class RanjodhbirModel extends RanjodhbirSchema {
                                 console.log('Error while reading file.', err);
                             })
                             .on('end', function(){
-                                resolve();
+                                console.log('Read entire file.');
+                                resolve(true);
                             })
                     );
             })
@@ -172,6 +184,7 @@ export class RanjodhbirModel extends RanjodhbirSchema {
 
         async function iterateFile() {
             await bufferFile(0);
+            console.log('data length', data.length);
             return data;
         }
         return await iterateFile();
