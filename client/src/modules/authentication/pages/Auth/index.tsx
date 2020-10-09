@@ -22,6 +22,11 @@ import { TopLink } from "./TopLink";
 import Loader from "../../../../components/common/Loader";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
+type AuthProps = PropsFromRedux & {
+    location: {
+        search: string
+    }
+}
 interface ResponseType {
     errors?: ErrorMessagesType[];
     email?: string;
@@ -36,7 +41,7 @@ export const SIGN_IN = 'log-in';
 export const VERIFY_EMAIL = 'verify-email';
 export const SIGN_OUT = 'sign-out';
 
-const AuthComponent = (props: PropsFromRedux) => {
+const AuthComponent = (props: AuthProps) => {
 
     const [isAlertOpen, setIsAlertOpen] = React.useState<boolean>(false);
     const [alert, setAlertMessage] = React.useState<AlertType>({message: ''});
@@ -118,7 +123,7 @@ const AuthComponent = (props: PropsFromRedux) => {
                 case SIGN_UP: {
                     showAlert({message: FORM_SUCCESSFULLY_SUBMITTED});
                     timeOut(() => {
-                        redirectToUrl(`/auth/${VERIFY_EMAIL}`);
+                        redirectToUrl(`/auth/${VERIFY_EMAIL}?email=${values.email}`);
                     });
                     break;
                 }

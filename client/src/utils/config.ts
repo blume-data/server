@@ -1,3 +1,1 @@
-export function getBaseUrl() {
-    return `https://dev.ranjod.com`;
-}
+export const ROOT_URL = `https://dev.ranjod.com`;

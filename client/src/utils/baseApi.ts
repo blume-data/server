@@ -1,5 +1,6 @@
 import axios, {AxiosRequestConfig} from 'axios';
-import {isUserLoggedIn} from "./tools";
+import {getItemFromLocalStorage, isUserLoggedIn} from "./tools";
+import {AUTH_TOKEN} from "@ranjodhbirkaur/constants";
 
 const axiosInstance = axios.create({
     timeout: 30000
@@ -8,7 +9,7 @@ const axiosInstance = axios.create({
 const authOptions = () => {
     return {
         headers: {
-            'Authorization' : isUserLoggedIn()
+            'Authorization' : getItemFromLocalStorage(AUTH_TOKEN)
         }
     }
 };

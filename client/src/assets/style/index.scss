@@ -9,6 +9,10 @@
     @include trim(3);
   }
 }
+
+.MuiDialog-paperWidthSm {
+  width: 100%;
+}
 a {
   text-decoration: none;
   color: $black;

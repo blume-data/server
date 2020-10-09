@@ -248,17 +248,17 @@ export const Form = (props: FormType) => {
     }
 
     return (
-        <Grid className={`${className} app-form`} container justify={'center'} direction={'column'}>
+        <Grid className={`${className} app-common-form`} container justify={'center'} direction={'column'}>
             {fields.map((option: ConfigField, index) => {
                 return renderFields(option, index);
             })}
 
-            <Grid container justify={'space-between'}>
+            <Grid container className={'button-section'}>
                 <Grid item>
-                    <Button variant="outlined" onClick={clearForm} color={'secondary'}>Clear</Button>
+                    <Button variant="contained" onClick={clearForm} color={'secondary'}>Clear</Button>
                 </Grid>
                 <Grid item>
-                    <Button variant="outlined" onClick={onClickSubmit} color={'primary'}>Submit</Button>
+                    <Button variant="contained" onClick={onClickSubmit} color={'primary'}>Submit</Button>
                 </Grid>
             </Grid>
             <Alert

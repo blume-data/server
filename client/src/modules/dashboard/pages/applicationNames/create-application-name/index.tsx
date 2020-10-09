@@ -2,11 +2,20 @@ import React from "react";
 import {Grid} from "@material-ui/core";
 import {Form} from "../../../../../components/common/Form";
 import {ConfigField, TEXT} from "../../../../../components/common/Form/interface";
-import {APPLICATION_NAME, ErrorMessagesType} from "@ranjodhbirkaur/constants";
+import {APPLICATION_NAME, APPLICATION_NAMES, CLIENT_USER_NAME, ErrorMessagesType} from "@ranjodhbirkaur/constants";
+import './create-application-name.scss';
+import {doPostRequest} from "../../../../../utils/baseApi";
+import {getItemFromLocalStorage} from "../../../../../utils/tools";
+import {getBaseUrl} from "../../../../../utils/urls";
 
-export const CreateApplicationName = (props: {url: string}) => {
+interface CreateApplicationNameProps {
+    url: string;
+    handleClose: () => void;
+}
 
-    console.log('pre', props.url);
+export const CreateApplicationName = (props: CreateApplicationNameProps) => {
+
+    const {handleClose} = props;
 
     const fields: ConfigField[] = [{
         required: true,
@@ -19,20 +28,41 @@ export const CreateApplicationName = (props: {url: string}) => {
         inputType: TEXT,
     }];
 
-    function onSubmit(values: object[]): Promise<string | ErrorMessagesType[]> {
-        console.log('values', values);
-        return new Promise((resolve, reject) => {
-            resolve('dsfsf');
+    async function onSubmit(values: any[]): Promise<string | ErrorMessagesType[]> {
+        return new Promise(async (resolve, reject) => {
+
+            const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
+            const applicationName = values[0];
+
+            const url = props.url
+                .replace(`:${CLIENT_USER_NAME}`, clientUserName ? clientUserName : '')
+                .replace(`:${APPLICATION_NAME}?`,'');
+
+            const resp = await doPostRequest(`${getBaseUrl()}${url}`, {
+                [APPLICATION_NAME]: applicationName.value
+            }, true);
+
+            if(resp && !resp.errors) {
+                const applicationNames = getItemFromLocalStorage(APPLICATION_NAMES);
+                if(applicationNames) {
+                    const parsedApplicationNames = JSON.parse(applicationNames);
+                    parsedApplicationNames.push(applicationName.value);
+                    localStorage.setItem(APPLICATION_NAMES, JSON.stringify(parsedApplicationNames));
+                }
+
+                handleClose();
+                resolve('');
+            }
+            else {
+                resolve(resp.errors);
+            }
         });
     }
 
 
     return (
-        <Grid container justify={"center"}>
-            <Grid item>
-                <Form className={'create-application-name-form'} fields={fields} onSubmit={onSubmit} />
-            </Grid>
-
+        <Grid container justify={"center"} className={'create-application-name-container'}>
+            <Form className={'create-application-name-form'} fields={fields} onSubmit={onSubmit} />
         </Grid>
     );
 };

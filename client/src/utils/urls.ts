@@ -1,5 +1,7 @@
+import {ROOT_URL} from "./config";
+
 export function getBaseUrl() {
-    return `https://dev.ranjod.com`;
+    return ROOT_URL;
 }
 
 export function getAuthRoutes() {
