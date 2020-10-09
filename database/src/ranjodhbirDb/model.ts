@@ -71,8 +71,7 @@ export class RanjodhbirModel extends RanjodhbirSchema {
     * Write data to actual file
     * */
     async storeData(item: object) {
-        const containerNumber = 0;
-        const id = `${containerNumber}${RANDOM_STRING(10)}`;
+        const id = `${RANDOM_STRING(10)}`;
         const newData = new Data(id);
         const data = Object.assign(item, newData);
         await this.writeFile(JSON.stringify(data)+'\n', `${0}.txt`);
@@ -189,6 +188,7 @@ export class RanjodhbirModel extends RanjodhbirSchema {
             }
             return data;
         }
+
         return await iterateFile();
     }
 }
