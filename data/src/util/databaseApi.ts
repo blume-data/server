@@ -23,7 +23,7 @@ export const getRanjodhBirData = async (modelName: string,
                                         clientUserName: string,
                                         connectionName: string,
                                         containerName: string,
-                                        conditions?: { where?: any; getOnly?: string[]; pageNo: number; perPage: number }) => {
+                                        conditions?: { where?: any; getOnly?: string[]; skip: number; limit: number }) => {
     const data = {
         modelName,
         clientUserName,

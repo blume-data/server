@@ -1,6 +1,5 @@
 import fs  from 'fs';
 import {DataBaseModelsModel} from "../models/models";
-import {NUMBER_OF_CONTAINERS} from "../utils/constants";
 
 export class RanjodhbirSchema {
 
@@ -27,7 +26,7 @@ export class RanjodhbirSchema {
         return new Promise(function(resolve, reject) {
             fs.appendFile(path, data, (err) => {
                 if (err) reject(err);
-                resolve(data);
+                resolve();
             });
         });
     }
@@ -46,9 +45,6 @@ export class RanjodhbirSchema {
                             reject(err);
                         }
                         else {
-                            // create a file
-                            await this.writeFile(JSON.stringify(''), `${0}.txt`);
-
                             const mongoModel = DataBaseModelsModel.build({
                                 clientUserName: this.clientUserName,
                                 modelName: this.name,

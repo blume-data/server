@@ -32,11 +32,8 @@ export async function getStoreRecord(req: Request, res: Response) {
 
     // get collection
     const collection = await getCollection(req);
-    const {perPage=PER_PAGE} = req.query;
-    let pageNo: number = (req.query && Number(req.query.pageNo)) || 1;
-    if (pageNo) {
-        --pageNo;
-    }
+    const {limit=PER_PAGE} = req.query;
+    let skip: number = (req.query && Number(req.query.skip)) || 0;
 
     if (collection) {
         const rules = JSON.parse(collection.rules);
@@ -44,8 +41,8 @@ export async function getStoreRecord(req: Request, res: Response) {
         if (validateParams(req, res, rules)) {
             const {where, getOnly} = req.body;
             const response = await getRanjodhBirData(collection.name, collection.clientUserName, collection.connectionName, collection.containerName,{
-                pageNo: Number(pageNo),
-                perPage: Number(perPage),
+                skip: Number(skip),
+                limit: Number(limit),
                 where,
                 getOnly
             });

@@ -49,9 +49,9 @@ route.post(`${rootUrl}/${getDataUrl}`,
     async (req: Request, res: Response) => {
 
     const {modelName='', clientUserName='', containerName, conditions={}} = req.body;
-    const {pageNo=1, perPage=10, where={}, getOnly={}} = conditions;
+    const {skip=0, limit=10, where={}, getOnly={}} = conditions;
     const db = new RanjodhbirModel(modelName, clientUserName, containerName);
-    const data = await db.readData({pageNo, perPage, where ,getOnly});
+    const data = await db.readData({skip, limit, where ,getOnly});
     res.status(okayStatus).send(data);
 
 });

@@ -10,8 +10,8 @@ import fs from 'fs';
 import es from 'event-stream';
 
 interface ReadDataType {
-    pageNo?: number;
-    perPage?: number;
+    skip?: number;
+    limit?: number;
     where?: any | null;
     getOnly?: string[] | null;
 }
@@ -72,18 +72,7 @@ export class RanjodhbirModel extends RanjodhbirSchema {
     * */
     async storeData(item: object) {
         const containerNumber = 0;
-        // ids first number is container number
         const id = `${containerNumber}${RANDOM_STRING(10)}`;
-        /*const containerData = await this.readFile(`${containerNumber}.txt`);
-
-        if (containerData !== undefined && typeof containerData === 'string') {
-            const parsedData = JSON.parse(containerData);
-            const newData = new Data(id);
-            const data = Object.assign(item, newData);
-            parsedData.push(data);
-            await this.writeFile(JSON.stringify(parsedData), `${0}.txt`);
-        }*/
-
         const newData = new Data(id);
         const data = Object.assign(item, newData);
         await this.writeFile(JSON.stringify(data)+'\n', `${0}.txt`);
@@ -91,26 +80,36 @@ export class RanjodhbirModel extends RanjodhbirSchema {
 
     async readData(conditions: ReadDataType) {
 
-        const {pageNo=1, perPage=10, getOnly=null, where=null} = conditions;
+        const {skip=0, limit=10, getOnly=null, where=null} = conditions;
         let data: any = [];
         let count = 0;
+        let skipped = 0;
         const rootPath = this.getModelPath();
-        let isFull = false;
+        let isCollectionCompleted = false;
 
         function pushData(item: any) {
+            if(skipped < skip) {
+                skipped++;
+            }
+            else {
+                data.push(item);
+                count++;
+                if (count == limit && skip == skipped) {
+                    isCollectionCompleted = true;
+                }
+            }
+        }
+
+        function processGetOnly(item: any) {
             if (getOnly && getOnly.length) {
                 const dataItem: any = {};
                 getOnly.forEach((getOnlyItem: string) => {
                     dataItem[getOnlyItem] = item[getOnlyItem] || null;
                 });
-                data.push(dataItem);
+                pushData(item);
             }
             else {
-                data.push(item);
-            }
-            count++;
-            if (count == (pageNo * perPage)) {
-                isFull = true;
+                pushData(item);
             }
         }
 
@@ -123,59 +122,59 @@ export class RanjodhbirModel extends RanjodhbirSchema {
             }
             if(isConditionSatisfied) {
                 // If condition matches
-                pushData(item);
+                processGetOnly(item);
             }
         }
 
         function processFileLine(content: string) {
-            if (typeof content === "string") {
+            if (content && typeof content === "string") {
                 try {
                     const item = JSON.parse(content);
-                    if (!isFull) {
-                        if (item && data.length<=perPage) {
-                            if (data.length === perPage) {
-                                // empty the data
-                                data = [];
-                                pushData(item);
-                            }
-                            else {
-                                // If there is where condition
-                                if (where && typeof where === 'object') {
-                                    whereCondition(item);
-                                }
-                                // There is no where condition
-                                else {
-                                    pushData(item);
-                                }
-                            }
+                    if (item) {
+                        // If there is where condition
+                        if (where && typeof where === 'object') {
+                            whereCondition(item);
+                        }
+                        // There is no where condition
+                        else {
+                            processGetOnly(item);
                         }
                     }
                 }
                 catch (e) {
-
+                    //console.log('skipped htis', content)
                 }
             }
         }
 
-        async function bufferFile(index: number) {
+        async function bufferFile() {
 
-            const path = `${rootPath}/${index}.txt`;
+            const path = `${rootPath}/${0}.txt`;
 
             return new Promise((resolve, reject) => {
                 const s = fs
                     .createReadStream(path)
                     .pipe(es.split())
                     .pipe(es.mapSync(function(line: any){
+
+                        console.log('still processing');
+
+                        if(skipped <= skip && !isCollectionCompleted) {
                             s.pause();
                             processFileLine(line);
                             s.resume();
+                        }
+                        else {
+                            s.destroy();
+                            resolve();
+                        }
                         })
                             .on('error', function(err){
                                 console.log('Error while reading file.', err);
                             })
                             .on('end', function(){
-                                console.log('Read entire file.');
-                                resolve(true);
+                                console.log('Read entire file');
+                                resolve();
                             })
                     );
             })
@@ -183,8 +182,11 @@ export class RanjodhbirModel extends RanjodhbirSchema {
         }
 
         async function iterateFile() {
-            await bufferFile(0);
-            console.log('data length', data.length);
+            await bufferFile();
+            console.log('data length', data.length, skipped, skip);
+            if(skip !== skipped) {
+                return [];
+            }
             return data;
         }
         return await iterateFile();
