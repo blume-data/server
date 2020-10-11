@@ -1,8 +1,7 @@
 import {Request, Response} from 'express';
-import {BadRequestError} from "@ranjodhbirkaur/common";
+import {BadRequestError, okayStatus} from "@ranjodhbirkaur/common";
 import {
-    DATA_COLLECTION, MAX_COLLECTION_LIMIT,
-    okayStatus, STORE_CONNECTIONS, USER_COLLECTION
+    DATA_COLLECTION, MAX_COLLECTION_LIMIT, STORE_CONNECTIONS, USER_COLLECTION
 } from "../util/constants";
 import _ from 'lodash';
 import {CollectionModel} from "../models/Collection";
@@ -13,14 +12,15 @@ import {RANDOM_COLLECTION_NAME} from "../util/methods";
 
 export async function createCollectionSchema(req: Request, res: Response) {
 
-    const userName  = req.params && req.params.userName;
+    const clientUserName  = req.params && req.params.clientUserName;
+    const applicationName  = req.params && req.params.applicationName;
     const language = req.params && req.params.language;
     const env = req.params && req.params.env;
 
     const reqBody = req.body;
 
     const isInLimit = await CollectionModel.find({
-        clientUserName: userName
+        clientUserName
     },'name');
     if ((isInLimit && isInLimit.length) > MAX_COLLECTION_LIMIT) {
         throw new BadRequestError(CANNOT_CREATE_COLLECTIONS_MORE_THAN_LIMIT);
@@ -55,7 +55,7 @@ export async function createCollectionSchema(req: Request, res: Response) {
 
     // Check if there is not other collection with same name and user_id
     const alreadyExist = await CollectionModel.findOne({
-        clientUserName: userName, name: reqBody.name, env
+        clientUserName, name: reqBody.name, env
     }, 'id');
 
     if (alreadyExist) {
@@ -66,9 +66,9 @@ export async function createCollectionSchema(req: Request, res: Response) {
     const storeConnection = _.sample(STORE_CONNECTIONS);
     const connectionName = (storeConnection && storeConnection.url) ? storeConnection.url : '';
     const newCollection = CollectionModel.build({
-        clientUserName: userName,
+        clientUserName,
         isPublic: false,
-        applicationName: 'some name',
+        applicationName,
         rules: JSON.stringify(reqBody.rules),
         name: reqBody.name,
         env,
@@ -78,10 +78,26 @@ export async function createCollectionSchema(req: Request, res: Response) {
         language
     });
 
-    await storeSchema(reqBody.name, userName, connectionName, containerName);
+    await storeSchema(reqBody.name, clientUserName, connectionName, containerName);
     await newCollection.save();
 
     res.status(okayStatus).send(newCollection);
+}
+
+export async function getCollectionNames(req: Request, res: Response) {
+
+    const clientUserName  = req.params && req.params.clientUserName;
+    const applicationName  = req.params && req.params.applicationName;
+    const language = req.params && req.params.language;
+    const env = req.params && req.params.env;
+
+    const collections = await CollectionModel.find({
+        clientUserName,
+        applicationName,
+        language,
+        env
+    }, 'name');
+    res.status(okayStatus).send(collections);
 }
 
 export async function deleteCollectionSchema(req: Request, res: Response) {

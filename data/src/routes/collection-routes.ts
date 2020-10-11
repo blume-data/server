@@ -1,11 +1,17 @@
 import express from 'express';
 import {body} from "express-validator";
 import {validateRequest, stringLimitOptionErrorMessage, stringLimitOptions} from "@ranjodhbirkaur/common";
-import {CollectionUrl} from "../util/urls";
-import {createCollectionSchema, deleteCollectionSchema, getCollectionSchema} from "../Controllers/CollectionController";
+import {CollectionUrl, GetCollectionNamesUrl} from "../util/urls";
+import {
+    createCollectionSchema,
+    deleteCollectionSchema,
+    getCollectionNames,
+    getCollectionSchema
+} from "../Controllers/CollectionController";
 import {validateCollections} from "../services/middlewares/collections/validateCollections";
 import {checkAuth} from "../services/checkAuth";
 import {validateEnvType} from "../util/enviornmentTypes";
+import {validateApplicationNameMiddleWare} from "../services/validateApplicationNameMiddleWare";
 
 const router = express.Router();
 
@@ -19,7 +25,11 @@ router.post(CollectionUrl, [
             .isLength(stringLimitOptions)
             .withMessage(stringLimitOptionErrorMessage('name'))
     ],
-    validateRequest, validateEnvType, checkAuth, validateCollections, createCollectionSchema);
+    validateRequest, validateEnvType, checkAuth,
+    validateApplicationNameMiddleWare, validateCollections, createCollectionSchema
+);
+
+router.get(GetCollectionNamesUrl, validateEnvType, checkAuth, validateApplicationNameMiddleWare, getCollectionNames);
 
 // Delete Item Schema
 router.delete(CollectionUrl, [

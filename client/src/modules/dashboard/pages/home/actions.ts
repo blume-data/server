@@ -24,3 +24,7 @@ export const fetchDataRouteAddresses = (): AppThunk => async (dispatch: ThunkDis
         });
     }
 };
+
+export const setConfigration = (field: string): AppThunk => async (dispatch: ThunkDispatch<any, any, AnyAction>) => {
+
+};

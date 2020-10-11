@@ -3,8 +3,6 @@ export const stringLimitOptionErrorMessage = (field: string) => field+' must be 
 const ENV = '/:env';
 export const serviceName = '/data';
 export const rootUrl = `${serviceName}${ENV}`;
-export const okayStatus = 202;
-export const errorStatus = 400;
 
 export const AUTH_TOKEN = 'AUTH_TOKEN';
 export const USER_NAME = 'userName';

@@ -6,6 +6,7 @@ import {
     clientType,
     CLIENT_USER_NAME
 } from "@ranjodhbirkaur/constants";
+import {LOCAL_STORAGE_ENV, LOCAL_STORAGE_LANGUAGE} from "../../../../utils/constants";
 
 interface SaveAuthenticationType {
     [AUTH_TOKEN]?: string;
@@ -48,4 +49,8 @@ export function clearAuthentication() {
     localStorage.removeItem(AUTH_TOKEN);
     localStorage.removeItem(APPLICATION_NAMES);
     localStorage.removeItem(USER_NAME);
+    localStorage.removeItem(clientType);
+    localStorage.removeItem(CLIENT_USER_NAME);
+    localStorage.removeItem(LOCAL_STORAGE_LANGUAGE);
+    localStorage.removeItem(LOCAL_STORAGE_ENV);
 }

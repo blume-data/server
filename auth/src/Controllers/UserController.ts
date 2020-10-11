@@ -1,4 +1,3 @@
-import {Request, Response} from 'express';
 import {
     BadRequestError,
     okayStatus,
@@ -9,7 +8,7 @@ import {
     RANDOM_STRING, ClientUser, AdminUser, FreeUser,
     CLIENT_USER_NAME,
     APPLICATION_NAME,
-    generateJwt,
+    generateJwt, Request, Response,
     sendJwtResponse, clientType, freeUserType, LAST_NAME, FIRST_NAME, PASSWORD, EMAIL, APPLICATION_NAMES
 } from "@ranjodhbirkaur/common";
 import {ClientTempUser} from "../models/clientTempUser";

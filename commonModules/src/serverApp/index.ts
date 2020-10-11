@@ -1,5 +1,5 @@
 import 'express-async-errors';
-import express from 'express';
+import express, {Request, Response, NextFunction} from 'express';
 import { json } from 'body-parser';
 import cookieSession from 'cookie-session';
 import cors from 'cors';
@@ -17,4 +17,4 @@ serverApp.use(cookieSession({
 }));
 serverApp.options('*', cors());
 
-export {serverApp};
+export {serverApp, Response, Request, NextFunction};

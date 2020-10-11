@@ -5,8 +5,9 @@ import {Auth, AUTH_ROOT, SIGN_IN} from "./modules/authentication/pages/Auth";
 import Home from "./modules/dashboard/pages/home";
 import {Redirect} from "react-router-dom";
 import {checkAuthentication} from "./modules/authentication/pages/Auth/methods";
-import {authUrl, dashboardApplicationNamesUrl, dashboardHomeUrl} from "./utils/urls";
+import {authUrl, dashboardApplicationNamesUrl, dashboardHomeUrl, dashboardStoresUrl} from "./utils/urls";
 import ApplicationNames from "./modules/dashboard/pages/applicationNames";
+import StoreComponent from "./modules/dashboard/pages/Store-Component";
 
 function PrivateRoute(Component: any) {
     return () => {
@@ -37,6 +38,11 @@ export const Routes = [
     {
         path: dashboardApplicationNamesUrl,
         render: PrivateRoute(ApplicationNames),
+        exact: true
+    },
+    {
+        path: dashboardStoresUrl,
+        render: PrivateRoute(StoreComponent),
         exact: true
     },
     {

@@ -1,8 +1,8 @@
 import {Request, Response} from 'express';
 import {CollectionModel} from "../models/Collection";
-import {BadRequestError} from "@ranjodhbirkaur/common";
+import {BadRequestError, okayStatus, errorStatus} from "@ranjodhbirkaur/common";
 
-import {errorStatus, okayStatus, PER_PAGE} from "../util/constants";
+import {PER_PAGE} from "../util/constants";
 import {COLLECTION_NOT_FOUND, PARAM_SHOULD_BE_UNIQUE} from "./Messages";
 import {RuleType} from "../util/interface";
 import {Model} from "mongoose";

@@ -5,14 +5,13 @@ import {APPLICATION_NAME_ALREADY_EXIST} from "./Messages";
 
 export async function createApplicationName(req: Request, res: Response) {
     const {applicationName} = req.body;
+    const lowerCaseApplicationName = applicationName.toLowerCase().split(' ').join('-');
 
     if(req.currentUser && req.currentUser[APPLICATION_NAMES] && typeof req.currentUser[APPLICATION_NAMES]) {
         const applicationNames = JSON.parse(req.currentUser[APPLICATION_NAMES]);
 
-        console.log('application names', applicationNames);
-
-        if (!applicationNames.includes(applicationName)) {
-            applicationNames.push(applicationName);
+        if (!applicationNames.includes(lowerCaseApplicationName)) {
+            applicationNames.push(lowerCaseApplicationName);
 
             await ClientUserModel.updateOne({
                 [USER_NAME]: req.currentUser[USER_NAME]
@@ -24,7 +23,7 @@ export async function createApplicationName(req: Request, res: Response) {
             return sendSingleError(res, APPLICATION_NAME_ALREADY_EXIST);
         }
 
-        return res.status(okayStatus).send(true);
+        return res.status(okayStatus).send(lowerCaseApplicationName);
 
     }
         

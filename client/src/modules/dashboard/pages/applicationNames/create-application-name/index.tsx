@@ -46,7 +46,7 @@ export const CreateApplicationName = (props: CreateApplicationNameProps) => {
                 const applicationNames = getItemFromLocalStorage(APPLICATION_NAMES);
                 if(applicationNames) {
                     const parsedApplicationNames = JSON.parse(applicationNames);
-                    parsedApplicationNames.push(applicationName.value);
+                    parsedApplicationNames.push(resp);
                     localStorage.setItem(APPLICATION_NAMES, JSON.stringify(parsedApplicationNames));
                 }
 

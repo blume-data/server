@@ -8,8 +8,10 @@ import {connect, ConnectedProps} from "react-redux";
 import {RootState} from "../../../rootReducer";
 import {fetchAuthRouteAddresses} from "./actions";
 import {checkAuthentication} from "../../../modules/authentication/pages/Auth/methods";
-import {setAuthentication} from "../../../modules/authentication/pages/Auth/actions";
+import {setAuthentication, setEnv, setLanguage} from "../../../modules/authentication/pages/Auth/actions";
 import {fetchDataRouteAddresses} from "../../../modules/dashboard/pages/home/actions";
+import {getItemFromLocalStorage} from "../../../utils/tools";
+import {LOCAL_STORAGE_ENV, LOCAL_STORAGE_LANGUAGE} from "../../../utils/constants";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type AppProps = PropsFromRedux & {
@@ -25,6 +27,14 @@ const Layout = (props: AppProps) => {
         props.fetchDataRouteAddresses();
         const isAuthenticated = checkAuthentication();
         setAuthentication(isAuthenticated);
+        const env = getItemFromLocalStorage(LOCAL_STORAGE_ENV);
+        if (!env) {
+            props.setEnv();
+        }
+        const language = getItemFromLocalStorage(LOCAL_STORAGE_LANGUAGE);
+        if(!language) {
+            props.setLanguage();
+        }
     }, []);
 
     return (
@@ -42,5 +52,8 @@ const mapState = (state: RootState) => ({
     routeAddress: state.routeAddress
 });
 
-const connector = connect(mapState, {fetchAuthRouteAddresses, setAuthentication, fetchDataRouteAddresses});
+const connector = connect(mapState, {
+    setEnv, setLanguage,
+    fetchAuthRouteAddresses, setAuthentication, fetchDataRouteAddresses
+});
 export default connector(Layout);
