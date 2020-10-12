@@ -51,6 +51,4 @@ export function clearAuthentication() {
     localStorage.removeItem(USER_NAME);
     localStorage.removeItem(clientType);
     localStorage.removeItem(CLIENT_USER_NAME);
-    localStorage.removeItem(LOCAL_STORAGE_LANGUAGE);
-    localStorage.removeItem(LOCAL_STORAGE_ENV);
 }

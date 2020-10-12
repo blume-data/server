@@ -84,6 +84,7 @@ export async function createCollectionSchema(req: Request, res: Response) {
     res.status(okayStatus).send(newCollection);
 }
 
+/*Return the list of collections in an application name*/
 export async function getCollectionNames(req: Request, res: Response) {
 
     const clientUserName  = req.params && req.params.clientUserName;
