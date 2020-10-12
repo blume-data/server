@@ -1,0 +1,16 @@
+@import "src/assets/style/index";
+
+.store-page-container {
+  .stores-list {
+    padding: 10px;
+    .stores-list-item {
+      padding: 10px;
+      text-transform: uppercase;
+    }
+    .stores-list-item:hover {
+      background-color: $light-gray;
+      cursor: pointer;
+    }
+  }
+
+}

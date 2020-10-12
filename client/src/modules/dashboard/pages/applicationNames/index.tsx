@@ -9,7 +9,7 @@ import {RootState} from "../../../../rootReducer";
 import {connect, ConnectedProps} from "react-redux";
 import './application-name.scss';
 import {Link} from "react-router-dom";
-import {dashboardStoresUrl} from "../../../../utils/urls";
+import {dashboardApplicationNameUrl, dashboardStoresUrl} from "../../../../utils/urls";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 const ApplicationNames = (props: PropsFromRedux) => {
@@ -45,7 +45,7 @@ const ApplicationNames = (props: PropsFromRedux) => {
                 <Grid container justify={"center"} className={'application-spaces-list'} direction={"column"}>
                     {applicationNames && applicationNames.map((applicationName, index) => {
                         return (
-                            <Link key={index} to={dashboardStoresUrl.replace(`:${APPLICATION_NAME}`, applicationName)}>
+                            <Link key={index} to={dashboardApplicationNameUrl.replace(`:${APPLICATION_NAME}`, applicationName)}>
                                 <Grid className="application-space-list-item" item >
                                     {applicationName}
                                 </Grid>

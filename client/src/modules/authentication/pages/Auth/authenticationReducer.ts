@@ -1,15 +1,20 @@
 import {
     AuthenticationInitialStateType,
     AuthActionType,
-    ACTION_AUTHENTICATE, ACTION_SET_ENV, ACTION_SET_LANGUAGE
+    ACTION_AUTHENTICATE, ACTION_SET_ENV, ACTION_SET_LANGUAGE, ACTION_SET_APPLICATION_NAME
 } from './types'
 import {DEVELOPMENT_ENV, EnglishLanguage, PRODUCTION_ENV} from "@ranjodhbirkaur/constants";
-import {LOCAL_STORAGE_ENV, LOCAL_STORAGE_LANGUAGE} from "../../../../utils/constants";
+import {
+    LOCAL_STORAGE_ENV,
+    LOCAL_STORAGE_LANGUAGE,
+    LOCAL_STORAGE_SELECTED_APPLICATION_NAME
+} from "../../../../utils/constants";
 
 const initialState: AuthenticationInitialStateType = {
     isAuth: false,
     env: PRODUCTION_ENV,
-    language: EnglishLanguage
+    language: EnglishLanguage,
+    applicationName: ''
 };
 
 export function authenticationReducer(
@@ -40,6 +45,17 @@ export function authenticationReducer(
             return {
                 ...state,
                 language
+            }
+        }
+        case ACTION_SET_APPLICATION_NAME: {
+
+            const applicationName = action.applicationName ? action.applicationName : '';
+            if(applicationName) {
+                localStorage.setItem(LOCAL_STORAGE_SELECTED_APPLICATION_NAME, applicationName);
+            }
+            return {
+                ...state,
+                applicationName: action.applicationName ? action.applicationName : ''
             }
         }
 

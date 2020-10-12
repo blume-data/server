@@ -1,5 +1,4 @@
 import React, {ChangeEvent} from "react";
-//import {FormControl, Grid, InputLabel, MenuItem, Select, FormHelperText} from "@material-ui/core";
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
@@ -22,7 +21,7 @@ export const DropDown = (props: DropDownType) => {
         placeholder='', required=false, value, index} = props;
     const randomId = `${name.split(' ').join('-')}-${index}-drop-down-input-label`;
     return (
-        <Grid key={index} className={`${className} app-drop-down`} id={id ? id : undefined}>
+        <Grid key={index} className={`${className} app-drop-down`} id={id ? id : ''}>
             <FormControl className={'app-drop-down-form-control'} error={error}>
                 <InputLabel id={randomId}>Age</InputLabel>
                 <Select
@@ -50,4 +49,4 @@ export const DropDown = (props: DropDownType) => {
             </FormControl>
         </Grid>
     );
-}
+};

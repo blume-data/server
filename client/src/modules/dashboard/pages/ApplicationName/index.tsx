@@ -3,15 +3,15 @@ import {Grid, Paper} from "@material-ui/core";
 import {connect, ConnectedProps} from "react-redux";
 import {RootState} from "../../../../rootReducer";
 import {doGetRequest} from "../../../../utils/baseApi";
-import {dashboardStoresUrl, getBaseUrl} from "../../../../utils/urls";
+import {dashboardCollectionsUrl, dashboardStoresUrl, getBaseUrl} from "../../../../utils/urls";
 import {APPLICATION_NAME, CLIENT_USER_NAME} from "@ranjodhbirkaur/constants";
 import {getItemFromLocalStorage} from "../../../../utils/tools";
 import {useParams} from "react-router";
-import './store-page.scss';
+import './application-name.scss';
 import {Link} from "react-router-dom";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
-const StoreComponent = (props: PropsFromRedux) => {
+const ApplicationName = (props: PropsFromRedux) => {
 
     const {GetCollectionNamesUrl, env, language} = props;
     const [stores, setStores] = useState<string[] | null>(null);
@@ -30,7 +30,7 @@ const StoreComponent = (props: PropsFromRedux) => {
 
             const fullUrl = `${getBaseUrl()}${url}`;
             const response = await doGetRequest(fullUrl, null, true);
-            if(response && response.length) {
+            if(response && Array.isArray(response)) {
                 const data = response.map((item: {name: string}) => {
                     return item.name;
                 });
@@ -42,18 +42,20 @@ const StoreComponent = (props: PropsFromRedux) => {
     useEffect(() => {
         getCollectionNames();
 
-    },[props.GetCollectionNamesUrl]);
-
+    },[props.GetCollectionNamesUrl, applicationName, env, language]);
 
     return (
 
         <Grid className={'store-page-container'}>
             <Paper elevation={3}>
-                <Grid container justify={"center"} className={'application-spaces-list'} direction={"column"}>
+                <Grid container justify={"center"} className={'stores-list'} direction={"column"}>
                     {stores && stores.map((storeName, index) => {
+                        const linkUrl = dashboardCollectionsUrl
+                            .replace(`:${APPLICATION_NAME}`, applicationName)
+                            .replace(':store-name', storeName);
                         return (
-                            <Link key={index} to={dashboardStoresUrl.replace(`:${APPLICATION_NAME}`, storeName)}>
-                                <Grid className="application-space-list-item" item >
+                            <Link key={index} to={linkUrl}>
+                                <Grid className="stores-list-item" item >
                                     {storeName}
                                 </Grid>
                             </Link>
@@ -75,4 +77,4 @@ const mapState = (state: RootState) => {
 };
 
 const connector = connect(mapState);
-export default connector(StoreComponent);
+export default connector(ApplicationName);

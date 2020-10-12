@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
@@ -17,6 +17,14 @@ import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import { LeftDrawerList } from './LeftDrawerList';
+import Button from "@material-ui/core/Button";
+import {ApplicationNamesList} from "./ApplicationNamesList";
+import {useHistory, useParams} from "react-router";
+import {dashboardApplicationNameUrl, dashboardStoresUrl} from "../../../utils/urls";
+import {APPLICATION_NAME} from "@ranjodhbirkaur/constants";
+import {setApplicationName} from "../../../modules/authentication/pages/Auth/actions";
+import {getItemFromLocalStorage} from "../../../utils/tools";
+import {LOCAL_STORAGE_SELECTED_APPLICATION_NAME} from "../../../utils/constants";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
@@ -33,10 +41,11 @@ export type Anchor = 'top' | 'left' | 'bottom' | 'right';
 
 export const NavBarComponent = (props: PropsFromRedux) => {
 
-    const {isAuth} = props;
+    const {isAuth, applicationName, setApplicationName} = props;
     const LEFT_ANCHOR = 'left';
 
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+    const [applicationNameMenuAnchor, setApplicationNameMenuAnchor] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
 
     const classes = useStyles();
@@ -46,6 +55,13 @@ export const NavBarComponent = (props: PropsFromRedux) => {
         bottom: false,
         right: false,
     });
+
+    useEffect(() => {
+        const selectedApplicationName = getItemFromLocalStorage(LOCAL_STORAGE_SELECTED_APPLICATION_NAME);
+        if(selectedApplicationName) {
+            setApplicationName(selectedApplicationName);
+        }
+    }, []);
 
     const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
@@ -82,6 +98,25 @@ export const NavBarComponent = (props: PropsFromRedux) => {
         </div>
     );
 
+    const history = useHistory();
+
+    function openApplicationNameMenu(event: React.MouseEvent<HTMLButtonElement>){
+        setApplicationNameMenuAnchor(event.currentTarget);
+    }
+
+    function onApplicationNameMenuClose() {
+        setApplicationNameMenuAnchor(null);
+    }
+
+    function onSelectApplicationName(name: string) {
+        setApplicationName(name);
+        const applicationNameUrl = dashboardApplicationNameUrl.replace(`:${APPLICATION_NAME}`, name);
+        history.push(applicationNameUrl);
+        onApplicationNameMenuClose();
+    }
+
+    console.log('ap', applicationName);
+
     return (
         <Grid id={'nav-bar-container'} >
             <AppBar position="static">
@@ -94,6 +129,21 @@ export const NavBarComponent = (props: PropsFromRedux) => {
                     <Typography variant="h6" className={'menu-title'}>
                         News
                     </Typography>
+                    <Grid container justify={"flex-start"}>
+                        <Button
+                            aria-controls="nav-bar-application-name-menu"
+                            aria-haspopup="true"
+                            onClick={openApplicationNameMenu}>
+                            {
+                                applicationName ? applicationName : 'application space t'
+                            }
+                        </Button>
+                        <ApplicationNamesList
+                            onSelectApplicationName={onSelectApplicationName}
+                            onApplicationNameMenuClose={onApplicationNameMenuClose}
+                            applicationNameMenuAnchor={applicationNameMenuAnchor}
+                        />
+                    </Grid>
                     <Grid container justify={'flex-end'}>
                         <IconButton
                             aria-label="account of current user"
@@ -139,7 +189,8 @@ export const NavBarComponent = (props: PropsFromRedux) => {
 };
 
 const mapState = (state: RootState) => ({
-    isAuth: state.authentication.isAuth
+    isAuth: state.authentication.isAuth,
+    applicationName: state.authentication.applicationName
 });
-const connector = connect(mapState);
+const connector = connect(mapState, {setApplicationName});
 export const NavBar = connector(NavBarComponent);
