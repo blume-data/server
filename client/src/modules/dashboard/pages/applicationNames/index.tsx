@@ -9,12 +9,13 @@ import {RootState} from "../../../../rootReducer";
 import {connect, ConnectedProps} from "react-redux";
 import './application-name.scss';
 import {Link} from "react-router-dom";
-import {dashboardApplicationNameUrl, dashboardStoresUrl} from "../../../../utils/urls";
+import {dashboardApplicationNameUrl} from "../../../../utils/urls";
+import {setApplicationName} from "../../../authentication/pages/Auth/actions";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 const ApplicationNames = (props: PropsFromRedux) => {
 
-    const {ApplicationNameUrl} = props;
+    const {ApplicationNameUrl, setApplicationName} = props;
 
     const [applicationNames, setApplicationNames] = useState<string[] | null>(null);
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -36,6 +37,10 @@ const ApplicationNames = (props: PropsFromRedux) => {
         setIsModalOpen(false);
     }
 
+    function onClickLink(name: string) {
+        setApplicationName(name);
+    }
+
     return (
         <Grid className={'application-name-container'}>
             Application names
@@ -45,7 +50,9 @@ const ApplicationNames = (props: PropsFromRedux) => {
                 <Grid container justify={"center"} className={'application-spaces-list'} direction={"column"}>
                     {applicationNames && applicationNames.map((applicationName, index) => {
                         return (
-                            <Link key={index} to={dashboardApplicationNameUrl.replace(`:${APPLICATION_NAME}`, applicationName)}>
+                            <Link key={index}
+                                  onClick={() => onClickLink(applicationName)}
+                                  to={dashboardApplicationNameUrl.replace(`:${APPLICATION_NAME}`, applicationName)}>
                                 <Grid className="application-space-list-item" item >
                                     {applicationName}
                                 </Grid>
@@ -81,5 +88,5 @@ const mapState = (state: RootState) => {
     }
 };
 
-const connector = connect(mapState);
+const connector = connect(mapState, {setApplicationName});
 export default connector(ApplicationNames);

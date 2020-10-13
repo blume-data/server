@@ -9,11 +9,12 @@ import {getItemFromLocalStorage} from "../../../../utils/tools";
 import {useParams} from "react-router";
 import './application-name.scss';
 import {Link} from "react-router-dom";
+import {setApplicationName} from "../../../authentication/pages/Auth/actions";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 const ApplicationName = (props: PropsFromRedux) => {
 
-    const {GetCollectionNamesUrl, env, language} = props;
+    const {GetCollectionNamesUrl, env, language, setApplicationName} = props;
     const [stores, setStores] = useState<string[] | null>(null);
 
     const {applicationName} = useParams();
@@ -41,7 +42,7 @@ const ApplicationName = (props: PropsFromRedux) => {
 
     useEffect(() => {
         getCollectionNames();
-
+        setApplicationName(applicationName);
     },[props.GetCollectionNamesUrl, applicationName, env, language]);
 
     return (
@@ -76,5 +77,5 @@ const mapState = (state: RootState) => {
     }
 };
 
-const connector = connect(mapState);
+const connector = connect(mapState, {setApplicationName});
 export default connector(ApplicationName);
