@@ -28,12 +28,11 @@ import {
     sendErrors,
     clientType,
     JWT_ID,
-    JwtPayloadType
+    JwtPayloadType, PayloadResponseType,
 } from '@ranjodhbirkaur/common';
 import {
     passwordLimitOptionErrorMessage,
     passwordLimitOptions,
-
 } from "../util/constants";
 import {ClientTempUser} from "../models/clientTempUser";
 
@@ -135,7 +134,7 @@ async function validateClientUserName(req: Request): Promise<{isValid: boolean; 
 * */
 async function saveUser(req: Request, res: Response, type=clientUserType ) {
 
-    const { email, password, firstName, lastName, userName, clientUserName, applicationName, env } = req.body;
+    const { email, password, firstName, lastName, userName, clientUserName, applicationName } = req.body;
     const [adminType] = req.body;
 
     if(type !== clientUserType && type !== adminUserType) {
@@ -191,7 +190,7 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
 
     const verificationToken = RANDOM_STRING(4);
 
-    let user, payload;
+    let user;
     const jwtId = RANDOM_STRING(10);
 
     switch (type) {
@@ -199,74 +198,72 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
             const created_at = `${new Date()}`;
             user = AdminUser.build({ email, password, userName, adminType, jwtId, created_at });
             await user.save();
-            payload = {
-                id: user.id,
-                email: user.email,
-                userName: user.userName
+            const payload: JwtPayloadType = {
+                [JWT_ID]: jwtId,
+                [USER_NAME]: user.userName,
+                [clientType]: type
             };
+            const responseData: PayloadResponseType = {
+                [CLIENT_USER_NAME]: userName,
+                [clientType]: type,
+                [USER_NAME]: userName,
+                [APPLICATION_NAMES]: ''
+            }
             const userJwt = generateJwt(payload, req);
-            return sendJwtResponse(res, payload, userJwt, user);
+            return sendJwtResponse(res, responseData, userJwt);
         }
         case clientUserType: {
 
             user = ClientTempUser.build({ email, password, firstName, lastName, userName, verificationToken, clientType: clientUserType });
             await user.save();
 
-            payload = {
-                id: user.id,
-                email: user.email,
-                userName: user.userName,
-                // TODO remove verification token later
-                verificationToken: user.verificationToken
-            };
-            if (isTestEnv()) {
-                payload = {
-                    ...payload,
-                    verificationToken: user.verificationToken
-                }
-            }
+            console.log('verification token', user.verificationToken);
             break;
         }
         case freeUserType: {
             user = ClientTempUser.build({ email, password, firstName, lastName, userName, verificationToken, clientType: freeUserType });
             await user.save();
-            payload = {
-                userName: user.userName,
-                verificationToken: user.verificationToken
-            };
-            if (isTestEnv()) {
-                payload = {
-                    ...payload,
-                    verificationToken: user.verificationToken
-                }
-            }
+
+            console.log('verification token', user.verificationToken);
+
             break;
         }
         case superVisorUserType: {
             user = FreeUser.build({ email, password, userName, clientType: superVisorUserType, jwtId, clientUserName });
             await user.save();
-            // TODO CHeck jwt payload from signin
-            const jwt = {
+
+            const jwt: JwtPayloadType = {
                 [clientType]: type,
                 [USER_NAME]: user.userName,
                 [JWT_ID]: user.jwtId
             };
+            const responseData: PayloadResponseType = {
+                [CLIENT_USER_NAME]: clientUserName,
+                [clientType]: type,
+                [USER_NAME]: userName,
+                [APPLICATION_NAMES]: JSON.parse(JSON.stringify([applicationName]))
+            }
             const userJwt = generateJwt(jwt, req);
-            
-            return sendJwtResponse(res, {userName, clientUserName}, userJwt, user);
+            return sendJwtResponse(res, responseData, userJwt);
         }
         case supportUserType: {
             user = FreeUser.build({ email, password, userName, clientType: supportUserType, jwtId, clientUserName, applicationName });
             await user.save();
             const jwt: JwtPayloadType = {
-                jwtId,
-                clientType: supportUserType,
-                userName
+                [JWT_ID]: jwtId,
+                [clientType]: supportUserType,
+                [USER_NAME]: userName
             };
+            const responseData: PayloadResponseType = {
+                [CLIENT_USER_NAME]: clientUserName,
+                [clientType]: type,
+                [USER_NAME]: userName,
+                [APPLICATION_NAMES]: JSON.parse(JSON.stringify([applicationName]))
+            }
             const userJwt = generateJwt(jwt, req);
-            return sendJwtResponse(res, {userName, clientUserName}, userJwt, user);
+            return sendJwtResponse(res, responseData, userJwt);
         }
     }
 
-    res.status(okayStatus).send({... payload});
+    res.status(okayStatus).send(true);
 }

@@ -5,7 +5,6 @@ export const serviceName = '/data';
 export const rootUrl = `${serviceName}${ENV}`;
 
 export const AUTH_TOKEN = 'AUTH_TOKEN';
-export const USER_NAME = 'userName';
 
 export const DATE_TYPE = 'date';
 export const HTML_TYPE = 'html';

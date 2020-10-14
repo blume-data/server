@@ -5,14 +5,25 @@ import {
     clientUserType,
     JWT_ID,
     adminUserType,
-    RANDOM_STRING, ClientUser, AdminUser, FreeUser,
+    RANDOM_STRING,
+    ClientUser,
+    AdminUser,
+    FreeUser,
     CLIENT_USER_NAME,
     APPLICATION_NAME,
-    generateJwt, Request, Response,
-    sendJwtResponse, clientType, freeUserType, LAST_NAME, FIRST_NAME, PASSWORD, EMAIL, APPLICATION_NAMES
+    generateJwt,
+    sendJwtResponse,
+    clientType,
+    freeUserType,
+    LAST_NAME,
+    FIRST_NAME,
+    PASSWORD,
+    EMAIL,
+    APPLICATION_NAMES,
+    PayloadResponseType, JwtPayloadType
 } from "@ranjodhbirkaur/common";
 import {ClientTempUser} from "../models/clientTempUser";
-
+import {Request, Response} from "express";
 import {TOKEN_NOT_VALID, USER_NAME_NOT_AVAILABLE} from "../util/errorMessages";
 import {EXAMPLE_APPLICATION_NAME} from "../util/constants";
 
@@ -65,6 +76,7 @@ export const verifyEmailToken = async function (req: ReqValidateEmail, res: Resp
         throw new BadRequestError('Invalid Request');
     }
     else {
+        // TODO check which properties to be taken from here
         const userExist = await ClientTempUser.findOne({email: modelProps.email, verificationToken: modelProps.token});
 
         if (userExist) {
@@ -72,10 +84,6 @@ export const verifyEmailToken = async function (req: ReqValidateEmail, res: Resp
             const jwtId = RANDOM_STRING(10);
             const created_at = `${new Date()}`;
             const userType = userExist.clientType;
-            let payload = {};
-            let response = {};
-        
-
 
             if(userType === freeUserType) {
                 const newUser = FreeUser.build({
@@ -91,17 +99,20 @@ export const verifyEmailToken = async function (req: ReqValidateEmail, res: Resp
     
                 await newUser.save();
 
-                response = {
-                    ...response,
-                    [APPLICATION_NAME]: '',
-                    [USER_NAME]: userExist[USER_NAME]
+                const response: PayloadResponseType = {
+                    [APPLICATION_NAMES]: '',
+                    [CLIENT_USER_NAME]: newUser[CLIENT_USER_NAME],
+                    [USER_NAME]: newUser[USER_NAME],
+                    [clientType]: freeUserType
                 };
 
-                payload = {
-                    ...payload,
+                const payload: JwtPayloadType = {
+                    [JWT_ID]: newUser[JWT_ID],
                     [clientType]: freeUserType,
                     [USER_NAME]: newUser[USER_NAME]
                 };
+
+                return await sendValidateEmailResponse(req, payload, response, res);
             }
             else if(userType === clientUserType) {
                 const applicationName = [EXAMPLE_APPLICATION_NAME];
@@ -120,33 +131,40 @@ export const verifyEmailToken = async function (req: ReqValidateEmail, res: Resp
                 await newUser.save();
 
                 // Pass application names in response
-                response = {
-                    ...response,
+                const response: PayloadResponseType = {
+                    [CLIENT_USER_NAME]: newUser[USER_NAME],
                     [clientType]: userType,
-                    [APPLICATION_NAMES]: applicationName,
-                    [USER_NAME]: userExist[USER_NAME]
+                    [APPLICATION_NAMES]: applicationNames,
+                    [USER_NAME]: newUser[USER_NAME]
                 };
+
+                const payload: JwtPayloadType = {
+                    [JWT_ID]: jwtId,
+                    [USER_NAME]: userExist[USER_NAME] || '',
+                    [clientType]: userExist[clientType] || ''
+                };
+
+                return await sendValidateEmailResponse(req, payload, response, res);
+
             }
-
-            payload = {
-                ...payload,
-                [JWT_ID]: jwtId,
-                [USER_NAME]: userExist[USER_NAME] || '',
-                [clientType]: userExist[clientType] || ''
-            };
-
-            // Generate JWT
-            const userJwt = generateJwt(payload, req);
-
-            ClientTempUser.deleteMany({email: modelProps.email}).then(() => {});
-
-            return sendJwtResponse(res, response, userJwt, response);
-
         }
         else {
             throw new BadRequestError(TOKEN_NOT_VALID);
         }
     }
 };
+
+/*Send response on email verification*/
+async function sendValidateEmailResponse(req: Request, payload: JwtPayloadType, responseData: PayloadResponseType, res: Response) {
+
+    const modelProps = req.query;
+    // Generate JWT
+    const userJwt = generateJwt(payload, req);
+
+    // TODO delete user in temp collection
+    //const okDeleted = await ClientTempUser.deleteMany({email: modelProps.email});
+
+    return sendJwtResponse(res, responseData, userJwt);
+}
 
 

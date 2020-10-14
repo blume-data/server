@@ -24,7 +24,7 @@ async function AuthClientUser(req: Request, res: Response, next: NextFunction) {
     }
 }
 
-router.post(ApplicationNameUrl, AuthClientUser, [
+router.post(ApplicationNameUrl, checkAuth, AuthClientUser, [
         body('applicationName')
             .trim()
             .isLength(stringLimitOptions)
