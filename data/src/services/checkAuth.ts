@@ -3,11 +3,11 @@ import {
     APPLICATION_NAMES,
     clientType,
     clientUserType,
-    JWT_ID,
+    JWT_ID, USER_NAME,
     sendSingleError, Is_Enabled,
 } from "@ranjodhbirkaur/common";
 import jwt from 'jsonwebtoken';
-import {AUTHORIZATION_TOKEN, USER_NAME} from "../util/constants";
+import {AUTHORIZATION_TOKEN} from "../util/constants";
 import {ClientUserModel} from "../authMongoConnection";
 
 /*
