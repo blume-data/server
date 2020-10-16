@@ -15,7 +15,7 @@ import {useHistory, useParams} from "react-router";
 import {CardForm} from "./CardForm";
 import {getFieldConfiguration} from "./fieldConfiguration";
 import {clearAuthentication, saveAuthentication} from "./methods";
-import {setAuthentication} from "./actions";
+import {setApplicationName, setAuthentication} from "./actions";
 import {Alert} from "../../../../components/common/Toast";
 import {AlertType} from "../../../../components/common/Form";
 import { TopLink } from "./TopLink";
@@ -170,11 +170,14 @@ const AuthComponent = (props: AuthProps) => {
     useEffect(() => {
         if (step === SIGN_OUT && props.routeAddress && props.routeAddress.logOut) {
             authUser({});
+            props.setApplicationName('');
         }
     },[props.routeAddress]);
 
 
-    if(SIGN_OUT === step) return null;
+    if(SIGN_OUT === step) {
+        return null;
+    }
 
     return (
         <Grid container className={'auth-page'} direction={'row'} justify={'space-between'}>
@@ -212,5 +215,5 @@ const mapState = (state: RootState) => ({
     routeAddress: state.routeAddress.routes.auth
 });
 
-const connector = connect(mapState, {setAuthentication});
+const connector = connect(mapState, {setAuthentication, setApplicationName});
 export const Auth = connector(AuthComponent);

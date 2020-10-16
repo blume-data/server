@@ -50,7 +50,7 @@ export function authenticationReducer(
         case ACTION_SET_APPLICATION_NAME: {
 
             const applicationName = action.applicationName ? action.applicationName : '';
-            if(applicationName) {
+            if(applicationName || applicationName === '') {
                 localStorage.setItem(LOCAL_STORAGE_SELECTED_APPLICATION_NAME, applicationName);
             }
             return {
