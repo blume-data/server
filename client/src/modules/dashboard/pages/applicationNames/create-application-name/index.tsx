@@ -10,7 +10,7 @@ import {getBaseUrl} from "../../../../../utils/urls";
 
 interface CreateApplicationNameProps {
     url: string;
-    handleClose: () => void;
+    handleClose: (applicationName: string) => void;
 }
 
 export const CreateApplicationName = (props: CreateApplicationNameProps) => {
@@ -50,7 +50,7 @@ export const CreateApplicationName = (props: CreateApplicationNameProps) => {
                     localStorage.setItem(APPLICATION_NAMES, JSON.stringify(parsedApplicationNames));
                 }
 
-                handleClose();
+                handleClose(resp);
                 resolve('');
             }
             else {

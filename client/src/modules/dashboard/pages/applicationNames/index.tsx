@@ -11,14 +11,16 @@ import './application-name.scss';
 import {Link} from "react-router-dom";
 import {dashboardApplicationNameUrl} from "../../../../utils/urls";
 import {setApplicationName} from "../../../authentication/pages/Auth/actions";
+import {useHistory} from "react-router";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 const ApplicationNames = (props: PropsFromRedux) => {
 
     const {ApplicationNameUrl, setApplicationName} = props;
-
     const [applicationNames, setApplicationNames] = useState<string[] | null>(null);
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
+    const history = useHistory();
 
     function updateApplicationNames() {
         const s = getItemFromLocalStorage(APPLICATION_NAMES);
@@ -35,6 +37,14 @@ const ApplicationNames = (props: PropsFromRedux) => {
     function closeModal() {
         updateApplicationNames();
         setIsModalOpen(false);
+    }
+
+    function onCreateApplicationName(applicationName: string) {
+        closeModal();
+        const url = dashboardApplicationNameUrl.replace(`:${APPLICATION_NAME}`, applicationName);
+        console.log('ur', url)
+        setApplicationName(applicationName);
+        history.push(url);
     }
 
     function onClickLink(name: string) {
@@ -74,7 +84,7 @@ const ApplicationNames = (props: PropsFromRedux) => {
                     title={'Create Application Space'}
                     handleClose={closeModal}>
                     <CreateApplicationName
-                        handleClose={closeModal}
+                        handleClose={onCreateApplicationName}
                         url={ApplicationNameUrl ? ApplicationNameUrl : ''}/>
                 </ModalDialog>
             </Paper>
