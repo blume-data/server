@@ -110,7 +110,7 @@ router.post(
           if (existingUser) {
             responseData = {
               [clientType]: userType,
-              [APPLICATION_NAMES]: JSON.parse(JSON.stringify([existingUser[APPLICATION_NAME]])),
+              [APPLICATION_NAMES]: JSON.parse(existingUser[APPLICATION_NAME]),
               [CLIENT_USER_NAME]: existingUser[CLIENT_USER_NAME],
               [USER_NAME]: existingUser[USER_NAME]
             }

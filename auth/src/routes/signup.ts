@@ -207,7 +207,7 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
                 [CLIENT_USER_NAME]: userName,
                 [clientType]: type,
                 [USER_NAME]: userName,
-                [APPLICATION_NAMES]: ''
+                [APPLICATION_NAMES]: ['']
             }
             const userJwt = generateJwt(payload, req);
             return sendJwtResponse(res, responseData, userJwt);
@@ -241,7 +241,7 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
                 [CLIENT_USER_NAME]: clientUserName,
                 [clientType]: type,
                 [USER_NAME]: userName,
-                [APPLICATION_NAMES]: JSON.parse(JSON.stringify([applicationName]))
+                [APPLICATION_NAMES]: [applicationName]
             }
             const userJwt = generateJwt(jwt, req);
             return sendJwtResponse(res, responseData, userJwt);
@@ -258,7 +258,7 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
                 [CLIENT_USER_NAME]: clientUserName,
                 [clientType]: type,
                 [USER_NAME]: userName,
-                [APPLICATION_NAMES]: JSON.parse(JSON.stringify([applicationName]))
+                [APPLICATION_NAMES]: [applicationName]
             }
             const userJwt = generateJwt(jwt, req);
             return sendJwtResponse(res, responseData, userJwt);

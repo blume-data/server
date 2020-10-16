@@ -16,8 +16,7 @@ export const MenuList = (props: ApplicationNamesListProps) => {
 
     const {menuName, onSelectMenuItem, menuItems, id, defaultName} = props;
     const [MenuAnchor, setMenuAnchor] = React.useState<null | HTMLElement>(null);
-
-
+    console.log('menu items', menuItems);
 
     function openMenu(event: React.MouseEvent<HTMLButtonElement>){
         setMenuAnchor(event.currentTarget);

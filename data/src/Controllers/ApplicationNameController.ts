@@ -8,7 +8,7 @@ export async function createApplicationName(req: Request, res: Response) {
     const lowerCaseApplicationName = applicationName.toLowerCase().split(' ').join('-');
 
     if(req.currentUser && req.currentUser[APPLICATION_NAMES] && typeof req.currentUser[APPLICATION_NAMES]) {
-        const applicationNames = JSON.parse(req.currentUser[APPLICATION_NAMES]);
+        const applicationNames = req.currentUser[APPLICATION_NAMES];
 
         if (!applicationNames.includes(lowerCaseApplicationName)) {
             applicationNames.push(lowerCaseApplicationName);

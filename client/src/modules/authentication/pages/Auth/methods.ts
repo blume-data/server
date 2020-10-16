@@ -25,9 +25,7 @@ export function saveAuthentication(response: SaveAuthenticationType) {
     if(response[APPLICATION_NAMES]) {
         localStorage.setItem(APPLICATION_NAMES, JSON.stringify(response[APPLICATION_NAMES]) || JSON.stringify(['']));
     }
-    if(response[APPLICATION_NAME]) {
-        localStorage.setItem(APPLICATION_NAME, response[APPLICATION_NAME] || '');
-    }
+
     if(response[clientType]) {
         localStorage.setItem(clientType, response[clientType] || '');
     }

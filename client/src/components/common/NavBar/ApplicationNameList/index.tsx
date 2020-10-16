@@ -19,6 +19,7 @@ export const ApplicationNameListComponent = (props: PropsFromRedux) => {
     function updateApplicationNames() {
         const s = getItemFromLocalStorage(APPLICATION_NAMES);
         if(s) {
+            //debugger
             setApplicationNames(JSON.parse(s));
         }
         const selectedApplicationName = getItemFromLocalStorage(LOCAL_STORAGE_SELECTED_APPLICATION_NAME);

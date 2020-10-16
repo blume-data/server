@@ -15,5 +15,5 @@ export interface PayloadResponseType {
     [CLIENT_USER_NAME]: string;
     [USER_NAME]: string;
     [clientType]: string;
-    [APPLICATION_NAMES]: string;
+    [APPLICATION_NAMES]: string[];
 }

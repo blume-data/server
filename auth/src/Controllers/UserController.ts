@@ -100,7 +100,7 @@ export const verifyEmailToken = async function (req: ReqValidateEmail, res: Resp
                 await newUser.save();
 
                 const response: PayloadResponseType = {
-                    [APPLICATION_NAMES]: '',
+                    [APPLICATION_NAMES]: [''],
                     [CLIENT_USER_NAME]: newUser[CLIENT_USER_NAME],
                     [USER_NAME]: newUser[USER_NAME],
                     [clientType]: freeUserType
@@ -115,13 +115,12 @@ export const verifyEmailToken = async function (req: ReqValidateEmail, res: Resp
                 return await sendValidateEmailResponse(req, payload, response, res);
             }
             else if(userType === clientUserType) {
-                const applicationName = [EXAMPLE_APPLICATION_NAME];
-                const applicationNames = JSON.stringify(applicationName);
+                const applicationNames = [EXAMPLE_APPLICATION_NAME];
                 const newUser = ClientUser.build({
                     email: userExist[EMAIL],
                     jwtId,
                     created_at,
-                    [APPLICATION_NAMES]: applicationNames,
+                    [APPLICATION_NAMES]: JSON.stringify(applicationNames),
                     password: userExist[PASSWORD],
                     firstName: userExist[FIRST_NAME],
                     lastName: userExist[LAST_NAME],
