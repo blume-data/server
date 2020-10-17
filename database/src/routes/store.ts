@@ -3,6 +3,7 @@ import {RanjodhbirModel} from "../ranjodhbirDb/model";
 import {APPLICATION_NAME, errorStatus, FIELD, MESSAGE, okayStatus} from "@ranjodhbirkaur/common";
 import {rootUrl} from "../utils/constants";
 import {addDataUrl, getDataUrl, schemaUrl} from "../utils/urls";
+import {RanjodhbirSchema} from "../ranjodhbirDb";
 
 const route = express.Router();
 
@@ -45,7 +46,7 @@ route.post(`${rootUrl}/${schemaUrl}`,
     async (req: Request, res: Response) => {
 
     const {modelName='', clientUserName='', containerName, applicationName} = req.body;
-    const db = new RanjodhbirModel(modelName, clientUserName, containerName, applicationName);
+    const db = new RanjodhbirSchema(modelName, clientUserName, containerName, applicationName);
     await db.createSchema();
     res.status(okayStatus).send(true);
 
@@ -56,9 +57,9 @@ route.post(`${rootUrl}/${getDataUrl}`,
 
     async (req: Request, res: Response) => {
 
-    const {modelName='', clientUserName='', containerName, conditions={}, applicationName} = req.body;
+    const {modelName='', clientUserName='', containerName, conditions={}, applicationName, language} = req.body;
     const {skip=0, limit=10, where={}, getOnly={}} = conditions;
-    const db = new RanjodhbirModel(modelName, clientUserName, containerName, applicationName);
+    const db = new RanjodhbirModel(modelName, clientUserName, containerName, applicationName, language);
     const data = await db.readData({skip, limit, where ,getOnly});
     res.status(okayStatus).send(data);
 
@@ -70,8 +71,8 @@ route.post(`${rootUrl}/${addDataUrl}`,
 
     async (req: Request, res: Response) => {
 
-    const {modelName='', data={}, clientUserName='', containerName, applicationName} = req.body;
-    const db = new RanjodhbirModel(modelName, clientUserName, containerName, applicationName);
+    const {modelName='', data={}, clientUserName='', containerName, applicationName, language} = req.body;
+    const db = new RanjodhbirModel(modelName, clientUserName, containerName, applicationName, language);
     await db.mutateData({
         action: "post",
         item: data

@@ -11,7 +11,7 @@ async function completeTasks(tasks: TasksAttrs[], modelName: string, clientUserN
     if (tasks && tasks.length) {
         for(let i=0; i<tasks.length;i++) {
             const {modelName, clientUserName, containerName, query, action, applicationName} = tasks[i];
-            const newModel = new RanjodhbirModel(modelName, clientUserName, containerName, applicationName);
+            const newModel = new RanjodhbirModel(modelName, clientUserName, containerName, applicationName, 'en');
             switch (action) {
                 case "post": {
                     await newModel.storeData(JSON.parse(query));

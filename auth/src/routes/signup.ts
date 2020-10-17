@@ -229,7 +229,7 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
             break;
         }
         case superVisorUserType: {
-            user = FreeUser.build({ email, password, userName, clientType: superVisorUserType, jwtId, clientUserName });
+            user = FreeUser.build({ env: '', email, password, userName, clientType: superVisorUserType, jwtId, clientUserName });
             await user.save();
 
             const jwt: JwtPayloadType = {
@@ -247,7 +247,7 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
             return sendJwtResponse(res, responseData, userJwt);
         }
         case supportUserType: {
-            user = FreeUser.build({ email, password, userName, clientType: supportUserType, jwtId, clientUserName, applicationName });
+            user = FreeUser.build({ email, password, userName, clientType: supportUserType, jwtId, clientUserName, applicationName, env: '' });
             await user.save();
             const jwt: JwtPayloadType = {
                 [JWT_ID]: jwtId,
