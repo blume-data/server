@@ -94,7 +94,8 @@ export const verifyEmailToken = async function (req: ReqValidateEmail, res: Resp
                     applicationName: '',
                     password: userExist[PASSWORD],
                     userName: userExist[USER_NAME],
-                    clientType: freeUserType
+                    clientType: freeUserType,
+                    env: ''
                 });
     
                 await newUser.save();
