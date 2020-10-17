@@ -1,6 +1,6 @@
 import {Request, Response} from 'express';
 import {CollectionModel} from "../models/Collection";
-import {BadRequestError, okayStatus, errorStatus} from "@ranjodhbirkaur/common";
+import {BadRequestError, okayStatus, errorStatus, CLIENT_USER_NAME, APPLICATION_NAME} from "@ranjodhbirkaur/common";
 
 import {PER_PAGE} from "../util/constants";
 import {COLLECTION_NOT_FOUND, PARAM_SHOULD_BE_UNIQUE} from "./Messages";
@@ -19,7 +19,13 @@ export async function createStoreRecord(req: Request, res: Response) {
         let body = checkBodyAndRules(rules, req, res);
 
         // add some alternate for unique params here
-        const response = await writeRanjodhBirData(collection.name, collection.clientUserName, collection.connectionName, collection.containerName, body);
+        const response = await writeRanjodhBirData(
+            collection.name,
+            collection.clientUserName,
+            collection.connectionName,
+            collection.containerName,
+            collection.applicationName,
+            body);
         res.status(okayStatus).send(response);
     }
     else {
@@ -40,12 +46,19 @@ export async function getStoreRecord(req: Request, res: Response) {
 
         if (validateParams(req, res, rules)) {
             const {where, getOnly} = req.body;
-            const response = await getRanjodhBirData(collection.name, collection.clientUserName, collection.connectionName, collection.containerName,{
-                skip: Number(skip),
-                limit: Number(limit),
-                where,
-                getOnly
-            });
+            const response = await getRanjodhBirData(
+                collection.name,
+                collection.clientUserName,
+                collection.connectionName,
+                collection.containerName,
+                collection[APPLICATION_NAME],
+                {
+                    skip: Number(skip),
+                    limit: Number(limit),
+                    where,
+                    getOnly
+                }
+            );
             res.status(okayStatus).send(response);
         }
     }
@@ -60,11 +73,13 @@ export async function getStoreRecord(req: Request, res: Response) {
 
 
 async function getCollection(req: Request) {
-    const userName  = req.params && req.params.userName;
-    const language = req.params && req.params.language;
+    const clientUserName  = req.params && req.params[CLIENT_USER_NAME];
     const collectionName = req.params && req.params.collectionName;
 
-    return CollectionModel.findOne({clientUserName: userName, name: collectionName, language});
+    return CollectionModel.findOne(
+        {clientUserName, name: collectionName},
+        ['name', CLIENT_USER_NAME, 'connectionName', 'containerName', APPLICATION_NAME, 'rules']
+        );
 }
 
 function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {

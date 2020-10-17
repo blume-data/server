@@ -23,8 +23,8 @@ interface MutateType {
 
 export class RanjodhbirModel extends RanjodhbirSchema {
 
-    constructor(name: string, clientUserName: string, containerName: string) {
-        super(name, clientUserName, containerName);
+    constructor(name: string, clientUserName: string, containerName: string, applicationName: string) {
+        super(name, clientUserName, containerName, applicationName);
     }
 
     private async addTask(params: MutateType) {

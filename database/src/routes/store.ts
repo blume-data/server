@@ -36,8 +36,8 @@ route.post(`${rootUrl}/${schemaUrl}`,
 
     async (req: Request, res: Response) => {
 
-    const {modelName='', clientUserName='', containerName} = req.body;
-    const db = new RanjodhbirModel(modelName, clientUserName, containerName);
+    const {modelName='', clientUserName='', containerName, applicationName=''} = req.body;
+    const db = new RanjodhbirModel(modelName, clientUserName, containerName, applicationName);
     await db.createSchema();
     res.status(okayStatus).send(true);
 
@@ -48,9 +48,9 @@ route.post(`${rootUrl}/${getDataUrl}`,
 
     async (req: Request, res: Response) => {
 
-    const {modelName='', clientUserName='', containerName, conditions={}} = req.body;
+    const {modelName='', clientUserName='', containerName, conditions={}, applicationName=''} = req.body;
     const {skip=0, limit=10, where={}, getOnly={}} = conditions;
-    const db = new RanjodhbirModel(modelName, clientUserName, containerName);
+    const db = new RanjodhbirModel(modelName, clientUserName, containerName, applicationName);
     const data = await db.readData({skip, limit, where ,getOnly});
     res.status(okayStatus).send(data);
 
@@ -62,8 +62,8 @@ route.post(`${rootUrl}/${addDataUrl}`,
 
     async (req: Request, res: Response) => {
 
-    const {modelName='', data={}, clientUserName='', containerName} = req.body;
-    const db = new RanjodhbirModel(modelName, clientUserName, containerName);
+    const {modelName='', data={}, clientUserName='', containerName, applicationName=''} = req.body;
+    const db = new RanjodhbirModel(modelName, clientUserName, containerName, applicationName);
     await db.mutateData({
         action: "post",
         item: data

@@ -4,7 +4,6 @@ interface CollectionAttrs {
     clientUserName : string;
     applicationName: string;
     env: string;
-    language: string;
 
     rules: string;
     name: string;
@@ -25,7 +24,6 @@ interface CollectionDoc extends mongoose.Document {
     clientUserName : string;
     applicationName: string;
     env: string;
-    language: string;
 
     rules: string;
     name: string;
@@ -52,11 +50,6 @@ const Collection = new mongoose.Schema(
             type: String,
             required: true
         },
-        language: {
-            type: String,
-            default: true
-        },
-
         rules : {
             type: String,
             required: true

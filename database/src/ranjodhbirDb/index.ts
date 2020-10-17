@@ -8,10 +8,10 @@ export class RanjodhbirSchema {
     readonly containerName: string;
     private readonly dataBaseDirectory: string;
 
-    constructor(name: string, clientUserName: string, containerName: string) {
+    constructor(name: string, clientUserName: string, containerName: string, applicationName: string) {
         this.name = name;
         this.containerName = containerName;
-        this.dataBaseDirectory = `database/${containerName}`;
+        this.dataBaseDirectory = `database/${containerName}/${applicationName}`;
         this.clientUserName = clientUserName;
     }
 

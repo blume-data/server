@@ -74,11 +74,10 @@ export async function createCollectionSchema(req: Request, res: Response) {
         env,
         connectionName,
         containerName,
-        collectionType: (reqBody.collectionType ? reqBody.collectionType : DATA_COLLECTION),
-        language
+        collectionType: (reqBody.collectionType ? reqBody.collectionType : DATA_COLLECTION)
     });
 
-    await storeSchema(reqBody.name, clientUserName, connectionName, containerName);
+    await storeSchema(reqBody.name, clientUserName, connectionName, containerName, applicationName);
     await newCollection.save();
 
     res.status(okayStatus).send(newCollection);

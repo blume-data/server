@@ -8,7 +8,7 @@ interface FreeUserAttrs extends RootUserAttrs{
   email?: string;
   clientUserName: string;
   applicationName?: string;
-  env?: string;
+  env: string;
   clientType: string;
 }
 
