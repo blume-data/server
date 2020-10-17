@@ -1,8 +1,10 @@
 export class Data {
 
-    id: string;
+    readonly id: string;
+    readonly spaceApplicationLanguage: string;
 
-    constructor(id: string) {
+    constructor(id: string, language: string) {
         this.id = id;
+        this.spaceApplicationLanguage = language;
     }
 }

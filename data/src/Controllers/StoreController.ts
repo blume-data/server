@@ -12,6 +12,7 @@ import {getRanjodhBirData, writeRanjodhBirData} from "../util/databaseApi";
 // Create Record
 export async function createStoreRecord(req: Request, res: Response) {
 
+    const language = req.params.language;
     // get collection
     const collection = await getCollection(req);
     if (collection) {
@@ -25,6 +26,7 @@ export async function createStoreRecord(req: Request, res: Response) {
             collection.connectionName,
             collection.containerName,
             collection.applicationName,
+            language,
             body);
         res.status(okayStatus).send(response);
     }
@@ -35,6 +37,8 @@ export async function createStoreRecord(req: Request, res: Response) {
 
 // Get Record
 export async function getStoreRecord(req: Request, res: Response) {
+
+    const language = req.params.language;
 
     // get collection
     const collection = await getCollection(req);
@@ -52,6 +56,7 @@ export async function getStoreRecord(req: Request, res: Response) {
                 collection.connectionName,
                 collection.containerName,
                 collection[APPLICATION_NAME],
+                language,
                 {
                     skip: Number(skip),
                     limit: Number(limit),

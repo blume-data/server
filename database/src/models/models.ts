@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 interface DataBaseModelsAttrs {
     modelName: string;
     clientUserName: string;
+    applicationName: string;
     isWritable: boolean;
 }
 
@@ -13,6 +14,7 @@ interface DataBaseModelsModel extends mongoose.Model<DataBaseModelsDoc> {
 interface DataBaseModelsDoc extends mongoose.Document {
     modelName: string;
     clientUserName: string;
+    applicationName: string;
     isWritable: boolean;
 }
 
@@ -27,6 +29,10 @@ const DataBaseModels = new mongoose.Schema(
             required: true
         },
         clientUserName: {
+            type: String,
+            required: true
+        },
+        applicationName: {
             type: String,
             required: true
         }

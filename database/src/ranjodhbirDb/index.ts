@@ -50,6 +50,7 @@ export class RanjodhbirSchema {
                             const mongoModel = DataBaseModelsModel.build({
                                 clientUserName: this.clientUserName,
                                 modelName: this.name,
+                                applicationName: this.applicationName,
                                 isWritable: true
                             });
                             await mongoModel.save();

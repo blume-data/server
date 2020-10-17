@@ -24,10 +24,11 @@ export const writeRanjodhBirData = async (
     connectionName: string,
     containerName: string,
     applicationName: string,
+    language: string,
     storeData: any
 ) => {
 
-    const data = {modelName, clientUserName, containerName, data: storeData, applicationName};
+    const data = {modelName, clientUserName, containerName, data: storeData, applicationName, language};
     const response = await axios.post(`${connectionName}/${addDataBaseUrl}`, data);
     return response.data;
 };
@@ -38,6 +39,7 @@ export const getRanjodhBirData = async (
     connectionName: string,
     containerName: string,
     applicationName: string,
+    language: string,
     conditions?: { where?: any; getOnly?: string[]; skip: number; limit: number }
     ) => {
     const data = {
@@ -45,7 +47,8 @@ export const getRanjodhBirData = async (
         clientUserName,
         containerName,
         conditions,
-        applicationName
+        applicationName,
+        language
     };
     const response = await axios.post(`${connectionName}/${getDataBaseUrl}`, data);
     return response.data;

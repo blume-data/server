@@ -5,7 +5,7 @@ import {RANDOM_STRING} from "@ranjodhbirkaur/common";
 import {DataBaseModelsModel} from "../models/models";
 import {TasksModel} from "../models/tasks";
 import {eventEmitter, setWritable} from "../worker";
-import {NUMBER_OF_CONTAINERS, START_TASK} from "../utils/constants";
+import {NUMBER_OF_CONTAINERS, SPACE_APPLICATION_LANGUAGE, START_TASK} from "../utils/constants";
 import fs from 'fs';
 import es from 'event-stream';
 
@@ -23,8 +23,11 @@ interface MutateType {
 
 export class RanjodhbirModel extends RanjodhbirSchema {
 
-    constructor(name: string, clientUserName: string, containerName: string, applicationName: string) {
+    readonly language: string;
+
+    constructor(name: string, clientUserName: string, containerName: string, applicationName: string, language: string) {
         super(name, clientUserName, containerName, applicationName);
+        this.language = language;
     }
 
     private async addTask(params: MutateType) {
@@ -73,8 +76,10 @@ export class RanjodhbirModel extends RanjodhbirSchema {
     * */
     async storeData(item: object) {
         const id = `${RANDOM_STRING(10)}`;
-        const newData = new Data(id);
+        const newData = new Data(id, this.language);
         const data = Object.assign(item, newData);
+        console.log('store-data', data);
+
         await this.writeFile(JSON.stringify(data)+'\n', `${0}.txt`);
     }
 
@@ -85,6 +90,7 @@ export class RanjodhbirModel extends RanjodhbirSchema {
         let count = 0;
         let skipped = 0;
         const rootPath = this.getModelPath();
+        const language = this.language;
         let isCollectionCompleted = false;
 
         function pushData(item: any) {
@@ -92,6 +98,13 @@ export class RanjodhbirModel extends RanjodhbirSchema {
                 skipped++;
             }
             else {
+                // skip space application language property
+                let dataObject: any = {};
+                for(let propertyItem in item) {
+                    if(item.hasOwnProperty(propertyItem) && propertyItem !== SPACE_APPLICATION_LANGUAGE) {
+                        dataObject[propertyItem] = item[propertyItem];
+                    }
+                }
                 data.push(item);
                 count++;
                 if (count == limit && skip == skipped) {
@@ -130,7 +143,8 @@ export class RanjodhbirModel extends RanjodhbirSchema {
             if (content && typeof content === "string") {
                 try {
                     const item = JSON.parse(content);
-                    if (item) {
+                    // If the language matches
+                    if (item && item[SPACE_APPLICATION_LANGUAGE] === language) {
                         // If there is where condition
                         if (where && typeof where === 'object') {
                             whereCondition(item);

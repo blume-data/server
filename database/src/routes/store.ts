@@ -45,7 +45,6 @@ route.post(`${rootUrl}/${schemaUrl}`,
     async (req: Request, res: Response) => {
 
     const {modelName='', clientUserName='', containerName, applicationName} = req.body;
-    console.log('re', req.body)
     const db = new RanjodhbirModel(modelName, clientUserName, containerName, applicationName);
     await db.createSchema();
     res.status(okayStatus).send(true);
