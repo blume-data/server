@@ -1,12 +1,13 @@
 import axios from 'axios';
 import {addDataBaseUrl, dataBaseRootUrl, getDataBaseUrl, schemaDataBaseUrl} from "./urls";
 
-export const storeSchema = async (modelName: string,
-                                  clientUserName: string,
-                                  connectionName: string,
-                                  containerName: string,
-                                  applicationName: string
-                                  ) => {
+export const storeSchema = async (
+    modelName: string,
+    clientUserName: string,
+    connectionName: string,
+    containerName: string,
+    applicationName: string
+) => {
     const data = {
         modelName,
         clientUserName,
@@ -23,25 +24,28 @@ export const writeRanjodhBirData = async (
     connectionName: string,
     containerName: string,
     applicationName: string,
-    storeData: any) => {
+    storeData: any
+) => {
 
     const data = {modelName, clientUserName, containerName, data: storeData, applicationName};
     const response = await axios.post(`${connectionName}/${addDataBaseUrl}`, data);
     return response.data;
 };
 
-export const getRanjodhBirData = async (modelName: string,
-                                        clientUserName: string,
-                                        connectionName: string,
-                                        containerName: string,
-                                        applicationName: string,
-                                        conditions?: { where?: any; getOnly?: string[]; skip: number; limit: number }
-                                        ) => {
+export const getRanjodhBirData = async (
+    modelName: string,
+    clientUserName: string,
+    connectionName: string,
+    containerName: string,
+    applicationName: string,
+    conditions?: { where?: any; getOnly?: string[]; skip: number; limit: number }
+    ) => {
     const data = {
         modelName,
         clientUserName,
         containerName,
-        conditions
+        conditions,
+        applicationName
     };
     const response = await axios.post(`${connectionName}/${getDataBaseUrl}`, data);
     return response.data;

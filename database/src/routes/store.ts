@@ -1,13 +1,21 @@
 import express, {Response, Request, NextFunction} from "express";
 import {RanjodhbirModel} from "../ranjodhbirDb/model";
-import {errorStatus, FIELD, MESSAGE, okayStatus} from "@ranjodhbirkaur/common";
+import {APPLICATION_NAME, errorStatus, FIELD, MESSAGE, okayStatus} from "@ranjodhbirkaur/common";
 import {rootUrl} from "../utils/constants";
 import {addDataUrl, getDataUrl, schemaUrl} from "../utils/urls";
 
 const route = express.Router();
 
 function validateStoreRequest(req: Request, res: Response, next: NextFunction) {
-    const {modelName='', clientUserName=''} = req.body;
+    const {modelName='', clientUserName='', applicationName} = req.body;
+    if(!applicationName) {
+        return res.status(errorStatus).send({
+            errors: [{
+                [FIELD]: 'applicationName',
+                [MESSAGE]: 'applicationName is required'
+            }]
+        });
+    }
     if (!modelName) {
         return res.status(errorStatus).send({
             errors: [{
@@ -36,7 +44,8 @@ route.post(`${rootUrl}/${schemaUrl}`,
 
     async (req: Request, res: Response) => {
 
-    const {modelName='', clientUserName='', containerName, applicationName=''} = req.body;
+    const {modelName='', clientUserName='', containerName, applicationName} = req.body;
+    console.log('re', req.body)
     const db = new RanjodhbirModel(modelName, clientUserName, containerName, applicationName);
     await db.createSchema();
     res.status(okayStatus).send(true);
@@ -48,7 +57,7 @@ route.post(`${rootUrl}/${getDataUrl}`,
 
     async (req: Request, res: Response) => {
 
-    const {modelName='', clientUserName='', containerName, conditions={}, applicationName=''} = req.body;
+    const {modelName='', clientUserName='', containerName, conditions={}, applicationName} = req.body;
     const {skip=0, limit=10, where={}, getOnly={}} = conditions;
     const db = new RanjodhbirModel(modelName, clientUserName, containerName, applicationName);
     const data = await db.readData({skip, limit, where ,getOnly});
@@ -62,7 +71,7 @@ route.post(`${rootUrl}/${addDataUrl}`,
 
     async (req: Request, res: Response) => {
 
-    const {modelName='', data={}, clientUserName='', containerName, applicationName=''} = req.body;
+    const {modelName='', data={}, clientUserName='', containerName, applicationName} = req.body;
     const db = new RanjodhbirModel(modelName, clientUserName, containerName, applicationName);
     await db.mutateData({
         action: "post",

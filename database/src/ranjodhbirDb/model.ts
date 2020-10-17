@@ -33,6 +33,7 @@ export class RanjodhbirModel extends RanjodhbirSchema {
             clientUserName: this.clientUserName,
             modelName: this.name,
             containerName: this.containerName,
+            applicationName: this.applicationName,
             action,
             query: JSON.stringify(item)
         });

@@ -75,9 +75,10 @@ export async function getStoreRecord(req: Request, res: Response) {
 async function getCollection(req: Request) {
     const clientUserName  = req.params && req.params[CLIENT_USER_NAME];
     const collectionName = req.params && req.params.collectionName;
+    const applicationName = req.params && req.params[APPLICATION_NAME];
 
     return CollectionModel.findOne(
-        {clientUserName, name: collectionName},
+        {clientUserName, name: collectionName, applicationName},
         ['name', CLIENT_USER_NAME, 'connectionName', 'containerName', APPLICATION_NAME, 'rules']
         );
 }

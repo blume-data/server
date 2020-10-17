@@ -4,6 +4,7 @@ export interface TasksAttrs {
     modelName: string;
     clientUserName: string;
     containerName: string;
+    applicationName: string;
     action: 'put' | 'post' | 'delete';
     query: string;
 }
@@ -16,6 +17,7 @@ export interface TasksDoc extends mongoose.Document {
     modelName: string;
     clientUserName: string;
     containerName: string;
+    applicationName: string;
     action: 'put' | 'post' | 'delete';
     query: string;
     created_at: string;
@@ -40,6 +42,10 @@ const Tasks = new mongoose.Schema(
             required: true
         },
         clientUserName: {
+            type: String,
+            required: true
+        },
+        applicationName: {
             type: String,
             required: true
         },

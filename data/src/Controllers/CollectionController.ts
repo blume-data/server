@@ -14,7 +14,6 @@ export async function createCollectionSchema(req: Request, res: Response) {
 
     const clientUserName  = req.params && req.params.clientUserName;
     const applicationName  = req.params && req.params.applicationName;
-    const language = req.params && req.params.language;
     const env = req.params && req.params.env;
 
     const reqBody = req.body;
@@ -55,7 +54,7 @@ export async function createCollectionSchema(req: Request, res: Response) {
 
     // Check if there is not other collection with same name and user_id
     const alreadyExist = await CollectionModel.findOne({
-        clientUserName, name: reqBody.name, env
+        clientUserName, name: reqBody.name, env, applicationName
     }, 'id');
 
     if (alreadyExist) {
