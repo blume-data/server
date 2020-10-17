@@ -105,7 +105,7 @@ export class RanjodhbirModel extends RanjodhbirSchema {
                         dataObject[propertyItem] = item[propertyItem];
                     }
                 }
-                data.push(item);
+                data.push(dataObject);
                 count++;
                 if (count == limit && skip == skipped) {
                     isCollectionCompleted = true;
