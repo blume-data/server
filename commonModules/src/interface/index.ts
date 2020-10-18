@@ -11,9 +11,14 @@ export interface JwtPayloadType{
     [JWT_ID]: string;
 }
 
+export interface ApplicationNameType {
+    name: string;
+    languages: string[];
+}
+
 export interface PayloadResponseType {
     [CLIENT_USER_NAME]: string;
     [USER_NAME]: string;
     [clientType]: string;
-    [APPLICATION_NAMES]: string[];
+    [APPLICATION_NAMES]: ApplicationNameType[];
 }

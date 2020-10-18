@@ -207,7 +207,10 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
                 [CLIENT_USER_NAME]: userName,
                 [clientType]: type,
                 [USER_NAME]: userName,
-                [APPLICATION_NAMES]: ['']
+                [APPLICATION_NAMES]: [{
+                    name: '',
+                    languages: ['']
+                }],
             }
             const userJwt = generateJwt(payload, req);
             return sendJwtResponse(res, responseData, userJwt);

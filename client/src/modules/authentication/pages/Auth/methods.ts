@@ -4,7 +4,7 @@ import {
     APPLICATION_NAMES,
     APPLICATION_NAME,
     clientType,
-    CLIENT_USER_NAME
+    CLIENT_USER_NAME, EnglishLanguage
 } from "@ranjodhbirkaur/constants";
 import {
     LOCAL_STORAGE_ENV,
@@ -23,7 +23,10 @@ interface SaveAuthenticationType {
 
 export function saveAuthentication(response: SaveAuthenticationType) {
     if(response[APPLICATION_NAMES]) {
-        localStorage.setItem(APPLICATION_NAMES, JSON.stringify(response[APPLICATION_NAMES]) || JSON.stringify(['']));
+        localStorage.setItem(APPLICATION_NAMES, JSON.stringify(response[APPLICATION_NAMES]) || JSON.stringify([{
+            name: '',
+            languages: [EnglishLanguage]
+        }]));
     }
 
     if(response[clientType]) {

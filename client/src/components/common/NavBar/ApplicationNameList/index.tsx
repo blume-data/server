@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {MenuList} from "../MenuList";
-import {getItemFromLocalStorage} from "../../../../utils/tools";
-import {APPLICATION_NAME, APPLICATION_NAMES} from "@ranjodhbirkaur/constants";
+import {getApplicationNamesLocalStorage, getItemFromLocalStorage} from "../../../../utils/tools";
+import {APPLICATION_NAME} from "@ranjodhbirkaur/constants";
 import {dashboardApplicationNameUrl} from "../../../../utils/urls";
 import {RootState} from "../../../../rootReducer";
 import {connect, ConnectedProps} from "react-redux";
@@ -17,10 +17,7 @@ export const ApplicationNameListComponent = (props: PropsFromRedux) => {
     const history = useHistory();
 
     function updateApplicationNames() {
-        const s = getItemFromLocalStorage(APPLICATION_NAMES);
-        if(s) {
-            setApplicationNames(JSON.parse(s));
-        }
+        setApplicationNames(getApplicationNamesLocalStorage());
         const selectedApplicationName = getItemFromLocalStorage(LOCAL_STORAGE_SELECTED_APPLICATION_NAME);
         if(selectedApplicationName) {
             setApplicationName(selectedApplicationName);

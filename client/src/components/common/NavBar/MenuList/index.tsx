@@ -49,11 +49,11 @@ export const MenuList = (props: ApplicationNamesListProps) => {
                 onClose={onMenuClose}
             >
                 {
-                    menuItems && menuItems.map(menuItem => {
+                    menuItems && menuItems.map((menuItem, index) => {
                         return (
                             <MenuItem
                                 onClick={() => onSelect(menuItem)}
-                                key={menuItem}>
+                                key={index}>
                                 {menuItem}
                             </MenuItem>
                         );

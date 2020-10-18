@@ -1,4 +1,11 @@
-import {APPLICATION_NAMES, okayStatus, sendSingleError, USER_NAME} from '@ranjodhbirkaur/common';
+import {
+    APPLICATION_NAMES,
+    ApplicationNameType,
+    EnglishLanguage,
+    okayStatus,
+    sendSingleError,
+    USER_NAME
+} from '@ranjodhbirkaur/common';
 import {Request, Response} from 'express';
 import {ClientUserModel} from "../authMongoConnection";
 import {APPLICATION_NAME_ALREADY_EXIST} from "./Messages";
@@ -8,10 +15,18 @@ export async function createApplicationName(req: Request, res: Response) {
     const lowerCaseApplicationName = applicationName.toLowerCase().split(' ').join('-');
 
     if(req.currentUser && req.currentUser[APPLICATION_NAMES] && typeof req.currentUser[APPLICATION_NAMES]) {
-        const applicationNames = req.currentUser[APPLICATION_NAMES];
+        const applicationNames: ApplicationNameType[] = req.currentUser[APPLICATION_NAMES];
 
-        if (!applicationNames.includes(lowerCaseApplicationName)) {
-            applicationNames.push(lowerCaseApplicationName);
+
+        const exist = applicationNames.find((item) => {
+            return item.name === lowerCaseApplicationName
+        });
+
+        if (!exist) {
+            applicationNames.push({
+                name: lowerCaseApplicationName,
+                languages: [EnglishLanguage]
+            });
 
             await ClientUserModel.updateOne({
                 [USER_NAME]: req.currentUser[USER_NAME]

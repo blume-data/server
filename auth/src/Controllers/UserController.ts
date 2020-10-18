@@ -20,7 +20,7 @@ import {
     PASSWORD,
     EMAIL,
     APPLICATION_NAMES,
-    PayloadResponseType, JwtPayloadType
+    PayloadResponseType, JwtPayloadType, EnglishLanguage
 } from "@ranjodhbirkaur/common";
 import {ClientTempUser} from "../models/clientTempUser";
 import {Request, Response} from "express";
@@ -101,7 +101,10 @@ export const verifyEmailToken = async function (req: ReqValidateEmail, res: Resp
                 await newUser.save();
 
                 const response: PayloadResponseType = {
-                    [APPLICATION_NAMES]: [''],
+                    [APPLICATION_NAMES]: [{
+                        name: '',
+                        languages: ['']
+                    }],
                     [CLIENT_USER_NAME]: newUser[CLIENT_USER_NAME],
                     [USER_NAME]: newUser[USER_NAME],
                     [clientType]: freeUserType
@@ -116,7 +119,10 @@ export const verifyEmailToken = async function (req: ReqValidateEmail, res: Resp
                 return await sendValidateEmailResponse(req, payload, response, res);
             }
             else if(userType === clientUserType) {
-                const applicationNames = [EXAMPLE_APPLICATION_NAME];
+                const applicationNames = [{
+                    name: EXAMPLE_APPLICATION_NAME,
+                    languages: [EnglishLanguage]
+                }];
                 const newUser = ClientUser.build({
                     email: userExist[EMAIL],
                     jwtId,

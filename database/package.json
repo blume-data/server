@@ -27,7 +27,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@ranjodhbirkaur/common": "^1.0.95",
+    "@ranjodhbirkaur/common": "^1.0.96",
     "@ranjodhbirkaur/constants": "^1.0.74",
     "@types/cookie-session": "2.0.39",
     "@types/event-stream": "^3.3.34",

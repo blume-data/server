@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {Grid, Paper} from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import ModalDialog from "../../../../components/common/ModalDialog";
-import {getItemFromLocalStorage} from "../../../../utils/tools";
+import {getApplicationNamesLocalStorage, getItemFromLocalStorage} from "../../../../utils/tools";
 import {APPLICATION_NAME, APPLICATION_NAMES} from "@ranjodhbirkaur/constants";
 import {CreateApplicationName} from "./create-application-name";
 import {RootState} from "../../../../rootReducer";
@@ -23,10 +23,7 @@ const ApplicationNames = (props: PropsFromRedux) => {
     const history = useHistory();
 
     function updateApplicationNames() {
-        const s = getItemFromLocalStorage(APPLICATION_NAMES);
-        if(s) {
-            setApplicationNames(JSON.parse(s));
-        }
+        setApplicationNames(getApplicationNamesLocalStorage());
     }
 
     // fetch the data routes

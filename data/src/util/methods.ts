@@ -1,8 +1,8 @@
 import { randomBytes } from 'crypto';
-import { RuleType } from './interface';
+/*import { RuleType } from './interface';
 import mongoose from 'mongoose';
 import { DATE_TYPE, HTML_TYPE } from './constants';
-import { getConnection } from './connections';
+import { getConnection } from './connections';*/
 
 export const RANDOM_STRING = function (minSize=10) {
     return randomBytes(minSize).toString('hex')
@@ -12,12 +12,13 @@ export const RANDOM_COLLECTION_NAME = function (min=1, max=1010) {
     return Math.floor(Math.random() * (max - min + 1) + min);
 };
 
-interface CreateModelType {
+/*interface CreateModelType {
     rules: {name: string; type: string}[];
     connectionName: string;
     name: string;
-}
+}*/
 
+/*
 export function createModel(params: CreateModelType) {
     const {rules, name, connectionName} = params;
     const CollectionName = name.split(' ').join('_');
@@ -122,4 +123,4 @@ export function createModel(params: CreateModelType) {
 
         return dbConnection.model(CollectionName, schema);
     }
-}
+}*/
