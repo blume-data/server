@@ -72,6 +72,7 @@ export async function createCollectionSchema(req: Request, res: Response) {
         name: reqBody.name,
         env,
         connectionName,
+        description: reqBody.description,
         containerName,
         collectionType: (reqBody.collectionType ? reqBody.collectionType : DATA_COLLECTION)
     });

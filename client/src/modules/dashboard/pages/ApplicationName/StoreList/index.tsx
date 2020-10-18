@@ -45,6 +45,7 @@ export const StoreList = (props: StoreListProps) => {
 
     return (
         <Grid className={'application-name-store-list'}>
+            Collections
             <Grid container justify={"center"} className={'stores-list'} direction={"column"}>
                 {stores && stores.map((storeName, index) => {
                     const linkUrl = dashboardCollectionsUrl
