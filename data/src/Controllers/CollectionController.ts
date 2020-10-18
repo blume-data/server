@@ -1,7 +1,7 @@
 import {Request, Response} from 'express';
-import {BadRequestError, okayStatus} from "@ranjodhbirkaur/common";
+import {BadRequestError, ID, okayStatus} from "@ranjodhbirkaur/common";
 import {
-    DATA_COLLECTION, MAX_COLLECTION_LIMIT, STORE_CONNECTIONS, USER_COLLECTION
+    DATA_COLLECTION, MAX_COLLECTION_LIMIT, MODEL_LOGGER_NAME, STORE_CONNECTIONS, USER_COLLECTION
 } from "../util/constants";
 import _ from 'lodash';
 import {CollectionModel} from "../models/Collection";
@@ -72,12 +72,14 @@ export async function createCollectionSchema(req: Request, res: Response) {
         name: reqBody.name,
         env,
         connectionName,
+        updatedBy: req.currentUser[ID],
         description: reqBody.description,
         containerName,
         collectionType: (reqBody.collectionType ? reqBody.collectionType : DATA_COLLECTION)
     });
 
     await storeSchema(reqBody.name, clientUserName, connectionName, containerName, applicationName);
+    await storeSchema(`${reqBody.name}-${MODEL_LOGGER_NAME}`, clientUserName, connectionName, containerName, applicationName);
     await newCollection.save();
 
     res.status(okayStatus).send(newCollection);
@@ -96,7 +98,7 @@ export async function getCollectionNames(req: Request, res: Response) {
         applicationName,
         language,
         env
-    }, 'name');
+    }, ['name', 'description', 'updatedAt', 'updatedBy']);
     res.status(okayStatus).send(collections);
 }
 

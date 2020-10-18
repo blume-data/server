@@ -1,10 +1,18 @@
 import {Request, Response} from 'express';
 import {CollectionModel} from "../models/Collection";
-import {BadRequestError, okayStatus, errorStatus, CLIENT_USER_NAME, APPLICATION_NAME} from "@ranjodhbirkaur/common";
+import {
+    BadRequestError,
+    okayStatus,
+    errorStatus,
+    CLIENT_USER_NAME,
+    APPLICATION_NAME,
+    ID,
+    EnglishLanguage, clientType
+} from "@ranjodhbirkaur/common";
 
-import {PER_PAGE} from "../util/constants";
+import {MODEL_LOGGER_NAME, PER_PAGE} from "../util/constants";
 import {COLLECTION_NOT_FOUND, PARAM_SHOULD_BE_UNIQUE} from "./Messages";
-import {RuleType} from "../util/interface";
+import {ModelLoggerBodyType, RuleType} from "../util/interface";
 import {Model} from "mongoose";
 import moment from 'moment';
 import {getRanjodhBirData, writeRanjodhBirData} from "../util/databaseApi";
@@ -28,6 +36,24 @@ export async function createStoreRecord(req: Request, res: Response) {
             collection.applicationName,
             language,
             body);
+
+        const logBody: ModelLoggerBodyType = {
+            modelName: collection.name,
+            action: "create",
+            actor: req.currentUser[ID],
+            time: `${new Date()}`,
+            [clientType]: req.currentUser[clientType],
+        }
+
+        await writeRanjodhBirData(
+            `${collection.name}-${MODEL_LOGGER_NAME}`,
+            collection.clientUserName,
+            collection.connectionName,
+            collection.containerName,
+            collection.applicationName,
+            EnglishLanguage,
+            logBody
+        )
         res.status(okayStatus).send(response);
     }
     else {
@@ -42,6 +68,7 @@ export async function getStoreRecord(req: Request, res: Response) {
 
     // get collection
     const collection = await getCollection(req);
+    const collectionName = req.params && req.params.collectionName;
     const {limit=PER_PAGE} = req.query;
     let skip: number = (req.query && Number(req.query.skip)) || 0;
 
@@ -51,7 +78,7 @@ export async function getStoreRecord(req: Request, res: Response) {
         if (validateParams(req, res, rules)) {
             const {where, getOnly} = req.body;
             const response = await getRanjodhBirData(
-                collection.name,
+                collectionName,
                 collection.clientUserName,
                 collection.connectionName,
                 collection.containerName,
@@ -82,8 +109,10 @@ async function getCollection(req: Request) {
     const collectionName = req.params && req.params.collectionName;
     const applicationName = req.params && req.params[APPLICATION_NAME];
 
+    const name = collectionName.split(`-${MODEL_LOGGER_NAME}`)[0];
+
     return CollectionModel.findOne(
-        {clientUserName, name: collectionName, applicationName},
+        {clientUserName, name, applicationName},
         ['name', CLIENT_USER_NAME, 'connectionName', 'containerName', APPLICATION_NAME, 'rules']
         );
 }

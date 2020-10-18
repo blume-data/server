@@ -14,7 +14,9 @@ interface CollectionAttrs {
     isPublic: boolean;
     isEnabled?: boolean;
     metaData?: string;
-    created_at?: string;
+
+    updatedBy: string;
+    updatedAt?: string;
 }
 
 interface CollectionModel extends mongoose.Model<CollectionDoc> {
@@ -33,9 +35,11 @@ interface CollectionDoc extends mongoose.Document {
     collectionType?: string;
     description: string;
     isPublic: boolean;
-    isEnabled?: boolean;
+    isEnabled: boolean;
     metaData?: string;
-    created_at?: string;
+
+    updatedBy: string;
+    updatedAt: string;
 }
 
 const Collection = new mongoose.Schema(
@@ -87,7 +91,8 @@ const Collection = new mongoose.Schema(
         metaData : {
             type: String
         },
-        created_at : { type: Date, default: Date.now }
+        updatedBy : { type: String, default: '' },
+        updatedAt : { type: Date, default: Date.now },
     },
     {
         toJSON: {

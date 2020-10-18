@@ -28,3 +28,4 @@ export const COLLECTION_TYPES = [USER_COLLECTION, DATA_COLLECTION];
 export const MONGO_DB_DATA_CONNECTIONS_AVAILABLE = ['one','two'];
 
 export const AUTHORIZATION_TOKEN = 'authorization';
+export const MODEL_LOGGER_NAME = 'model-logs-schema-space-i-love-ranjodh-bir-kaur';

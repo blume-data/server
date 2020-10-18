@@ -78,7 +78,6 @@ export class RanjodhbirModel extends RanjodhbirSchema {
         const id = `${RANDOM_STRING(10)}`;
         const newData = new Data(id, this.language);
         const data = Object.assign(item, newData);
-        console.log('store-data', data);
 
         await this.writeFile(JSON.stringify(data)+'\n', `${0}.txt`);
     }

@@ -8,7 +8,11 @@ export interface RuleType {
     isPassword?: boolean;
 }
 
-export interface ErrorMessages {
-    field?: string;
-    message: string;
+
+export interface ModelLoggerBodyType {
+    modelName: string;
+    time: string;
+    action: 'create' | 'update',
+    actor: string;
+    clientType: string;
 }

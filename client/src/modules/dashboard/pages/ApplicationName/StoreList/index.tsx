@@ -41,6 +41,7 @@ export const StoreList = (props: StoreListProps) => {
 
     useEffect(() => {
         getCollectionNames();
+
     }, [applicationName, env, language, GetCollectionNamesUrl]);
 
     return (
