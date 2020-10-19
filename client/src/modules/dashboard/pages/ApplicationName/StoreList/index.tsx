@@ -6,6 +6,7 @@ import {Link} from "react-router-dom";
 import './store-list.scss';
 import {getItemFromLocalStorage} from "../../../../../utils/tools";
 import {doGetRequest} from "../../../../../utils/baseApi";
+import BasicTableMIUI from "../../../../../components/common/BasicTableMIUI";
 
 interface StoreListProps {
     env: string;
@@ -15,7 +16,7 @@ interface StoreListProps {
 }
 export const StoreList = (props: StoreListProps) => {
     const {applicationName, env, language, GetCollectionNamesUrl} = props;
-    const [stores, setStores] = useState<string[] | null>(null);
+    const [stores, setStores] = useState<any>(null);
 
     async function getCollectionNames() {
         if(GetCollectionNamesUrl) {
@@ -31,10 +32,7 @@ export const StoreList = (props: StoreListProps) => {
             const fullUrl = `${getBaseUrl()}${url}`;
             const response = await doGetRequest(fullUrl, null, true);
             if(response && Array.isArray(response)) {
-                const data = response.map((item: {name: string}) => {
-                    return item.name;
-                });
-                setStores(data);
+                setStores(response);
             }
         }
     }
@@ -44,22 +42,26 @@ export const StoreList = (props: StoreListProps) => {
 
     }, [applicationName, env, language, GetCollectionNamesUrl]);
 
+    const tableRows = [
+        {name: 'Description', value: 'description'},
+        {name: 'Updated by', value: 'updatedBy'},
+        {name: 'Name', value: 'name'},
+        {name: 'Updated At', value: 'updatedAt'},
+    ]
+
+
     return (
         <Grid className={'application-name-store-list'}>
             Collections
             <Grid container justify={"center"} className={'stores-list'} direction={"column"}>
-                {stores && stores.map((storeName, index) => {
-                    const linkUrl = dashboardCollectionsUrl
-                        .replace(`:${APPLICATION_NAME}`, applicationName)
-                        .replace(':store-name', storeName);
-                    return (
-                        <Link key={index} to={linkUrl}>
-                            <Grid className="stores-list-item" item >
-                                {storeName}
-                            </Grid>
-                        </Link>
-                    );
-                })}
+
+                {
+                    stores ? <BasicTableMIUI
+                        rows={stores}
+                        tableRows={tableRows}
+                        tableName={'stores'}
+                    /> : null
+                }
             </Grid>
         </Grid>
     );
