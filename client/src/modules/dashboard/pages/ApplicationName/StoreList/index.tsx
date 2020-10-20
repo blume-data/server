@@ -7,6 +7,7 @@ import './store-list.scss';
 import {getItemFromLocalStorage} from "../../../../../utils/tools";
 import {doGetRequest} from "../../../../../utils/baseApi";
 import BasicTableMIUI from "../../../../../components/common/BasicTableMIUI";
+import moment from "moment";
 
 interface StoreListProps {
     env: string;
@@ -32,7 +33,15 @@ export const StoreList = (props: StoreListProps) => {
             const fullUrl = `${getBaseUrl()}${url}`;
             const response = await doGetRequest(fullUrl, null, true);
             if(response && Array.isArray(response)) {
-                setStores(response);
+                setStores(response.map(item => {
+                    const updatedAt = moment(item.updatedAt).fromNow();
+                    const updatedBy = item.updatedBy.split('-')[1];
+                    return {
+                        ...item,
+                        updatedAt,
+                        updatedBy
+                    }
+                }));
             }
         }
     }
@@ -52,15 +61,15 @@ export const StoreList = (props: StoreListProps) => {
 
     return (
         <Grid className={'application-name-store-list'}>
-            Collections
+
             <Grid container justify={"center"} className={'stores-list'} direction={"column"}>
 
                 {
-                    stores ? <BasicTableMIUI
+                    stores && stores.length ? <BasicTableMIUI
                         rows={stores}
                         tableRows={tableRows}
                         tableName={'stores'}
-                    /> : null
+                    /> : <p>No stores</p>
                 }
             </Grid>
         </Grid>

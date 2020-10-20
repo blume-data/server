@@ -7,6 +7,7 @@ import './application-name.scss';
 import {setApplicationName} from "../../../authentication/pages/Auth/actions";
 import {StoreList} from "./StoreList";
 import {AccordianCommon} from "../../../../components/common/AccordianCommon";
+import Accordion from "@material-ui/core/Accordion";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 const ApplicationName = (props: PropsFromRedux) => {

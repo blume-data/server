@@ -34,8 +34,6 @@ export default function BasicTableMIUI(props: BasicTableMIUIProps) {
         return (
             <TableRow key={key}>
                 {tableRows.map((tableRow, index) => {
-
-                    console.log('table row', tableRow);
                     return (
                         <TableCell component={index === 0 ? "th" : undefined} scope={index === 0 ? "row" : undefined}  align={index === 0 ? undefined : "right"}>
                             {row[tableRow.value]}
@@ -61,7 +59,7 @@ export default function BasicTableMIUI(props: BasicTableMIUIProps) {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {rows.map(renderRow(row, index))}
+                    {rows.map(renderRow)}
                 </TableBody>
             </Table>
         </TableContainer>

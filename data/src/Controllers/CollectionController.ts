@@ -1,5 +1,5 @@
 import {Request, Response} from 'express';
-import {BadRequestError, ID, okayStatus} from "@ranjodhbirkaur/common";
+import {BadRequestError, ID, okayStatus, USER_NAME} from "@ranjodhbirkaur/common";
 import {
     DATA_COLLECTION, MAX_COLLECTION_LIMIT, MODEL_LOGGER_NAME, STORE_CONNECTIONS, USER_COLLECTION
 } from "../util/constants";
@@ -72,7 +72,7 @@ export async function createCollectionSchema(req: Request, res: Response) {
         name: reqBody.name,
         env,
         connectionName,
-        updatedBy: req.currentUser[ID],
+        updatedBy: `${req.currentUser[ID]}-${req.currentUser[USER_NAME]}`,
         description: reqBody.description,
         containerName,
         collectionType: (reqBody.collectionType ? reqBody.collectionType : DATA_COLLECTION)
