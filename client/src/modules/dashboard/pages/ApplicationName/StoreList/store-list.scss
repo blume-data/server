@@ -1,6 +1,15 @@
 @import "src/assets/style/index";
 
-.application-name-store-list {
+.store-list-container {
   width: 100%;
+
+  .filter-section {
+    padding: 10px;
+    .add-store-button {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+  }
 
 }

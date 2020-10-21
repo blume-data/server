@@ -8,6 +8,10 @@ import {getItemFromLocalStorage} from "../../../../../utils/tools";
 import {doGetRequest} from "../../../../../utils/baseApi";
 import BasicTableMIUI from "../../../../../components/common/BasicTableMIUI";
 import moment from "moment";
+import TextField from "@material-ui/core/TextField";
+import Button from "@material-ui/core/Button";
+import ModalDialog from "../../../../../components/common/ModalDialog";
+import {CreateStore} from "./create-store";
 
 interface StoreListProps {
     env: string;
@@ -18,6 +22,7 @@ interface StoreListProps {
 export const StoreList = (props: StoreListProps) => {
     const {applicationName, env, language, GetCollectionNamesUrl} = props;
     const [stores, setStores] = useState<any>(null);
+    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
     async function getCollectionNames() {
         if(GetCollectionNamesUrl) {
@@ -58,9 +63,28 @@ export const StoreList = (props: StoreListProps) => {
         {name: 'Updated At', value: 'updatedAt'},
     ]
 
+    function closeModal() {
+        setIsModalOpen(false);
+    }
+
 
     return (
-        <Grid className={'application-name-store-list'}>
+        <Grid className={'store-list-container'}>
+
+            <Grid className={'filter-section'} container justify={"space-between"}>
+                <Grid item>
+                    <TextField id="outlined-basic" label="Outlined" />
+                </Grid>
+                <Grid item className={'add-store-button'}>
+                    <Button
+                        onClick={() => setIsModalOpen(true)}
+                        variant="contained"
+                        color={'primary'}>
+                        Add Store
+                    </Button>
+                </Grid>
+
+            </Grid>
 
             <Grid container justify={"center"} className={'stores-list'} direction={"column"}>
 
@@ -72,6 +96,14 @@ export const StoreList = (props: StoreListProps) => {
                     /> : <p>No stores</p>
                 }
             </Grid>
+
+            <ModalDialog
+                isOpen={isModalOpen}
+                title={'Create Store'}
+                handleClose={closeModal}>
+                <CreateStore />
+            </ModalDialog>
+
         </Grid>
     );
 };
