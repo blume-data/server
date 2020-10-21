@@ -10,7 +10,7 @@ import {Alert} from "../Toast";
 import {PLEASE_PROVIDE_VALID_VALUES} from "../../../modules/authentication/pages/Auth/constants";
 
 interface FormState {
-    name: string;
+    label: string;
     value: string;
     isTouched: boolean;
     helperText: string;
@@ -41,11 +41,11 @@ export const Form = (props: FormType) => {
         let state: FormState[];
         if (action === SET_VALUE_ACTION) {
             state = formState.map((item) => {
-                if (item.name === field) {
+                if (item.label === field) {
                     return {
                         ...item,
                         value,
-                        helperText: (!value) ? setErrorMessage(field) : '',
+                        helperText: (!value) ? setErrorMessage(item.label) : '',
                     }
                 }
                 return item;
@@ -54,10 +54,10 @@ export const Form = (props: FormType) => {
         }
         if (action === SET_IS_TOUCHED_ACTION) {
             state = formState.map((item) => {
-                if (item.name === field) {
+                if (item.label === field) {
                     return {
                         ...item,
-                        helperText: !item.value ? setErrorMessage(item.name) : '',
+                        helperText: !item.value ? setErrorMessage(item.label) : '',
                         isTouched: true
                     }
                 }
@@ -70,7 +70,7 @@ export const Form = (props: FormType) => {
     useEffect(() => {
         const state = fields.map(field => {
             return {
-                name: field.name,
+                label: field.label,
                 [`value`]: field.value,
                 [`isTouched`]: !!field.helperText,
                 [`helperText`]: field.helperText || ''
@@ -79,24 +79,24 @@ export const Form = (props: FormType) => {
         setFormState(state);
     }, [fields]);
 
-    function getValue(name: string) {
-        const value = formState.find(item => item.name === name);
+    function getValue(label: string) {
+        const value = formState.find(item => item.label === label);
         if (value) {
             return value.value;
         }
         return '';
     }
 
-    function hasError(name: string) {
-        const value = formState.find(item => item.name === name);
+    function hasError(label: string) {
+        const value = formState.find(item => item.label === label);
         if (value) {
             return !!(value.helperText)
         }
         return false;
     }
 
-    function getHelperText(name: string) {
-        const value = formState.find(item => item.name === name);
+    function getHelperText(label: string) {
+        const value = formState.find(item => item.label === label);
         if (value) {
             return value.helperText
         }
@@ -119,24 +119,24 @@ export const Form = (props: FormType) => {
                     type={type}
                     key={index}
                     name={name}
-                    error={hasError(name)}
+                    error={hasError(label)}
                     required={required}
                     placeholder={placeholder}
-                    helperText={getHelperText(name)}
-                    onChange={(e) => changeValue(e, name, SET_VALUE_ACTION)}
-                    onBlur={(e) => changeValue(e, name, SET_IS_TOUCHED_ACTION)}
+                    helperText={getHelperText(label)}
+                    onChange={(e) => changeValue(e, label, SET_VALUE_ACTION)}
+                    onBlur={(e) => changeValue(e, label, SET_IS_TOUCHED_ACTION)}
                     label={label}
                     id={id}
-                    value={getValue(name)}
-                    className={'sddsfdsf'} />
+                    value={getValue(label)}
+                    className={className} />
             );
         }
         if(inputType === DROPDOWN) {
             return (
                 <DropDown
-                    onBlur={(e) => changeValue(e, name, SET_IS_TOUCHED_ACTION)}
+                    onBlur={(e) => changeValue(e, label, SET_IS_TOUCHED_ACTION)}
                     value={getValue(name)} options={options && options.length ? options : []}
-                    onChange={(e) => changeValue(e, name, SET_VALUE_ACTION)}
+                    onChange={(e) => changeValue(e, label, SET_VALUE_ACTION)}
                     placeholder={placeholder} required={required} index={index} name={name}
                     label={label} error={hasError(name)} helperText={getHelperText(name)}
                     key={index} className={className} />
@@ -152,12 +152,12 @@ export const Form = (props: FormType) => {
                     required={required}
                     placeholder={placeholder}
                     helperText={getHelperText(name)}
-                    onBlur={(e) => changeValue(e, name, SET_IS_TOUCHED_ACTION)}
-                    onChange={(e) => changeValue(e, name, SET_VALUE_ACTION)}
+                    onBlur={(e) => changeValue(e, label, SET_IS_TOUCHED_ACTION)}
+                    onChange={(e) => changeValue(e, label, SET_VALUE_ACTION)}
                     label={label}
                     id={id}
                     value={getValue(name)}
-                    className={'text-asdfrea-form-control'}  />
+                    className={className}  />
             );
         }
     }
@@ -165,7 +165,7 @@ export const Form = (props: FormType) => {
     async function onClickSubmit() {
         let isValid = true;
         formState.forEach(item => {
-            const formItem = fields.find(field => field.name === item.name);
+            const formItem = fields.find(field => field.name === item.label);
             if (formItem && formItem.required && !item.value) {
                 isValid = false
             }
@@ -174,10 +174,13 @@ export const Form = (props: FormType) => {
         if(isValid) {
             const values: {name: string; value: string}[] = [];
             formState.forEach(item => {
-                values.push({
-                    name: item.name,
-                    value: item.value
-                });
+                const exist = fields.find(field => field.label === item.label);
+                if(exist) {
+                    values.push({
+                        name: exist.name,
+                        value: item.value
+                    });
+                }
             });
             const res = await onSubmit(values);
             if (typeof res === 'string') {
@@ -196,12 +199,12 @@ export const Form = (props: FormType) => {
         else {
             let newFormState: FormState[] = [];
             formState.forEach(item => {
-                const formItem = fields.find(field => field.name === item.name);
+                const formItem = fields.find(field => field.name === item.label);
                 if (formItem && formItem.required && !item.value) {
                     newFormState.push({
                         ...item,
                         isTouched: true,
-                        helperText: setErrorMessage(item.name)
+                        helperText: setErrorMessage(item.label)
                     });
                 }
                 else {
@@ -216,7 +219,7 @@ export const Form = (props: FormType) => {
         const values: FormState[] = [];
         formState.forEach(item => {
             if (errors && errors.length) {
-                const error = errors.find(errorItem => errorItem[FIELD] === item.name);
+                const error = errors.find(errorItem => errorItem[FIELD] === item.label);
                 if (error) {
                     values.push({
                         ...item,

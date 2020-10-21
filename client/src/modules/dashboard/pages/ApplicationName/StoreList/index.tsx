@@ -12,6 +12,7 @@ import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import ModalDialog from "../../../../../components/common/ModalDialog";
 import {CreateStore} from "./create-store";
+import Paper from "@material-ui/core/Paper";
 
 interface StoreListProps {
     env: string;
@@ -71,20 +72,22 @@ export const StoreList = (props: StoreListProps) => {
     return (
         <Grid className={'store-list-container'}>
 
-            <Grid className={'filter-section'} container justify={"space-between"}>
-                <Grid item>
-                    <TextField id="outlined-basic" label="Outlined" />
-                </Grid>
-                <Grid item className={'add-store-button'}>
-                    <Button
-                        onClick={() => setIsModalOpen(true)}
-                        variant="contained"
-                        color={'primary'}>
-                        Add Store
-                    </Button>
-                </Grid>
+            <Paper elevation={2}>
+                <Grid className={'filter-section'} container justify={"space-between"}>
+                    <Grid item>
+                        <TextField id="filter-stores" label="Filter" />
+                    </Grid>
+                    <Grid item className={'add-store-button'}>
+                        <Button
+                            onClick={() => setIsModalOpen(true)}
+                            variant="contained"
+                            color={'primary'}>
+                            Add Store
+                        </Button>
+                    </Grid>
 
-            </Grid>
+                </Grid>
+            </Paper>
 
             <Grid container justify={"center"} className={'stores-list'} direction={"column"}>
 

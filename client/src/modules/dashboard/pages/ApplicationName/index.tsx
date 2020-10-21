@@ -25,7 +25,7 @@ const ApplicationName = (props: PropsFromRedux) => {
         <Grid className={'store-page-container'}>
             <Paper elevation={3}>
                 <Grid className={'accordion-list'}>
-                    <AccordianCommon name={'stores'}>
+                    <AccordianCommon name={'Content models'}>
                         <StoreList
                             env={env}
                             language={language}

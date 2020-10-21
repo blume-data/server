@@ -12,6 +12,7 @@ interface CollectionAttrs {
     containerName: string;
     collectionType?: string;
     description: string;
+    displayName: string;
     isPublic: boolean;
     isEnabled?: boolean;
     metaData?: string;
@@ -35,6 +36,7 @@ interface CollectionDoc extends mongoose.Document {
     containerName: string;
     collectionType?: string;
     description: string;
+    displayName: string;
     isPublic: boolean;
     isEnabled: boolean;
     metaData?: string;
@@ -75,7 +77,11 @@ const Collection = new mongoose.Schema(
         },
         description: {
             type: String,
-            default: ''
+            required: true
+        },
+        displayName: {
+            type: String,
+            required: true
         },
         collectionType: {
             type: String,

@@ -6,6 +6,7 @@ import MuiDialogContent from '@material-ui/core/DialogContent';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
+import './style.scss';
 
 const styles = (theme: Theme) => createStyles({
         root: {
@@ -58,7 +59,7 @@ export default function ModalDialog(props: ModalDialogType) {
     const {isOpen, children, handleClose, title} = props;
 
     return (
-        <Dialog onClose={handleClose} aria-labelledby="dialog-title" open={isOpen}>
+        <Dialog className={'dialog-modal-container'} onClose={handleClose} aria-labelledby="dialog-title" open={isOpen}>
             <DialogTitle id="customized-dialog-title" onClose={handleClose}>
                 {title}
             </DialogTitle>

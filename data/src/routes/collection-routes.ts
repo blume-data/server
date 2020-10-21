@@ -24,6 +24,10 @@ router.post(CollectionUrl, [
             .trim()
             .isLength(stringLimitOptions)
             .withMessage(stringLimitOptionErrorMessage('name')),
+        body('displayName')
+            .trim()
+            .isLength(stringLimitOptions)
+            .withMessage(stringLimitOptionErrorMessage('displayName')),
         body('description')
             .trim()
             .isLength({ min: 1, max: 100 })

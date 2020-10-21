@@ -70,6 +70,7 @@ export async function createCollectionSchema(req: Request, res: Response) {
         applicationName,
         rules: JSON.stringify(reqBody.rules),
         name: reqBody.name,
+        displayName: reqBody.displayName,
         env,
         connectionName,
         updatedBy: `${req.currentUser[ID]}-${req.currentUser[USER_NAME]}`,
