@@ -1,0 +1,36 @@
+@import "src/assets/style/index";
+
+.create-content-model {
+  .fields-container {
+    .numbers {
+      display: flex;
+    }
+    .field-item {
+      button {
+        margin: 0 30px;
+        width: 125px;
+        span {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+        }
+        padding: 10px;
+        svg {
+          margin: 0 auto;
+          padding: 5px;
+        }
+        h2 {
+          text-align: center;
+          padding: 5px;
+          font-weight: 700;
+          font-size: 14px;
+        }
+        p{
+          text-transform: lowercase;
+          padding: 5px;
+          font-size: 12px;
+        }
+      }
+    }
+  }
+}
