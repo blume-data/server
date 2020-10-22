@@ -1,8 +1,13 @@
-import React, {Fragment} from "react";
+import React, {Fragment, useState} from "react";
 import {Grid} from "@material-ui/core";
 import {Form} from "../../../../../../components/common/Form";
 import {ConfigField, TEXT} from "../../../../../../components/common/Form/interface";
-import {APPLICATION_NAME, ErrorMessagesType} from "@ranjodhbirkaur/constants";
+import {
+    APPLICATION_NAME, BOOLEAN_FIElD_TYPE, DATE_FIElD_TYPE, DECIMAL_FIELD_TYPE,
+    ErrorMessagesType, INTEGER_FIElD_TYPE, JSON_FIELD_TYPE, LOCATION_FIELD_TYPE,
+    LONG_STRING_FIELD_TYPE, MEDIA_FIELD_TYPE, REFERENCE_FIELD_TYPE,
+    SHORT_STRING_FIElD_TYPE
+} from "@ranjodhbirkaur/constants";
 import TextFieldsIcon from '@material-ui/icons/TextFields';
 import './style.scss';
 import Button from "@material-ui/core/Button";
@@ -17,6 +22,11 @@ import PermMediaIcon from '@material-ui/icons/PermMedia';
 import LinkIcon from '@material-ui/icons/Link';
 
 export const CreateStore = () => {
+
+    const [addingField, setAddingField] = useState<boolean>(false);
+    const [fieldName, setFieldName] = useState<string>('');
+    const [isRequired, setRequired] = useState<boolean>(false);
+    const [fieldType, setFieldType] = useState<string>('');
 
     const fields: ConfigField[] = [
         {
@@ -60,10 +70,10 @@ export const CreateStore = () => {
         })
     }
 
-    function fieldItem(name: string, description: string, Icon: JSX.Element) {
+    function fieldItem(name: string, description: string, Icon: JSX.Element, value: string) {
         return (
-            <Grid className={'field-item'}>
-                <Button>
+            <Grid className={'field-item'} title={description}>
+                <Button onClick={() => setFieldType(value)}>
                     {Icon}
                     <h2>{name}</h2>
                     <p>{description}</p>
@@ -72,27 +82,53 @@ export const CreateStore = () => {
         );
     }
 
+
+
     return (
         <Grid>
             <Grid className="create-content-model">
 
                 <Form className={'create-content-model-form'} fields={fields} onSubmit={onCreateContentModel} />
 
-                <Grid container justify={"center"} className="fields-container">
-                    {fieldItem('Formatted Text', 'customised text with links and media', <TextFieldsIcon />)}
-                    {fieldItem('Text', 'names, paragraphs, title', <TextFieldsIcon />)}
-                    {fieldItem('Number', 'numbers like age, count, quantity', <Grid className={'numbers'}>
-                        <Looks3Icon />
-                        <Looks4Icon />
-                        <Looks5Icon />
-                    </Grid> )}
-                    {fieldItem('Date and time', 'time, date, days, events', <DateRangeIcon />)}
-                    {fieldItem('Location', 'coordinates', <LocationOnIcon />)}
-                    {fieldItem('Boolean', 'true or false', <ToggleOffIcon />)}
-                    {fieldItem('Json', 'json data', <CodeIcon />)}
-                    {fieldItem('Media', 'videos, photos, files', <PermMediaIcon />)}
-                    {fieldItem('Reference', 'For example a comment can refer to authors', <LinkIcon />)}
-                </Grid>
+                {
+                    addingField
+                    ? <Grid container justify={"center"} className="fields-container">
+                            {fieldItem(
+                                'Formatted Text',
+                                'customised text with links and media',
+                                <TextFieldsIcon />,
+                                LONG_STRING_FIELD_TYPE
+                                )}
+                            {fieldItem(
+                                'Text',
+                                'names, paragraphs, title',
+                                <TextFieldsIcon />,
+                                SHORT_STRING_FIElD_TYPE
+                                )}
+                            {fieldItem('Number', 'numbers like age, count, quantity', <Grid className={'numbers'}>
+                                <Looks3Icon />
+                                <Looks4Icon />
+                                <Looks5Icon />
+                            </Grid>, INTEGER_FIElD_TYPE )}
+                            {fieldItem('Decimal', 'decimals like quantity, currency', <Grid className={'numbers'}>
+                                <Looks3Icon />
+                                <Looks4Icon />
+                                <Looks5Icon />
+                            </Grid>, DECIMAL_FIELD_TYPE )}
+                            {fieldItem('Date and time', 'time, date, days, events', <DateRangeIcon />, DATE_FIElD_TYPE)}
+                            {fieldItem('Location', 'coordinates', <LocationOnIcon />, LOCATION_FIELD_TYPE)}
+                            {fieldItem('Boolean', 'true or false', <ToggleOffIcon />, BOOLEAN_FIElD_TYPE)}
+                            {fieldItem('Json', 'json data', <CodeIcon />, JSON_FIELD_TYPE)}
+                            {fieldItem('Media', 'videos, photos, files', <PermMediaIcon />, MEDIA_FIELD_TYPE)}
+                            {fieldItem('Reference', 'For example a comment can refer to authors', <LinkIcon />, REFERENCE_FIELD_TYPE)}
+                        </Grid>
+                    : <Button
+                        onClick={() => setAddingField(true)}
+                            color={"primary"}
+                            variant={"contained"}>
+                        Add Fields
+                      </Button>
+                }
 
             </Grid>
         </Grid>

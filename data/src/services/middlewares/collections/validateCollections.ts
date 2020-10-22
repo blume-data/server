@@ -84,7 +84,7 @@ export async function validateCollections(req: Request, res: Response, next: Nex
 
             switch (rule.type) {
                 case SHORT_STRING_FIElD_TYPE: {
-                    
+
                 }
             }
 
