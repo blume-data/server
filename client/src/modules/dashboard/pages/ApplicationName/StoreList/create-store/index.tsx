@@ -20,6 +20,8 @@ import ToggleOffIcon from '@material-ui/icons/ToggleOff';
 import CodeIcon from '@material-ui/icons/Code';
 import PermMediaIcon from '@material-ui/icons/PermMedia';
 import LinkIcon from '@material-ui/icons/Link';
+import Paper from "@material-ui/core/Paper";
+import EditIcon from '@material-ui/icons/Edit';
 
 export const CreateStore = () => {
 
@@ -27,6 +29,15 @@ export const CreateStore = () => {
     const [fieldName, setFieldName] = useState<string>('');
     const [isRequired, setRequired] = useState<boolean>(false);
     const [fieldType, setFieldType] = useState<string>('');
+    const [hideNames, setHideNames] = useState<boolean>(false);
+
+    const [contentModelName, setContentModelName] = useState<string>('');
+    const [contentModelDescription, setContentModelDescription] = useState<string>('');
+    const [contentModelDisplayName, setContentModelDisplayName] = useState<string>('');
+
+    const DISPLAY_NAME = 'displayName';
+    const NAME = 'name';
+    const DESCRIPTION = 'description';
 
     const fields: ConfigField[] = [
         {
@@ -35,27 +46,27 @@ export const CreateStore = () => {
             value: '',
             className: 'create-content-model-name-text-field',
             type: 'text',
-            name: 'displayName',
+            name: DISPLAY_NAME,
             label: 'Display Name',
             inputType: TEXT,
         },
         {
-            required: true,
+            required: false,
             placeholder: 'Name',
             value: '',
             className: 'create-content-model-display-name-text-field',
             type: 'text',
-            name: 'name',
+            name: NAME,
             label: 'Name',
             inputType: TEXT,
         },
         {
-            required: true,
+            required: false,
             placeholder: 'Description',
             value: '',
             className: 'create-content-model-description-text-field',
             type: 'text',
-            name: 'description',
+            name: DESCRIPTION,
             label: 'Description',
             inputType: TEXT,
         },
@@ -66,8 +77,27 @@ export const CreateStore = () => {
         console.log('value', values);
 
         return new Promise(async (resolve, reject) => {
+
+            values.forEach((value: any) => {
+                if(value.name === NAME) {
+                    setContentModelName(value.value);
+                }
+                else if(value.name === DISPLAY_NAME) {
+                    setContentModelDisplayName(value.value);
+                }
+                else if(value.name === DESCRIPTION) {
+                    setContentModelDescription(value.value);
+                }
+            });
+            setHideNames(true);
+            setAddingField(true);
             return resolve('')
         })
+    }
+
+    function onClickAddFields() {
+        setAddingField(true);
+        setHideNames(true);
     }
 
     function fieldItem(name: string, description: string, Icon: JSX.Element, value: string) {
@@ -82,13 +112,44 @@ export const CreateStore = () => {
         );
     }
 
+    function renderNameSection() {
+        return (
+            <Paper>
+                <Grid container justify={"flex-start"} direction={"row"} className="name-section">
+                    <Grid item className={'name-section-item'}>
+                        <p>Name: </p>
+                        <h2>{contentModelName}</h2>
+                    </Grid>
+                    <Grid item className={'name-section-item'}>
+                        <p>Description: </p>
+                        <h2>{contentModelDescription}</h2>
+                    </Grid>
+                    <Grid item className={'name-section-item'}>
+                        <p>Display name:</p>
+                        <h2>{contentModelDisplayName}</h2>
+                    </Grid>
+                    <Grid item className={'name-section-item edit-button'}>
+                        <Button title={'edit content model'}>
+                            <EditIcon /> Edit
+                        </Button>
+                    </Grid>
+                </Grid>
+            </Paper>
+        )
+    }
+
 
 
     return (
         <Grid>
             <Grid className="create-content-model">
 
-                <Form className={'create-content-model-form'} fields={fields} onSubmit={onCreateContentModel} />
+                {
+                    hideNames
+                        ? renderNameSection()
+                        : <Form className={'create-content-model-form'} fields={fields} onSubmit={onCreateContentModel} />
+
+                }
 
                 {
                     addingField
@@ -123,7 +184,7 @@ export const CreateStore = () => {
                             {fieldItem('Reference', 'For example a comment can refer to authors', <LinkIcon />, REFERENCE_FIELD_TYPE)}
                         </Grid>
                     : <Button
-                        onClick={() => setAddingField(true)}
+                        onClick={onClickAddFields}
                             color={"primary"}
                             variant={"contained"}>
                         Add Fields
