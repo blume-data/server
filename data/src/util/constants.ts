@@ -6,10 +6,6 @@ export const rootUrl = `${serviceName}${ENV}`;
 
 export const AUTH_TOKEN = 'AUTH_TOKEN';
 
-export const DATE_TYPE = 'date';
-export const HTML_TYPE = 'html';
-export const SUPPORTED_DATA_TYPES = ['string', 'boolean', 'number', 'date', 'html'];
-
 export const MAX_USER_LIMIT = 1000;
 export const MAX_COLLECTION_LIMIT = 1000;
 

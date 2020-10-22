@@ -1,8 +1,7 @@
 import {NextFunction, Request, Response} from "express";
 import {RuleType} from "../../../util/interface";
-import {COLLECTION_TYPES, SUPPORTED_DATA_TYPES} from "../../../util/constants";
+import {COLLECTION_TYPES} from "../../../util/constants";
 import {
-    DEFAULT_VALUE_SHOULD_BE_OF_SPECIFIED_TYPE,
     EMAIL_PROPERTY_IN_RULES_SHOULD_BE_STRING, INVALID_RULES_MESSAGE,
     IS_EMAIL_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN,
     IS_PASSWORD_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN,
@@ -11,6 +10,7 @@ import {
     UNIQUE_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN
 } from "../../../Controllers/Messages";
 import {errorStatus} from "@ranjodhbirkaur/common";
+import {SHORT_STRING_FIElD_TYPE, SUPPORTED_FIELDS_TYPE} from "@ranjodhbirkaur/constants";
 
 export async function validateCollections(req: Request, res: Response, next: NextFunction) {
 
@@ -56,7 +56,8 @@ export async function validateCollections(req: Request, res: Response, next: Nex
                     field: 'rules'
                 });
             }
-            else if(rule.isEmail && typeof rule.isEmail === 'boolean' && rule.type !== 'string') {
+            
+            else if(rule.isEmail && typeof rule.isEmail === 'boolean' && rule.type !== SHORT_STRING_FIElD_TYPE) {
                 isValidBody = false;
                 inValidMessage.push({
                     message: `${rule.name}: ${EMAIL_PROPERTY_IN_RULES_SHOULD_BE_STRING}`,
@@ -72,7 +73,7 @@ export async function validateCollections(req: Request, res: Response, next: Nex
                     field: 'rules'
                 });
             }
-            else if(rule.isPassword && typeof rule.isPassword === 'boolean' && rule.type !== 'string') {
+            else if(rule.isPassword && typeof rule.isPassword === 'boolean' && rule.type !== SHORT_STRING_FIElD_TYPE) {
                 isValidBody = false;
                 inValidMessage.push({
                     message: `${rule.name}: ${PASSWORD_PROPERTY_IN_RULES_SHOULD_BE_STRING}`,
@@ -80,17 +81,19 @@ export async function validateCollections(req: Request, res: Response, next: Nex
                 })
             }
 
-            // check default property
-            if (rule.default && typeof rule.default !== rule.type) {
-                isValidBody = false;
-                inValidMessage.push({
-                    message: `${rule.name}: ${DEFAULT_VALUE_SHOULD_BE_OF_SPECIFIED_TYPE}${rule.type}`,
-                    field: 'rules'
-                });
+
+            switch (rule.type) {
+                case SHORT_STRING_FIElD_TYPE: {
+                    
+                }
             }
 
+
+
+
+
             // Validate rule type
-            if (typeof rule.type === 'string' && SUPPORTED_DATA_TYPES.includes(rule.type)) {
+            if (SUPPORTED_FIELDS_TYPE.includes(rule.type)) {
                 // remove all the spaces from name
                 rule.name = rule.name.split(' ').join('_');
             }

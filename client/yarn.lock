@@ -1495,10 +1495,10 @@
   dependencies:
     mkdirp "^1.0.4"
 
-"@ranjodhbirkaur/constants@^1.0.83":
-  version "1.0.83"
-  resolved "https://registry.yarnpkg.com/@ranjodhbirkaur/constants/-/constants-1.0.83.tgz#307a42599cc8eddf37c49902c6b84bd31e93b859"
-  integrity sha512-0C4KDT1w3AUupUkHLBmqmP5QFnTigvepnsGGWfZVT6grwc1qhWWQ85iHKtI/7LZJCwUIG2nGx55qDAz3tLSSjA==
+"@ranjodhbirkaur/constants@*":
+  version "1.0.84"
+  resolved "https://registry.yarnpkg.com/@ranjodhbirkaur/constants/-/constants-1.0.84.tgz#5fe716e16861284c97c27540811c9a37a58c7af2"
+  integrity sha512-F64+QB9+k/oBFV5X9YPbqCQ5KLkQoHGgEU1OTL6peWhLknB3Itp1w1j4EHxIvotlk9b546q9fehpiAfv0HwHjg==
 
 "@sheerun/mutationobserver-shim@^0.3.2":
   version "0.3.3"
