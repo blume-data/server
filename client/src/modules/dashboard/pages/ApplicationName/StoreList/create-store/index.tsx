@@ -1,12 +1,12 @@
-import React, {Fragment, useState} from "react";
+import React, {useState} from "react";
 import {Grid} from "@material-ui/core";
 import {Form} from "../../../../../../components/common/Form";
 import {ConfigField, RADIO, TEXT} from "../../../../../../components/common/Form/interface";
 import {
-    APPLICATION_NAME, BOOLEAN_FIElD_TYPE, DATE_FIElD_TYPE, DECIMAL_FIELD_TYPE,
+    BOOLEAN_FIElD_TYPE, DATE_FIElD_TYPE, DECIMAL_FIELD_TYPE,
     ErrorMessagesType, INTEGER_FIElD_TYPE, JSON_FIELD_TYPE, LOCATION_FIELD_TYPE,
     LONG_STRING_FIELD_TYPE, MEDIA_FIELD_TYPE, REFERENCE_FIELD_TYPE,
-    SHORT_STRING_FIElD_TYPE
+    SHORT_STRING_FIElD_TYPE, trimCharactersAndNumbers
 } from "@ranjodhbirkaur/constants";
 import TextFieldsIcon from '@material-ui/icons/TextFields';
 import './style.scss';
@@ -22,12 +22,6 @@ import PermMediaIcon from '@material-ui/icons/PermMedia';
 import LinkIcon from '@material-ui/icons/Link';
 import Paper from "@material-ui/core/Paper";
 import EditIcon from '@material-ui/icons/Edit';
-
-interface ValueType {
-    fieldName: string;
-    fieldId: string;
-    required: string;
-}
 
 export const CreateStore = () => {
 
@@ -148,18 +142,40 @@ export const CreateStore = () => {
         })
     }
 
-    function onSubmitFieldProperty(values: ValueType[]): Promise<string | ErrorMessagesType[]> {
+    function onSubmitFieldProperty(values: any): Promise<string | ErrorMessagesType[]> {
 
         console.log('value', values);
 
         return new Promise(async (resolve, reject) => {
 
             setSettingFieldName(false);
-            if(values && values[0]) {
-                setFieldName(values[0].fieldName);
-                const fieldId = (values[0].fieldId && values[0].fieldId) || values[0].fieldName.split(' ').join('');
-                setFieldIdValue(values[0].fieldId && values[0].fieldId.split(' ').join(''));
-                setRequired(values[0].required);
+
+            if(values && values.length) {
+
+                let propertyId = '';
+                let propertyName = '';
+                let propertyIsRequired = '';
+                values.forEach((value: any) => {
+                    switch (value.name) {
+                        case FIELD_ID: {
+                            propertyId = trimCharactersAndNumbers(value.value);
+                            break;
+                        }
+                        case FIELD_NAME: {
+                            propertyName = trimCharactersAndNumbers(value.value);
+                            break;
+                        }
+                        case IS_FIELD_REQUIRED: {
+                            propertyIsRequired = trimCharactersAndNumbers(value.value);
+                            break;
+                        }
+
+                    }
+                });
+
+                setFieldIdValue(propertyId);
+                setFieldName(propertyName);
+                setRequired(propertyIsRequired);
             }
 
             return resolve('')
@@ -177,6 +193,7 @@ export const CreateStore = () => {
             setFieldType(value);
             setAddingField(false);
             setSettingFieldName(true);
+            setFieldType(value);
         }
 
 
