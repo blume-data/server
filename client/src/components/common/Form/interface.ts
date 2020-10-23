@@ -3,6 +3,7 @@ import {ErrorMessagesType} from "@ranjodhbirkaur/constants";
 export const DROPDOWN = 'dropdown';
 export const BIG_TEXT = 'bigText';
 export const TEXT = 'text';
+export const RADIO = 'radio';
 
 export interface FormType {
     className: string;

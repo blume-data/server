@@ -1,7 +1,7 @@
 import React, {Fragment, useState} from "react";
 import {Grid} from "@material-ui/core";
 import {Form} from "../../../../../../components/common/Form";
-import {ConfigField, TEXT} from "../../../../../../components/common/Form/interface";
+import {ConfigField, RADIO, TEXT} from "../../../../../../components/common/Form/interface";
 import {
     APPLICATION_NAME, BOOLEAN_FIElD_TYPE, DATE_FIElD_TYPE, DECIMAL_FIELD_TYPE,
     ErrorMessagesType, INTEGER_FIElD_TYPE, JSON_FIELD_TYPE, LOCATION_FIELD_TYPE,
@@ -23,12 +23,19 @@ import LinkIcon from '@material-ui/icons/Link';
 import Paper from "@material-ui/core/Paper";
 import EditIcon from '@material-ui/icons/Edit';
 
+interface ValueType {
+    fieldName: string;
+    fieldId: string;
+    required: string;
+}
+
 export const CreateStore = () => {
 
     const [settingFieldName, setSettingFieldName] = useState<boolean>(false);
     const [addingField, setAddingField] = useState<boolean>(false);
     const [fieldName, setFieldName] = useState<string>('');
-    const [isRequired, setRequired] = useState<boolean>(false);
+    const [fieldIdValue, setFieldIdValue] = useState<string>('');
+    const [isRequired, setRequired] = useState<string>('no');
     const [fieldType, setFieldType] = useState<string>('');
     const [hideNames, setHideNames] = useState<boolean>(false);
 
@@ -42,6 +49,7 @@ export const CreateStore = () => {
     const FIELD_NAME = 'fieldName';
     const FIELD_TYPE = 'fieldType';
     const FIELD_ID = 'fieldId';
+    const IS_FIELD_REQUIRED = 'required'
 
     const nameFields: ConfigField[] = [
         {
@@ -82,7 +90,7 @@ export const CreateStore = () => {
             {
             required: true,
             placeholder: 'Field Name',
-            value: '',
+            value: fieldName,
             className: 'create-content-model-name-text-field',
             type: 'text',
             name: FIELD_NAME,
@@ -92,13 +100,26 @@ export const CreateStore = () => {
             {
                 required: false,
                 placeholder: 'Field Id',
-                value: '',
+                value: fieldIdValue,
                 className: 'create-content-model-name-text-field',
                 type: 'text',
                 name: FIELD_ID,
                 label: 'Field id',
                 inputType: TEXT,
-            }
+            },
+            {
+                required: false,
+                placeholder: 'Is required',
+                value: isRequired,
+                className: 'is-required-radio',
+                name: IS_FIELD_REQUIRED,
+                options: [
+                    {label: 'Yes', value: 'yes'},
+                    {label: 'No', value: 'no'}
+                ],
+                label: 'Is required',
+                inputType: RADIO,
+            },
         ];
 
         return hello;
@@ -127,13 +148,19 @@ export const CreateStore = () => {
         })
     }
 
-    function onSubmitFieldProperty(values: object[]): Promise<string | ErrorMessagesType[]> {
+    function onSubmitFieldProperty(values: ValueType[]): Promise<string | ErrorMessagesType[]> {
 
         console.log('value', values);
 
         return new Promise(async (resolve, reject) => {
 
             setSettingFieldName(false);
+            if(values && values[0]) {
+                setFieldName(values[0].fieldName);
+                const fieldId = (values[0].fieldId && values[0].fieldId) || values[0].fieldName.split(' ').join('');
+                setFieldIdValue(values[0].fieldId && values[0].fieldId.split(' ').join(''));
+                setRequired(values[0].required);
+            }
 
             return resolve('')
         })

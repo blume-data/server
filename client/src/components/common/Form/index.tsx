@@ -3,11 +3,12 @@ import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import {TextBox} from "./TextBox";
 import {DropDown} from "./DropDown";
-import {BIG_TEXT, ConfigField, DROPDOWN, FormType, TEXT} from "./interface";
+import {BIG_TEXT, ConfigField, DROPDOWN, FormType, RADIO, TEXT} from "./interface";
 import './style.scss';
 import {ErrorMessagesType, FIELD, MESSAGE} from "@ranjodhbirkaur/constants";
 import {Alert} from "../Toast";
 import {PLEASE_PROVIDE_VALID_VALUES} from "../../../modules/authentication/pages/Auth/constants";
+import {CommonRadioField} from "./CommonRadioField";
 
 interface FormState {
     label: string;
@@ -117,33 +118,54 @@ export const Form = (props: FormType) => {
 
     function renderFields(field: ConfigField, index: number) {
         const {inputType, options, id, className, name, placeholder, required, type='text', label} = field;
+
+        function onChange(e: ChangeEvent<any>) {
+            changeValue(e, label, SET_VALUE_ACTION)
+        }
+
+        function onBlur(e: ChangeEvent<any>) {
+            changeValue(e, label, SET_IS_TOUCHED_ACTION)
+        }
+
+        const helperText = getHelperText(label);
+        const value = getValue(label);
+        const error = hasError(label);
+
+
         if (inputType === TEXT) {
             return (
                 <TextBox
                     type={type}
                     key={index}
                     name={name}
-                    error={hasError(label)}
+                    error={error}
                     required={required}
                     placeholder={placeholder}
-                    helperText={getHelperText(label)}
-                    onChange={(e) => changeValue(e, label, SET_VALUE_ACTION)}
-                    onBlur={(e) => changeValue(e, label, SET_IS_TOUCHED_ACTION)}
+                    helperText={helperText}
+                    onChange={onChange}
+                    onBlur={onBlur}
                     label={label}
                     id={id}
-                    value={getValue(label)}
+                    value={value}
                     className={className} />
             );
         }
         if(inputType === DROPDOWN) {
             return (
                 <DropDown
-                    onBlur={(e) => changeValue(e, label, SET_IS_TOUCHED_ACTION)}
-                    value={getValue(name)} options={options && options.length ? options : []}
-                    onChange={(e) => changeValue(e, label, SET_VALUE_ACTION)}
-                    placeholder={placeholder} required={required} index={index} name={name}
-                    label={label} error={hasError(name)} helperText={getHelperText(name)}
-                    key={index} className={className} />
+                    onBlur={onBlur}
+                    value={value}
+                    options={options && options.length ? options : []}
+                    onChange={onChange}
+                    placeholder={placeholder}
+                    required={required}
+                    index={index}
+                    name={name}
+                    label={label}
+                    error={error}
+                    helperText={helperText}
+                    key={index}
+                    className={className} />
             );
         }
         if(inputType === BIG_TEXT) {
@@ -152,16 +174,35 @@ export const Form = (props: FormType) => {
                     type={type}
                     key={index}
                     name={name}
+                    error={error}
                     multiline={true}
                     required={required}
                     placeholder={placeholder}
-                    helperText={getHelperText(name)}
-                    onBlur={(e) => changeValue(e, label, SET_IS_TOUCHED_ACTION)}
-                    onChange={(e) => changeValue(e, label, SET_VALUE_ACTION)}
+                    helperText={helperText}
+                    onBlur={onBlur}
+                    onChange={onChange}
+                    label={label}
+                    value={value}
+                    id={id}
+                    className={className}
+                />
+            );
+        }
+        if(inputType === RADIO) {
+            return (
+                <CommonRadioField
+                    required={required}
+                    name={name}
+                    placeholder={''}
+                    onChange={onChange}
+                    onBlur={onBlur}
+                    value={value}
                     label={label}
                     id={id}
-                    value={getValue(name)}
-                    className={className}  />
+                    className={className}
+                    options={options}
+                    helperText={helperText}
+                />
             );
         }
     }
