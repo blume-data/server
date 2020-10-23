@@ -5,8 +5,9 @@ export const BIG_TEXT = 'bigText';
 export const TEXT = 'text';
 
 export interface FormType {
-    className: string
-    fields: ConfigField[]
+    className: string;
+    fields: ConfigField[];
+    submitButtonName?: string;
     onSubmit: (values: object[]) => Promise<string | ErrorMessagesType[]>;
 }
 

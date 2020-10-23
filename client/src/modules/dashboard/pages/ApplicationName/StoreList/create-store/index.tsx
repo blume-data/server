@@ -25,6 +25,7 @@ import EditIcon from '@material-ui/icons/Edit';
 
 export const CreateStore = () => {
 
+    const [settingFieldName, setSettingFieldName] = useState<boolean>(false);
     const [addingField, setAddingField] = useState<boolean>(false);
     const [fieldName, setFieldName] = useState<string>('');
     const [isRequired, setRequired] = useState<boolean>(false);
@@ -38,12 +39,15 @@ export const CreateStore = () => {
     const DISPLAY_NAME = 'displayName';
     const NAME = 'name';
     const DESCRIPTION = 'description';
+    const FIELD_NAME = 'fieldName';
+    const FIELD_TYPE = 'fieldType';
+    const FIELD_ID = 'fieldId';
 
-    const fields: ConfigField[] = [
+    const nameFields: ConfigField[] = [
         {
             required: true,
             placeholder: 'Display Name',
-            value: '',
+            value: contentModelDisplayName,
             className: 'create-content-model-name-text-field',
             type: 'text',
             name: DISPLAY_NAME,
@@ -53,7 +57,7 @@ export const CreateStore = () => {
         {
             required: false,
             placeholder: 'Name',
-            value: '',
+            value: contentModelName,
             className: 'create-content-model-display-name-text-field',
             type: 'text',
             name: NAME,
@@ -63,7 +67,7 @@ export const CreateStore = () => {
         {
             required: false,
             placeholder: 'Description',
-            value: '',
+            value: contentModelDescription,
             className: 'create-content-model-description-text-field',
             type: 'text',
             name: DESCRIPTION,
@@ -72,7 +76,35 @@ export const CreateStore = () => {
         },
     ];
 
-    function onCreateContentModel(values: object[]): Promise<string | ErrorMessagesType[]> {
+    const propertyNameFields = () => {
+
+        const hello: ConfigField[] = [
+            {
+            required: true,
+            placeholder: 'Field Name',
+            value: '',
+            className: 'create-content-model-name-text-field',
+            type: 'text',
+            name: FIELD_NAME,
+            label: 'Field Name',
+            inputType: TEXT,
+            },
+            {
+                required: false,
+                placeholder: 'Field Id',
+                value: '',
+                className: 'create-content-model-name-text-field',
+                type: 'text',
+                name: FIELD_ID,
+                label: 'Field id',
+                inputType: TEXT,
+            }
+        ];
+
+        return hello;
+    };
+
+    function onSubmitCreateContentModel(values: object[]): Promise<string | ErrorMessagesType[]> {
 
         console.log('value', values);
 
@@ -95,15 +127,35 @@ export const CreateStore = () => {
         })
     }
 
+    function onSubmitFieldProperty(values: object[]): Promise<string | ErrorMessagesType[]> {
+
+        console.log('value', values);
+
+        return new Promise(async (resolve, reject) => {
+
+            setSettingFieldName(false);
+
+            return resolve('')
+        })
+    }
+
     function onClickAddFields() {
         setAddingField(true);
         setHideNames(true);
     }
 
     function fieldItem(name: string, description: string, Icon: JSX.Element, value: string) {
+
+        function onClick() {
+            setFieldType(value);
+            setAddingField(false);
+            setSettingFieldName(true);
+        }
+
+
         return (
             <Grid className={'field-item'} title={description}>
-                <Button onClick={() => setFieldType(value)}>
+                <Button onClick={onClick}>
                     {Icon}
                     <h2>{name}</h2>
                     <p>{description}</p>
@@ -112,7 +164,18 @@ export const CreateStore = () => {
         );
     }
 
+    // Data Model name, description, display name
     function renderNameSection() {
+
+        function onClick() {
+            // turn off fields
+            // turn off setting fields property
+            // open name form
+            setSettingFieldName(false);
+            setAddingField(false);
+            setHideNames(false);
+        }
+
         return (
             <Paper>
                 <Grid container justify={"flex-start"} direction={"row"} className="name-section">
@@ -129,7 +192,7 @@ export const CreateStore = () => {
                         <h2>{contentModelDisplayName}</h2>
                     </Grid>
                     <Grid item className={'name-section-item edit-button'}>
-                        <Button title={'edit content model'}>
+                        <Button title={'edit content model'} onClick={onClick}>
                             <EditIcon /> Edit
                         </Button>
                     </Grid>
@@ -138,8 +201,6 @@ export const CreateStore = () => {
         )
     }
 
-
-
     return (
         <Grid>
             <Grid className="create-content-model">
@@ -147,7 +208,12 @@ export const CreateStore = () => {
                 {
                     hideNames
                         ? renderNameSection()
-                        : <Form className={'create-content-model-form'} fields={fields} onSubmit={onCreateContentModel} />
+                        : <Form
+                            submitButtonName={'Create data model'}
+                            className={'create-content-model-form'}
+                            fields={nameFields}
+                            onSubmit={onSubmitCreateContentModel}
+                          />
 
                 }
 
@@ -183,12 +249,27 @@ export const CreateStore = () => {
                             {fieldItem('Media', 'videos, photos, files', <PermMediaIcon />, MEDIA_FIELD_TYPE)}
                             {fieldItem('Reference', 'For example a comment can refer to authors', <LinkIcon />, REFERENCE_FIELD_TYPE)}
                         </Grid>
+                    : settingFieldName
+                    ? null
                     : <Button
                         onClick={onClickAddFields}
-                            color={"primary"}
-                            variant={"contained"}>
+                        color={"primary"}
+                        variant={"contained"}>
                         Add Fields
                       </Button>
+                }
+
+                {
+                    settingFieldName
+                    ? <Grid container className={'set-fields-property-container'}>
+                        <Form
+                            submitButtonName={'Add field'}
+                            onSubmit={onSubmitFieldProperty}
+                            fields={propertyNameFields()}
+                            className={'field-property-form'}
+                        />
+                      </Grid>
+                    : null
                 }
 
             </Grid>

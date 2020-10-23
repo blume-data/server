@@ -30,7 +30,7 @@ export const Form = (props: FormType) => {
     const [alert, setAlertMessage] = React.useState<AlertType>({message: ''});
 
     const [formState, setFormState] = useState<FormState[]>([]);
-    const {className, fields, onSubmit} = props;
+    const {className, fields, onSubmit, submitButtonName} = props;
 
     function setErrorMessage(name: string) {
         return `${name} is required`;
@@ -39,31 +39,35 @@ export const Form = (props: FormType) => {
     function changeValue(event: ChangeEvent<any>, field: string, action: string) {
         const value = event.target.value;
         let state: FormState[];
-        if (action === SET_VALUE_ACTION) {
-            state = formState.map((item) => {
-                if (item.label === field) {
-                    return {
-                        ...item,
-                        value,
-                        helperText: (!value) ? setErrorMessage(item.label) : '',
+
+        const fieldItem = fields.find(ranjodh => ranjodh.label === field);
+        if(fieldItem) {
+            if (action === SET_VALUE_ACTION) {
+                state = formState.map((item) => {
+                    if (item.label === field) {
+                        return {
+                            ...item,
+                            value,
+                            helperText: (!value && fieldItem.required) ? setErrorMessage(item.label) : '',
+                        }
                     }
-                }
-                return item;
-            });
-            setFormState(state);
-        }
-        if (action === SET_IS_TOUCHED_ACTION) {
-            state = formState.map((item) => {
-                if (item.label === field) {
-                    return {
-                        ...item,
-                        helperText: !item.value ? setErrorMessage(item.label) : '',
-                        isTouched: true
+                    return item;
+                });
+                setFormState(state);
+            }
+            if (action === SET_IS_TOUCHED_ACTION) {
+                state = formState.map((item) => {
+                    if (item.label === field) {
+                        return {
+                            ...item,
+                            helperText: (!item.value && fieldItem.required) ? setErrorMessage(item.label) : '',
+                            isTouched: true
+                        }
                     }
-                }
-                return item;
-            });
-            setFormState(state);
+                    return item;
+                });
+                setFormState(state);
+            }
         }
     }
 
@@ -261,7 +265,9 @@ export const Form = (props: FormType) => {
                     <Button variant="contained" onClick={clearForm} color={'secondary'}>Clear</Button>
                 </Grid>
                 <Grid item>
-                    <Button variant="contained" onClick={onClickSubmit} color={'primary'}>Submit</Button>
+                    <Button variant="contained" onClick={onClickSubmit} color={'primary'}>
+                        {submitButtonName ? submitButtonName : 'Submit'}
+                    </Button>
                 </Grid>
             </Grid>
             <Alert
