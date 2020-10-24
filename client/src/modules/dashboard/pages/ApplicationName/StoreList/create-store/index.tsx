@@ -23,13 +23,18 @@ import LinkIcon from '@material-ui/icons/Link';
 import Paper from "@material-ui/core/Paper";
 import EditIcon from '@material-ui/icons/Edit';
 
+interface PropertiesType {
+    displayName: string;
+    name: string;
+    type: string;
+    required: boolean;
+    description: string;
+}
+
 export const CreateStore = () => {
 
     const [settingFieldName, setSettingFieldName] = useState<boolean>(false);
     const [addingField, setAddingField] = useState<boolean>(false);
-    const [fieldName, setFieldName] = useState<string>('');
-    const [fieldIdValue, setFieldIdValue] = useState<string>('');
-    const [isRequired, setRequired] = useState<string>('no');
     const [fieldType, setFieldType] = useState<string>('');
     const [hideNames, setHideNames] = useState<boolean>(false);
 
@@ -37,20 +42,23 @@ export const CreateStore = () => {
     const [contentModelDescription, setContentModelDescription] = useState<string>('');
     const [contentModelDisplayName, setContentModelDisplayName] = useState<string>('');
 
+    const [properties, setProperties] = useState<PropertiesType[] | null>(null);
+
     const DISPLAY_NAME = 'displayName';
     const NAME = 'name';
     const DESCRIPTION = 'description';
     const FIELD_NAME = 'fieldName';
     const FIELD_TYPE = 'fieldType';
+    const FIELD_DESCRIPTION = 'fieldDescription';
     const FIELD_ID = 'fieldId';
     const IS_FIELD_REQUIRED = 'required'
 
     const nameFields: ConfigField[] = [
         {
             required: true,
-            placeholder: 'Display Name',
+            placeholder: 'Name',
             value: contentModelDisplayName,
-            className: 'create-content-model-name-text-field',
+            className: 'create-content-model-name',
             type: 'text',
             name: DISPLAY_NAME,
             label: 'Display Name',
@@ -58,19 +66,19 @@ export const CreateStore = () => {
         },
         {
             required: false,
-            placeholder: 'Name',
+            placeholder: 'Name Identifier',
             value: contentModelName,
-            className: 'create-content-model-display-name-text-field',
+            className: 'create-content-model-name-identifier',
             type: 'text',
             name: NAME,
-            label: 'Name',
+            label: 'Name Identifier',
             inputType: TEXT,
         },
         {
             required: false,
             placeholder: 'Description',
             value: contentModelDescription,
-            className: 'create-content-model-description-text-field',
+            className: 'create-content-model-description',
             type: 'text',
             name: DESCRIPTION,
             label: 'Description',
@@ -84,7 +92,7 @@ export const CreateStore = () => {
             {
             required: true,
             placeholder: 'Field Name',
-            value: fieldName,
+            value: '',
             className: 'create-content-model-name-text-field',
             type: 'text',
             name: FIELD_NAME,
@@ -94,7 +102,7 @@ export const CreateStore = () => {
             {
                 required: false,
                 placeholder: 'Field Id',
-                value: fieldIdValue,
+                value: '',
                 className: 'create-content-model-name-text-field',
                 type: 'text',
                 name: FIELD_ID,
@@ -103,8 +111,18 @@ export const CreateStore = () => {
             },
             {
                 required: false,
+                placeholder: 'Field description',
+                value: '',
+                className: 'create-content-model-name-text-field',
+                type: 'text',
+                name: FIELD_DESCRIPTION,
+                label: 'Field description',
+                inputType: TEXT,
+            },
+            {
+                required: false,
                 placeholder: 'Is required',
-                value: isRequired,
+                value: '',
                 className: 'is-required-radio',
                 name: IS_FIELD_REQUIRED,
                 options: [
@@ -125,17 +143,25 @@ export const CreateStore = () => {
 
         return new Promise(async (resolve, reject) => {
 
+            let name = '';
+            let displayName = '';
+            let description = '';
+
             values.forEach((value: any) => {
                 if(value.name === NAME) {
-                    setContentModelName(value.value);
+                    name = trimCharactersAndNumbers(value.value);
                 }
                 else if(value.name === DISPLAY_NAME) {
-                    setContentModelDisplayName(value.value);
+                    displayName = value.value;
                 }
                 else if(value.name === DESCRIPTION) {
-                    setContentModelDescription(value.value);
+                    description = value.value;
                 }
             });
+
+            setContentModelName(name ? name : trimCharactersAndNumbers(displayName));
+            setContentModelDisplayName(displayName);
+            setContentModelDescription(description);
             setHideNames(true);
             setAddingField(true);
             return resolve('')
@@ -155,6 +181,7 @@ export const CreateStore = () => {
                 let propertyId = '';
                 let propertyName = '';
                 let propertyIsRequired = '';
+                let propertyDescription = '';
                 values.forEach((value: any) => {
                     switch (value.name) {
                         case FIELD_ID: {
@@ -162,7 +189,7 @@ export const CreateStore = () => {
                             break;
                         }
                         case FIELD_NAME: {
-                            propertyName = trimCharactersAndNumbers(value.value);
+                            propertyName = value.value;
                             break;
                         }
                         case IS_FIELD_REQUIRED: {
@@ -170,12 +197,25 @@ export const CreateStore = () => {
                             break;
                         }
 
+                        case FIELD_DESCRIPTION: {
+                            propertyDescription = value.value;
+                        }
+
                     }
                 });
 
-                setFieldIdValue(propertyId);
-                setFieldName(propertyName);
-                setRequired(propertyIsRequired);
+                setTimeout(() => {
+                    const property: PropertiesType = {
+                        name: propertyId,
+                        displayName: propertyName,
+                        required: propertyIsRequired === 'yes',
+                        type: fieldType,
+                        description: propertyDescription
+                    };
+                    const tempProperties = JSON.parse(JSON.stringify(properties ? properties : []));
+                    tempProperties.push(property);
+                    setProperties(tempProperties);
+                });
             }
 
             return resolve('')
@@ -209,6 +249,9 @@ export const CreateStore = () => {
     }
 
     // Data Model name, description, display name
+
+    console.log('properties', properties);
+
     function renderNameSection() {
 
         function onClick() {
@@ -224,16 +267,16 @@ export const CreateStore = () => {
             <Paper>
                 <Grid container justify={"flex-start"} direction={"row"} className="name-section">
                     <Grid item className={'name-section-item'}>
-                        <p>Name: </p>
+                        <p>Name:</p>
+                        <h2>{contentModelDisplayName}</h2>
+                    </Grid>
+                    <Grid item className={'name-section-item'}>
+                        <p>Name Identifier: </p>
                         <h2>{contentModelName}</h2>
                     </Grid>
                     <Grid item className={'name-section-item'}>
                         <p>Description: </p>
                         <h2>{contentModelDescription}</h2>
-                    </Grid>
-                    <Grid item className={'name-section-item'}>
-                        <p>Display name:</p>
-                        <h2>{contentModelDisplayName}</h2>
                     </Grid>
                     <Grid item className={'name-section-item edit-button'}>
                         <Button title={'edit content model'} onClick={onClick}>
@@ -243,6 +286,23 @@ export const CreateStore = () => {
                 </Grid>
             </Paper>
         )
+    }
+
+    function renderPropertiesSection() {
+        return (
+            <Paper>
+                <Grid container className={'property-section-container'}>
+                    {properties && properties.map(property => {
+                        return (
+                            <Grid container justify={"flex-start"} className={'property-item'}>
+                                <h2>{property.displayName}</h2>
+                                <p>{property.type}</p>
+                            </Grid>
+                        );
+                    })}
+                </Grid>
+            </Paper>
+        );
     }
 
     return (
@@ -259,6 +319,12 @@ export const CreateStore = () => {
                             onSubmit={onSubmitCreateContentModel}
                           />
 
+                }
+
+                {
+                    properties
+                    ? renderPropertiesSection()
+                    : null
                 }
 
                 {
