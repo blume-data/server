@@ -43,4 +43,14 @@
       }
     }
   }
+
+  .property-section-container {
+    .property-item {
+      margin: 0 20px;
+      h2 {
+        @include trim(1);
+      }
+    }
+
+  }
 }

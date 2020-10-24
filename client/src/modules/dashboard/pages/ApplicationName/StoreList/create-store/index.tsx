@@ -3,7 +3,7 @@ import {Grid} from "@material-ui/core";
 import {Form} from "../../../../../../components/common/Form";
 import {ConfigField, RADIO, TEXT} from "../../../../../../components/common/Form/interface";
 import {
-    BOOLEAN_FIElD_TYPE, DATE_FIElD_TYPE, DECIMAL_FIELD_TYPE,
+    BOOLEAN_FIElD_TYPE, CLIENT_USER_NAME, DATE_FIElD_TYPE, DECIMAL_FIELD_TYPE,
     ErrorMessagesType, INTEGER_FIElD_TYPE, JSON_FIELD_TYPE, LOCATION_FIELD_TYPE,
     LONG_STRING_FIELD_TYPE, MEDIA_FIELD_TYPE, REFERENCE_FIELD_TYPE,
     SHORT_STRING_FIElD_TYPE, trimCharactersAndNumbers
@@ -22,6 +22,12 @@ import PermMediaIcon from '@material-ui/icons/PermMedia';
 import LinkIcon from '@material-ui/icons/Link';
 import Paper from "@material-ui/core/Paper";
 import EditIcon from '@material-ui/icons/Edit';
+import ButtonGroup from "@material-ui/core/ButtonGroup";
+import {RootState} from "../../../../../../rootReducer";
+import {connect, ConnectedProps} from "react-redux";
+import {doPostRequest} from "../../../../../../utils/baseApi";
+import {getItemFromLocalStorage} from "../../../../../../utils/tools";
+import {getBaseUrl} from "../../../../../../utils/urls";
 
 interface PropertiesType {
     displayName: string;
@@ -31,7 +37,12 @@ interface PropertiesType {
     description: string;
 }
 
-export const CreateStore = () => {
+type PropsFromRedux = ConnectedProps<typeof connector>;
+type CreateStoreType = PropsFromRedux & {
+    onCreateDataModel: () => void;
+}
+
+const CreateStore = (props: CreateStoreType) => {
 
     const [settingFieldName, setSettingFieldName] = useState<boolean>(false);
     const [addingField, setAddingField] = useState<boolean>(false);
@@ -137,6 +148,8 @@ export const CreateStore = () => {
         return hello;
     };
 
+    const {env, CollectionUrl, applicationName, onCreateDataModel} = props;
+
     function onSubmitCreateContentModel(values: object[]): Promise<string | ErrorMessagesType[]> {
 
         console.log('value', values);
@@ -206,7 +219,7 @@ export const CreateStore = () => {
 
                 setTimeout(() => {
                     const property: PropertiesType = {
-                        name: propertyId,
+                        name: propertyId || trimCharactersAndNumbers(propertyName),
                         displayName: propertyName,
                         required: propertyIsRequired === 'yes',
                         type: fieldType,
@@ -225,6 +238,30 @@ export const CreateStore = () => {
     function onClickAddFields() {
         setAddingField(true);
         setHideNames(true);
+    }
+
+    async function onClickSaveDataModel() {
+        //data/:env/:clientUserName/:applicationName/collection
+        const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
+        if(CollectionUrl && clientUserName) {
+            const url = CollectionUrl
+                .replace(':clientUserName', clientUserName)
+                .replace(':env', env)
+                .replace(':applicationName', applicationName);
+            const response = await doPostRequest(`${getBaseUrl()}${url}`, {
+                name: contentModelName,
+                displayName: contentModelDisplayName,
+                description: contentModelDescription,
+                rules: properties
+            }, true);
+
+            console.log('res', response);
+
+            if(response && !response.errors) {
+                // close the modal
+                onCreateDataModel();
+            }
+        }
     }
 
     function fieldItem(name: string, description: string, Icon: JSX.Element, value: string) {
@@ -291,12 +328,12 @@ export const CreateStore = () => {
     function renderPropertiesSection() {
         return (
             <Paper>
-                <Grid container className={'property-section-container'}>
+                <Grid container direction={"column"} className={'property-section-container'}>
                     {properties && properties.map(property => {
                         return (
                             <Grid container justify={"flex-start"} className={'property-item'}>
-                                <h2>{property.displayName}</h2>
-                                <p>{property.type}</p>
+                                <h2 className={'property-name'}>{property.name}:</h2>
+                                <h2 className={'property-description'}>{property.description}</h2>
                             </Grid>
                         );
                     })}
@@ -361,12 +398,24 @@ export const CreateStore = () => {
                         </Grid>
                     : settingFieldName
                     ? null
-                    : <Button
-                        onClick={onClickAddFields}
-                        color={"primary"}
-                        variant={"contained"}>
-                        Add Fields
-                      </Button>
+                    : <ButtonGroup>
+                            <Button
+                                onClick={onClickAddFields}
+                                color={"secondary"}
+                                variant={"contained"}>
+                                Add Fields
+                            </Button>
+                            {
+                                properties && properties.length
+                                ? <Button
+                                        onClick={onClickSaveDataModel}
+                                        color={"primary"}
+                                        variant={"contained"}>
+                                        Save Data Model
+                                    </Button>
+                                : null
+                            }
+                        </ButtonGroup>
                 }
 
                 {
@@ -386,3 +435,14 @@ export const CreateStore = () => {
         </Grid>
     );
 }
+
+const mapState = (state: RootState) => {
+    return {
+        env: state.authentication.env,
+        applicationName: state.authentication.applicationName,
+        CollectionUrl: state.routeAddress.routes.data?.CollectionUrl
+    }
+};
+
+const connector = connect(mapState);
+export default connector(CreateStore);

@@ -10,7 +10,7 @@ import {
     UNIQUE_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN
 } from "../../../Controllers/Messages";
 import {errorStatus} from "@ranjodhbirkaur/common";
-import {SHORT_STRING_FIElD_TYPE, SUPPORTED_FIELDS_TYPE} from "@ranjodhbirkaur/constants";
+import {SHORT_STRING_FIElD_TYPE, SUPPORTED_FIELDS_TYPE, trimCharactersAndNumbers} from "@ranjodhbirkaur/constants";
 
 export async function validateCollections(req: Request, res: Response, next: NextFunction) {
 
@@ -81,21 +81,10 @@ export async function validateCollections(req: Request, res: Response, next: Nex
                 })
             }
 
-
-            switch (rule.type) {
-                case SHORT_STRING_FIElD_TYPE: {
-
-                }
-            }
-
-
-
-
-
             // Validate rule type
             if (SUPPORTED_FIELDS_TYPE.includes(rule.type)) {
                 // remove all the spaces from name
-                rule.name = rule.name.split(' ').join('_');
+                rule.name = trimCharactersAndNumbers(rule.name);
             }
 
             else {

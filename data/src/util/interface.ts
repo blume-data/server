@@ -1,6 +1,8 @@
 export interface RuleType {
     type: string;
     name: string;
+    displayName?: string;
+    description?: string;
     required?: boolean;
     unique?: boolean;
     default?: any;

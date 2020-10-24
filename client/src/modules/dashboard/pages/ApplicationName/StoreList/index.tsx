@@ -1,8 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {Grid} from "@material-ui/core";
-import {dashboardCollectionsUrl, getBaseUrl} from "../../../../../utils/urls";
+import {getBaseUrl} from "../../../../../utils/urls";
 import {APPLICATION_NAME, CLIENT_USER_NAME} from "@ranjodhbirkaur/constants";
-import {Link} from "react-router-dom";
 import './store-list.scss';
 import {getItemFromLocalStorage} from "../../../../../utils/tools";
 import {doGetRequest} from "../../../../../utils/baseApi";
@@ -11,7 +10,7 @@ import moment from "moment";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import ModalDialog from "../../../../../components/common/ModalDialog";
-import {CreateStore} from "./create-store";
+import CreateStore from "./create-store";
 import Paper from "@material-ui/core/Paper";
 
 interface StoreListProps {
@@ -54,18 +53,22 @@ export const StoreList = (props: StoreListProps) => {
 
     useEffect(() => {
         getCollectionNames();
-
     }, [applicationName, env, language, GetCollectionNamesUrl]);
 
     const tableRows = [
+        {name: 'Name', value: 'name'},
         {name: 'Description', value: 'description'},
         {name: 'Updated by', value: 'updatedBy'},
-        {name: 'Name', value: 'name'},
         {name: 'Updated At', value: 'updatedAt'},
     ]
 
     function closeModal() {
         setIsModalOpen(false);
+    }
+
+    function onCreateDataModel() {
+        closeModal();
+        getCollectionNames();
     }
 
 
@@ -104,7 +107,9 @@ export const StoreList = (props: StoreListProps) => {
                 isOpen={isModalOpen}
                 title={'Create Store'}
                 handleClose={closeModal}>
-                <CreateStore />
+                <CreateStore
+                    onCreateDataModel={onCreateDataModel}
+                />
             </ModalDialog>
 
         </Grid>
