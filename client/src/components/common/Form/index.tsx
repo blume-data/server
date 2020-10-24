@@ -210,7 +210,7 @@ export const Form = (props: FormType) => {
     async function onClickSubmit() {
         let isValid = true;
         formState.forEach(item => {
-            const formItem = fields.find(field => field.name === item.label);
+            const formItem = fields.find(field => field.label === item.label);
             if (formItem && formItem.required && !item.value) {
                 isValid = false
             }
@@ -244,7 +244,7 @@ export const Form = (props: FormType) => {
         else {
             let newFormState: FormState[] = [];
             formState.forEach(item => {
-                const formItem = fields.find(field => field.name === item.label);
+                const formItem = fields.find(field => field.label === item.label);
                 if (formItem && formItem.required && !item.value) {
                     newFormState.push({
                         ...item,
