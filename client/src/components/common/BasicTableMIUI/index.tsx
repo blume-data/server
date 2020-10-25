@@ -7,6 +7,7 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
+import {Link} from "react-router-dom";
 
 const useStyles = makeStyles({
     table: {
@@ -18,6 +19,7 @@ interface BasicTableMIUIProps {
     tableRows: {
         name: string;
         value: string;
+        linkUrl?: boolean;
     }[];
     rows: any;
     tableName: string;
@@ -36,7 +38,11 @@ export default function BasicTableMIUI(props: BasicTableMIUIProps) {
                 {tableRows.map((tableRow, index) => {
                     return (
                         <TableCell component={index === 0 ? "th" : undefined} scope={index === 0 ? "row" : undefined}  align={index === 0 ? undefined : "right"}>
-                            {row[tableRow.value]}
+                            {
+                                tableRow.linkUrl
+                                ? <Link to={row['linkUrl']}>{row[tableRow.value]}</Link>
+                                : row[tableRow.value]
+                            }
                         </TableCell>
                     );
                 })}

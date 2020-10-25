@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {Grid} from "@material-ui/core";
-import {getBaseUrl} from "../../../../../utils/urls";
+import {dashboardDataModelUrl, getBaseUrl} from "../../../../../utils/urls";
 import {APPLICATION_NAME, CLIENT_USER_NAME} from "@ranjodhbirkaur/constants";
 import './store-list.scss';
 import {getItemFromLocalStorage} from "../../../../../utils/tools";
@@ -40,6 +40,10 @@ const DataModels = (props: PropsFromRedux) => {
                     const updatedBy = item.updatedBy.split('-')[1];
                     return {
                         ...item,
+                        linkUrl : `${dashboardDataModelUrl
+                            .replace(':data-model', item.name)
+                            .replace(':applicationName',applicationName)
+                        }`,
                         updatedAt,
                         updatedBy
                     }
@@ -53,7 +57,7 @@ const DataModels = (props: PropsFromRedux) => {
     }, [applicationName, env, language, GetCollectionNamesUrl]);
 
     const tableRows = [
-        {name: 'Name', value: 'name'},
+        {name: 'Name', value: 'name', linkUrl: true},
         {name: 'Description', value: 'description'},
         {name: 'Updated by', value: 'updatedBy'},
         {name: 'Updated At', value: 'updatedAt'},
