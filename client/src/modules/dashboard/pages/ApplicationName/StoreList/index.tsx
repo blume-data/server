@@ -12,14 +12,11 @@ import Button from "@material-ui/core/Button";
 import ModalDialog from "../../../../../components/common/ModalDialog";
 import CreateStore from "./create-store";
 import Paper from "@material-ui/core/Paper";
+import {RootState} from "../../../../../rootReducer";
+import {connect, ConnectedProps} from "react-redux";
 
-interface StoreListProps {
-    env: string;
-    language: string;
-    applicationName: string;
-    GetCollectionNamesUrl: string;
-}
-export const StoreList = (props: StoreListProps) => {
+type PropsFromRedux = ConnectedProps<typeof connector>;
+const StoreList = (props: PropsFromRedux) => {
     const {applicationName, env, language, GetCollectionNamesUrl} = props;
     const [stores, setStores] = useState<any>(null);
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -115,3 +112,15 @@ export const StoreList = (props: StoreListProps) => {
         </Grid>
     );
 };
+
+const mapState = (state: RootState) => {
+    return {
+        env: state.authentication.env,
+        language: state.authentication.language,
+        applicationName: state.authentication.applicationName,
+        GetCollectionNamesUrl: state.routeAddress.routes.data?.GetCollectionNamesUrl
+    }
+};
+
+const connector = connect(mapState);
+export default connector(StoreList);

@@ -36,11 +36,10 @@ const ApplicationNames = (props: PropsFromRedux) => {
         setIsModalOpen(false);
     }
 
-    function onCreateApplicationName(applicationName: string) {
+    function onCreateApplicationName(applicationName: {name: string; languages: string[]}) {
         closeModal();
-        const url = dashboardApplicationNameUrl.replace(`:${APPLICATION_NAME}`, applicationName);
-        console.log('ur', url)
-        setApplicationName(applicationName);
+        const url = dashboardApplicationNameUrl.replace(`:${APPLICATION_NAME}`, applicationName.name);
+        setApplicationName(applicationName.name);
         history.push(url);
     }
 

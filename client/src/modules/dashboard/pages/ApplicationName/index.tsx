@@ -5,20 +5,19 @@ import {RootState} from "../../../../rootReducer";
 import {useParams} from "react-router";
 import './application-name.scss';
 import {setApplicationName} from "../../../authentication/pages/Auth/actions";
-import {StoreList} from "./StoreList";
+import StoreList from "./StoreList";
 import {AccordianCommon} from "../../../../components/common/AccordianCommon";
-import Accordion from "@material-ui/core/Accordion";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 const ApplicationName = (props: PropsFromRedux) => {
 
-    const {env, language, setApplicationName, GetCollectionNamesUrl} = props;
+    const {env, language, setApplicationName} = props;
 
     const {applicationName} = useParams();
 
     useEffect(() => {
         setApplicationName(applicationName);
-    },[props.GetCollectionNamesUrl, applicationName, env, language]);
+    },[applicationName, env, language]);
 
     return (
 
@@ -26,16 +25,7 @@ const ApplicationName = (props: PropsFromRedux) => {
             <Paper elevation={3}>
                 <Grid className={'accordion-list'}>
                     <AccordianCommon name={'Content models'}>
-                        <StoreList
-                            env={env}
-                            language={language}
-                            GetCollectionNamesUrl={
-                                GetCollectionNamesUrl
-                                    ? GetCollectionNamesUrl
-                                    : ''
-                            }
-                            applicationName={applicationName}
-                        />
+                        <StoreList />
                     </AccordianCommon>
                 </Grid>
 
@@ -47,8 +37,7 @@ const ApplicationName = (props: PropsFromRedux) => {
 const mapState = (state: RootState) => {
     return {
         env: state.authentication.env,
-        language: state.authentication.language,
-        GetCollectionNamesUrl: state.routeAddress.routes.data?.GetCollectionNamesUrl
+        language: state.authentication.language
     }
 };
 

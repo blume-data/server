@@ -16,6 +16,7 @@ export async function createApplicationName(req: Request, res: Response) {
 
     if(req.currentUser && req.currentUser[APPLICATION_NAMES] && typeof req.currentUser[APPLICATION_NAMES]) {
         const applicationNames: ApplicationNameType[] = req.currentUser[APPLICATION_NAMES];
+        let newApplicationName: ApplicationNameType;
 
 
         const exist = applicationNames.find((item) => {
@@ -23,10 +24,11 @@ export async function createApplicationName(req: Request, res: Response) {
         });
 
         if (!exist) {
-            applicationNames.push({
+            newApplicationName = {
                 name: lowerCaseApplicationName,
                 languages: [EnglishLanguage]
-            });
+            };
+            applicationNames.push(newApplicationName);
 
             await ClientUserModel.updateOne({
                 [USER_NAME]: req.currentUser[USER_NAME]
@@ -38,7 +40,7 @@ export async function createApplicationName(req: Request, res: Response) {
             return sendSingleError(res, APPLICATION_NAME_ALREADY_EXIST);
         }
 
-        return res.status(okayStatus).send(lowerCaseApplicationName);
+        return res.status(okayStatus).send(newApplicationName);
 
     }
         

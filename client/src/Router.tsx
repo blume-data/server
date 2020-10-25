@@ -10,10 +10,11 @@ import {
     dashboardApplicationNamesUrl,
     dashboardApplicationNameUrl,
     dashboardHomeUrl,
-    dashboardStoresUrl
+    dashboardDataModelsUrl
 } from "./utils/urls";
 import ApplicationNames from "./modules/dashboard/pages/applicationNames";
 import ApplicationName from "./modules/dashboard/pages/ApplicationName";
+import StoreList from "./modules/dashboard/pages/ApplicationName/StoreList";
 
 function PrivateRoute(Component: any) {
     return () => {
@@ -49,6 +50,11 @@ export const Routes = [
     {
         path: dashboardApplicationNameUrl,
         render: PrivateRoute(ApplicationName),
+        exact: true
+    },
+    {
+        path: dashboardDataModelsUrl,
+        render: PrivateRoute(StoreList),
         exact: true
     },
     {
