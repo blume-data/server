@@ -148,8 +148,6 @@ const CreateDataModel = (props: CreateDataModelType) => {
 
     function onSubmitCreateContentModel(values: object[]): Promise<string | ErrorMessagesType[]> {
 
-        console.log('value', values);
-
         return new Promise(async (resolve, reject) => {
 
             let name = '';
@@ -178,8 +176,6 @@ const CreateDataModel = (props: CreateDataModelType) => {
     }
 
     function onSubmitFieldProperty(values: any): Promise<string | ErrorMessagesType[]> {
-
-        console.log('value', values);
 
         return new Promise(async (resolve, reject) => {
 
@@ -237,7 +233,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
     }
 
     async function onClickSaveDataModel() {
-        //data/:env/:clientUserName/:applicationName/collection
+
         const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
         if(CollectionUrl && clientUserName) {
             const url = CollectionUrl
@@ -280,10 +276,6 @@ const CreateDataModel = (props: CreateDataModelType) => {
             </Grid>
         );
     }
-
-    // Data Model name, description, display name
-
-    console.log('properties', properties);
 
     function renderNameSection() {
 
