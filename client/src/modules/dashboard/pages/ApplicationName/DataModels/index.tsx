@@ -86,7 +86,7 @@ const DataModels = (props: PropsFromRedux) => {
                             onClick={() => setIsModalOpen(true)}
                             variant="contained"
                             color={'primary'}>
-                            Add Data Model
+                            Add model
                         </Button>
                     </Grid>
 
@@ -100,7 +100,7 @@ const DataModels = (props: PropsFromRedux) => {
                         rows={stores}
                         tableRows={tableRows}
                         tableName={'stores'}
-                    /> : <p>No Data Models</p>
+                    /> : <p>No models</p>
                 }
             </Grid>
 

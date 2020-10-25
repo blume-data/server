@@ -27,12 +27,12 @@ const NavBarMenuComponent = (props: PropsFromRedux) => {
             <ApplicationNameList />
             <Link className={'nav-bar-menu-link-item'} to={dataModelsUrl}>
                 <Button>
-                    Data models
+                    Models
                 </Button>
             </Link>
             <Link className={'nav-bar-menu-link-item'} to={dataEntriesUrl}>
                 <Button>
-                    Data entries
+                    Entries
                 </Button>
             </Link>
         </Grid>

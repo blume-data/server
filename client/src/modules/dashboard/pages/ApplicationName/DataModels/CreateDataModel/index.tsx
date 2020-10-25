@@ -346,7 +346,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                     hideNames
                         ? renderNameSection()
                         : <Form
-                            submitButtonName={'Create data model'}
+                            submitButtonName={'Create model'}
                             className={'create-content-model-form'}
                             fields={nameFields}
                             onSubmit={onSubmitCreateContentModel}
@@ -407,7 +407,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                                         onClick={onClickSaveDataModel}
                                         color={"primary"}
                                         variant={"contained"}>
-                                        Save Data Model
+                                        Save Model
                                     </Button>
                                 : null
                             }

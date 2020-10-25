@@ -15,9 +15,9 @@ export function getDataRoutes() {
 export const dashboardHomeUrl = '/dashboard/home';
 export const dashboardApplicationNamesUrl = '/dashboard/application-space';
 export const dashboardApplicationNameUrl = '/dashboard/:applicationName/application-space';
-export const dashboardDataModelsUrl = '/dashboard/:applicationName/data-models';
-export const dashboardDataModelUrl = '/dashboard/:applicationName/data-models/:dataModel';
-export const dashboardDataEntriesUrl = '/dashboard/:applicationName/data-entries';
-export const dashboardDataEntryUrl = '/dashboard/:applicationName/data-entry/:dataEntryId';
+export const dashboardDataModelsUrl = '/dashboard/:applicationName/models';
+export const dashboardDataModelUrl = '/dashboard/:applicationName/models/:dataModel';
+export const dashboardDataEntriesUrl = '/dashboard/:applicationName/entries';
+export const dashboardDataEntryUrl = '/dashboard/:applicationName/entry/:dataEntryId';
 
 export const authUrl = '/auth';
