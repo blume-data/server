@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import {Grid} from "@material-ui/core";
 import {Form} from "../../../../../../components/common/Form";
-import {ConfigField, RADIO, TEXT} from "../../../../../../components/common/Form/interface";
+import {CHECKBOX, ConfigField, RADIO, TEXT} from "../../../../../../components/common/Form/interface";
 import {
     BOOLEAN_FIElD_TYPE, CLIENT_USER_NAME, DATE_FIElD_TYPE, DECIMAL_FIELD_TYPE,
     ErrorMessagesType, INTEGER_FIElD_TYPE, JSON_FIELD_TYPE, LOCATION_FIELD_TYPE,
@@ -136,12 +136,8 @@ const CreateStore = (props: CreateStoreType) => {
                 value: '',
                 className: 'is-required-radio',
                 name: IS_FIELD_REQUIRED,
-                options: [
-                    {label: 'Yes', value: 'yes'},
-                    {label: 'No', value: 'no'}
-                ],
                 label: 'Is required',
-                inputType: RADIO,
+                inputType: CHECKBOX,
             },
         ];
 
@@ -206,7 +202,7 @@ const CreateStore = (props: CreateStoreType) => {
                             break;
                         }
                         case IS_FIELD_REQUIRED: {
-                            propertyIsRequired = trimCharactersAndNumbers(value.value);
+                            propertyIsRequired = value.value;
                             break;
                         }
 
@@ -221,7 +217,7 @@ const CreateStore = (props: CreateStoreType) => {
                     const property: PropertiesType = {
                         name: propertyId || trimCharactersAndNumbers(propertyName),
                         displayName: propertyName,
-                        required: propertyIsRequired === 'yes',
+                        required: propertyIsRequired === 'true',
                         type: fieldType,
                         description: propertyDescription
                     };

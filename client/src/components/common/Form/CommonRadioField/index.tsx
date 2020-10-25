@@ -14,13 +14,13 @@ interface RadioTypeProps extends FieldType{
 }
 
 export const CommonRadioField = (props: RadioTypeProps) => {
-    const {id, className, label,
+    const {id, className, label, required,
         onBlur, helperText, name, options,
         onChange, error=false, value=''
     } = props;
     return (
-        <Grid className={`${className} app-text-box`}>
-            <FormControl component="fieldset" error={error} id={id ? id : undefined}>
+        <Grid className={`${className} app-radio-box`} id={id ? id : undefined}>
+            <FormControl required={required} component="fieldset" error={error}>
                 <FormLabel component="legend">{label}</FormLabel>
                 <RadioGroup aria-label={label} name={name} value={value} onBlur={onBlur} onChange={onChange}>
                     {options && options.map(option => {

@@ -4,6 +4,7 @@ export const DROPDOWN = 'dropdown';
 export const BIG_TEXT = 'bigText';
 export const TEXT = 'text';
 export const RADIO = 'radio';
+export const CHECKBOX = 'check-box';
 
 export interface FormType {
     className: string;

@@ -3,12 +3,13 @@ import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import {TextBox} from "./TextBox";
 import {DropDown} from "./DropDown";
-import {BIG_TEXT, ConfigField, DROPDOWN, FormType, RADIO, TEXT} from "./interface";
+import {BIG_TEXT, CHECKBOX, ConfigField, DROPDOWN, FormType, RADIO, TEXT} from "./interface";
 import './style.scss';
 import {ErrorMessagesType, FIELD, MESSAGE} from "@ranjodhbirkaur/constants";
 import {Alert} from "../Toast";
 import {PLEASE_PROVIDE_VALID_VALUES} from "../../../modules/authentication/pages/Auth/constants";
 import {CommonRadioField} from "./CommonRadioField";
+import {CommonCheckBoxField} from "./CommonCheckBoxField";
 
 interface FormState {
     label: string;
@@ -201,6 +202,22 @@ export const Form = (props: FormType) => {
                     id={id}
                     className={className}
                     options={options}
+                    helperText={helperText}
+                />
+            );
+        }
+        if(inputType === CHECKBOX) {
+            return (
+                <CommonCheckBoxField
+                    required={required}
+                    name={name}
+                    placeholder={''}
+                    onBlur={onBlur}
+                    onChange={onChange}
+                    value={value}
+                    label={label}
+                    id={id}
+                    className={className}
                     helperText={helperText}
                 />
             );
