@@ -1,4 +1,4 @@
-import React from "react";
+import React, {Fragment} from "react";
 import {Grid} from "@material-ui/core";
 import {ApplicationNameList} from "../ApplicationNameList";
 import {Link} from "react-router-dom";
@@ -25,16 +25,22 @@ const NavBarMenuComponent = (props: PropsFromRedux) => {
     return (
         <Grid className={'nav-bar-menu-container'}>
             <ApplicationNameList />
-            <Link className={'nav-bar-menu-link-item'} to={dataModelsUrl}>
-                <Button>
-                    Models
-                </Button>
-            </Link>
-            <Link className={'nav-bar-menu-link-item'} to={dataEntriesUrl}>
-                <Button>
-                    Entries
-                </Button>
-            </Link>
+            {
+                applicationName
+                ? <Fragment>
+                    <Link className={'nav-bar-menu-link-item'} to={dataModelsUrl}>
+                        <Button>
+                            Models
+                        </Button>
+                    </Link>
+                    <Link className={'nav-bar-menu-link-item'} to={dataEntriesUrl}>
+                        <Button>
+                            Entries
+                        </Button>
+                    </Link>
+                  </Fragment>
+                : null
+            }
         </Grid>
     );
 };
