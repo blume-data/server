@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import {Grid} from "@material-ui/core";
 import {Form} from "../../../../../../components/common/Form";
-import {CHECKBOX, ConfigField, RADIO, TEXT} from "../../../../../../components/common/Form/interface";
+import {CHECKBOX, ConfigField, TEXT} from "../../../../../../components/common/Form/interface";
 import {
     BOOLEAN_FIElD_TYPE, CLIENT_USER_NAME, DATE_FIElD_TYPE, DECIMAL_FIELD_TYPE,
     ErrorMessagesType, INTEGER_FIElD_TYPE, JSON_FIELD_TYPE, LOCATION_FIELD_TYPE,
@@ -38,11 +38,11 @@ interface PropertiesType {
 }
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
-type CreateStoreType = PropsFromRedux & {
+type CreateDataModelType = PropsFromRedux & {
     onCreateDataModel: () => void;
 }
 
-const CreateStore = (props: CreateStoreType) => {
+const CreateDataModel = (props: CreateDataModelType) => {
 
     const [settingFieldName, setSettingFieldName] = useState<boolean>(false);
     const [addingField, setAddingField] = useState<boolean>(false);
@@ -441,4 +441,4 @@ const mapState = (state: RootState) => {
 };
 
 const connector = connect(mapState);
-export default connector(CreateStore);
+export default connector(CreateDataModel);

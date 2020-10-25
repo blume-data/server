@@ -10,13 +10,13 @@ import moment from "moment";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import ModalDialog from "../../../../../components/common/ModalDialog";
-import CreateStore from "./create-store";
+import CreateDataModel from "./CreateDataModel";
 import Paper from "@material-ui/core/Paper";
 import {RootState} from "../../../../../rootReducer";
 import {connect, ConnectedProps} from "react-redux";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
-const StoreList = (props: PropsFromRedux) => {
+const DataModels = (props: PropsFromRedux) => {
     const {applicationName, env, language, GetCollectionNamesUrl} = props;
     const [stores, setStores] = useState<any>(null);
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -104,7 +104,7 @@ const StoreList = (props: PropsFromRedux) => {
                 isOpen={isModalOpen}
                 title={'Create Store'}
                 handleClose={closeModal}>
-                <CreateStore
+                <CreateDataModel
                     onCreateDataModel={onCreateDataModel}
                 />
             </ModalDialog>
@@ -123,4 +123,4 @@ const mapState = (state: RootState) => {
 };
 
 const connector = connect(mapState);
-export default connector(StoreList);
+export default connector(DataModels);

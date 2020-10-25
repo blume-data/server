@@ -3,8 +3,9 @@ import AccordionSummary from "@material-ui/core/AccordionSummary";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import Typography from "@material-ui/core/Typography";
 import AccordionDetails from "@material-ui/core/AccordionDetails";
-import Accordion from "@material-ui/core/Accordion";
 import {randomString} from "../../../utils/tools";
+import loadable from "@loadable/component";
+const Accordion = loadable(() => import('@material-ui/core/Accordion'));
 
 interface AccordianCommonProps {
     children: any;

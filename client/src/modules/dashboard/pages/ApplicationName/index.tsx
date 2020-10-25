@@ -5,7 +5,7 @@ import {RootState} from "../../../../rootReducer";
 import {useParams} from "react-router";
 import './application-name.scss';
 import {setApplicationName} from "../../../authentication/pages/Auth/actions";
-import StoreList from "./StoreList";
+import DataModels from "./DataModels";
 import {AccordianCommon} from "../../../../components/common/AccordianCommon";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
@@ -25,7 +25,7 @@ const ApplicationName = (props: PropsFromRedux) => {
             <Paper elevation={3}>
                 <Grid className={'accordion-list'}>
                     <AccordianCommon name={'Data models'}>
-                        <StoreList />
+                        <DataModels />
                     </AccordianCommon>
                 </Grid>
 
