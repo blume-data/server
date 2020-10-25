@@ -29,7 +29,7 @@ export default function BasicTableMIUI(props: BasicTableMIUIProps) {
     const {tableName, tableRows, rows} = props;
 
     function renderRow(row: any, index: number) {
-        console.log('row', row);
+
         const key = `${index}`;
         return (
             <TableRow key={key}>

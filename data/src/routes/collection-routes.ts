@@ -29,9 +29,8 @@ router.post(CollectionUrl, [
             .isLength(stringLimitOptions)
             .withMessage(stringLimitOptionErrorMessage('displayName')),
         body('description')
-            .trim()
             .optional()
-            .isLength({ min: 1, max: 100 })
+            .isLength({ max: 100 })
             .withMessage('description must be between 1 and 100 characters')
     ],
     validateRequest, validateEnvType, checkAuth,
