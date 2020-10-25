@@ -41,7 +41,7 @@ const DataModels = (props: PropsFromRedux) => {
                     return {
                         ...item,
                         linkUrl : `${dashboardDataModelUrl
-                            .replace(':data-model', item.name)
+                            .replace(':dataModel', item.name)
                             .replace(':applicationName',applicationName)
                         }`,
                         updatedAt,

@@ -17,5 +17,7 @@ export const dashboardApplicationNamesUrl = '/dashboard/application-space';
 export const dashboardApplicationNameUrl = '/dashboard/:applicationName/application-space';
 export const dashboardDataModelsUrl = '/dashboard/:applicationName/data-models';
 export const dashboardDataModelUrl = '/dashboard/:applicationName/data-models/:dataModel';
+export const dashboardDataEntriesUrl = '/dashboard/:applicationName/data-entries';
+export const dashboardDataEntryUrl = '/dashboard/:applicationName/data-entry/:dataEntryId';
 
 export const authUrl = '/auth';

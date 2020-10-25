@@ -7,10 +7,11 @@ import './create-application-name.scss';
 import {doPostRequest} from "../../../../../utils/baseApi";
 import {getItemFromLocalStorage} from "../../../../../utils/tools";
 import {getBaseUrl} from "../../../../../utils/urls";
+import {ApplicationNameType} from "../index";
 
 interface CreateApplicationNameProps {
     url: string;
-    handleClose: (applicationName: string) => void;
+    handleClose: (applicationName: ApplicationNameType) => void;
 }
 
 export const CreateApplicationName = (props: CreateApplicationNameProps) => {

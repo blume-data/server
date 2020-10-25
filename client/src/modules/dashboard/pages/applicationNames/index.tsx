@@ -2,8 +2,8 @@ import React, {useEffect, useState} from "react";
 import {Grid, Paper} from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import ModalDialog from "../../../../components/common/ModalDialog";
-import {getApplicationNamesLocalStorage, getItemFromLocalStorage} from "../../../../utils/tools";
-import {APPLICATION_NAME, APPLICATION_NAMES} from "@ranjodhbirkaur/constants";
+import {getApplicationNamesLocalStorage} from "../../../../utils/tools";
+import {APPLICATION_NAME} from "@ranjodhbirkaur/constants";
 import {CreateApplicationName} from "./create-application-name";
 import {RootState} from "../../../../rootReducer";
 import {connect, ConnectedProps} from "react-redux";
@@ -14,6 +14,12 @@ import {setApplicationName} from "../../../authentication/pages/Auth/actions";
 import {useHistory} from "react-router";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
+
+export interface ApplicationNameType {
+    name: string;
+    languages: string[];
+}
+
 const ApplicationNames = (props: PropsFromRedux) => {
 
     const {ApplicationNameUrl, setApplicationName} = props;
@@ -36,7 +42,7 @@ const ApplicationNames = (props: PropsFromRedux) => {
         setIsModalOpen(false);
     }
 
-    function onCreateApplicationName(applicationName: {name: string; languages: string[]}) {
+    function onCreateApplicationName(applicationName: ApplicationNameType) {
         closeModal();
         const url = dashboardApplicationNameUrl.replace(`:${APPLICATION_NAME}`, applicationName.name);
         setApplicationName(applicationName.name);
