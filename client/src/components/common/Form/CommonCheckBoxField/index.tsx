@@ -15,7 +15,7 @@ interface CheckBoxTypeProps extends FieldType{
 export const CommonCheckBoxField = (props: CheckBoxTypeProps) => {
 
     const {id, className, label,
-        onBlur, helperText, name,
+        onBlur, helperText, name, disabled=false,
         onChange, error=false, value=''
     } = props;
 
@@ -26,7 +26,7 @@ export const CommonCheckBoxField = (props: CheckBoxTypeProps) => {
 
     return (
         <Grid className={`${className} app-check-box-field`} id={id ? id : undefined}>
-            <FormControl component="fieldset" error={error} className={'form-control'}>
+            <FormControl component="fieldset" disabled={disabled} error={error} className={'form-control'}>
                 <FormLabel component="legend">{label}</FormLabel>
                 <FormGroup onBlur={onBlur}>
                     <FormControlLabel

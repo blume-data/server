@@ -118,7 +118,7 @@ export const Form = (props: FormType) => {
     }
 
     function renderFields(field: ConfigField, index: number) {
-        const {inputType, options, id, className, name, placeholder, required, type='text', label} = field;
+        const {inputType, options, id, className, name, placeholder, required, type='text', label, disabled=false} = field;
 
         function onChange(e: ChangeEvent<any>) {
             changeValue(e, label, SET_VALUE_ACTION)
@@ -139,6 +139,7 @@ export const Form = (props: FormType) => {
                     type={type}
                     key={index}
                     name={name}
+                    disabled={disabled}
                     error={error}
                     required={required}
                     placeholder={placeholder}
@@ -154,6 +155,7 @@ export const Form = (props: FormType) => {
         if(inputType === DROPDOWN) {
             return (
                 <DropDown
+                    disabled={disabled}
                     onBlur={onBlur}
                     value={value}
                     options={options && options.length ? options : []}
@@ -172,6 +174,7 @@ export const Form = (props: FormType) => {
         if(inputType === BIG_TEXT) {
             return (
                 <TextBox
+                    disabled={disabled}
                     type={type}
                     key={index}
                     name={name}
@@ -192,6 +195,7 @@ export const Form = (props: FormType) => {
         if(inputType === RADIO) {
             return (
                 <CommonRadioField
+                    disabled={disabled}
                     required={required}
                     name={name}
                     placeholder={''}
@@ -209,6 +213,7 @@ export const Form = (props: FormType) => {
         if(inputType === CHECKBOX) {
             return (
                 <CommonCheckBoxField
+                    disabled={disabled}
                     required={required}
                     name={name}
                     placeholder={''}

@@ -13,7 +13,7 @@ interface TextBoxType extends FieldType{
 }
 export const TextBox = (props: TextBoxType) => {
     const {id, className, label, required=false,
-        onBlur, helperText, type,
+        onBlur, helperText, type, disabled=false,
         onChange, error=false, value='', placeholder='', multiline=false} = props;
     return (
         <Grid className={`${className} app-text-box`}>
@@ -21,6 +21,7 @@ export const TextBox = (props: TextBoxType) => {
                 <TextField
                     placeholder={placeholder}
                     value={value}
+                    disabled={disabled}
                     error={error}
                     type={type}
                     helperText={helperText}

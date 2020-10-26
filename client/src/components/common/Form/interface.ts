@@ -30,6 +30,7 @@ export interface FieldType {
     error?: boolean;
     helperText?: string;
     type?: string;
+    disabled?: boolean;
 }
 
 export interface ConfigField extends FieldType{

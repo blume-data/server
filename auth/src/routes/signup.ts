@@ -39,6 +39,7 @@ import {ClientTempUser} from "../models/clientTempUser";
 import {validateUserTypeSignUp} from "../middleware/userTypeCheck-Signup";
 import {APPLICATION_NAME_NOT_VALID, CLIENT_USER_NAME_NOT_VALID, EmailInUseMessage, InValidEmailMessage, UserNameNotAvailableMessage} from "../util/errorMessages";
 import {signUpUrl} from "../util/urls";
+import {trimCharactersAndNumbers} from "@ranjodhbirkaur/constants";
 
 const
     router = express.Router();
@@ -70,6 +71,7 @@ router.post(
   async (req: Request, res: Response) => {
 
         const userType = req.params.userType;
+        req.body.userName = trimCharactersAndNumbers(req.body.userName);
 
         switch (userType) {
             case clientUserType: {
@@ -217,7 +219,9 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
         }
         case clientUserType: {
 
-            user = ClientTempUser.build({ email, password, firstName, lastName, userName, verificationToken, clientType: clientUserType });
+            user = ClientTempUser.build({
+                email, password, firstName, lastName,  userName, verificationToken, clientType: clientUserType
+            });
             await user.save();
 
             console.log('verification token', user.verificationToken);
