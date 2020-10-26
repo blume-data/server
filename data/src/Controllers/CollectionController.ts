@@ -1,7 +1,7 @@
 import {Request, Response} from 'express';
-import {BadRequestError, ID, okayStatus, USER_NAME} from "@ranjodhbirkaur/common";
+import {BadRequestError, ID, okayStatus, sendSingleError, USER_NAME} from "@ranjodhbirkaur/common";
 import {
-    DATA_COLLECTION, MAX_COLLECTION_LIMIT, MODEL_LOGGER_NAME, STORE_CONNECTIONS, USER_COLLECTION
+    MAX_COLLECTION_LIMIT, MODEL_LOGGER_NAME, STORE_CONNECTIONS
 } from "../util/constants";
 import _ from 'lodash';
 import {CollectionModel} from "../models/Collection";
@@ -9,81 +9,95 @@ import {CANNOT_CREATE_COLLECTIONS_MORE_THAN_LIMIT, COLLECTION_ALREADY_EXIST} fro
 import {RuleType} from "../util/interface";
 import {storeSchema} from "../util/databaseApi";
 import {RANDOM_COLLECTION_NAME} from "../util/methods";
+import {trimCharactersAndNumbers} from "@ranjodhbirkaur/constants";
 
 export async function createCollectionSchema(req: Request, res: Response) {
 
     const clientUserName  = req.params && req.params.clientUserName;
     const applicationName  = req.params && req.params.applicationName;
     const env = req.params && req.params.env;
+    const reqMethod = req.method;
 
     const reqBody = req.body;
 
-    const isInLimit = await CollectionModel.find({
-        clientUserName
-    },'name');
-    if ((isInLimit && isInLimit.length) > MAX_COLLECTION_LIMIT) {
-        throw new BadRequestError(CANNOT_CREATE_COLLECTIONS_MORE_THAN_LIMIT);
-    }
-
-    // the name of the custom schema collection should not contain any space
-    if (reqBody && reqBody.name && typeof reqBody.name === 'string') {
-        const name = reqBody.name.split(' ').join('_');
-        if (reqBody.collectionType && reqBody.collectionType === USER_COLLECTION) {
-            const hasEmail = reqBody.rules.find((rule: RuleType) => rule.name === 'email');
-            if (!hasEmail) {
-                reqBody.rules.push({
-                    name: 'email',
-                    type: 'string',
-                    unique: true,
-                    required: true,
-                    isEmail: true
-                });
-            }
-            const hasPassword = reqBody.rules.find((rule: RuleType) => rule.name === 'password');
-            if (!hasPassword) {
-                reqBody.rules.push({
-                    name: 'password',
-                    type: 'string',
-                    required: true,
-                    isPassword: true
-                });
-            }
+    if(reqMethod === 'POST') {
+        /*If in create mode*/
+        /*Check collection limit*/
+        const isInLimit = await CollectionModel.find({
+            clientUserName
+        },'name');
+        if ((isInLimit && isInLimit.length) > MAX_COLLECTION_LIMIT) {
+            throw new BadRequestError(CANNOT_CREATE_COLLECTIONS_MORE_THAN_LIMIT);
         }
-        reqBody.name = name;
+
+        // the name of the custom schema collection should not contain any space
+        if (reqBody && reqBody.name && typeof reqBody.name === 'string') {
+            reqBody.name = trimCharactersAndNumbers(reqBody.name);
+        }
+
+        // Check if there is not other collection with same name and user_id
+        const alreadyExist = await CollectionModel.findOne({
+            clientUserName, name: reqBody.name, env, applicationName
+        }, 'id');
+
+        if (alreadyExist) {
+            throw new BadRequestError(COLLECTION_ALREADY_EXIST);
+        }
+
+        const containerName = `${RANDOM_COLLECTION_NAME(1, 1000)}`;
+        const storeConnection = _.sample(STORE_CONNECTIONS);
+        const connectionName = (storeConnection && storeConnection.url) ? storeConnection.url : '';
+        const newCollection = CollectionModel.build({
+            clientUserName,
+            isPublic: false,
+            applicationName,
+            rules: JSON.stringify(reqBody.rules),
+            name: reqBody.name,
+            displayName: reqBody.displayName,
+            env,
+            connectionName,
+            updatedBy: `${req.currentUser[ID]}-${req.currentUser[USER_NAME]}`,
+            description: reqBody.description,
+            containerName
+        });
+
+        await storeSchema(reqBody.name, clientUserName, connectionName, containerName, applicationName);
+        await storeSchema(`${reqBody.name}-${MODEL_LOGGER_NAME}`, clientUserName, connectionName, containerName, applicationName);
+        await newCollection.save();
+
+        res.status(okayStatus).send(newCollection);
     }
+    else {
 
-    // Check if there is not other collection with same name and user_id
-    const alreadyExist = await CollectionModel.findOne({
-        clientUserName, name: reqBody.name, env, applicationName
-    }, 'id');
+        const exist = await CollectionModel.findOne({
+            _id: reqBody.id
+        },
+            ['name', 'displayName', 'description', 'rules']);
 
-    if (alreadyExist) {
-        throw new BadRequestError(COLLECTION_ALREADY_EXIST);
+        if(exist) {
+            const update: any = {};
+            if(reqBody.rules) {
+                update.rules = JSON.stringify(reqBody.rules);
+            }
+            if(reqBody.description) {
+                update.description = reqBody.description;
+            }
+            if(reqBody.displayName) {
+                update.displayName = reqBody.displayName;
+            }
+
+            const hello = await CollectionModel.findOneAndUpdate({
+                _id: reqBody.id
+            }, update);
+            console.log('hello', hello);
+
+            return res.status(okayStatus).send('done');
+
+        }
+        else {
+            return sendSingleError(res, 'Model not foundc');
+        }
     }
-
-    const containerName = `${RANDOM_COLLECTION_NAME(1, 1000)}`;
-    const storeConnection = _.sample(STORE_CONNECTIONS);
-    const connectionName = (storeConnection && storeConnection.url) ? storeConnection.url : '';
-    const newCollection = CollectionModel.build({
-        clientUserName,
-        isPublic: false,
-        applicationName,
-        rules: JSON.stringify(reqBody.rules),
-        name: reqBody.name,
-        displayName: reqBody.displayName,
-        env,
-        connectionName,
-        updatedBy: `${req.currentUser[ID]}-${req.currentUser[USER_NAME]}`,
-        description: reqBody.description,
-        containerName,
-        collectionType: (reqBody.collectionType ? reqBody.collectionType : DATA_COLLECTION)
-    });
-
-    await storeSchema(reqBody.name, clientUserName, connectionName, containerName, applicationName);
-    await storeSchema(`${reqBody.name}-${MODEL_LOGGER_NAME}`, clientUserName, connectionName, containerName, applicationName);
-    await newCollection.save();
-
-    res.status(okayStatus).send(newCollection);
 }
 
 /*Return the list of collections in an application name*/
@@ -99,8 +113,29 @@ export async function getCollectionNames(req: Request, res: Response) {
         applicationName,
         language,
         env
-    }, ['name', 'description', 'updatedAt', 'updatedBy']);
+    }, ['name', 'description', 'updatedAt', 'updatedBy', 'rules', 'displayName']);
+
     res.status(okayStatus).send(collections);
+}
+
+/*Return info of the data-model*/
+export async function getModel(req: Request, res: Response) {
+
+    const applicationName  = req.params && req.params.applicationName;
+    const env = req.params && req.params.env;
+    const clientUserName  = req.params && req.params.clientUserName;
+    const modelName = req.params && req.params.modelName;
+
+    const model = await CollectionModel.findOne({
+        clientUserName,
+        applicationName,
+        env,
+        name: modelName
+    });
+
+    console.log('mdole', model);
+
+    res.status(okayStatus).send(model);
 }
 
 export async function deleteCollectionSchema(req: Request, res: Response) {

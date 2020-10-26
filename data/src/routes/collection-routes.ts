@@ -1,12 +1,12 @@
 import express from 'express';
 import {body} from "express-validator";
 import {validateRequest, stringLimitOptionErrorMessage, stringLimitOptions} from "@ranjodhbirkaur/common";
-import {CollectionUrl, GetCollectionNamesUrl} from "../util/urls";
+import {CollectionUrl, GetCollectionNamesUrl, GetDataModelUrl} from "../util/urls";
 import {
     createCollectionSchema,
     deleteCollectionSchema,
     getCollectionNames,
-    getCollectionSchema
+    getCollectionSchema, getModel
 } from "../Controllers/CollectionController";
 import {validateCollections} from "../services/middlewares/collections/validateCollections";
 import {checkAuth} from "../services/checkAuth";
@@ -37,7 +37,20 @@ router.post(CollectionUrl, [
     validateApplicationNameMiddleWare, validateCollections, createCollectionSchema
 );
 
+router.put(CollectionUrl, [
+        body('id')
+            .notEmpty()
+            .withMessage('id is required')
+    ],
+    validateRequest, validateEnvType, checkAuth,
+    validateApplicationNameMiddleWare, validateCollections, createCollectionSchema
+);
+
+/*get all the models of the application space*/
 router.get(GetCollectionNamesUrl, validateEnvType, checkAuth, validateApplicationNameMiddleWare, getCollectionNames);
+
+/*get info of the data model*/
+router.get(GetDataModelUrl, validateEnvType, checkAuth, validateApplicationNameMiddleWare, getModel)
 
 // Delete Item Schema
 router.delete(CollectionUrl, [

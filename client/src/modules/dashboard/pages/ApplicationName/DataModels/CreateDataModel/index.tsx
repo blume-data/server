@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Grid} from "@material-ui/core";
 import {Form} from "../../../../../../components/common/Form";
 import {CHECKBOX, ConfigField, TEXT} from "../../../../../../components/common/Form/interface";
@@ -25,11 +25,11 @@ import EditIcon from '@material-ui/icons/Edit';
 import ButtonGroup from "@material-ui/core/ButtonGroup";
 import {RootState} from "../../../../../../rootReducer";
 import {connect, ConnectedProps} from "react-redux";
-import {doPostRequest} from "../../../../../../utils/baseApi";
+import {doPostRequest, doPutRequest} from "../../../../../../utils/baseApi";
 import {getItemFromLocalStorage} from "../../../../../../utils/tools";
 import {getBaseUrl} from "../../../../../../utils/urls";
 
-interface PropertiesType {
+export interface PropertiesType {
     displayName: string;
     name: string;
     type: string;
@@ -40,6 +40,11 @@ interface PropertiesType {
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type CreateDataModelType = PropsFromRedux & {
     onCreateDataModel: () => void;
+    modelName?: string;
+    modelId?: string;
+    modelDescription?: string;
+    modelDisplayName?: string;
+    modelProperties?: PropertiesType[];
 }
 
 const CreateDataModel = (props: CreateDataModelType) => {
@@ -52,6 +57,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
     const [contentModelName, setContentModelName] = useState<string>('');
     const [contentModelDescription, setContentModelDescription] = useState<string>('');
     const [contentModelDisplayName, setContentModelDisplayName] = useState<string>('');
+    const [contentModelId, setContentModelId] = useState<string | null>(null);
 
     const [properties, setProperties] = useState<PropertiesType[] | null>(null);
 
@@ -62,7 +68,22 @@ const CreateDataModel = (props: CreateDataModelType) => {
     const FIELD_TYPE = 'fieldType';
     const FIELD_DESCRIPTION = 'fieldDescription';
     const FIELD_ID = 'fieldId';
-    const IS_FIELD_REQUIRED = 'required'
+    const IS_FIELD_REQUIRED = 'required';
+
+    const {env, CollectionUrl, applicationName, onCreateDataModel,
+        modelProperties, modelId,
+        modelName, modelDescription='', modelDisplayName,} = props;
+
+    useEffect(() => {
+        if(modelId && modelName && modelProperties && modelDisplayName) {
+
+            setContentModelDescription(modelDescription);
+            setContentModelDisplayName(modelDisplayName);
+            setContentModelName(modelName);
+            setProperties(modelProperties);
+            setContentModelId(modelId);
+        }
+    }, []);
 
     const nameFields: ConfigField[] = [
         {
@@ -143,8 +164,6 @@ const CreateDataModel = (props: CreateDataModelType) => {
 
         return hello;
     };
-
-    const {env, CollectionUrl, applicationName, onCreateDataModel} = props;
 
     function onSubmitCreateContentModel(values: object[]): Promise<string | ErrorMessagesType[]> {
 
@@ -240,14 +259,26 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 .replace(':clientUserName', clientUserName)
                 .replace(':env', env)
                 .replace(':applicationName', applicationName);
-            const response = await doPostRequest(`${getBaseUrl()}${url}`, {
-                name: contentModelName,
-                displayName: contentModelDisplayName,
-                description: contentModelDescription,
-                rules: properties
-            }, true);
 
-            console.log('res', response);
+            let response;
+
+            if(contentModelId) {
+                response = await doPutRequest(`${getBaseUrl()}${url}`, {
+                    name: contentModelName,
+                    displayName: contentModelDisplayName,
+                    description: contentModelDescription,
+                    rules: properties,
+                    id: contentModelId
+                }, true);
+            }
+            else {
+                response = await doPostRequest(`${getBaseUrl()}${url}`, {
+                    name: contentModelName,
+                    displayName: contentModelDisplayName,
+                    description: contentModelDescription,
+                    rules: properties
+                }, true);
+            }
 
             if(response && !response.errors) {
                 // close the modal
@@ -320,7 +351,8 @@ const CreateDataModel = (props: CreateDataModelType) => {
                     {properties && properties.map(property => {
                         return (
                             <Grid container justify={"flex-start"} className={'property-item'}>
-                                <h2 className={'property-name'}>{property.name}:</h2>
+                                <h2 className={'property-name'}>{property.name}</h2>
+                                <h2 className="property-type">({property.type})</h2>
                                 <h2 className={'property-description'}>{property.description}</h2>
                             </Grid>
                         );
@@ -338,7 +370,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                     hideNames
                         ? renderNameSection()
                         : <Form
-                            submitButtonName={'Create model'}
+                            submitButtonName={'Save model name'}
                             className={'create-content-model-form'}
                             fields={nameFields}
                             onSubmit={onSubmitCreateContentModel}

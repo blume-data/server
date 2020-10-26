@@ -10,16 +10,39 @@ import moment from "moment";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import ModalDialog from "../../../../../components/common/ModalDialog";
-import CreateDataModel from "./CreateDataModel";
+import CreateDataModel, {PropertiesType} from "./CreateDataModel";
 import Paper from "@material-ui/core/Paper";
 import {RootState} from "../../../../../rootReducer";
 import {connect, ConnectedProps} from "react-redux";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
+
+interface ModelDataType {
+    modelId: string;
+    modelName: string;
+    modelDescription: string;
+    modelDisplayName: string;
+    modelProperties: PropertiesType[]
+}
+
 const DataModels = (props: PropsFromRedux) => {
     const {applicationName, env, language, GetCollectionNamesUrl} = props;
     const [stores, setStores] = useState<any>(null);
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
+
+    const [modelData, setModelData] = useState<ModelDataType | null>(null);
+
+    function onClickEdit(id: string, name: string, description: string, displayName: string, rules: any) {
+        setModelData({
+            modelId: id,
+            modelDescription: description,
+            modelDisplayName: displayName,
+            modelName: name,
+            modelProperties: rules
+        });
+        setIsModalOpen(true);
+    }
 
     async function getCollectionNames() {
         if(GetCollectionNamesUrl) {
@@ -40,10 +63,12 @@ const DataModels = (props: PropsFromRedux) => {
                     const updatedBy = item.updatedBy.split('-')[1];
                     return {
                         ...item,
-                        linkUrl : `${dashboardDataModelUrl
-                            .replace(':dataModel', item.name)
+                        linkUrl: `${dashboardDataModelUrl
+                            .replace(':modelName', item.name)
                             .replace(':applicationName',applicationName)
                         }`,
+                        edit: 'Edit',
+                        onClick: () => onClickEdit(item.id, item.name, item.description, item.displayName, JSON.parse(item.rules)),
                         updatedAt,
                         updatedBy
                     }
@@ -61,6 +86,7 @@ const DataModels = (props: PropsFromRedux) => {
         {name: 'Description', value: 'description'},
         {name: 'Updated by', value: 'updatedBy'},
         {name: 'Updated At', value: 'updatedAt'},
+        {name: 'EDIT', value: 'edit', onClick: true}
     ]
 
     function closeModal() {
@@ -70,6 +96,11 @@ const DataModels = (props: PropsFromRedux) => {
     function onCreateDataModel() {
         closeModal();
         getCollectionNames();
+    }
+
+    function onClickAddModel() {
+        setIsModalOpen(true)
+        setModelData(null);
     }
 
 
@@ -82,8 +113,9 @@ const DataModels = (props: PropsFromRedux) => {
                         <TextField id="filter-stores" label="Filter" />
                     </Grid>
                     <Grid item className={'add-store-button'}>
+                        {/*open model and clear model data*/}
                         <Button
-                            onClick={() => setIsModalOpen(true)}
+                            onClick={onClickAddModel}
                             variant="contained"
                             color={'primary'}>
                             Add model
@@ -106,9 +138,14 @@ const DataModels = (props: PropsFromRedux) => {
 
             <ModalDialog
                 isOpen={isModalOpen}
-                title={'Create Store'}
+                title={'Data Model'}
                 handleClose={closeModal}>
                 <CreateDataModel
+                    modelId={modelData?.modelId}
+                    modelDescription={modelData?.modelDescription}
+                    modelDisplayName={modelData?.modelDisplayName}
+                    modelName={modelData?.modelName}
+                    modelProperties={modelData?.modelProperties}
                     onCreateDataModel={onCreateDataModel}
                 />
             </ModalDialog>

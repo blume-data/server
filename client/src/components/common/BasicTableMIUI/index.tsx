@@ -20,6 +20,7 @@ interface BasicTableMIUIProps {
         name: string;
         value: string;
         linkUrl?: boolean;
+        onClick?: any;
     }[];
     rows: any;
     tableName: string;
@@ -37,12 +38,17 @@ export default function BasicTableMIUI(props: BasicTableMIUIProps) {
             <TableRow key={key}>
                 {tableRows.map((tableRow, index) => {
                     return (
-                        <TableCell component={index === 0 ? "th" : undefined} scope={index === 0 ? "row" : undefined}  align={index === 0 ? undefined : "right"}>
+                        <TableCell
+                            key={index}
+                            component={index === 0 ? "th" : undefined} scope={index === 0 ? "row" : undefined}  align={index === 0 ? undefined : "right"}>
                             {
                                 tableRow.linkUrl
                                 ? <Link to={row['linkUrl']}>{row[tableRow.value]}</Link>
-                                : row[tableRow.value]
+                                : <div onClick={tableRow.onClick ? row.onClick : null} className={`table-cell-item ${tableRow.onClick ? 'has-on-click' : ''}`}>
+                                        {row[tableRow.value]}
+                                  </div>
                             }
+
                         </TableCell>
                     );
                 })}

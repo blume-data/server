@@ -1,6 +1,5 @@
 import {NextFunction, Request, Response} from "express";
 import {RuleType} from "../../../util/interface";
-import {COLLECTION_TYPES} from "../../../util/constants";
 import {
     EMAIL_PROPERTY_IN_RULES_SHOULD_BE_STRING, INVALID_RULES_MESSAGE,
     IS_EMAIL_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN,
@@ -17,16 +16,10 @@ export async function validateCollections(req: Request, res: Response, next: Nex
     const reqBody = req.body;
     let isValidBody = true;
     let inValidMessage = [];
+    const reqMethod = req.method;
 
     // Validate Rules
     if (reqBody.rules && typeof reqBody.rules === 'object' && reqBody.rules.length) {
-        if (reqBody.collectionType && !COLLECTION_TYPES.includes(reqBody.collectionType)) {
-            isValidBody = false;
-            inValidMessage.push({
-                message: `${reqBody.collectionType} is not a valid collectionType`,
-                field: 'collectionType'
-            });
-        }
 
         reqBody.rules.forEach((rule: RuleType) => {
 
@@ -96,7 +89,8 @@ export async function validateCollections(req: Request, res: Response, next: Nex
             }
         });
     }
-    else {
+    // rules is option in put request
+    else if(reqMethod === 'POST') {
         isValidBody = false;
         inValidMessage.push({
             message: INVALID_RULES_MESSAGE,

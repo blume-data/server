@@ -27,6 +27,7 @@ interface DataRoutesType {
     CollectionUrl: string;
     ApplicationNameUrl: string;
     GetCollectionNamesUrl: string;
+    GetDataModelUrl: string;
 }
 
 interface AuthRoutesType {
