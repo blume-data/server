@@ -82,7 +82,7 @@ const DataModels = (props: PropsFromRedux) => {
     }, [applicationName, env, language, GetCollectionNamesUrl]);
 
     const tableRows = [
-        {name: 'Name', value: 'name', linkUrl: true},
+        {name: 'Name', value: 'displayName', linkUrl: true},
         {name: 'Description', value: 'description'},
         {name: 'Updated by', value: 'updatedBy'},
         {name: 'Updated At', value: 'updatedAt'},

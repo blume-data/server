@@ -86,10 +86,9 @@ export async function createCollectionSchema(req: Request, res: Response) {
                 update.displayName = reqBody.displayName;
             }
 
-            const hello = await CollectionModel.findOneAndUpdate({
+            await CollectionModel.findOneAndUpdate({
                 _id: reqBody.id
             }, update);
-            console.log('hello', hello);
 
             return res.status(okayStatus).send('done');
 
