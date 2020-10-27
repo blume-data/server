@@ -9,10 +9,11 @@ import {
 import {Request, Response} from 'express';
 import {ClientUserModel} from "../authMongoConnection";
 import {APPLICATION_NAME_ALREADY_EXIST} from "./Messages";
+import {trimCharactersAndNumbers} from "@ranjodhbirkaur/constants";
 
 export async function createApplicationName(req: Request, res: Response) {
     const {applicationName} = req.body;
-    const lowerCaseApplicationName = applicationName.toLowerCase().split(' ').join('-');
+    const lowerCaseApplicationName = trimCharactersAndNumbers(applicationName);
 
     if(req.currentUser && req.currentUser[APPLICATION_NAMES] && typeof req.currentUser[APPLICATION_NAMES]) {
         const applicationNames: ApplicationNameType[] = req.currentUser[APPLICATION_NAMES];

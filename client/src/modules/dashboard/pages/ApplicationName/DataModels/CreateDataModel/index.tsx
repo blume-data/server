@@ -28,6 +28,7 @@ import {connect, ConnectedProps} from "react-redux";
 import {doPostRequest, doPutRequest} from "../../../../../../utils/baseApi";
 import {getItemFromLocalStorage} from "../../../../../../utils/tools";
 import {getBaseUrl} from "../../../../../../utils/urls";
+import {AccordianCommon} from "../../../../../../components/common/AccordianCommon";
 
 export interface PropertiesType {
     displayName: string;
@@ -76,7 +77,6 @@ const CreateDataModel = (props: CreateDataModelType) => {
 
     useEffect(() => {
         if(modelId && modelName && modelProperties && modelDisplayName) {
-
             setContentModelDescription(modelDescription);
             setContentModelDisplayName(modelDisplayName);
             setContentModelName(modelName);
@@ -287,13 +287,17 @@ const CreateDataModel = (props: CreateDataModelType) => {
         }
     }
 
+    /*Handle click on cancel add field*/
+    function onClickCancelAddField() {
+        setAddingField(false);
+    }
+
     function fieldItem(name: string, description: string, Icon: JSX.Element, value: string) {
 
         function onClick() {
             setFieldType(value);
             setAddingField(false);
             setSettingFieldName(true);
-            setFieldType(value);
         }
 
 
@@ -320,45 +324,41 @@ const CreateDataModel = (props: CreateDataModelType) => {
         }
 
         return (
-            <Paper>
-                <Grid container justify={"flex-start"} direction={"row"} className="name-section">
+            <Grid container justify={"space-between"} direction={"row"} className="name-section">
+                <Grid className="name-section-grid-item">
                     <Grid item className={'name-section-item'}>
                         <p>Name:</p>
                         <h2>{contentModelDisplayName}</h2>
                     </Grid>
                     <Grid item className={'name-section-item'}>
-                        <p>Name Identifier: </p>
-                        <h2>{contentModelName}</h2>
-                    </Grid>
-                    <Grid item className={'name-section-item'}>
                         <p>Description: </p>
                         <h2>{contentModelDescription}</h2>
                     </Grid>
+                </Grid>
+                <Grid className="name-section-grid-item">
                     <Grid item className={'name-section-item edit-button'}>
                         <Button title={'edit content model'} onClick={onClick}>
                             <EditIcon /> Edit
                         </Button>
                     </Grid>
                 </Grid>
-            </Paper>
+            </Grid>
         )
     }
 
     function renderPropertiesSection() {
         return (
-            <Paper>
-                <Grid container direction={"column"} className={'property-section-container'}>
-                    {properties && properties.map(property => {
-                        return (
-                            <Grid container justify={"flex-start"} className={'property-item'}>
-                                <h2 className={'property-name'}>{property.name}</h2>
-                                <h2 className="property-type">({property.type})</h2>
-                                <h2 className={'property-description'}>{property.description}</h2>
-                            </Grid>
-                        );
-                    })}
-                </Grid>
-            </Paper>
+            <Grid container direction={"column"} className={'property-section-container'}>
+                {properties && properties.map(property => {
+                    return (
+                        <Grid container justify={"flex-start"} className={'property-item'}>
+                            <h2 className={'property-name'}>{property.name}</h2>
+                            <h2 className="property-type">({property.type})</h2>
+                            <h2 className={'property-description'}>{property.description}</h2>
+                        </Grid>
+                    );
+                })}
+            </Grid>
         );
     }
 
@@ -366,39 +366,37 @@ const CreateDataModel = (props: CreateDataModelType) => {
         <Grid>
             <Grid className="create-content-model">
 
-                {
-                    hideNames
-                        ? renderNameSection()
-                        : <Form
-                            submitButtonName={'Save model name'}
-                            className={'create-content-model-form'}
-                            fields={nameFields}
-                            onSubmit={onSubmitCreateContentModel}
-                          />
+                <AccordianCommon name={'Model name'}>
+                    {
+                        hideNames
+                            ? renderNameSection()
+                            : <Form
+                                submitButtonName={'Save model name'}
+                                className={'create-content-model-form'}
+                                fields={nameFields}
+                                onSubmit={onSubmitCreateContentModel}
+                            />
 
-                }
+                    }
+                </AccordianCommon>
 
-                {
-                    properties
-                    ? renderPropertiesSection()
-                    : null
-                }
+                <AccordianCommon name={'Model fields'}>
+                    {
+                        properties
+                            ? renderPropertiesSection()
+                            : null
+                    }
+                </AccordianCommon>
 
                 {
                     addingField
-                    ? <Grid container justify={"center"} className="fields-container">
-                            {fieldItem(
-                                'Formatted Text',
-                                'customised text with links and media',
-                                <TextFieldsIcon />,
-                                LONG_STRING_FIELD_TYPE
-                                )}
-                            {fieldItem(
-                                'Text',
-                                'names, paragraphs, title',
-                                <TextFieldsIcon />,
-                                SHORT_STRING_FIElD_TYPE
-                                )}
+                    ? <Grid container  className="fields-container">
+                        <Grid container justify={"flex-end"}>
+                            <Button onClick={onClickCancelAddField}>Cancel</Button>
+                        </Grid>
+                        <Grid container justify={"center"} className="fields-grid">
+                            {fieldItem('Formatted Text', 'customised text with links and media', <TextFieldsIcon />, LONG_STRING_FIELD_TYPE)}
+                            {fieldItem('Text','names, paragraphs, title', <TextFieldsIcon />, SHORT_STRING_FIElD_TYPE)}
                             {fieldItem('Number', 'numbers like age, count, quantity', <Grid className={'numbers'}>
                                 <Looks3Icon />
                                 <Looks4Icon />
@@ -416,9 +414,11 @@ const CreateDataModel = (props: CreateDataModelType) => {
                             {fieldItem('Media', 'videos, photos, files', <PermMediaIcon />, MEDIA_FIELD_TYPE)}
                             {fieldItem('Reference', 'For example a comment can refer to authors', <LinkIcon />, REFERENCE_FIELD_TYPE)}
                         </Grid>
+
+                        </Grid>
                     : settingFieldName
                     ? null
-                    : <ButtonGroup>
+                    : <ButtonGroup className={'modal-action-buttons'}>
                             <Button
                                 onClick={onClickAddFields}
                                 color={"secondary"}
