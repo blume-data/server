@@ -20,7 +20,6 @@ import ToggleOffIcon from '@material-ui/icons/ToggleOff';
 import CodeIcon from '@material-ui/icons/Code';
 import PermMediaIcon from '@material-ui/icons/PermMedia';
 import LinkIcon from '@material-ui/icons/Link';
-import Paper from "@material-ui/core/Paper";
 import EditIcon from '@material-ui/icons/Edit';
 import ButtonGroup from "@material-ui/core/ButtonGroup";
 import {RootState} from "../../../../../../rootReducer";
@@ -29,6 +28,7 @@ import {doPostRequest, doPutRequest} from "../../../../../../utils/baseApi";
 import {getItemFromLocalStorage} from "../../../../../../utils/tools";
 import {getBaseUrl} from "../../../../../../utils/urls";
 import {AccordianCommon} from "../../../../../../components/common/AccordianCommon";
+import BasicTableMIUI from "../../../../../../components/common/BasicTableMIUI";
 
 export interface PropertiesType {
     displayName: string;
@@ -61,6 +61,8 @@ const CreateDataModel = (props: CreateDataModelType) => {
     const [contentModelId, setContentModelId] = useState<string | null>(null);
 
     const [properties, setProperties] = useState<PropertiesType[] | null>(null);
+
+    const [response, setResponse] = useState<string | ErrorMessagesType[]>('');
 
     const DISPLAY_NAME = 'displayName';
     const NAME = 'name';
@@ -260,6 +262,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                     rules: properties,
                     id: contentModelId
                 }, true);
+                setResponse(response);
             }
             else {
                 response = await doPostRequest(`${getBaseUrl()}${url}`, {
@@ -268,6 +271,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                     description: contentModelDescription,
                     rules: properties
                 }, true);
+                setResponse(response);
             }
 
             if(response && !response.errors) {
@@ -275,10 +279,6 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 onCreateDataModel();
             }
         }
-    }
-
-    function setErrors() {
-
     }
 
     /*Handle click on cancel add field*/
@@ -341,17 +341,23 @@ const CreateDataModel = (props: CreateDataModelType) => {
     }
 
     function renderPropertiesSection() {
+
+        const tableRows = [
+            {name: 'Name', value: DISPLAY_NAME},
+            {name: 'Description', value: DESCRIPTION},
+            {name: 'Type', value: 'type'},
+            {name: 'EDIT', value: 'edit', onClick: true}
+        ]
+
         return (
             <Grid container direction={"column"} className={'property-section-container'}>
-                {properties && properties.map((property, index) => {
-                    return (
-                        <Grid key={index} container justify={"flex-start"} className={'property-item'}>
-                            <h2 className={'property-name'}>{property.name}</h2>
-                            <h2 className="property-type">({property.type})</h2>
-                            <h2 className={'property-description'}>{property.description}</h2>
-                        </Grid>
-                    );
-                })}
+                {
+                    properties && properties.length ? <BasicTableMIUI
+                        rows={properties}
+                        tableRows={tableRows}
+                        tableName={'Fields'}
+                    /> : <p>No fields added</p>
+                }
             </Grid>
         );
     }
@@ -360,11 +366,12 @@ const CreateDataModel = (props: CreateDataModelType) => {
         <Grid>
             <Grid className="create-content-model">
 
-                <AccordianCommon name={'Model name'}>
+                <AccordianCommon shouldExpand={true} name={'Model name'}>
                     {
                         hideNames
                             ? renderNameSection()
                             : <Form
+                                response={response}
                                 submitButtonName={'Save model name'}
                                 className={'create-content-model-form'}
                                 fields={nameFields}
@@ -375,11 +382,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 </AccordianCommon>
 
                 <AccordianCommon name={'Model fields'}>
-                    {
-                        properties
-                            ? renderPropertiesSection()
-                            : null
-                    }
+                    {renderPropertiesSection()}
                 </AccordianCommon>
 
                 {
@@ -440,6 +443,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                         </Grid>
                         <Grid item>
                             <Form
+                                response={response}
                                 submitButtonName={'Add field'}
                                 onSubmit={onSubmitFieldProperty}
                                 fields={propertyNameFields()}
