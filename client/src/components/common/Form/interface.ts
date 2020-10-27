@@ -10,7 +10,9 @@ export interface FormType {
     className: string;
     fields: ConfigField[];
     submitButtonName?: string;
-    onSubmit: (values: object[]) => Promise<string | ErrorMessagesType[]>;
+    onSubmit: (values: object[]) => void;
+    response: string | ErrorMessagesType[];
+    clearOnSubmit?: boolean;
 }
 
 export interface OptionsType {

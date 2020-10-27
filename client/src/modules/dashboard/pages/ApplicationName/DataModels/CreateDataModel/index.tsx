@@ -103,6 +103,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
             className: 'create-content-model-name-identifier',
             type: 'text',
             name: NAME,
+            disabled: !!modelId,
             label: 'Name Identifier',
             inputType: TEXT,
         },
@@ -165,85 +166,74 @@ const CreateDataModel = (props: CreateDataModelType) => {
         return hello;
     };
 
-    function onSubmitCreateContentModel(values: object[]): Promise<string | ErrorMessagesType[]> {
+    function onSubmitCreateContentModel(values: object[]) {
+        let name = '';
+        let displayName = '';
+        let description = '';
 
-        return new Promise(async (resolve, reject) => {
+        values.forEach((value: any) => {
+            if(value.name === NAME) {
+                name = trimCharactersAndNumbers(value.value);
+            }
+            else if(value.name === DISPLAY_NAME) {
+                displayName = value.value;
+            }
+            else if(value.name === DESCRIPTION) {
+                description = value.value;
+            }
+        });
 
-            let name = '';
-            let displayName = '';
-            let description = '';
+        setContentModelName(name ? name : trimCharactersAndNumbers(displayName));
+        setContentModelDisplayName(displayName);
+        setContentModelDescription(description);
+        setHideNames(true);
+        setAddingField(true);
+    }
 
+    function onSubmitFieldProperty(values: any) {
+        setSettingFieldName(false);
+
+        if(values && values.length) {
+
+            let propertyId = '';
+            let propertyName = '';
+            let propertyIsRequired = '';
+            let propertyDescription = '';
             values.forEach((value: any) => {
-                if(value.name === NAME) {
-                    name = trimCharactersAndNumbers(value.value);
-                }
-                else if(value.name === DISPLAY_NAME) {
-                    displayName = value.value;
-                }
-                else if(value.name === DESCRIPTION) {
-                    description = value.value;
+                switch (value.name) {
+                    case FIELD_ID: {
+                        propertyId = trimCharactersAndNumbers(value.value);
+                        break;
+                    }
+                    case FIELD_NAME: {
+                        propertyName = value.value;
+                        break;
+                    }
+                    case IS_FIELD_REQUIRED: {
+                        propertyIsRequired = value.value;
+                        break;
+                    }
+
+                    case FIELD_DESCRIPTION: {
+                        propertyDescription = value.value;
+                    }
+
                 }
             });
 
-            setContentModelName(name ? name : trimCharactersAndNumbers(displayName));
-            setContentModelDisplayName(displayName);
-            setContentModelDescription(description);
-            setHideNames(true);
-            setAddingField(true);
-            return resolve('')
-        })
-    }
-
-    function onSubmitFieldProperty(values: any): Promise<string | ErrorMessagesType[]> {
-
-        return new Promise(async (resolve, reject) => {
-
-            setSettingFieldName(false);
-
-            if(values && values.length) {
-
-                let propertyId = '';
-                let propertyName = '';
-                let propertyIsRequired = '';
-                let propertyDescription = '';
-                values.forEach((value: any) => {
-                    switch (value.name) {
-                        case FIELD_ID: {
-                            propertyId = trimCharactersAndNumbers(value.value);
-                            break;
-                        }
-                        case FIELD_NAME: {
-                            propertyName = value.value;
-                            break;
-                        }
-                        case IS_FIELD_REQUIRED: {
-                            propertyIsRequired = value.value;
-                            break;
-                        }
-
-                        case FIELD_DESCRIPTION: {
-                            propertyDescription = value.value;
-                        }
-
-                    }
-                });
-
-                setTimeout(() => {
-                    const property: PropertiesType = {
-                        name: propertyId || trimCharactersAndNumbers(propertyName),
-                        displayName: propertyName,
-                        required: propertyIsRequired === 'true',
-                        type: fieldType,
-                        description: propertyDescription
-                    };
-                    const tempProperties = JSON.parse(JSON.stringify(properties ? properties : []));
-                    tempProperties.push(property);
-                    setProperties(tempProperties);
-                });
-            }
-
-            return resolve('')
-        })
+            setTimeout(() => {
+                const property: PropertiesType = {
+                    name: propertyId || trimCharactersAndNumbers(propertyName),
+                    displayName: propertyName,
+                    required: propertyIsRequired === 'true',
+                    type: fieldType,
+                    description: propertyDescription
+                };
+                const tempProperties = JSON.parse(JSON.stringify(properties ? properties : []));
+                tempProperties.push(property);
+                setProperties(tempProperties);
+            });
+        }
     }
 
     function onClickAddFields() {
@@ -285,6 +275,10 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 onCreateDataModel();
             }
         }
+    }
+
+    function setErrors() {
+
     }
 
     /*Handle click on cancel add field*/
@@ -349,9 +343,9 @@ const CreateDataModel = (props: CreateDataModelType) => {
     function renderPropertiesSection() {
         return (
             <Grid container direction={"column"} className={'property-section-container'}>
-                {properties && properties.map(property => {
+                {properties && properties.map((property, index) => {
                     return (
-                        <Grid container justify={"flex-start"} className={'property-item'}>
+                        <Grid key={index} container justify={"flex-start"} className={'property-item'}>
                             <h2 className={'property-name'}>{property.name}</h2>
                             <h2 className="property-type">({property.type})</h2>
                             <h2 className={'property-description'}>{property.description}</h2>
@@ -440,13 +434,18 @@ const CreateDataModel = (props: CreateDataModelType) => {
 
                 {
                     settingFieldName
-                    ? <Grid container className={'set-fields-property-container'}>
-                        <Form
-                            submitButtonName={'Add field'}
-                            onSubmit={onSubmitFieldProperty}
-                            fields={propertyNameFields()}
-                            className={'field-property-form'}
-                        />
+                    ? <Grid container direction={'column'} className={'set-fields-property-container'}>
+                        <Grid item className={'cancel-button-container'}>
+                            <Button>Cancel</Button>
+                        </Grid>
+                        <Grid item>
+                            <Form
+                                submitButtonName={'Add field'}
+                                onSubmit={onSubmitFieldProperty}
+                                fields={propertyNameFields()}
+                                className={'field-property-form'}
+                            />
+                        </Grid>
                       </Grid>
                     : null
                 }

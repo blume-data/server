@@ -68,4 +68,12 @@
   .modal-action-buttons {
     margin-top: 20px;
   }
+
+  .set-fields-property-container {
+    .cancel-button-container {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+  }
 }

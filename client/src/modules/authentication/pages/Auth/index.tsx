@@ -45,6 +45,7 @@ const AuthComponent = (props: AuthProps) => {
 
     const [isAlertOpen, setIsAlertOpen] = React.useState<boolean>(false);
     const [alert, setAlertMessage] = React.useState<AlertType>({message: ''});
+    const [response, setResponse] = React.useState<string | ErrorMessagesType[]>('');
 
     const history = useHistory();
 
@@ -71,7 +72,7 @@ const AuthComponent = (props: AuthProps) => {
         });
     }
 
-    async function authUser(values: any): Promise<string | ErrorMessagesType[]> {
+    async function authUser(values: any) {
         const {routeAddress, setAuthentication} = props;
         //setIsLoading(true);
         // set route url according to step
@@ -116,6 +117,7 @@ const AuthComponent = (props: AuthProps) => {
             timeOut(() => {
                 history.push(`/auth/${SIGN_IN}`);
             });
+            setResponse('');
             return '';
         }
         if (response && !response.errors) {
@@ -148,13 +150,11 @@ const AuthComponent = (props: AuthProps) => {
                     break;
                 }
             }
-            return FORM_SUCCESSFULLY_SUBMITTED;
+            setResponse(FORM_SUCCESSFULLY_SUBMITTED);
         }
         else if(response && response.errors && response.errors.length) {
-
-            return response.errors;
+            setResponse(response.errors);
         }
-        return '';
     }
 
     function showAlert(alertParam: AlertType) {
@@ -188,15 +188,15 @@ const AuthComponent = (props: AuthProps) => {
                 <Grid container justify={'center'}>
                     <TopLink step={step}/>
                     {step === SIGN_UP
-                        ? <CardForm fields={getFieldConfiguration(SIGN_UP)}
+                        ? <CardForm fields={getFieldConfiguration(SIGN_UP)} response={response}
                                     onSubmit={onSubmit} title={REGISTRATION_TITLE} />
                         : null}
                     {step === SIGN_IN
-                        ? <CardForm fields={getFieldConfiguration(SIGN_IN)}
+                        ? <CardForm fields={getFieldConfiguration(SIGN_IN)} response={response}
                                     onSubmit={onSubmit} title={LOGIN_TITLE} />
                         : null}
                     {step === VERIFY_EMAIL
-                        ? <CardForm fields={getFieldConfiguration(VERIFY_EMAIL)}
+                        ? <CardForm fields={getFieldConfiguration(VERIFY_EMAIL)} response={response}
                                     onSubmit={onSubmit} title={REGISTRATION_TITLE} />
                         : null}
                 </Grid>

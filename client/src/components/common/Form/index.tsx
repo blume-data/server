@@ -32,7 +32,7 @@ export const Form = (props: FormType) => {
     const [alert, setAlertMessage] = React.useState<AlertType>({message: ''});
 
     const [formState, setFormState] = useState<FormState[]>([]);
-    const {className, fields, onSubmit, submitButtonName} = props;
+    const {className, fields, onSubmit, submitButtonName, response='', clearOnSubmit=false} = props;
 
     function setErrorMessage(name: string) {
         return `${name} is required`;
@@ -84,6 +84,24 @@ export const Form = (props: FormType) => {
         });
         setFormState(state);
     }, [fields]);
+
+    useEffect(() => {
+
+        if (typeof response === 'string') {
+            if(clearOnSubmit) {
+                clearForm();
+            }
+        }
+        else if(response && response.length) {
+            setFormErrors(response);
+            if (response.length === 1 && !response[0][FIELD] && response[0][MESSAGE]) {
+                showAlert({message: response[0][MESSAGE], severity: "error"});
+            }
+            else {
+                showAlert({message: PLEASE_PROVIDE_VALID_VALUES, severity: "error"});
+            }
+    }
+    }, [response, clearOnSubmit])
 
     function getValue(label: string) {
         const value = formState.find(item => item.label === label);
@@ -250,18 +268,6 @@ export const Form = (props: FormType) => {
                 }
             });
             const res = await onSubmit(values);
-            if (typeof res === 'string') {
-                clearForm();
-            }
-            else if(res && res.length) {
-                setFormErrors(res);
-                if (res.length === 1 && !res[0][FIELD] && res[0][MESSAGE]) {
-                    showAlert({message: res[0][MESSAGE], severity: "error"});
-                }
-                else {
-                    showAlert({message: PLEASE_PROVIDE_VALID_VALUES, severity: "error"});
-                }
-            }
         }
         else {
             let newFormState: FormState[] = [];
@@ -286,18 +292,21 @@ export const Form = (props: FormType) => {
         const values: FormState[] = [];
         formState.forEach(item => {
             if (errors && errors.length) {
-                const error = errors.find(errorItem => errorItem[FIELD] === item.label);
-                if (error) {
-                    values.push({
-                        ...item,
-                        helperText: error[MESSAGE],
-                        isTouched: true
-                    });
-                }
-                else {
-                    values.push({
-                        ...item
-                    });
+                const field = fields.find(fieldItem => fieldItem.label === item.label);
+                if(field) {
+                    const error = errors.find(errorItem => errorItem[FIELD] === field.name);
+                    if (error) {
+                        values.push({
+                            ...item,
+                            helperText: error[MESSAGE],
+                            isTouched: true
+                        });
+                    }
+                    else {
+                        values.push({
+                            ...item
+                        });
+                    }
                 }
             }
         });
