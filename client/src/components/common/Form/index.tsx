@@ -32,7 +32,7 @@ export const Form = (props: FormType) => {
     const [alert, setAlertMessage] = React.useState<AlertType>({message: ''});
 
     const [formState, setFormState] = useState<FormState[]>([]);
-    const {className, fields, onSubmit, submitButtonName, response='', clearOnSubmit=false} = props;
+    const {className, fields, onSubmit, submitButtonName, response='', clearOnSubmit=false, showClearButton=false} = props;
 
     function setErrorMessage(name: string) {
         return `${name} is required`;
@@ -333,9 +333,11 @@ export const Form = (props: FormType) => {
             })}
 
             <Grid container className={'button-section'}>
-                <Grid item>
-                    <Button variant="contained" onClick={clearForm} color={'secondary'}>Clear</Button>
-                </Grid>
+                {
+                    showClearButton
+                    ? <Grid item><Button variant="contained" onClick={clearForm} color={'secondary'}>Clear</Button></Grid>
+                    : null
+                }
                 <Grid item>
                     <Button variant="contained" onClick={onClickSubmit} color={'primary'}>
                         {submitButtonName ? submitButtonName : 'Submit'}

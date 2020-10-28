@@ -13,6 +13,7 @@ export interface FormType {
     onSubmit: (values: object[]) => void;
     response: string | ErrorMessagesType[];
     clearOnSubmit?: boolean;
+    showClearButton?: boolean;
 }
 
 export interface OptionsType {

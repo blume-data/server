@@ -16,7 +16,7 @@ import {RootState} from "../../../../../rootReducer";
 import {connect, ConnectedProps} from "react-redux";
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
-import {Edit} from "@material-ui/icons";
+import IconButton from "@material-ui/core/IconButton";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
@@ -70,8 +70,8 @@ const DataModels = (props: PropsFromRedux) => {
                             .replace(':modelName', item.name)
                             .replace(':applicationName',applicationName)
                         }`,
-                        edit: <EditIcon />,
-                        delete: <DeleteIcon />  ,
+                        edit: <IconButton><EditIcon /></IconButton>,
+                        delete: <IconButton><DeleteIcon /></IconButton>,
                         'delete-click': () => alert('delete clicked'),
                         'edit-click': () => onClickEdit(item.id, item.name, item.description, item.displayName, JSON.parse(item.rules)),
                         updatedAt,

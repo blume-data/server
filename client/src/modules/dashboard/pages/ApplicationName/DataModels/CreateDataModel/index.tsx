@@ -30,6 +30,7 @@ import {getBaseUrl} from "../../../../../../utils/urls";
 import {AccordianCommon} from "../../../../../../components/common/AccordianCommon";
 import BasicTableMIUI from "../../../../../../components/common/BasicTableMIUI";
 import DeleteIcon from "@material-ui/icons/Delete";
+import IconButton from "@material-ui/core/IconButton";
 
 export interface PropertiesType {
     displayName: string;
@@ -392,8 +393,8 @@ const CreateDataModel = (props: CreateDataModelType) => {
         const rows = properties && properties.map(property => {
             return {
                 ...property,
-                edit: <EditIcon />,
-                delete: <DeleteIcon />,
+                edit: <IconButton><EditIcon /></IconButton>,
+                delete: <IconButton><DeleteIcon /></IconButton>,
                 'delete-click': () => alert('delete clicked'),
                 'edit-click': () => onClickEdit(property),
             }
@@ -503,6 +504,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                         </Grid>
                         <Grid item>
                             <Form
+                                showClearButton={!fieldEditMode}
                                 response={response}
                                 submitButtonName={'Save field'}
                                 onSubmit={onSubmitFieldProperty}
