@@ -31,6 +31,7 @@ import {AccordianCommon} from "../../../../../../components/common/AccordianComm
 import BasicTableMIUI from "../../../../../../components/common/BasicTableMIUI";
 import DeleteIcon from "@material-ui/icons/Delete";
 import IconButton from "@material-ui/core/IconButton";
+import Paper from "@material-ui/core/Paper";
 
 export interface PropertiesType {
     displayName: string;
@@ -148,12 +149,12 @@ const CreateDataModel = (props: CreateDataModelType) => {
             {
                 disabled: fieldEditMode,
                 required: false,
-                placeholder: 'Field Id',
+                placeholder: 'Field Identifier',
                 value: fieldName,
                 className: 'create-content-model-name-text-field',
                 type: 'text',
                 name: FIELD_ID,
-                label: 'Field id',
+                label: 'Field Identifier',
                 inputType: TEXT,
             },
             {
@@ -346,25 +347,30 @@ const CreateDataModel = (props: CreateDataModelType) => {
             setHideNames(false);
         }
 
+        const tableRows = [
+            {name: 'Name', value: DISPLAY_NAME},
+            {name: 'Description', value: DESCRIPTION},
+            {name: 'Field Identifier', value: NAME},
+            {name: 'Edit', value: 'edit', onClick: true},
+        ];
+
+        const items = [{
+            [DISPLAY_NAME]: contentModelDisplayName,
+            [DESCRIPTION]: contentModelDescription,
+            [NAME]: contentModelName,
+            edit: <IconButton><EditIcon /></IconButton>,
+            'edit-click': () => onClick(),
+        }];
+
         return (
             <Grid container justify={"space-between"} direction={"row"} className="name-section">
-                <Grid className="name-section-grid-item">
-                    <Grid item className={'name-section-item'}>
-                        <p>Name:</p>
-                        <h2>{contentModelDisplayName}</h2>
-                    </Grid>
-                    <Grid item className={'name-section-item'}>
-                        <p>Description: </p>
-                        <h2>{contentModelDescription}</h2>
-                    </Grid>
-                </Grid>
-                <Grid className="name-section-grid-item">
-                    <Grid item className={'name-section-item edit-button'}>
-                        <Button title={'edit content model'} onClick={onClick}>
-                            <EditIcon /> Edit
-                        </Button>
-                    </Grid>
-                </Grid>
+                {
+                    items && items.length ? <BasicTableMIUI
+                        rows={items}
+                        tableRows={tableRows}
+                        tableName={'Model Name'}
+                    /> : null
+                }
             </Grid>
         )
     }
@@ -498,21 +504,23 @@ const CreateDataModel = (props: CreateDataModelType) => {
 
                 {
                     settingFieldName
-                    ? <Grid container direction={'column'} className={'set-fields-property-container'}>
-                        <Grid item className={'cancel-button-container'}>
-                            <Button onClick={closeAddFieldForm}>Cancel</Button>
+                    ? <Paper>
+                        <Grid container direction={'column'} className={'set-fields-property-container'}>
+                            <Grid item className={'cancel-button-container'}>
+                                <Button onClick={closeAddFieldForm}>Cancel</Button>
+                            </Grid>
+                            <Grid item>
+                                <Form
+                                    showClearButton={!fieldEditMode}
+                                    response={response}
+                                    submitButtonName={'Save field'}
+                                    onSubmit={onSubmitFieldProperty}
+                                    fields={propertyNameFields()}
+                                    className={'field-property-form'}
+                                />
+                            </Grid>
                         </Grid>
-                        <Grid item>
-                            <Form
-                                showClearButton={!fieldEditMode}
-                                response={response}
-                                submitButtonName={'Save field'}
-                                onSubmit={onSubmitFieldProperty}
-                                fields={propertyNameFields()}
-                                className={'field-property-form'}
-                            />
-                        </Grid>
-                      </Grid>
+                      </Paper>
                     : null
                 }
 

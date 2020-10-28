@@ -20,7 +20,7 @@ export const CardForm = (props: RegisterType) => {
             <CardContent>
                 <Typography variant={'h3'}>{title}</Typography>
             </CardContent>
-            <Form response={response} onSubmit={onSubmit} fields={fields} className={'auth-form'} />
+            <Form showClearButton={true} response={response} onSubmit={onSubmit} fields={fields} className={'auth-form'} />
         </Card>
     );
 };

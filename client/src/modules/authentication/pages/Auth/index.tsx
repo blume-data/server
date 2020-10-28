@@ -188,16 +188,19 @@ const AuthComponent = (props: AuthProps) => {
                 <Grid container justify={'center'}>
                     <TopLink step={step}/>
                     {step === SIGN_UP
-                        ? <CardForm fields={getFieldConfiguration(SIGN_UP)} response={response}
-                                    onSubmit={onSubmit} title={REGISTRATION_TITLE} />
+                        ? <CardForm
+                            fields={getFieldConfiguration(SIGN_UP)} response={response}
+                            onSubmit={onSubmit} title={REGISTRATION_TITLE} />
                         : null}
                     {step === SIGN_IN
-                        ? <CardForm fields={getFieldConfiguration(SIGN_IN)} response={response}
-                                    onSubmit={onSubmit} title={LOGIN_TITLE} />
+                        ? <CardForm
+                            fields={getFieldConfiguration(SIGN_IN)} response={response}
+                            onSubmit={onSubmit} title={LOGIN_TITLE} />
                         : null}
                     {step === VERIFY_EMAIL
-                        ? <CardForm fields={getFieldConfiguration(VERIFY_EMAIL)} response={response}
-                                    onSubmit={onSubmit} title={REGISTRATION_TITLE} />
+                        ? <CardForm
+                            fields={getFieldConfiguration(VERIFY_EMAIL)} response={response}
+                            onSubmit={onSubmit} title={REGISTRATION_TITLE} />
                         : null}
                 </Grid>
             </Grid>
