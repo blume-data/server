@@ -26,6 +26,8 @@ export interface FieldType {
     value: string;
     id?: string;
     options?: OptionsType[];
+    min?: number;
+    max?: number;
     className: string;
     required: boolean;
     name: string;

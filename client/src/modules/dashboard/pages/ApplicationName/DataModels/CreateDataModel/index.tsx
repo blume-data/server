@@ -109,8 +109,12 @@ const CreateDataModel = (props: CreateDataModelType) => {
             name: DISPLAY_NAME,
             label: 'Display Name',
             inputType: TEXT,
+            min: 1,
+            max: 40
         },
         {
+            min: 1,
+            max: 40,
             required: false,
             placeholder: 'Name Identifier',
             value: contentModelName,
@@ -130,6 +134,8 @@ const CreateDataModel = (props: CreateDataModelType) => {
             name: DESCRIPTION,
             label: 'Description',
             inputType: TEXT,
+            min: 1,
+            max: 40
         },
     ];
 
@@ -143,6 +149,8 @@ const CreateDataModel = (props: CreateDataModelType) => {
             className: 'create-content-model-name-text-field',
             type: 'text',
             name: FIELD_NAME,
+            min: 1,
+            max: 40,
             label: 'Field Name',
             inputType: TEXT,
             },
@@ -156,6 +164,8 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 name: FIELD_ID,
                 label: 'Field Identifier',
                 inputType: TEXT,
+                min: 1,
+                max: 40,
             },
             {
                 required: false,
@@ -166,6 +176,8 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 name: FIELD_DESCRIPTION,
                 label: 'Field description',
                 inputType: TEXT,
+                min: 1,
+                max: 40,
             },
             {
                 required: false,
@@ -511,7 +523,6 @@ const CreateDataModel = (props: CreateDataModelType) => {
                             </Grid>
                             <Grid item>
                                 <Form
-                                    showClearButton={!fieldEditMode}
                                     response={response}
                                     submitButtonName={'Save field'}
                                     onSubmit={onSubmitFieldProperty}

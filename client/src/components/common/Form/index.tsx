@@ -42,6 +42,32 @@ export const Form = (props: FormType) => {
         const value = event.target.value;
         let state: FormState[];
 
+
+        function setHelperText(fieldItem: ConfigField, formStateItem: FormState, value: string) {
+
+            const {max, inputType, min, required} = fieldItem;
+            const {label} = formStateItem;
+
+            if(max !== undefined || min!== undefined) {
+                if(max !== undefined) {
+                    if(inputType === BIG_TEXT || inputType === TEXT) {
+                        if(value.length > max && !(!required && (!value || value.length === 0))) {
+                            return `${label} should have maximum ${max} characters`;
+                        }
+                    }
+                }
+                if(min !== undefined) {
+                    if(inputType === BIG_TEXT || inputType === TEXT) {
+                        if(value.length < min && !(!required && (!value || value.length === 0))) {
+                            return `${label} should have minimum ${min} characters`;
+                        }
+                    }
+                }
+            }
+
+            return (!value && fieldItem.required) ? setErrorMessage(formStateItem.label) : ''
+        }
+
         const fieldItem = fields.find(ranjodh => ranjodh.label === field);
         if(fieldItem) {
             if (action === SET_VALUE_ACTION) {
@@ -50,7 +76,7 @@ export const Form = (props: FormType) => {
                         return {
                             ...item,
                             value,
-                            helperText: (!value && fieldItem.required) ? setErrorMessage(item.label) : '',
+                            helperText: setHelperText(fieldItem, item, value)
                         }
                     }
                     return item;
@@ -62,7 +88,7 @@ export const Form = (props: FormType) => {
                     if (item.label === field) {
                         return {
                             ...item,
-                            helperText: (!item.value && fieldItem.required) ? setErrorMessage(item.label) : '',
+                            helperText: setHelperText(fieldItem, item, item.value),
                             isTouched: true
                         }
                     }
