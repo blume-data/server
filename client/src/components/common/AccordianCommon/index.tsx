@@ -5,6 +5,8 @@ import Typography from "@material-ui/core/Typography";
 import AccordionDetails from "@material-ui/core/AccordionDetails";
 import {randomString} from "../../../utils/tools";
 import loadable from "@loadable/component";
+import './index.scss';
+
 const Accordion = loadable(() => import('@material-ui/core/Accordion'));
 
 interface AccordianCommonProps {
@@ -29,7 +31,7 @@ export const AccordianCommon = (props: AccordianCommonProps) => {
     };
 
     return (
-        <Accordion expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
+        <Accordion className={'accordian-common-container'} expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
             <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
                 aria-controls={`${id}-content`}

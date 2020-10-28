@@ -14,6 +14,9 @@ import CreateDataModel, {PropertiesType} from "./CreateDataModel";
 import Paper from "@material-ui/core/Paper";
 import {RootState} from "../../../../../rootReducer";
 import {connect, ConnectedProps} from "react-redux";
+import DeleteIcon from '@material-ui/icons/Delete';
+import EditIcon from '@material-ui/icons/Edit';
+import {Edit} from "@material-ui/icons";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
@@ -67,8 +70,10 @@ const DataModels = (props: PropsFromRedux) => {
                             .replace(':modelName', item.name)
                             .replace(':applicationName',applicationName)
                         }`,
-                        edit: 'Edit',
-                        onClick: () => onClickEdit(item.id, item.name, item.description, item.displayName, JSON.parse(item.rules)),
+                        edit: <EditIcon />,
+                        delete: <DeleteIcon />  ,
+                        'delete-click': () => alert('delete clicked'),
+                        'edit-click': () => onClickEdit(item.id, item.name, item.description, item.displayName, JSON.parse(item.rules)),
                         updatedAt,
                         updatedBy
                     }
@@ -86,7 +91,8 @@ const DataModels = (props: PropsFromRedux) => {
         {name: 'Description', value: 'description'},
         {name: 'Updated by', value: 'updatedBy'},
         {name: 'Updated At', value: 'updatedAt'},
-        {name: 'EDIT', value: 'edit', onClick: true}
+        {name: 'EDIT', value: 'edit', onClick: true},
+        {name: 'Delete', value: 'delete', onClick: true}
     ]
 
     function closeModal() {

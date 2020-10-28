@@ -44,7 +44,7 @@ export default function BasicTableMIUI(props: BasicTableMIUIProps) {
                             {
                                 tableRow.linkUrl
                                 ? <Link to={row['linkUrl']}>{row[tableRow.value]}</Link>
-                                : <div onClick={tableRow.onClick ? row.onClick : null} className={`table-cell-item ${tableRow.onClick ? 'has-on-click' : ''}`}>
+                                : <div onClick={tableRow.onClick ? row[`${tableRow.value}-click`] : null} className={`table-cell-item ${tableRow.onClick ? 'has-on-click' : ''}`}>
                                         {row[tableRow.value]}
                                   </div>
                             }

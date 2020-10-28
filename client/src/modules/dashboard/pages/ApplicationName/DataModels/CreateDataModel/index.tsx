@@ -29,6 +29,7 @@ import {getItemFromLocalStorage} from "../../../../../../utils/tools";
 import {getBaseUrl} from "../../../../../../utils/urls";
 import {AccordianCommon} from "../../../../../../components/common/AccordianCommon";
 import BasicTableMIUI from "../../../../../../components/common/BasicTableMIUI";
+import DeleteIcon from "@material-ui/icons/Delete";
 
 export interface PropertiesType {
     displayName: string;
@@ -52,7 +53,16 @@ const CreateDataModel = (props: CreateDataModelType) => {
 
     const [settingFieldName, setSettingFieldName] = useState<boolean>(false);
     const [addingField, setAddingField] = useState<boolean>(false);
+
+
+    const [fieldName, setFieldName] = useState<string>('');
+    const [fieldDescription, setFieldDescription] = useState<string>('');
+    const [fieldDisplayName, setFieldDisplayName] = useState<string>('');
+    const [fieldIsRequired, setFieldIsRequired] = useState<string>('');
     const [fieldType, setFieldType] = useState<string>('');
+    const [fieldEditMode, setFieldEditMode] = useState<boolean>(false);
+
+
     const [hideNames, setHideNames] = useState<boolean>(false);
 
     const [contentModelName, setContentModelName] = useState<string>('');
@@ -127,7 +137,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
             {
             required: true,
             placeholder: 'Field Name',
-            value: '',
+            value: fieldDisplayName,
             className: 'create-content-model-name-text-field',
             type: 'text',
             name: FIELD_NAME,
@@ -135,9 +145,10 @@ const CreateDataModel = (props: CreateDataModelType) => {
             inputType: TEXT,
             },
             {
+                disabled: fieldEditMode,
                 required: false,
                 placeholder: 'Field Id',
-                value: '',
+                value: fieldName,
                 className: 'create-content-model-name-text-field',
                 type: 'text',
                 name: FIELD_ID,
@@ -147,7 +158,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
             {
                 required: false,
                 placeholder: 'Field description',
-                value: '',
+                value: fieldDescription,
                 className: 'create-content-model-name-text-field',
                 type: 'text',
                 name: FIELD_DESCRIPTION,
@@ -157,7 +168,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
             {
                 required: false,
                 placeholder: 'Is required',
-                value: '',
+                value: fieldIsRequired,
                 className: 'is-required-radio',
                 name: IS_FIELD_REQUIRED,
                 label: 'Is required',
@@ -193,7 +204,6 @@ const CreateDataModel = (props: CreateDataModelType) => {
     }
 
     function onSubmitFieldProperty(values: any) {
-        setSettingFieldName(false);
 
         if(values && values.length) {
 
@@ -231,9 +241,27 @@ const CreateDataModel = (props: CreateDataModelType) => {
                     type: fieldType,
                     description: propertyDescription
                 };
+
                 const tempProperties = JSON.parse(JSON.stringify(properties ? properties : []));
-                tempProperties.push(property);
-                setProperties(tempProperties);
+                const exist = tempProperties.find((item: any) => item.name === property.name);
+
+                if(exist) {
+                    const newProperties: PropertiesType[] = tempProperties.map((propertyItem: PropertiesType) => {
+                        if(property.name === propertyItem.name) {
+                            return property;
+                        }
+                        else {
+                            return propertyItem;
+                        }
+                    });
+                    setProperties(newProperties);
+                }
+                else {
+                    tempProperties.push(property);
+                    setProperties(tempProperties);
+                }
+
+                closeAddFieldForm();
             });
         }
     }
@@ -346,20 +374,52 @@ const CreateDataModel = (props: CreateDataModelType) => {
             {name: 'Name', value: DISPLAY_NAME},
             {name: 'Description', value: DESCRIPTION},
             {name: 'Type', value: 'type'},
-            {name: 'EDIT', value: 'edit', onClick: true}
-        ]
+            {name: 'Edit', value: 'edit', onClick: true},
+            {name: 'Delete', value: 'delete', onClick: true}
+        ];
+
+        function onClickEdit(property: PropertiesType) {
+            setSettingFieldName(true);
+            setAddingField(false);
+            setFieldType(property.type);
+            setFieldEditMode(true);
+            setFieldDisplayName(property.displayName);
+            setFieldName(property.name);
+            setFieldDescription(property.description);
+            setFieldIsRequired(property.required ? 'true' : 'false');
+        }
+
+        const rows = properties && properties.map(property => {
+            return {
+                ...property,
+                edit: <EditIcon />,
+                delete: <DeleteIcon />,
+                'delete-click': () => alert('delete clicked'),
+                'edit-click': () => onClickEdit(property),
+            }
+        })
 
         return (
             <Grid container direction={"column"} className={'property-section-container'}>
                 {
                     properties && properties.length ? <BasicTableMIUI
-                        rows={properties}
+                        rows={rows}
                         tableRows={tableRows}
                         tableName={'Fields'}
                     /> : <p>No fields added</p>
                 }
             </Grid>
         );
+    }
+
+    /*Close the form of fields properties*/
+    function closeAddFieldForm() {
+        setFieldName('');
+        setFieldDescription('');
+        setFieldDisplayName('');
+        setFieldEditMode(false);
+        setFieldIsRequired('');
+        setSettingFieldName(false);
     }
 
     return (
@@ -439,12 +499,12 @@ const CreateDataModel = (props: CreateDataModelType) => {
                     settingFieldName
                     ? <Grid container direction={'column'} className={'set-fields-property-container'}>
                         <Grid item className={'cancel-button-container'}>
-                            <Button>Cancel</Button>
+                            <Button onClick={closeAddFieldForm}>Cancel</Button>
                         </Grid>
                         <Grid item>
                             <Form
                                 response={response}
-                                submitButtonName={'Add field'}
+                                submitButtonName={'Save field'}
                                 onSubmit={onSubmitFieldProperty}
                                 fields={propertyNameFields()}
                                 className={'field-property-form'}
