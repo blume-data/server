@@ -277,8 +277,11 @@ export const Form = (props: FormType) => {
         let isValid = true;
         formState.forEach(item => {
             const formItem = fields.find(field => field.label === item.label);
-            if (formItem && formItem.required && !item.value) {
-                isValid = false
+            if(formItem) {
+                const errorHai = hasError(formItem.label);
+                if(errorHai) {
+                    isValid = false
+                }
             }
         });
 
