@@ -1,12 +1,13 @@
 import React, {useEffect, useState} from "react";
 import {Grid} from "@material-ui/core";
-import {Form} from "../../../../../../components/common/Form";
+import {AlertType, Form} from "../../../../../../components/common/Form";
 import {CHECKBOX, ConfigField, TEXT} from "../../../../../../components/common/Form/interface";
 import {
     BOOLEAN_FIElD_TYPE, CLIENT_USER_NAME, DATE_FIElD_TYPE, DECIMAL_FIELD_TYPE,
     ErrorMessagesType, INTEGER_FIElD_TYPE, JSON_FIELD_TYPE, LOCATION_FIELD_TYPE,
-    LONG_STRING_FIELD_TYPE, MEDIA_FIELD_TYPE, REFERENCE_FIELD_TYPE,
-    SHORT_STRING_FIElD_TYPE, trimCharactersAndNumbers
+    LONG_STRING_FIELD_TYPE, MEDIA_FIELD_TYPE, REFERENCE_FIELD_TYPE, IS_FIELD_REQUIRED,
+    SHORT_STRING_FIElD_TYPE, trimCharactersAndNumbers, DISPLAY_NAME, NAME, DESCRIPTION,
+    FIELD_MAX, FIELD_MIN, FIELD_CUSTOM_ERROR_MSG_MIN_MAX
 } from "@ranjodhbirkaur/constants";
 import TextFieldsIcon from '@material-ui/icons/TextFields';
 import './style.scss';
@@ -32,6 +33,7 @@ import BasicTableMIUI from "../../../../../../components/common/BasicTableMIUI";
 import DeleteIcon from "@material-ui/icons/Delete";
 import IconButton from "@material-ui/core/IconButton";
 import Paper from "@material-ui/core/Paper";
+import {Alert} from "../../../../../../components/common/Toast";
 
 export interface PropertiesType {
     displayName: string;
@@ -39,6 +41,9 @@ export interface PropertiesType {
     type: string;
     required: boolean;
     description: string;
+    max?: number;
+    min?: number;
+    [FIELD_CUSTOM_ERROR_MSG_MIN_MAX]?: string;
 }
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
@@ -59,6 +64,9 @@ const CreateDataModel = (props: CreateDataModelType) => {
 
     const [fieldName, setFieldName] = useState<string>('');
     const [fieldDescription, setFieldDescription] = useState<string>('');
+    const [fieldMax, setFieldMax] = useState<number | string>('');
+    const [fieldMin, setFieldMin] = useState<number | string>('');
+    const [fieldMinMaxCustomErrorMessage, setFieldMinMaxCustomErrorMessage] = useState<string>('');
     const [fieldDisplayName, setFieldDisplayName] = useState<string>('');
     const [fieldIsRequired, setFieldIsRequired] = useState<string>('');
     const [fieldType, setFieldType] = useState<string>('');
@@ -76,14 +84,14 @@ const CreateDataModel = (props: CreateDataModelType) => {
 
     const [response, setResponse] = useState<string | ErrorMessagesType[]>('');
 
-    const DISPLAY_NAME = 'displayName';
-    const NAME = 'name';
-    const DESCRIPTION = 'description';
+    // to show alerts
+    const [isAlertOpen, setIsAlertOpen] = React.useState<boolean>(false);
+    const [alert, setAlertMessage] = React.useState<AlertType>({message: ''});
+
     const FIELD_NAME = 'fieldName';
     const FIELD_TYPE = 'fieldType';
     const FIELD_DESCRIPTION = 'fieldDescription';
     const FIELD_ID = 'fieldId';
-    const IS_FIELD_REQUIRED = 'required';
 
     const {env, CollectionUrl, applicationName, onCreateDataModel,
         modelProperties, modelId,
@@ -190,6 +198,39 @@ const CreateDataModel = (props: CreateDataModelType) => {
             },
         ];
 
+        if(fieldType === SHORT_STRING_FIElD_TYPE) {
+            hello.push({
+                required: false,
+                placeholder: 'Max character count',
+                value: `${fieldMax}`,
+                className: 'field-max-count',
+                type: 'number',
+                name: FIELD_MAX,
+                label: 'Max character count',
+                inputType: TEXT
+            });
+            hello.push({
+                required: false,
+                placeholder: 'Min character count',
+                value: `${fieldMin}`,
+                className: 'field-min-count',
+                type: 'number',
+                name: FIELD_MIN,
+                label: 'Min character count',
+                inputType: TEXT
+            });
+            hello.push({
+                required: false,
+                placeholder: 'Character count custom error message',
+                value: `${fieldMinMaxCustomErrorMessage}`,
+                className: 'field-custom-error-message',
+                type: 'text',
+                name: FIELD_CUSTOM_ERROR_MSG_MIN_MAX,
+                label: 'Character count custom error message',
+                inputType: TEXT
+            });
+        }
+
         return hello;
     };
 
@@ -214,7 +255,6 @@ const CreateDataModel = (props: CreateDataModelType) => {
         setContentModelDisplayName(displayName);
         setContentModelDescription(description);
         setHideNames(true);
-        setAddingField(true);
     }
 
     function onSubmitFieldProperty(values: any) {
@@ -225,24 +265,42 @@ const CreateDataModel = (props: CreateDataModelType) => {
             let propertyName = '';
             let propertyIsRequired = '';
             let propertyDescription = '';
+            let propertyMax = 0;
+            let propertyMin = 0;
+            let propertyMinMaxCustomErrorMessage = '';
             values.forEach((value: any) => {
+                const v = value.value;
                 switch (value.name) {
                     case FIELD_ID: {
-                        propertyId = trimCharactersAndNumbers(value.value);
+                        propertyId = trimCharactersAndNumbers(v);
                         break;
                     }
                     case FIELD_NAME: {
-                        propertyName = value.value;
+                        propertyName = v;
                         break;
                     }
                     case IS_FIELD_REQUIRED: {
-                        propertyIsRequired = value.value;
+                        propertyIsRequired = v;
                         break;
                     }
 
                     case FIELD_DESCRIPTION: {
-                        propertyDescription = value.value;
+                        propertyDescription = v;
+                        break;
                     }
+                    case FIELD_MAX: {
+                        propertyMax = v;
+                        break;
+                    }
+                    case FIELD_MIN: {
+                        propertyMin = v;
+                        break;
+                    }
+                    case FIELD_CUSTOM_ERROR_MSG_MIN_MAX: {
+                        propertyMinMaxCustomErrorMessage = v;
+                        break;
+                    }
+
 
                 }
             });
@@ -253,7 +311,10 @@ const CreateDataModel = (props: CreateDataModelType) => {
                     displayName: propertyName,
                     required: propertyIsRequired === 'true',
                     type: fieldType,
-                    description: propertyDescription
+                    description: propertyDescription,
+                    [FIELD_MIN]: propertyMin,
+                    [FIELD_MAX]: propertyMax,
+                    [FIELD_CUSTOM_ERROR_MSG_MIN_MAX]: propertyMinMaxCustomErrorMessage
                 };
 
                 const tempProperties = JSON.parse(JSON.stringify(properties ? properties : []));
@@ -288,7 +349,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
     async function onClickSaveDataModel() {
 
         const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
-        if(CollectionUrl && clientUserName) {
+        if(CollectionUrl && clientUserName && properties && properties.length) {
             const url = CollectionUrl
                 .replace(':clientUserName', clientUserName)
                 .replace(':env', env)
@@ -320,6 +381,13 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 // close the modal
                 onCreateDataModel();
             }
+        }
+        else if(!properties || !properties.length) {
+            setIsAlertOpen(true);
+            setAlertMessage({
+                message: 'Please add fields',
+                severity: "error"
+            })
         }
     }
 
@@ -406,6 +474,9 @@ const CreateDataModel = (props: CreateDataModelType) => {
             setFieldName(property.name);
             setFieldDescription(property.description);
             setFieldIsRequired(property.required ? 'true' : 'false');
+            setFieldMax(property.max || '');
+            setFieldMin(property.min || '');
+            setFieldMinMaxCustomErrorMessage(property[FIELD_CUSTOM_ERROR_MSG_MIN_MAX] || '');
         }
 
         const rows = properties && properties.map(property => {
@@ -413,7 +484,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 ...property,
                 edit: <IconButton><EditIcon /></IconButton>,
                 delete: <IconButton><DeleteIcon /></IconButton>,
-                'delete-click': () => alert('delete clicked'),
+                'delete-click': () => console.log('delete is clicked'),
                 'edit-click': () => onClickEdit(property),
             }
         })
@@ -536,6 +607,11 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 }
 
             </Grid>
+            <Alert
+                isAlertOpen={isAlertOpen}
+                onAlertClose={setIsAlertOpen}
+                severity={alert.severity}
+                message={alert.message} />
         </Grid>
     );
 }
