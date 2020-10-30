@@ -3,11 +3,28 @@ import {Grid} from "@material-ui/core";
 import {AlertType, Form} from "../../../../../../components/common/Form";
 import {CHECKBOX, ConfigField, TEXT} from "../../../../../../components/common/Form/interface";
 import {
-    BOOLEAN_FIElD_TYPE, CLIENT_USER_NAME, DATE_FIElD_TYPE, DECIMAL_FIELD_TYPE,
-    ErrorMessagesType, INTEGER_FIElD_TYPE, JSON_FIELD_TYPE, LOCATION_FIELD_TYPE,
-    LONG_STRING_FIELD_TYPE, MEDIA_FIELD_TYPE, REFERENCE_FIELD_TYPE, IS_FIELD_REQUIRED,
-    SHORT_STRING_FIElD_TYPE, trimCharactersAndNumbers, DISPLAY_NAME, NAME, DESCRIPTION,
-    FIELD_MAX, FIELD_MIN, FIELD_CUSTOM_ERROR_MSG_MIN_MAX, IS_FIELD_UNIQUE
+    BOOLEAN_FIElD_TYPE,
+    CLIENT_USER_NAME,
+    DATE_FIElD_TYPE,
+    DECIMAL_FIELD_TYPE,
+    DESCRIPTION,
+    DISPLAY_NAME,
+    ErrorMessagesType,
+    FIELD_CUSTOM_ERROR_MSG_MIN_MAX,
+    FIELD_MAX,
+    FIELD_MIN,
+    INTEGER_FIElD_TYPE,
+    IS_FIELD_REQUIRED,
+    IS_FIELD_UNIQUE,
+    JSON_FIELD_TYPE,
+    LOCATION_FIELD_TYPE,
+    LONG_STRING_FIELD_TYPE,
+    MEDIA_FIELD_TYPE,
+    MESSAGE,
+    NAME,
+    REFERENCE_FIELD_TYPE,
+    SHORT_STRING_FIElD_TYPE,
+    trimCharactersAndNumbers
 } from "@ranjodhbirkaur/constants";
 import TextFieldsIcon from '@material-ui/icons/TextFields';
 import './style.scss';
@@ -118,7 +135,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
             className: 'create-content-model-name',
             type: 'text',
             name: DISPLAY_NAME,
-            label: 'Display Name',
+            label: 'Name',
             inputType: TEXT,
             min: MIN_VALUE,
             max: MAX_VALUE
@@ -363,9 +380,31 @@ const CreateDataModel = (props: CreateDataModelType) => {
         setHideNames(true);
     }
 
+    /*Clear Alert*/
+    function clearAlert() {
+        setTimeout(() => {
+            setIsAlertOpen(false);
+            setAlertMessage({
+                message: ''
+            });
+        }, 3000);
+    }
+
     async function onClickSaveDataModel() {
 
         const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
+        // validate
+        if(!contentModelDisplayName) {
+            setIsAlertOpen(true);
+            setAlertMessage({
+                message: 'Please add model name',
+                severity: "error"
+            });
+            clearAlert();
+            return;
+        }
+
+
         if(CollectionUrl && clientUserName && properties && properties.length) {
             const url = CollectionUrl
                 .replace(':clientUserName', clientUserName)
@@ -398,13 +437,25 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 // close the modal
                 onCreateDataModel();
             }
+            else if(response.errors && response.errors.length) {
+                setIsAlertOpen(true);
+                let message = '';
+                response.errors.map((errorItem: ErrorMessagesType, index: number) => {
+                    message+=`${index + 1}: ${errorItem[MESSAGE]} \n`
+                });
+                setAlertMessage({
+                    message,
+                    severity: "error"
+                });
+            }
         }
         else if(!properties || !properties.length) {
             setIsAlertOpen(true);
             setAlertMessage({
                 message: 'Please add fields',
                 severity: "error"
-            })
+            });
+            clearAlert();
         }
     }
 
