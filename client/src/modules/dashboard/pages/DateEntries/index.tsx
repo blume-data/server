@@ -8,10 +8,12 @@ import {APPLICATION_NAME, CLIENT_USER_NAME} from "@ranjodhbirkaur/constants";
 import {doGetRequest} from "../../../../utils/baseApi";
 import {getBaseUrl} from "../../../../utils/urls";
 import ModalDialog from "../../../../components/common/ModalDialog";
+import Button from "@material-ui/core/Button";
+import CreateEntry from "./CreateEntry";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
-const dataEntriesComponent = (props: PropsFromRedux) => {
 
+function dataEntriesComponent(props: PropsFromRedux) {
     const {env, applicationName, GetCollectionNamesUrl, language, StoreUrl} = props;
 
     // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -25,23 +27,6 @@ const dataEntriesComponent = (props: PropsFromRedux) => {
     const {modelName} = useParams();
 
     const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
-
-    async function getData() {
-        if(GetCollectionNamesUrl) {
-            const url = GetCollectionNamesUrl
-                .replace(`:${CLIENT_USER_NAME}`, clientUserName ? clientUserName : '')
-                .replace(':env', env)
-                .replace(':language', language)
-                .replace(`:${APPLICATION_NAME}`,applicationName);
-            let data: any = {};
-            if(modelName) {
-                data.name = modelName;
-            }
-
-            const response = await doGetRequest(`${getBaseUrl()}${url}`, data, true);
-            console.log('res', response);
-        }
-    }
 
     // Fetch records in the model
     async function getItems() {
@@ -61,22 +46,29 @@ const dataEntriesComponent = (props: PropsFromRedux) => {
 
     // eslint-disable-next-line react-hooks/rules-of-hooks
     useEffect(() => {
-        getData();
         getItems();
     }, [modelName, GetCollectionNamesUrl]);
 
     return (
         <Grid>
             <Grid className="data-entries">
+                <Grid container justify={"space-between"}>
+                    <Grid item>
+                        filter
+                    </Grid>
+                    <Grid item>
+                        <Button variant={"contained"} color={"primary"} onClick={() => setIsModalOpen(true)}>
+                            Add {`${modelName ? modelName : 'entry'}`}
+                        </Button>
+                    </Grid>
+                </Grid>
 
             </Grid>
             <ModalDialog
                 isOpen={isModalOpen}
-                title={'Create Store'}
+                title={`Add ${modelName ? modelName : 'entry'}`}
                 handleClose={closeModal}>
-                <h2>
-                    sdf
-                </h2>
+                <CreateEntry modelName={modelName ? modelName : ''} />
             </ModalDialog>
         </Grid>
     );

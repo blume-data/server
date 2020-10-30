@@ -32,9 +32,9 @@ export function makeRequest(uri: string, options: AxiosRequestConfig, isAuthRequ
     })
 }
 
-export async function doGetRequest(uri: string, data?: any, isAuthRequest = false,) {
+export async function doGetRequest(uri: string, data: any, isAuthRequest = false,) {
 
-    return await makeRequest(`${uri}`, {data, method: "get"}, isAuthRequest);
+    return await makeRequest(`${uri}`, {method: "get", data}, isAuthRequest);
 }
 
 export async function doPostRequest(uri: string, data: any, isAuthRequest = false,) {
