@@ -581,6 +581,33 @@ const CreateDataModel = (props: CreateDataModelType) => {
         setSettingFieldName(false);
     }
 
+    function renderAddFieldsAndSaveModelButtonGroup() {
+        if(contentModelDisplayName) {
+            return (
+                <ButtonGroup className={'modal-action-buttons'}>
+                    <Button
+                        onClick={onClickAddFields}
+                        color={"secondary"}
+                        variant={"contained"}>
+                        Add Fields
+                    </Button>
+                    {
+                        properties && properties
+                            ? <Button
+                                onClick={onClickSaveDataModel}
+                                color={"primary"}
+                                variant={"contained"}>
+                                Save Model
+                            </Button>
+                            : null
+                    }
+                </ButtonGroup>
+            );
+        }
+        return null;
+
+    }
+
     return (
         <Grid>
             <Grid className="create-content-model">
@@ -600,9 +627,13 @@ const CreateDataModel = (props: CreateDataModelType) => {
                     }
                 </AccordianCommon>
 
-                <AccordianCommon name={'Model fields'}>
-                    {renderPropertiesSection()}
-                </AccordianCommon>
+                {
+                    contentModelDisplayName
+                        ? <AccordianCommon name={'Model fields'}>
+                            {renderPropertiesSection()}
+                          </AccordianCommon>
+                        : null
+                }
 
                 {
                     addingField
@@ -634,24 +665,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                         </Grid>
                     : settingFieldName
                     ? null
-                    : <ButtonGroup className={'modal-action-buttons'}>
-                            <Button
-                                onClick={onClickAddFields}
-                                color={"secondary"}
-                                variant={"contained"}>
-                                Add Fields
-                            </Button>
-                            {
-                                properties && properties.length
-                                ? <Button
-                                        onClick={onClickSaveDataModel}
-                                        color={"primary"}
-                                        variant={"contained"}>
-                                        Save Model
-                                    </Button>
-                                : null
-                            }
-                        </ButtonGroup>
+                    : renderAddFieldsAndSaveModelButtonGroup()
                 }
 
                 {
