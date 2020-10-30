@@ -7,7 +7,7 @@ import {
     ErrorMessagesType, INTEGER_FIElD_TYPE, JSON_FIELD_TYPE, LOCATION_FIELD_TYPE,
     LONG_STRING_FIELD_TYPE, MEDIA_FIELD_TYPE, REFERENCE_FIELD_TYPE, IS_FIELD_REQUIRED,
     SHORT_STRING_FIElD_TYPE, trimCharactersAndNumbers, DISPLAY_NAME, NAME, DESCRIPTION,
-    FIELD_MAX, FIELD_MIN, FIELD_CUSTOM_ERROR_MSG_MIN_MAX
+    FIELD_MAX, FIELD_MIN, FIELD_CUSTOM_ERROR_MSG_MIN_MAX, IS_FIELD_UNIQUE
 } from "@ranjodhbirkaur/constants";
 import TextFieldsIcon from '@material-ui/icons/TextFields';
 import './style.scss';
@@ -43,6 +43,7 @@ export interface PropertiesType {
     description: string;
     max?: number;
     min?: number;
+    unique: boolean;
     [FIELD_CUSTOM_ERROR_MSG_MIN_MAX]?: string;
 }
 
@@ -69,6 +70,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
     const [fieldMinMaxCustomErrorMessage, setFieldMinMaxCustomErrorMessage] = useState<string>('');
     const [fieldDisplayName, setFieldDisplayName] = useState<string>('');
     const [fieldIsRequired, setFieldIsRequired] = useState<string>('');
+    const [fieldIsUnique, setFieldIsUnique] = useState<string>('');
     const [fieldType, setFieldType] = useState<string>('');
     const [fieldEditMode, setFieldEditMode] = useState<boolean>(false);
 
@@ -89,7 +91,8 @@ const CreateDataModel = (props: CreateDataModelType) => {
     const [alert, setAlertMessage] = React.useState<AlertType>({message: ''});
 
     const FIELD_NAME = 'fieldName';
-    const FIELD_TYPE = 'fieldType';
+    const MIN_VALUE = 1;
+    const MAX_VALUE = 40;
     const FIELD_DESCRIPTION = 'fieldDescription';
     const FIELD_ID = 'fieldId';
 
@@ -117,12 +120,12 @@ const CreateDataModel = (props: CreateDataModelType) => {
             name: DISPLAY_NAME,
             label: 'Display Name',
             inputType: TEXT,
-            min: 1,
-            max: 40
+            min: MIN_VALUE,
+            max: MAX_VALUE
         },
         {
-            min: 1,
-            max: 40,
+            min: MIN_VALUE,
+            max: MAX_VALUE,
             required: false,
             placeholder: 'Name Identifier',
             value: contentModelName,
@@ -142,8 +145,8 @@ const CreateDataModel = (props: CreateDataModelType) => {
             name: DESCRIPTION,
             label: 'Description',
             inputType: TEXT,
-            min: 1,
-            max: 40
+            min: MIN_VALUE,
+            max: MAX_VALUE
         },
     ];
 
@@ -157,8 +160,8 @@ const CreateDataModel = (props: CreateDataModelType) => {
             className: 'create-content-model-name-text-field',
             type: 'text',
             name: FIELD_NAME,
-            min: 1,
-            max: 40,
+            min: MIN_VALUE,
+            max: MAX_VALUE,
             label: 'Field Name',
             inputType: TEXT,
             },
@@ -172,8 +175,8 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 name: FIELD_ID,
                 label: 'Field Identifier',
                 inputType: TEXT,
-                min: 1,
-                max: 40,
+                min: MIN_VALUE,
+                max: MAX_VALUE,
             },
             {
                 required: false,
@@ -184,18 +187,18 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 name: FIELD_DESCRIPTION,
                 label: 'Field description',
                 inputType: TEXT,
-                min: 1,
-                max: 40,
+                min: MIN_VALUE,
+                max: MAX_VALUE,
             },
             {
                 required: false,
                 placeholder: 'Is required',
                 value: fieldIsRequired,
-                className: 'is-required-radio',
+                className: 'is-required-check-box',
                 name: IS_FIELD_REQUIRED,
                 label: 'Is required',
                 inputType: CHECKBOX,
-            },
+            }
         ];
 
         if(fieldType === SHORT_STRING_FIElD_TYPE) {
@@ -230,6 +233,16 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 inputType: TEXT
             });
         }
+
+        hello.push({
+            required: false,
+            placeholder: 'Is unique',
+            value: fieldIsUnique,
+            className: 'is-unique-check-box',
+            name: IS_FIELD_UNIQUE,
+            label: 'Is unique',
+            inputType: CHECKBOX,
+        });
 
         return hello;
     };
@@ -268,6 +281,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
             let propertyMax = 0;
             let propertyMin = 0;
             let propertyMinMaxCustomErrorMessage = '';
+            let propertyIsUnique = '';
             values.forEach((value: any) => {
                 const v = value.value;
                 switch (value.name) {
@@ -300,8 +314,10 @@ const CreateDataModel = (props: CreateDataModelType) => {
                         propertyMinMaxCustomErrorMessage = v;
                         break;
                     }
-
-
+                    case IS_FIELD_UNIQUE: {
+                        propertyIsUnique = v;
+                        break;
+                    }
                 }
             });
 
@@ -314,6 +330,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                     description: propertyDescription,
                     [FIELD_MIN]: propertyMin,
                     [FIELD_MAX]: propertyMax,
+                    [IS_FIELD_UNIQUE]: propertyIsUnique === 'true',
                     [FIELD_CUSTOM_ERROR_MSG_MIN_MAX]: propertyMinMaxCustomErrorMessage
                 };
 
@@ -476,6 +493,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
             setFieldIsRequired(property.required ? 'true' : 'false');
             setFieldMax(property.max || '');
             setFieldMin(property.min || '');
+            setFieldIsUnique(property.unique ? 'true' : 'false');
             setFieldMinMaxCustomErrorMessage(property[FIELD_CUSTOM_ERROR_MSG_MIN_MAX] || '');
         }
 

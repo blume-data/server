@@ -6,6 +6,7 @@ import {FieldType} from "../interface";
 import FormControl from "@material-ui/core/FormControl";
 import FormGroup from "@material-ui/core/FormGroup";
 import FormHelperText from "@material-ui/core/FormHelperText";
+import './style.scss';
 
 interface CheckBoxTypeProps extends FieldType{
     onChange: (event: ChangeEvent<any>) => void;
