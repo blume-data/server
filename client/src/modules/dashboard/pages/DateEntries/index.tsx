@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import {Grid} from "@material-ui/core";
 import {RootState} from "../../../../rootReducer";
 import {connect, ConnectedProps} from "react-redux";
@@ -7,11 +7,19 @@ import {getItemFromLocalStorage} from "../../../../utils/tools";
 import {APPLICATION_NAME, CLIENT_USER_NAME} from "@ranjodhbirkaur/constants";
 import {doGetRequest} from "../../../../utils/baseApi";
 import {getBaseUrl} from "../../../../utils/urls";
+import ModalDialog from "../../../../components/common/ModalDialog";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 const dataEntriesComponent = (props: PropsFromRedux) => {
 
     const {env, applicationName, GetCollectionNamesUrl, language, StoreUrl} = props;
+
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
+    function closeModal() {
+        setIsModalOpen(false);
+    }
 
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const {modelName} = useParams();
@@ -59,7 +67,17 @@ const dataEntriesComponent = (props: PropsFromRedux) => {
 
     return (
         <Grid>
-            data entries
+            <Grid className="data-entries">
+
+            </Grid>
+            <ModalDialog
+                isOpen={isModalOpen}
+                title={'Create Store'}
+                handleClose={closeModal}>
+                <h2>
+                    sdf
+                </h2>
+            </ModalDialog>
         </Grid>
     );
 }

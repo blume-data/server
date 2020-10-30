@@ -54,6 +54,9 @@ export class RanjodhbirSchema {
                                 isWritable: true
                             });
                             await mongoModel.save();
+
+                            // create empty file
+                            await this.writeFile('', `${0}.txt`);
                             resolve();
                         }
                     });

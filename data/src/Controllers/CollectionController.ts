@@ -125,26 +125,6 @@ export async function getCollectionNames(req: Request, res: Response) {
     res.status(okayStatus).send(collections);
 }
 
-/*Return info of the data-model*/
-export async function getModel(req: Request, res: Response) {
-
-    const applicationName  = req.params && req.params.applicationName;
-    const env = req.params && req.params.env;
-    const clientUserName  = req.params && req.params.clientUserName;
-    const modelName = req.params && req.params.modelName;
-
-    const model = await CollectionModel.findOne({
-        clientUserName,
-        applicationName,
-        env,
-        name: modelName
-    });
-
-    console.log('mdole', model);
-
-    res.status(okayStatus).send(model);
-}
-
 export async function deleteCollectionSchema(req: Request, res: Response) {
     const userName  = req.params && req.params.userName;
     const language = req.params && req.params.language;

@@ -8,8 +8,8 @@ export const ApplicationNameUrl = `${serviceName}/:clientUserName/application-sp
 
 export const CollectionUrl = `${rootUrl}/:clientUserName/:applicationName/models`;
 
-/*Get a data model*/
-export const GetDataModelUrl = `${rootUrl}/:clientUserName/:applicationName/model/:modelName`;
+/*/!*Get a data model*!/
+export const GetDataModelUrl = `${rootUrl}/:clientUserName/:applicationName/model/:modelName`;*/
 
 export const GetCollectionNamesUrl = `${rootUrl}/:clientUserName/:applicationName/get-models`;
 

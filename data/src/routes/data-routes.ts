@@ -6,8 +6,7 @@ import {
     CollectionUrl,
     StoreUrl,
     ApplicationNameUrl,
-    GetCollectionNamesUrl,
-    GetDataModelUrl
+    GetCollectionNamesUrl
 } from "../util/urls";
 
 const router = Router();
@@ -17,7 +16,6 @@ router.get(`${dataRouteUrls}`, (req: Request, res: Response) => {
         RoleUrl,
         ApplicationNameUrl,
         CollectionUrl,
-        GetDataModelUrl,
         StoreUrl,
         GetCollectionNamesUrl
     });
