@@ -3,7 +3,7 @@ export const passwordLimitOptionErrorMessage = (field: string) => field+' must b
 
 export const clusterUrl = '/events';
 
-export const EXAMPLE_APPLICATION_NAME = 'example-application';
+export const EXAMPLE_APPLICATION_NAME = 'exampleSpace';
 
 export interface ExistingUserType {
     password: string;

@@ -165,6 +165,7 @@ export class RanjodhbirModel extends RanjodhbirSchema {
             const path = `${rootPath}/${0}.txt`;
 
             return new Promise((resolve, reject) => {
+                console.log('reading flole')
                 const s = fs
                     .createReadStream(path)
                     .pipe(es.split())

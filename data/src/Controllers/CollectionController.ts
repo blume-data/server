@@ -61,9 +61,9 @@ export async function createCollectionSchema(req: Request, res: Response) {
             containerName
         });
 
-        await storeSchema(reqBody.name, clientUserName, connectionName, containerName, applicationName);
-        await storeSchema(`${reqBody.name}-${MODEL_LOGGER_NAME}`, clientUserName, connectionName, containerName, applicationName);
-        await newCollection.save();
+        const store = await storeSchema(reqBody.name, clientUserName, connectionName, containerName, applicationName);
+        const storeTwo = await storeSchema(`${reqBody.name}-${MODEL_LOGGER_NAME}`, clientUserName, connectionName, containerName, applicationName);
+        const nreCollection = await newCollection.save();
 
         res.status(okayStatus).send(newCollection);
     }
@@ -106,13 +106,21 @@ export async function getCollectionNames(req: Request, res: Response) {
     const applicationName  = req.params && req.params.applicationName;
     const language = req.params && req.params.language;
     const env = req.params && req.params.env;
-
-    const collections = await CollectionModel.find({
+    const name = req.body.name;
+    const where: any = {
         clientUserName,
         applicationName,
         language,
         env
-    }, ['name', 'description', 'updatedAt', 'updatedBy', 'rules', 'displayName']);
+    };
+
+    if(name) {
+        where.name = name;
+    }
+
+    const collections = await CollectionModel.find(where,
+        ['name', 'description', 'updatedAt', 'updatedBy', 'rules', 'displayName']
+    );
 
     res.status(okayStatus).send(collections);
 }

@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {Grid} from "@material-ui/core";
-import {dashboardDataModelUrl, getBaseUrl} from "../../../../../utils/urls";
+import {dashboardDataEntriesUrl, getBaseUrl} from "../../../../../utils/urls";
 import {APPLICATION_NAME, CLIENT_USER_NAME} from "@ranjodhbirkaur/constants";
 import './store-list.scss';
 import {getItemFromLocalStorage} from "../../../../../utils/tools";
@@ -66,8 +66,8 @@ const DataModels = (props: PropsFromRedux) => {
                     const updatedBy = item.updatedBy.split('-')[1];
                     return {
                         ...item,
-                        linkUrl: `${dashboardDataModelUrl
-                            .replace(':modelName', item.name)
+                        linkUrl: `${dashboardDataEntriesUrl
+                            .replace(':modelName?', item.name)
                             .replace(':applicationName',applicationName)
                         }`,
                         edit: <IconButton><EditIcon /></IconButton>,

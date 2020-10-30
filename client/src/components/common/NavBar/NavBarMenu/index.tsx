@@ -20,6 +20,7 @@ const NavBarMenuComponent = (props: PropsFromRedux) => {
 
     const dataEntriesUrl = `${dashboardDataEntriesUrl
         .replace(':applicationName',applicationName)
+        .replace(':modelName?', '')
     }`
 
     return (
