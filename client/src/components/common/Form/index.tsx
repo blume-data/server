@@ -175,7 +175,7 @@ export const Form = (props: FormType) => {
     }
 
     /*set value in html editors*/
-    function setHtmlEditorValue(value: string) {
+    function setHtmlEditorValue(value: string, name: string) {
 
         const newHtmlValues: HtmlValueType[] = [];
         htmlValues && htmlValues.forEach(ranjodh => {
@@ -320,7 +320,7 @@ export const Form = (props: FormType) => {
             const htmlValue = exist && exist.value ? exist.value : '';
 
             return (
-                <HtmlEditor setValue={setHtmlEditorValue} value={htmlValue} />
+                <HtmlEditor setValue={(str: string) => setHtmlEditorValue(str, name)} value={htmlValue} />
             );
         }
     }
@@ -406,6 +406,8 @@ export const Form = (props: FormType) => {
         });
         setFormState(values);
     }
+
+    console.log('htms', htmlValues)
 
     return (
         <Grid className={`${className} app-common-form`} container justify={'center'} direction={'column'}>
