@@ -58,14 +58,14 @@ export const Form = (props: FormType) => {
             const {label} = formStateItem;
 
             if(max !== undefined || min!== undefined) {
-                if(max !== undefined) {
+                if(max !== undefined && max) {
                     if(inputType === BIG_TEXT || inputType === TEXT) {
                         if(value.length > max && !(!required && (!value || value.length === 0))) {
                             return `${label} should have maximum ${max} characters`;
                         }
                     }
                 }
-                if(min !== undefined) {
+                if(min !== undefined && min) {
                     if(inputType === BIG_TEXT || inputType === TEXT) {
                         if(value.length < min && !(!required && (!value || value.length === 0))) {
                             return `${label} should have minimum ${min} characters`;

@@ -15,19 +15,19 @@ import {RuleType} from "../../../../../../../data/src/util/interface";
 import Loader from "../../../../../components/common/Loader";
 import {ConfigField, FORMATTED_TEXT, TEXT} from "../../../../../components/common/Form/interface";
 import {Form} from "../../../../../components/common/Form";
+import {useParams} from "react-router";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
-type CreateEntryProps = PropsFromRedux & {
-    modelName: string;
-}
 
-const CreateEntry = (props: CreateEntryProps) => {
+const CreateEntry = (props: PropsFromRedux) => {
 
     const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
-    const {env, applicationName, GetCollectionNamesUrl, language, modelName, StoreUrl} = props;
+    const {env, applicationName, GetCollectionNamesUrl, language, StoreUrl} = props;
     const [rules, setRules] = useState<RuleType[] | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [response, setResponse] = useState<string | ErrorMessagesType[]>('');
+
+    const {modelName} = useParams();
 
     async function getData() {
         if(GetCollectionNamesUrl) {

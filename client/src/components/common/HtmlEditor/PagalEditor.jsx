@@ -9,10 +9,10 @@ import FroalaEditor from 'react-froala-wysiwyg';
 import './style.scss';
 
 
-export const PagalEditor = ({value='', setValue}) => {
+export const PagalEditor = ({value, setValue}) => {
 
     const handleChange = (str) => {
-        //setValue(str);
+        setValue(str);
     };
     const config = {
         autoSave: true,
