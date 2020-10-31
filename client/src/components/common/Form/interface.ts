@@ -5,6 +5,7 @@ export const BIG_TEXT = 'bigText';
 export const TEXT = 'text';
 export const RADIO = 'radio';
 export const CHECKBOX = 'check-box';
+export const FORMATTED_TEXT = 'formatted-text'
 
 export interface FormType {
     className: string;
@@ -36,6 +37,7 @@ export interface FieldType {
     helperText?: string;
     type?: string;
     disabled?: boolean;
+    descriptionText?: string;
 }
 
 export interface ConfigField extends FieldType{

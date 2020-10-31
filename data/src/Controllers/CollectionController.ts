@@ -6,7 +6,7 @@ import {
 import _ from 'lodash';
 import {CollectionModel} from "../models/Collection";
 import {CANNOT_CREATE_COLLECTIONS_MORE_THAN_LIMIT, COLLECTION_ALREADY_EXIST} from "./Messages";
-import {RuleType} from "../util/interface";
+
 import {storeSchema} from "../util/databaseApi";
 import {RANDOM_COLLECTION_NAME} from "../util/methods";
 import {trimCharactersAndNumbers} from "@ranjodhbirkaur/constants";

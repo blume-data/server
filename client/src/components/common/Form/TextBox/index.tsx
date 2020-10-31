@@ -4,6 +4,7 @@ import FormControl from '@material-ui/core/FormControl';
 import TextField from '@material-ui/core/TextField';
 import './style.scss';
 import {FieldType} from "../interface";
+import {DescriptionText} from "../DescriptionText";
 
 interface TextBoxType extends FieldType{
     multiline?: boolean;
@@ -13,7 +14,7 @@ interface TextBoxType extends FieldType{
 }
 export const TextBox = (props: TextBoxType) => {
     const {id, className, label, required=false,
-        onBlur, helperText, type, disabled=false,
+        onBlur, helperText, type, disabled=false, descriptionText='',
         onChange, error=false, value='', placeholder='', multiline=false} = props;
     return (
         <Grid className={`${className} app-text-box`}>
@@ -32,6 +33,7 @@ export const TextBox = (props: TextBoxType) => {
                     id={id ? id : undefined}
                     label={label}
                 />
+                <DescriptionText description={descriptionText} />
             </FormControl>
         </Grid>
     );

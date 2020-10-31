@@ -6,14 +6,14 @@ import {getItemFromLocalStorage} from "../../../../../utils/tools";
 import {
     APPLICATION_NAME,
     CLIENT_USER_NAME, ErrorMessagesType,
-    INTEGER_FIElD_TYPE,
+    INTEGER_FIElD_TYPE, LONG_STRING_FIELD_TYPE,
     SHORT_STRING_FIElD_TYPE
 } from "@ranjodhbirkaur/constants";
 import {doGetRequest} from "../../../../../utils/baseApi";
 import {getBaseUrl} from "../../../../../utils/urls";
 import {RuleType} from "../../../../../../../data/src/util/interface";
 import Loader from "../../../../../components/common/Loader";
-import {ConfigField, TEXT} from "../../../../../components/common/Form/interface";
+import {ConfigField, FORMATTED_TEXT, TEXT} from "../../../../../components/common/Form/interface";
 import {Form} from "../../../../../components/common/Form";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
@@ -71,6 +71,11 @@ const CreateEntry = (props: CreateEntryProps) => {
                     type = 'text';
                     break;
                 }
+                case LONG_STRING_FIELD_TYPE: {
+                    inputType = FORMATTED_TEXT;
+                    type = 'text'
+                    break;
+                }
                 case INTEGER_FIElD_TYPE: {
                     inputType = TEXT;
                     type = 'number';
@@ -89,7 +94,8 @@ const CreateEntry = (props: CreateEntryProps) => {
                 max: rule.max,
                 className: '',
                 value: '',
-                name: rule.name
+                name: rule.name,
+                descriptionText: rule.description
             })
         })
     }

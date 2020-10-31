@@ -7,6 +7,7 @@ import Grid from '@material-ui/core/Grid';
 import FormControl from '@material-ui/core/FormControl';
 import './style.scss';
 import {FieldType, OptionsType} from "../interface";
+import {DescriptionText} from "../DescriptionText";
 
 interface DropDownType extends FieldType{
     options: OptionsType[];
@@ -17,7 +18,7 @@ interface DropDownType extends FieldType{
 export const DropDown = (props: DropDownType) => {
 
     const {options, id, className, name, onChange, onBlur,
-        error=false, helperText, disabled=false,
+        error=false, helperText, disabled=false, descriptionText = '',
         placeholder='', required=false, value, index} = props;
     const randomId = `${name.split(' ').join('-')}-${index}-drop-down-input-label`;
     return (
@@ -46,6 +47,7 @@ export const DropDown = (props: DropDownType) => {
                     }
                 </Select>
                 {error && helperText ? <FormHelperText>{helperText}</FormHelperText> : null}
+                <DescriptionText description={descriptionText} />
             </FormControl>
         </Grid>
     );

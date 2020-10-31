@@ -3,13 +3,15 @@ import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import {TextBox} from "./TextBox";
 import {DropDown} from "./DropDown";
-import {BIG_TEXT, CHECKBOX, ConfigField, DROPDOWN, FormType, RADIO, TEXT} from "./interface";
+import {BIG_TEXT, CHECKBOX, ConfigField, DROPDOWN, FORMATTED_TEXT, FormType, RADIO, TEXT} from "./interface";
 import './style.scss';
 import {ErrorMessagesType, FIELD, MESSAGE} from "@ranjodhbirkaur/constants";
 import {Alert} from "../Toast";
 import {PLEASE_PROVIDE_VALID_VALUES} from "../../../modules/authentication/pages/Auth/constants";
 import {CommonRadioField} from "./CommonRadioField";
 import {CommonCheckBoxField} from "./CommonCheckBoxField";
+import {CommonButton} from "../CommonButton";
+import HtmlEditor from "../HtmlEditor";
 
 interface FormState {
     label: string;
@@ -26,12 +28,18 @@ export interface AlertType {
     severity?: 'success' | 'error' | 'info'
 }
 
+interface HtmlValueType {
+    name: string;
+    value: string
+}
+
 export const Form = (props: FormType) => {
 
     const [isAlertOpen, setIsAlertOpen] = React.useState<boolean>(false);
     const [alert, setAlertMessage] = React.useState<AlertType>({message: ''});
 
     const [formState, setFormState] = useState<FormState[]>([]);
+    const [htmlValues, setHtmlValues] = useState<HtmlValueType[] | null>(null);
     const {className, fields, onSubmit, submitButtonName, response='', clearOnSubmit=false, showClearButton=false} = props;
 
     function setErrorMessage(name: string) {
@@ -100,7 +108,19 @@ export const Form = (props: FormType) => {
     }
 
     useEffect(() => {
+
+        const htmlStrings: any = []
+
         const state = fields.map(field => {
+
+            // set the default values
+            if(field.inputType === FORMATTED_TEXT) {
+                htmlStrings.push({
+                    name: field.name,
+                    value: field.value
+                });
+            }
+
             return {
                 label: field.label,
                 [`value`]: field.value,
@@ -109,6 +129,7 @@ export const Form = (props: FormType) => {
             };
         });
         setFormState(state);
+        setHtmlValues(htmlStrings);
     }, [fields]);
 
     useEffect(() => {
@@ -153,6 +174,23 @@ export const Form = (props: FormType) => {
         return '';
     }
 
+    /*set value in html editors*/
+    function setHtmlEditorValue(value: string) {
+
+        const newHtmlValues: HtmlValueType[] = [];
+        htmlValues && htmlValues.forEach(ranjodh => {
+            if(ranjodh.name === name) {
+                newHtmlValues.push({
+                    name, value
+                })
+            }
+            else {
+                newHtmlValues.push(ranjodh);
+            }
+        });
+        setHtmlValues(newHtmlValues);
+    }
+
     function showAlert(alertParam: AlertType) {
         setIsAlertOpen(true);
         setAlertMessage({
@@ -162,7 +200,7 @@ export const Form = (props: FormType) => {
     }
 
     function renderFields(field: ConfigField, index: number) {
-        const {inputType, options, id, className, name, placeholder, required, type='text', label, disabled=false} = field;
+        const {inputType, options, id, className, name, placeholder, required, type='text', label, disabled=false, descriptionText=''} = field;
 
         function onChange(e: ChangeEvent<any>) {
             changeValue(e, label, SET_VALUE_ACTION)
@@ -180,6 +218,7 @@ export const Form = (props: FormType) => {
         if (inputType === TEXT) {
             return (
                 <TextBox
+                    descriptionText={descriptionText}
                     type={type}
                     key={index}
                     name={name}
@@ -199,6 +238,7 @@ export const Form = (props: FormType) => {
         if(inputType === DROPDOWN) {
             return (
                 <DropDown
+                    descriptionText={descriptionText}
                     disabled={disabled}
                     onBlur={onBlur}
                     value={value}
@@ -218,6 +258,7 @@ export const Form = (props: FormType) => {
         if(inputType === BIG_TEXT) {
             return (
                 <TextBox
+                    descriptionText={descriptionText}
                     disabled={disabled}
                     type={type}
                     key={index}
@@ -239,6 +280,7 @@ export const Form = (props: FormType) => {
         if(inputType === RADIO) {
             return (
                 <CommonRadioField
+                    descriptionText={descriptionText}
                     disabled={disabled}
                     required={required}
                     name={name}
@@ -257,6 +299,7 @@ export const Form = (props: FormType) => {
         if(inputType === CHECKBOX) {
             return (
                 <CommonCheckBoxField
+                    descriptionText={descriptionText}
                     disabled={disabled}
                     required={required}
                     name={name}
@@ -269,6 +312,15 @@ export const Form = (props: FormType) => {
                     className={className}
                     helperText={helperText}
                 />
+            );
+        }
+        if(inputType === FORMATTED_TEXT) {
+
+            const exist = htmlValues && htmlValues.find(ranjodh => ranjodh.name === name);
+            const htmlValue = exist && exist.value ? exist.value : '';
+
+            return (
+                <HtmlEditor setValue={setHtmlEditorValue} value={htmlValue} />
             );
         }
     }
@@ -364,13 +416,15 @@ export const Form = (props: FormType) => {
             <Grid container className={'button-section'}>
                 {
                     showClearButton
-                    ? <Grid item><Button variant="contained" onClick={clearForm} color={'secondary'}>Clear</Button></Grid>
+                    ? <Grid item><CommonButton name={'Clear'} onClick={clearForm} color={'secondary'} /></Grid>
                     : null
                 }
                 <Grid item>
-                    <Button variant="contained" onClick={onClickSubmit} color={'primary'}>
-                        {submitButtonName ? submitButtonName : 'Submit'}
-                    </Button>
+                    <CommonButton
+                        onClick={onClickSubmit}
+                        name={submitButtonName ? submitButtonName : 'Submit'}
+                        color={"primary"}
+                    />
                 </Grid>
             </Grid>
             <Alert

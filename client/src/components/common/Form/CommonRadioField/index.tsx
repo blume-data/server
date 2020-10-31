@@ -7,6 +7,7 @@ import RadioGroup from "@material-ui/core/RadioGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Radio from "@material-ui/core/Radio";
 import FormHelperText from "@material-ui/core/FormHelperText";
+import {DescriptionText} from "../DescriptionText";
 
 interface RadioTypeProps extends FieldType{
     onChange: (event: ChangeEvent<any>) => void;
@@ -15,7 +16,7 @@ interface RadioTypeProps extends FieldType{
 
 export const CommonRadioField = (props: RadioTypeProps) => {
     const {id, className, label, required, disabled=false,
-        onBlur, helperText, name, options,
+        onBlur, helperText, name, options, descriptionText='',
         onChange, error=false, value=''
     } = props;
     return (
@@ -30,6 +31,7 @@ export const CommonRadioField = (props: RadioTypeProps) => {
                     })}
                 </RadioGroup>
                 {error && helperText ? <FormHelperText>{helperText}</FormHelperText> : null}
+                <DescriptionText description={descriptionText} />
             </FormControl>
         </Grid>
     );

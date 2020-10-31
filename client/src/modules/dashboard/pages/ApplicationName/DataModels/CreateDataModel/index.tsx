@@ -137,6 +137,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
             name: DISPLAY_NAME,
             label: 'Name',
             inputType: TEXT,
+            descriptionText: 'name of the model',
             min: MIN_VALUE,
             max: MAX_VALUE
         },
@@ -151,6 +152,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
             name: NAME,
             disabled: !!modelId,
             label: 'Name Identifier',
+            descriptionText: 'Generated from name (uniquely identify model)',
             inputType: TEXT,
         },
         {
@@ -163,7 +165,8 @@ const CreateDataModel = (props: CreateDataModelType) => {
             label: 'Description',
             inputType: TEXT,
             min: MIN_VALUE,
-            max: MAX_VALUE
+            max: MAX_VALUE,
+            descriptionText: 'Description of the model'
         },
     ];
 
@@ -181,6 +184,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
             max: MAX_VALUE,
             label: 'Field Name',
             inputType: TEXT,
+            descriptionText: 'Name of the field'
             },
             {
                 disabled: fieldEditMode,
@@ -194,6 +198,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 inputType: TEXT,
                 min: MIN_VALUE,
                 max: MAX_VALUE,
+                descriptionText: 'Generated from name (uniquely identify field)',
             },
             {
                 required: false,
@@ -206,6 +211,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 inputType: TEXT,
                 min: MIN_VALUE,
                 max: MAX_VALUE,
+                descriptionText: 'Description of field'
             },
             {
                 required: false,
@@ -215,6 +221,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 name: IS_FIELD_REQUIRED,
                 label: 'Is required',
                 inputType: CHECKBOX,
+                descriptionText: 'You won\'t be able to publish an entry if this field is empty'
             }
         ];
 
@@ -227,7 +234,8 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 type: 'number',
                 name: FIELD_MAX,
                 label: 'Max character count',
-                inputType: TEXT
+                inputType: TEXT,
+                descriptionText: 'Specify a maximum allowed number of characters'
             });
             hello.push({
                 required: false,
@@ -237,7 +245,8 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 type: 'number',
                 name: FIELD_MIN,
                 label: 'Min character count',
-                inputType: TEXT
+                inputType: TEXT,
+                descriptionText: 'Specify a minimum number of characters'
             });
             hello.push({
                 required: false,
@@ -247,6 +256,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 type: 'text',
                 name: FIELD_CUSTOM_ERROR_MSG_MIN_MAX,
                 label: 'Character count custom error message',
+                descriptionText: 'Specify a custom error message if characters are not within specified range',
                 inputType: TEXT
             });
         }
@@ -259,6 +269,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
             name: IS_FIELD_UNIQUE,
             label: 'Is unique',
             inputType: CHECKBOX,
+            descriptionText: 'You won\'t be able to publish an entry if there is an existing entry with identical content\n'
         });
 
         return hello;

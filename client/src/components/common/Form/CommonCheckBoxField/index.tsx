@@ -7,6 +7,7 @@ import FormControl from "@material-ui/core/FormControl";
 import FormGroup from "@material-ui/core/FormGroup";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import './style.scss';
+import {DescriptionText} from "../DescriptionText";
 
 interface CheckBoxTypeProps extends FieldType{
     onChange: (event: ChangeEvent<any>) => void;
@@ -17,7 +18,7 @@ export const CommonCheckBoxField = (props: CheckBoxTypeProps) => {
 
     const {id, className, label,
         onBlur, helperText, name, disabled=false,
-        onChange, error=false, value=''
+        onChange, error=false, value='', descriptionText=''
     } = props;
 
     function onChangeCheckBox(e: ChangeEvent<any>) {
@@ -36,6 +37,7 @@ export const CommonCheckBoxField = (props: CheckBoxTypeProps) => {
                     />
                 </FormGroup>
                 <FormHelperText>{helperText}</FormHelperText>
+                <DescriptionText description={descriptionText} />
             </FormControl>
         </Grid>
     );
