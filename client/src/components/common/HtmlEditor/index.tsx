@@ -1,16 +1,18 @@
 import React from 'react';
-import {PagalEditor} from "./PagalEditor";
+import loadable from "@loadable/component";
+
+const PagalEditor = loadable(() => import('./PagalEditor'), {
+    resolveComponent: component => component.PagalEditor,
+});
 
 interface HtmlEditorType {
     value: string;
-    setValue: any
+    setValue: any;
 }
 
 function HtmlEditor(props: HtmlEditorType) {
 
     const {value, setValue} = props;
-    console.log('value', value);
-
     return (
         <PagalEditor value={value} setValue={setValue} />
     );

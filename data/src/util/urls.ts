@@ -8,12 +8,9 @@ export const ApplicationNameUrl = `${serviceName}/:clientUserName/application-sp
 
 export const CollectionUrl = `${rootUrl}/:clientUserName/:applicationName/models`;
 
-/*/!*Get a data model*!/
-export const GetDataModelUrl = `${rootUrl}/:clientUserName/:applicationName/model/:modelName`;*/
-
 export const GetCollectionNamesUrl = `${rootUrl}/:clientUserName/:applicationName/get-models`;
 
-export const StoreUrl = `${rootUrl}/:language/:clientUserName/:applicationName/entry/:collectionName`;
+export const StoreUrl = `${rootUrl}/:language/:clientUserName/:applicationName/entry/:modelName`;
 
 export const AUTH_SRV_URL = 'http://auth-srv:3000/events';
 

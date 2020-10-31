@@ -68,7 +68,7 @@ export async function getStoreRecord(req: Request, res: Response) {
 
     // get collection
     const collection = await getCollection(req);
-    const collectionName = req.params && req.params.collectionName;
+    const collectionName = req.params && req.params.modelName;
     const {limit=PER_PAGE} = req.query;
     let skip: number = (req.query && Number(req.query.skip)) || 0;
 
@@ -106,10 +106,10 @@ export async function getStoreRecord(req: Request, res: Response) {
 
 async function getCollection(req: Request) {
     const clientUserName  = req.params && req.params[CLIENT_USER_NAME];
-    const collectionName = req.params && req.params.collectionName;
+    const modelName = req.params && req.params.modelName;
     const applicationName = req.params && req.params[APPLICATION_NAME];
 
-    const name = collectionName.split(`-${MODEL_LOGGER_NAME}`)[0];
+    const name = modelName.split(`-${MODEL_LOGGER_NAME}`)[0];
 
     return CollectionModel.findOne(
         {clientUserName, name, applicationName},

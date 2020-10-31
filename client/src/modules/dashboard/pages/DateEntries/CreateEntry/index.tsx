@@ -9,7 +9,7 @@ import {
     INTEGER_FIElD_TYPE, LONG_STRING_FIELD_TYPE,
     SHORT_STRING_FIElD_TYPE
 } from "@ranjodhbirkaur/constants";
-import {doGetRequest} from "../../../../../utils/baseApi";
+import {doGetRequest, doPostRequest} from "../../../../../utils/baseApi";
 import {getBaseUrl} from "../../../../../utils/urls";
 import {RuleType} from "../../../../../../../data/src/util/interface";
 import Loader from "../../../../../components/common/Loader";
@@ -24,7 +24,7 @@ type CreateEntryProps = PropsFromRedux & {
 const CreateEntry = (props: CreateEntryProps) => {
 
     const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
-    const {env, applicationName, GetCollectionNamesUrl, language, modelName} = props;
+    const {env, applicationName, GetCollectionNamesUrl, language, modelName, StoreUrl} = props;
     const [rules, setRules] = useState<RuleType[] | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [response, setResponse] = useState<string | ErrorMessagesType[]>('');
@@ -46,14 +46,14 @@ const CreateEntry = (props: CreateEntryProps) => {
             if(response && !response.errors && response.length) {
                 setRules(JSON.parse(response[0].rules));
             }
-            console.log('res', response);
+            //  console.log('res', response);
             setIsLoading(false);
         }
     }
 
     useEffect(() => {
         getData();
-    }, []);
+    }, [GetCollectionNamesUrl]);
 
     console.log('rules', rules);
 
@@ -100,7 +100,25 @@ const CreateEntry = (props: CreateEntryProps) => {
         })
     }
 
-    function onsubmit() {
+    async function createEntry(values: any) {
+
+        if(StoreUrl) {
+            const url = StoreUrl
+                .replace(`:${CLIENT_USER_NAME}`, clientUserName ? clientUserName : '')
+                .replace(':env', env)
+                .replace(':language', language)
+                .replace(':modelName', modelName)
+                .replace(`:${APPLICATION_NAME}`,applicationName);
+
+            const res = await doPostRequest(`${getBaseUrl()}${url}`, values, true);
+            console.log('respnse', res);
+        }
+
+    }
+
+    function onsubmit(values: any) {
+        console.log('values', values);
+        createEntry(values);
 
     }
 

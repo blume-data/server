@@ -17,14 +17,40 @@ export async function validateCollections(req: Request, res: Response, next: Nex
     let isValidBody = true;
     let inValidMessage = [];
     const reqMethod = req.method;
+    const parsedRules: RuleType[] = [];
 
     // Validate Rules
     if (reqBody.rules && typeof reqBody.rules === 'object' && reqBody.rules.length) {
 
         reqBody.rules.forEach((rule: RuleType) => {
 
-            // Check required property
-            if (rule.required !== undefined && typeof rule.required !== 'boolean') {
+            let parsedRule: RuleType = {
+                name: rule.name,
+                type: rule.type
+            };
+
+            // check if name is there
+            if(!rule.name) {
+                isValidBody = false;
+                inValidMessage.push({
+                    message: `name is required`,
+                    field: 'rules'
+                });
+            }
+            // check if displayName is present
+            if(!rule.displayName) {
+                isValidBody = false;
+                inValidMessage.push({
+                    message: `displayName is required`,
+                    field: 'rules'
+                });
+            }
+
+            // check required rule
+            if(!rule.required) {
+                rule.required = false;
+            }
+            else if(typeof rule.required !== 'boolean') {
                 isValidBody = false;
                 inValidMessage.push({
                     message: `${rule.name}: ${REQUIRED_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN}`,
@@ -33,7 +59,10 @@ export async function validateCollections(req: Request, res: Response, next: Nex
             }
 
             // Check unique property
-            if (rule.unique !== undefined && typeof rule.unique !== 'boolean') {
+            if(!rule.unique) {
+                rule.unique = false;
+            }
+            else if(rule.unique !== undefined && typeof rule.unique !== 'boolean') {
                 isValidBody = false;
                 inValidMessage.push({
                     message: `${rule.name}: ${UNIQUE_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN}`,
@@ -42,36 +71,18 @@ export async function validateCollections(req: Request, res: Response, next: Nex
             }
 
             // Check ifEmail property
-            if (rule.isEmail !== undefined && typeof rule.isEmail !== 'boolean') {
+            if(!rule.isEmail) {
+                rule.isEmail = false;
+            }
+            else if(rule.isEmail !== undefined && typeof rule.isEmail !== 'boolean') {
                 isValidBody = false;
                 inValidMessage.push({
                     message: `${rule.name}: ${IS_EMAIL_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN}`,
                     field: 'rules'
                 });
             }
-            
             else if(rule.isEmail && typeof rule.isEmail === 'boolean' && rule.type !== SHORT_STRING_FIElD_TYPE) {
-                isValidBody = false;
-                inValidMessage.push({
-                    message: `${rule.name}: ${EMAIL_PROPERTY_IN_RULES_SHOULD_BE_STRING}`,
-                    field: 'rules'
-                })
-            }
-
-            // Check isPassword property
-            if (rule.isPassword !== undefined && typeof rule.isPassword !== 'boolean') {
-                isValidBody = false;
-                inValidMessage.push({
-                    message: `${rule.name}: ${IS_PASSWORD_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN}`,
-                    field: 'rules'
-                });
-            }
-            else if(rule.isPassword && typeof rule.isPassword === 'boolean' && rule.type !== SHORT_STRING_FIElD_TYPE) {
-                isValidBody = false;
-                inValidMessage.push({
-                    message: `${rule.name}: ${PASSWORD_PROPERTY_IN_RULES_SHOULD_BE_STRING}`,
-                    field: 'rules'
-                })
+                rule.isEmail = false;
             }
 
             // Validate rule type

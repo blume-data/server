@@ -12,7 +12,6 @@ export interface RuleType {
     max?: number;
     [FIELD_CUSTOM_ERROR_MSG_MIN_MAX]?: string;
     isEmail?: boolean;
-    isPassword?: boolean;
 }
 
 

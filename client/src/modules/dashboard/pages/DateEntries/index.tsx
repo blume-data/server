@@ -6,10 +6,11 @@ import {useParams} from "react-router";
 import {getItemFromLocalStorage} from "../../../../utils/tools";
 import {APPLICATION_NAME, CLIENT_USER_NAME} from "@ranjodhbirkaur/constants";
 import {doGetRequest} from "../../../../utils/baseApi";
-import {getBaseUrl} from "../../../../utils/urls";
+import {dashboardCreateDataEntryUrl, getBaseUrl} from "../../../../utils/urls";
 import ModalDialog from "../../../../components/common/ModalDialog";
 import Button from "@material-ui/core/Button";
 import CreateEntry from "./CreateEntry";
+import {Link} from "react-router-dom";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
@@ -35,7 +36,7 @@ function dataEntriesComponent(props: PropsFromRedux) {
                 .replace(`:${CLIENT_USER_NAME}`, clientUserName ? clientUserName : '')
                 .replace(':env', env)
                 .replace(':language', language)
-                .replace(':collectionName', modelName)
+                .replace(':modelName', modelName)
                 .replace(`:${APPLICATION_NAME}`,applicationName);
 
             const response = await doGetRequest(`${getBaseUrl()}${url}`, null, true);
@@ -49,6 +50,10 @@ function dataEntriesComponent(props: PropsFromRedux) {
         getItems();
     }, [modelName, GetCollectionNamesUrl]);
 
+    const createDataEntryUrl = dashboardCreateDataEntryUrl
+        .replace(':applicationName', applicationName)
+        .replace(':modelName', modelName);
+
     return (
         <Grid>
             <Grid className="data-entries">
@@ -57,19 +62,15 @@ function dataEntriesComponent(props: PropsFromRedux) {
                         filter
                     </Grid>
                     <Grid item>
-                        <Button variant={"contained"} color={"primary"} onClick={() => setIsModalOpen(true)}>
-                            Add {`${modelName ? modelName : 'entry'}`}
-                        </Button>
+                        <Link to={createDataEntryUrl}>
+                            <Button variant={"contained"} color={"primary"} onClick={() => setIsModalOpen(true)}>
+                                Add {`${modelName ? modelName : 'entry'}`}
+                            </Button>
+                        </Link>
                     </Grid>
                 </Grid>
 
             </Grid>
-            <ModalDialog
-                isOpen={isModalOpen}
-                title={`Add ${modelName ? modelName : 'entry'}`}
-                handleClose={closeModal}>
-                <CreateEntry modelName={modelName ? modelName : ''} />
-            </ModalDialog>
         </Grid>
     );
 }

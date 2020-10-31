@@ -1,6 +1,6 @@
 import React, {ChangeEvent, useEffect, useState} from "react";
 import Grid from '@material-ui/core/Grid';
-import Button from '@material-ui/core/Button';
+
 import {TextBox} from "./TextBox";
 import {DropDown} from "./DropDown";
 import {BIG_TEXT, CHECKBOX, ConfigField, DROPDOWN, FORMATTED_TEXT, FormType, RADIO, TEXT} from "./interface";
@@ -11,7 +11,9 @@ import {PLEASE_PROVIDE_VALID_VALUES} from "../../../modules/authentication/pages
 import {CommonRadioField} from "./CommonRadioField";
 import {CommonCheckBoxField} from "./CommonCheckBoxField";
 import {CommonButton} from "../CommonButton";
-import HtmlEditor from "../HtmlEditor";
+
+import loadable from "@loadable/component";
+const HtmlEditor = loadable(() => import('../HtmlEditor'));
 
 interface FormState {
     label: string;
@@ -39,14 +41,13 @@ export const Form = (props: FormType) => {
     const [alert, setAlertMessage] = React.useState<AlertType>({message: ''});
 
     const [formState, setFormState] = useState<FormState[]>([]);
-    const [htmlValues, setHtmlValues] = useState<HtmlValueType[] | null>(null);
     const {className, fields, onSubmit, submitButtonName, response='', clearOnSubmit=false, showClearButton=false} = props;
 
     function setErrorMessage(name: string) {
         return `${name} is required`;
     }
 
-    function changeValue(event: ChangeEvent<any>, field: string, action: string) {
+    function changeValue(event: any, field: string, action: string) {
         const value = event.target.value;
         let state: FormState[];
 
@@ -109,17 +110,7 @@ export const Form = (props: FormType) => {
 
     useEffect(() => {
 
-        const htmlStrings: any = []
-
         const state = fields.map(field => {
-
-            // set the default values
-            if(field.inputType === FORMATTED_TEXT) {
-                htmlStrings.push({
-                    name: field.name,
-                    value: field.value
-                });
-            }
 
             return {
                 label: field.label,
@@ -129,7 +120,6 @@ export const Form = (props: FormType) => {
             };
         });
         setFormState(state);
-        setHtmlValues(htmlStrings);
     }, [fields]);
 
     useEffect(() => {
@@ -175,20 +165,9 @@ export const Form = (props: FormType) => {
     }
 
     /*set value in html editors*/
-    function setHtmlEditorValue(value: string, name: string) {
+    function setHtmlEditorValue(value: string, label: string, action: string) {
 
-        const newHtmlValues: HtmlValueType[] = [];
-        htmlValues && htmlValues.forEach(ranjodh => {
-            if(ranjodh.name === name) {
-                newHtmlValues.push({
-                    name, value
-                })
-            }
-            else {
-                newHtmlValues.push(ranjodh);
-            }
-        });
-        setHtmlValues(newHtmlValues);
+        changeValue({target: {value}}, label, action);
     }
 
     function showAlert(alertParam: AlertType) {
@@ -316,11 +295,11 @@ export const Form = (props: FormType) => {
         }
         if(inputType === FORMATTED_TEXT) {
 
-            const exist = htmlValues && htmlValues.find(ranjodh => ranjodh.name === name);
-            const htmlValue = exist && exist.value ? exist.value : '';
-
             return (
-                <HtmlEditor setValue={(str: string) => setHtmlEditorValue(str, name)} value={htmlValue} />
+                <HtmlEditor
+                    setValue={(str: string) => setHtmlEditorValue(str, label, SET_VALUE_ACTION)}
+                    value={value}
+                />
             );
         }
     }
@@ -406,8 +385,6 @@ export const Form = (props: FormType) => {
         });
         setFormState(values);
     }
-
-    console.log('htms', htmlValues)
 
     return (
         <Grid className={`${className} app-common-form`} container justify={'center'} direction={'column'}>
