@@ -102,7 +102,7 @@ const CreateEntry = (props: PropsFromRedux) => {
 
     async function createEntry(values: any) {
 
-        if(StoreUrl) {
+        if(StoreUrl && values && values.length) {
             const url = StoreUrl
                 .replace(`:${CLIENT_USER_NAME}`, clientUserName ? clientUserName : '')
                 .replace(':env', env)
@@ -110,7 +110,14 @@ const CreateEntry = (props: PropsFromRedux) => {
                 .replace(':modelName', modelName)
                 .replace(`:${APPLICATION_NAME}`,applicationName);
 
-            const res = await doPostRequest(`${getBaseUrl()}${url}`, values, true);
+            let data: any = {};
+
+            values.forEach((valueItem: {name: string; value: string}) => {
+                data[valueItem.name] = valueItem.value;
+            });
+
+
+            const res = await doPostRequest(`${getBaseUrl()}${url}`, data, true);
             console.log('respnse', res);
         }
 

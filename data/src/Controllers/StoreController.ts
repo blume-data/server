@@ -1,13 +1,14 @@
 import {Request, Response} from 'express';
 import {CollectionModel} from "../models/Collection";
 import {
-    BadRequestError,
-    okayStatus,
-    errorStatus,
-    CLIENT_USER_NAME,
     APPLICATION_NAME,
+    BadRequestError,
+    CLIENT_USER_NAME,
+    clientType,
+    EnglishLanguage,
+    errorStatus,
     ID,
-    EnglishLanguage, clientType
+    okayStatus
 } from "@ranjodhbirkaur/common";
 
 import {MODEL_LOGGER_NAME, PER_PAGE} from "../util/constants";
@@ -16,6 +17,12 @@ import {ModelLoggerBodyType, RuleType} from "../util/interface";
 import {Model} from "mongoose";
 import moment from 'moment';
 import {getRanjodhBirData, writeRanjodhBirData} from "../util/databaseApi";
+import {
+    BOOLEAN_FIElD_TYPE,
+    FIELD_CUSTOM_ERROR_MSG_MIN_MAX,
+    INTEGER_FIElD_TYPE,
+    SHORT_STRING_FIElD_TYPE
+} from "@ranjodhbirkaur/constants";
 
 // Create Record
 export async function createStoreRecord(req: Request, res: Response) {
@@ -26,35 +33,36 @@ export async function createStoreRecord(req: Request, res: Response) {
     if (collection) {
         const rules = JSON.parse(collection.rules);
         let body = checkBodyAndRules(rules, req, res);
+        if(body) {
+            // add some alternate for unique params here
+            const response = await writeRanjodhBirData(
+                collection.name,
+                collection.clientUserName,
+                collection.connectionName,
+                collection.containerName,
+                collection.applicationName,
+                language,
+                body);
 
-        // add some alternate for unique params here
-        const response = await writeRanjodhBirData(
-            collection.name,
-            collection.clientUserName,
-            collection.connectionName,
-            collection.containerName,
-            collection.applicationName,
-            language,
-            body);
+            const logBody: ModelLoggerBodyType = {
+                modelName: collection.name,
+                action: "create",
+                actor: req.currentUser[ID],
+                time: `${new Date()}`,
+                [clientType]: req.currentUser[clientType],
+            }
 
-        const logBody: ModelLoggerBodyType = {
-            modelName: collection.name,
-            action: "create",
-            actor: req.currentUser[ID],
-            time: `${new Date()}`,
-            [clientType]: req.currentUser[clientType],
+            await writeRanjodhBirData(
+                `${collection.name}-${MODEL_LOGGER_NAME}`,
+                collection.clientUserName,
+                collection.connectionName,
+                collection.containerName,
+                collection.applicationName,
+                EnglishLanguage,
+                logBody
+            )
+            res.status(okayStatus).send(response);
         }
-
-        await writeRanjodhBirData(
-            `${collection.name}-${MODEL_LOGGER_NAME}`,
-            collection.clientUserName,
-            collection.connectionName,
-            collection.containerName,
-            collection.applicationName,
-            EnglishLanguage,
-            logBody
-        )
-        res.status(okayStatus).send(response);
     }
     else {
         throw new BadRequestError(COLLECTION_NOT_FOUND);
@@ -140,33 +148,59 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
 
             const type = typeof reqBody[rule.name];
             switch (rule.type) {
-                case 'string': {
-                    if (!['string','number'].includes(type)) {
+                case SHORT_STRING_FIElD_TYPE: {
+                    reqBody[rule.name]= `${reqBody[rule.name]}`;
+
+                    // check rule min
+                    if(rule.min && reqBody[rule.name].length < Number(rule.min)) {
                         isValid = false;
                         errorMessages.push({
                             field: rule.name,
-                            message: `${rule.name} should be of type ${rule.type}`
+                            message: (rule[FIELD_CUSTOM_ERROR_MSG_MIN_MAX]
+                                ? (rule[FIELD_CUSTOM_ERROR_MSG_MIN_MAX])
+                                : `${rule.name} should have minimum ${rule.min} characters`)
                         });
                     }
-                    else {
-                        reqBody[rule.name]=String(reqBody[rule.name]);
-                    }
-                    break;
-                }
-                case 'number': {
-                    if (!['string', 'number'].includes(type)) {
+                    // check rule max
+                    if(rule.max && reqBody[rule.name].length > Number(rule.max)) {
                         isValid = false;
                         errorMessages.push({
                             field: rule.name,
-                            message: `${rule.name} should be of type ${rule.type}`
+                            message: (rule[FIELD_CUSTOM_ERROR_MSG_MIN_MAX]
+                                ? (rule[FIELD_CUSTOM_ERROR_MSG_MIN_MAX])
+                                : `${rule.name} should have maximum ${rule.max} characters`)
                         });
-                    }
-                    else {
-                        reqBody[rule.name] = Number(reqBody[rule.name]);
                     }
                     break;
                 }
-                case 'boolean': {
+                case INTEGER_FIElD_TYPE: {
+
+                    reqBody[rule.name] = Number(reqBody[rule.name]);
+
+                    // check rule min
+                    if(rule.min && reqBody[rule.name] < Number(rule.min)) {
+                        isValid = false;
+                        errorMessages.push({
+                            field: rule.name,
+                            message: (rule[FIELD_CUSTOM_ERROR_MSG_MIN_MAX]
+                                ? (rule[FIELD_CUSTOM_ERROR_MSG_MIN_MAX])
+                                : `${rule.name} should be a minimum ${rule.min}`)
+                        });
+                    }
+                    // check rule max
+                    if(rule.max && reqBody[rule.name] > (Number(rule.max))) {
+                        isValid = false;
+                        errorMessages.push({
+                            field: rule.name,
+                            message: (rule[FIELD_CUSTOM_ERROR_MSG_MIN_MAX]
+                                ? (rule[FIELD_CUSTOM_ERROR_MSG_MIN_MAX])
+                                : `${rule.name} should be maximum ${rule.max}`)
+                        });
+                    }
+
+                    break;
+                }
+                case BOOLEAN_FIElD_TYPE: {
                     if (typeof reqBody[rule.name] !== 'boolean') {
                         isValid = false;
                         errorMessages.push({
