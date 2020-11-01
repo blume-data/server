@@ -70,6 +70,7 @@ export interface PropertiesType {
     [FIELD_CUSTOM_ERROR_MSG_MIN_MAX]: string;
     [FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN]: string;
     [FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN]: string;
+    onlyAllowedValues: string[];
 }
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
@@ -95,8 +96,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
     const [fieldMatchPattern, setFieldMatchPattern] = useState<string>('');
     const [fieldProhibitPattern, setFieldProhibitPattern] = useState<string>('');
     const [fieldMinMaxCustomErrorMessage, setFieldMinMaxCustomErrorMessage] = useState<string>('');
-    const [fielMatchPatternCustomErrorMessage, setFielMatchPatternCustomErrorMessage] = useState<string>('');
-    const [fieldProhibitPatternCustomErrorMessage, setFieldProhibitPatternCustomErrorMessage] = useState<string>('');
+    const [fieldOnlySpecifiedValues, setFieldOnlySpecifiedValues] = useState<string>('');
     const [fieldDisplayName, setFieldDisplayName] = useState<string>('');
     const [fieldIsRequired, setFieldIsRequired] = useState<string>('');
     const [fieldIsUnique, setFieldIsUnique] = useState<string>('');
@@ -125,6 +125,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
     const FIELD_DESCRIPTION = 'fieldDescription';
     const FIELD_ID = 'fieldId';
     const FIELD_MATCH_SPECIFIC_PATTERN_STRING = 'matchSpecificPatternString';
+    const FIELD_ONLY_SPECIFIED_VALUES = 'onlyAllowedValues';
 
     const FIELD_MATCH_SPECIFIC_PATTERN = 'matchSpecificPattern';
     const FIELD_PROHIBIT_SPECIFIC_PATTERN = 'prohibitSpecificPattern';
@@ -243,6 +244,14 @@ const CreateDataModel = (props: CreateDataModelType) => {
 
         if(fieldType === SHORT_STRING_FIElD_TYPE) {
             // select pattern
+            const emailReg = '^\\w[\\w.-]*@([\\w-]+\\.)+[\\w-]+$';
+            const urlReg = '^(ftp|http|https):\\/\\/(\\w+:{0,1}\\w*@)?(\\S+)(:[0-9]+)?(\\/|\\/([\\w#!:.?+=&%@!\\-/]))?$';
+            const dataUsReg = '^(0?[1-9]|1[012])[- /.](0?[1-9]|[12][0-9]|3[01])[- /.](19|20)?\\d\\d$';
+            const dateERREG = '^(0?[1-9]|[12][0-9]|3[01])[- /.](0?[1-9]|1[012])[- /.](19|20)?\\d\\d$';
+            const hhTimeReg = '^(0?[1-9]|1[012]):[0-5][0-9](:[0-5][0-9])?\\s*[aApP][mM]$';
+            const HHTimeReg = '^(0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9](:[0-5][0-9])?$';
+            const usPhoneReg = '^\\d[ -.]?\\(?\\d\\d\\d\\)?[ -.]?\\d\\d\\d[ -.]?\\d\\d\\d\\d$';
+            const usZipReg = '^\\d{5}$|^\\d{5}-\\d{4}$}';
             hello.push({
                 required: false,
                 placeholder: 'Match a specific pattern',
@@ -252,9 +261,14 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 name: FIELD_MATCH_SPECIFIC_PATTERN,
                 label: 'Match a specific pattern',
                 options:[
-                    {label: 'Email', value: "^\\w[\\w.-]*@([\\w-]+\\.)+[\\w-]+$"},
-                    {label: 'Url', value: "^(ftp|http|https):\\/\\/(\\w+:{0,1}\\w*@)?(\\S+)(:[0-9]+"},
-                    {label: '12h Time', value: "^(0?[1-9]|1[012]):[0-5][0-9](:[0-5][0-9])?\\s*[aApP][mM]$"}
+                    {label: `Email (${emailReg})`, value: emailReg},
+                    {label: `Url (${urlReg})`, value: urlReg},
+                    {label: `Date US (${dataUsReg})`, value: dataUsReg},
+                    {label: `Date European (${dateERREG})`, value: dateERREG},
+                    {label: `12h Time (${hhTimeReg})`, value: hhTimeReg},
+                    {label: `24h Time (${HHTimeReg})`, value: HHTimeReg},
+                    {label: `Us phone number (${usPhoneReg})`, value: usPhoneReg},
+                    {label: `Us zip code (${usZipReg})`, value: usZipReg}
                 ],
                 inputType: DROPDOWN,
                 descriptionText: 'Make this field match a pattern: e-mail address, URI, or a custom regular expression'
@@ -320,6 +334,17 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 descriptionText: `Specify a custom error message if ${fieldType === SHORT_STRING_FIElD_TYPE ? 'characters are' : 'value is'} not within specified range`,
                 inputType: TEXT
             });
+            hello.push({
+                required: false,
+                placeholder: 'Accept only specified values',
+                value: `${fieldOnlySpecifiedValues}`,
+                className: 'field-min-count',
+                type: 'text',
+                name: FIELD_ONLY_SPECIFIED_VALUES,
+                label: 'Accept only specified values',
+                inputType: TEXT,
+                descriptionText: 'An entry won\'t be valid if the field value is not in the list of specified values (Add values separated by comma)'
+            });
         }
 
         hello.push({
@@ -376,9 +401,14 @@ const CreateDataModel = (props: CreateDataModelType) => {
             let propertyProhibitPattern = '';
             let propertyProhibitPatternError = '';
             let propertyMatchPatternString = '';
+            let propertyOnlySpecifiedValues = '';
             values.forEach((value: any) => {
                 const v = value.value;
                 switch (value.name) {
+                    case FIELD_ONLY_SPECIFIED_VALUES: {
+                        propertyOnlySpecifiedValues = v;
+                        break;
+                    }
                     case FIELD_PROHIBIT_SPECIFIC_PATTERN: {
                         propertyProhibitPattern = v;
                         break;
