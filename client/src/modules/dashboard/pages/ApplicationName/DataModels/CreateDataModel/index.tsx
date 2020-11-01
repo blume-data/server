@@ -24,7 +24,10 @@ import {
     NAME,
     REFERENCE_FIELD_TYPE,
     SHORT_STRING_FIElD_TYPE,
-    trimCharactersAndNumbers
+    trimCharactersAndNumbers,
+    FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN,
+    FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN,
+
 } from "@ranjodhbirkaur/constants";
 import TextFieldsIcon from '@material-ui/icons/TextFields';
 import './style.scss';
@@ -53,15 +56,20 @@ import Paper from "@material-ui/core/Paper";
 import {Alert} from "../../../../../../components/common/Toast";
 
 export interface PropertiesType {
-    displayName: string;
-    name: string;
     type: string;
-    required: boolean;
+    name: string;
+    displayName: string;
     description: string;
-    max?: number;
-    min?: number;
+    required: boolean;
     unique: boolean;
-    [FIELD_CUSTOM_ERROR_MSG_MIN_MAX]?: string;
+    default: any;
+    min: number;
+    max: number;
+    matchSpecificPattern: string;
+    prohibitSpecificPattern: string;
+    [FIELD_CUSTOM_ERROR_MSG_MIN_MAX]: string;
+    [FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN]: string;
+    [FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN]: string;
 }
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
@@ -117,7 +125,6 @@ const CreateDataModel = (props: CreateDataModelType) => {
     const FIELD_DESCRIPTION = 'fieldDescription';
     const FIELD_ID = 'fieldId';
     const FIELD_MATCH_SPECIFIC_PATTERN_STRING = 'matchSpecificPatternString';
-    const FIELD_PROHIBIT_SPECIFIC_PATTERN_STRING = 'prohibitSpecificPatternString';
 
     const FIELD_MATCH_SPECIFIC_PATTERN = 'matchSpecificPattern';
     const FIELD_PROHIBIT_SPECIFIC_PATTERN = 'prohibitSpecificPattern';
@@ -272,7 +279,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 value: `${fieldProhibitPattern}`,
                 className: 'field-min-count',
                 type: 'string',
-                name: FIELD_MATCH_SPECIFIC_PATTERN_STRING,
+                name: FIELD_PROHIBIT_SPECIFIC_PATTERN,
                 label: 'Prohibit a specific pattern',
                 inputType: TEXT,
                 descriptionText: 'Make this field invalid when a pattern is matched: custom regular expression (e.g. bad word list)'
@@ -364,9 +371,34 @@ const CreateDataModel = (props: CreateDataModelType) => {
             let propertyMin = 0;
             let propertyMinMaxCustomErrorMessage = '';
             let propertyIsUnique = '';
+            let propertyMatchPattern = '';
+            let propertyMatchPatternError = '';
+            let propertyProhibitPattern = '';
+            let propertyProhibitPatternError = '';
+            let propertyMatchPatternString = '';
             values.forEach((value: any) => {
                 const v = value.value;
                 switch (value.name) {
+                    case FIELD_PROHIBIT_SPECIFIC_PATTERN: {
+                        propertyProhibitPattern = v;
+                        break;
+                    }
+                    case FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN: {
+                        propertyMatchPatternError = v;
+                        break;
+                    }
+                    case FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN: {
+                        propertyProhibitPatternError = v;
+                        break;
+                    }
+                    case FIELD_MATCH_SPECIFIC_PATTERN: {
+                        propertyMatchPattern = v;
+                        break;
+                    }
+                    case FIELD_MATCH_SPECIFIC_PATTERN_STRING: {
+                        propertyMatchPatternString = v;
+                        break;
+                    }
                     case FIELD_ID: {
                         propertyId = trimCharactersAndNumbers(v);
                         break;
@@ -409,7 +441,12 @@ const CreateDataModel = (props: CreateDataModelType) => {
                     displayName: propertyName,
                     required: propertyIsRequired === 'true',
                     type: fieldType,
+                    default: '',
+                    matchSpecificPattern: propertyMatchPattern ? propertyMatchPattern : propertyMatchPatternString,
+                    prohibitSpecificPattern: propertyProhibitPattern,
                     description: propertyDescription,
+                    [FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN]: propertyProhibitPatternError,
+                    [FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN]: propertyMatchPatternError,
                     [FIELD_MIN]: propertyMin,
                     [FIELD_MAX]: propertyMax,
                     [IS_FIELD_UNIQUE]: propertyIsUnique === 'true',
@@ -610,6 +647,10 @@ const CreateDataModel = (props: CreateDataModelType) => {
             setFieldMax(property.max || '');
             setFieldMin(property.min || '');
             setFieldIsUnique(property.unique ? 'true' : 'false');
+            if(fieldType === SHORT_STRING_FIElD_TYPE) {
+                setFieldMatchPattern(property.matchSpecificPattern || '');
+                setFieldProhibitPattern(property.prohibitSpecificPattern || '');
+            }
             setFieldMinMaxCustomErrorMessage(property[FIELD_CUSTOM_ERROR_MSG_MIN_MAX] || '');
         }
 

@@ -54,21 +54,31 @@ export const Form = (props: FormType) => {
 
         function setHelperText(fieldItem: ConfigField, formStateItem: FormState, value: string) {
 
-            const {max, inputType, min, required} = fieldItem;
+            const {max, inputType, min, required, type} = fieldItem;
             const {label} = formStateItem;
 
             if(max !== undefined || min!== undefined) {
                 if(max !== undefined && max) {
-                    if(inputType === BIG_TEXT || inputType === TEXT) {
+                    if((inputType === BIG_TEXT || inputType === TEXT) && type === 'text') {
                         if(value.length > max && !(!required && (!value || value.length === 0))) {
                             return `${label} should have maximum ${max} characters`;
                         }
                     }
+                    else if(inputType === TEXT && type === 'number') {
+                        if(Number(value) > Number(max) && !(!required && !value)) {
+                            return `${label} should be maximum ${max}`;
+                        }
+                    }
                 }
                 if(min !== undefined && min) {
-                    if(inputType === BIG_TEXT || inputType === TEXT) {
+                    if((inputType === BIG_TEXT || inputType === TEXT) && type === 'text') {
                         if(value.length < min && !(!required && (!value || value.length === 0))) {
                             return `${label} should have minimum ${min} characters`;
+                        }
+                    }
+                    else if(inputType === TEXT && type === 'number') {
+                        if(Number(value) < Number(min) && !(!required && !value)) {
+                            return `${label} should be minimum ${min}`;
                         }
                     }
                 }
