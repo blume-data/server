@@ -17,14 +17,14 @@ interface DropDownType extends FieldType{
 }
 export const DropDown = (props: DropDownType) => {
 
-    const {options, id, className, name, onChange, onBlur,
+    const {options, id, className, name, onChange, onBlur, label,
         error=false, helperText, disabled=false, descriptionText = '',
         placeholder='', required=false, value, index} = props;
     const randomId = `${name.split(' ').join('-')}-${index}-drop-down-input-label`;
     return (
         <Grid key={index} className={`${className} app-drop-down`} id={id ? id : ''}>
             <FormControl className={'app-drop-down-form-control'} error={error} disabled={disabled}>
-                <InputLabel id={randomId}>Age</InputLabel>
+                <InputLabel id={randomId}>{label}</InputLabel>
                 <Select
                     className={'app-drop-down-select'}
                     name={name}

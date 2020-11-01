@@ -15,6 +15,7 @@ export interface RuleType {
     [FIELD_CUSTOM_ERROR_MSG_MIN_MAX]: string;
     [FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN]: string;
     [FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN]: string;
+    allowedValues: string[];
     isEmail: boolean;
 }
 

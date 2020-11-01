@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {Grid} from "@material-ui/core";
 import {AlertType, Form} from "../../../../../../components/common/Form";
-import {CHECKBOX, ConfigField, TEXT} from "../../../../../../components/common/Form/interface";
+import {CHECKBOX, ConfigField, DROPDOWN, TEXT} from "../../../../../../components/common/Form/interface";
 import {
     BOOLEAN_FIElD_TYPE,
     CLIENT_USER_NAME,
@@ -84,7 +84,11 @@ const CreateDataModel = (props: CreateDataModelType) => {
     const [fieldDescription, setFieldDescription] = useState<string>('');
     const [fieldMax, setFieldMax] = useState<number | string>('');
     const [fieldMin, setFieldMin] = useState<number | string>('');
+    const [fieldMatchPattern, setFieldMatchPattern] = useState<string>('');
+    const [fieldProhibitPattern, setFieldProhibitPattern] = useState<string>('');
     const [fieldMinMaxCustomErrorMessage, setFieldMinMaxCustomErrorMessage] = useState<string>('');
+    const [fielMatchPatternCustomErrorMessage, setFielMatchPatternCustomErrorMessage] = useState<string>('');
+    const [fieldProhibitPatternCustomErrorMessage, setFieldProhibitPatternCustomErrorMessage] = useState<string>('');
     const [fieldDisplayName, setFieldDisplayName] = useState<string>('');
     const [fieldIsRequired, setFieldIsRequired] = useState<string>('');
     const [fieldIsUnique, setFieldIsUnique] = useState<string>('');
@@ -109,9 +113,14 @@ const CreateDataModel = (props: CreateDataModelType) => {
 
     const FIELD_NAME = 'fieldName';
     const MIN_VALUE = 1;
-    const MAX_VALUE = 40;
+    const MAX_VALUE = 100;
     const FIELD_DESCRIPTION = 'fieldDescription';
     const FIELD_ID = 'fieldId';
+    const FIELD_MATCH_SPECIFIC_PATTERN_STRING = 'matchSpecificPatternString';
+    const FIELD_PROHIBIT_SPECIFIC_PATTERN_STRING = 'prohibitSpecificPatternString';
+
+    const FIELD_MATCH_SPECIFIC_PATTERN = 'matchSpecificPattern';
+    const FIELD_PROHIBIT_SPECIFIC_PATTERN = 'prohibitSpecificPattern';
 
     const {env, CollectionUrl, applicationName, onCreateDataModel,
         modelProperties, modelId,
@@ -226,37 +235,82 @@ const CreateDataModel = (props: CreateDataModelType) => {
         ];
 
         if(fieldType === SHORT_STRING_FIElD_TYPE) {
+            // select pattern
             hello.push({
                 required: false,
-                placeholder: 'Max character count',
+                placeholder: 'Match a specific pattern',
+                value: `${fieldMatchPattern}`,
+                className: 'field-min-count',
+                type: 'string',
+                name: FIELD_MATCH_SPECIFIC_PATTERN,
+                label: 'Match a specific pattern',
+                options:[
+                    {label: 'Email', value: "^\\w[\\w.-]*@([\\w-]+\\.)+[\\w-]+$"},
+                    {label: 'Url', value: "^(ftp|http|https):\\/\\/(\\w+:{0,1}\\w*@)?(\\S+)(:[0-9]+"},
+                    {label: '12h Time', value: "^(0?[1-9]|1[012]):[0-5][0-9](:[0-5][0-9])?\\s*[aApP][mM]$"}
+                ],
+                inputType: DROPDOWN,
+                descriptionText: 'Make this field match a pattern: e-mail address, URI, or a custom regular expression'
+            });
+            // allowed pattern
+            hello.push({
+                required: false,
+                placeholder: 'Match a custom specific pattern',
+                value: `${fieldMatchPattern}`,
+                className: 'field-min-count',
+                type: 'string',
+                name: FIELD_MATCH_SPECIFIC_PATTERN_STRING,
+                label: 'Match a custom specific pattern',
+                inputType: TEXT,
+                descriptionText: 'Make this field match a custom regular expression'
+            });
+
+            // prohibit pattern
+            hello.push({
+                required: false,
+                placeholder: 'Prohibit a specific pattern',
+                value: `${fieldProhibitPattern}`,
+                className: 'field-min-count',
+                type: 'string',
+                name: FIELD_MATCH_SPECIFIC_PATTERN_STRING,
+                label: 'Prohibit a specific pattern',
+                inputType: TEXT,
+                descriptionText: 'Make this field invalid when a pattern is matched: custom regular expression (e.g. bad word list)'
+            });
+        }
+
+        if(fieldType === SHORT_STRING_FIElD_TYPE || fieldType === INTEGER_FIElD_TYPE || fieldType === DECIMAL_FIELD_TYPE) {
+            hello.push({
+                required: false,
+                placeholder: fieldType ===SHORT_STRING_FIElD_TYPE ? 'Max character count' : 'Max value',
                 value: `${fieldMax}`,
                 className: 'field-max-count',
                 type: 'number',
                 name: FIELD_MAX,
-                label: 'Max character count',
+                label: fieldType === SHORT_STRING_FIElD_TYPE ? 'Max character count' : 'Max value',
                 inputType: TEXT,
-                descriptionText: 'Specify a maximum allowed number of characters'
+                descriptionText: fieldType === SHORT_STRING_FIElD_TYPE ? 'Specify a maximum allowed number of characters' : 'Specify a maximum allowed value'
             });
             hello.push({
                 required: false,
-                placeholder: 'Min character count',
+                placeholder: fieldType ===SHORT_STRING_FIElD_TYPE ? 'Min character count' : 'Min value',
                 value: `${fieldMin}`,
                 className: 'field-min-count',
                 type: 'number',
                 name: FIELD_MIN,
-                label: 'Min character count',
+                label: fieldType === SHORT_STRING_FIElD_TYPE ? 'Min character count' : 'Min value',
                 inputType: TEXT,
-                descriptionText: 'Specify a minimum number of characters'
+                descriptionText: fieldType === SHORT_STRING_FIElD_TYPE ? 'Specify a minimum allowed number of characters' : 'Specify a minimum allowed value'
             });
             hello.push({
                 required: false,
-                placeholder: 'Character count custom error message',
+                placeholder: fieldType === SHORT_STRING_FIElD_TYPE ? 'Character count custom error message' : 'Allowed value custom error message',
                 value: `${fieldMinMaxCustomErrorMessage}`,
                 className: 'field-custom-error-message',
                 type: 'text',
                 name: FIELD_CUSTOM_ERROR_MSG_MIN_MAX,
-                label: 'Character count custom error message',
-                descriptionText: 'Specify a custom error message if characters are not within specified range',
+                label: fieldType === SHORT_STRING_FIElD_TYPE ? 'Character count custom error message' : 'Allowed value custom error message',
+                descriptionText: `Specify a custom error message if ${fieldType === SHORT_STRING_FIElD_TYPE ? 'characters are' : 'value is'} not within specified range`,
                 inputType: TEXT
             });
         }
