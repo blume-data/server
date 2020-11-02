@@ -2,7 +2,6 @@ import {NextFunction, Request, Response} from "express";
 import {RuleType} from "../../../util/interface";
 import {
     INVALID_RULES_MESSAGE,
-    IS_EMAIL_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN,
     REQUIRED_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN,
     UNIQUE_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN
 } from "../../../Controllers/Messages";
@@ -12,8 +11,7 @@ import {
     FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN,
     FIELD_CUSTOM_ERROR_MSG_MIN_MAX, FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN, INTEGER_FIElD_TYPE,
     SHORT_STRING_FIElD_TYPE,
-    SUPPORTED_FIELDS_TYPE,
-    trimCharactersAndNumbers
+    SUPPORTED_FIELDS_TYPE
 } from "@ranjodhbirkaur/constants";
 
 export async function validateCollections(req: Request, res: Response, next: NextFunction) {
@@ -36,7 +34,6 @@ export async function validateCollections(req: Request, res: Response, next: Nex
                 displayName: `${rule.displayName}`,
                 max: 0,
                 min: 0,
-                isEmail: Boolean(rule.isEmail),
                 unique: Boolean(rule.unique),
                 required: Boolean(rule.required),
                 default: ``,
@@ -44,7 +41,8 @@ export async function validateCollections(req: Request, res: Response, next: Nex
                 [FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN]: '',
                 [FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN]: '',
                 matchSpecificPattern: '',
-                prohibitSpecificPattern: ''
+                prohibitSpecificPattern: '',
+                onlyAllowedValues: ''
             };
 
             // check if name is there
@@ -104,21 +102,6 @@ export async function validateCollections(req: Request, res: Response, next: Nex
                 });
             }
 
-            // Check ifEmail property
-            if(!rule.isEmail) {
-                rule.isEmail = false;
-            }
-            else if(typeof rule.isEmail !== 'boolean') {
-                isValidBody = false;
-                inValidMessage.push({
-                    message: `${rule.name}: ${IS_EMAIL_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN}`,
-                    field: 'rules'
-                });
-            }
-            else if(rule.isEmail && typeof rule.isEmail === 'boolean' && rule.type !== SHORT_STRING_FIElD_TYPE) {
-                rule.isEmail = false;
-            }
-
             // check max property
             if(rule.max && [INTEGER_FIElD_TYPE, DECIMAL_FIELD_TYPE, SHORT_STRING_FIElD_TYPE].includes(rule.type)) {
                 if(Number(rule.max) > 50000 && rule.type === SHORT_STRING_FIElD_TYPE) {
@@ -170,6 +153,11 @@ export async function validateCollections(req: Request, res: Response, next: Nex
             //check FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN property
             if(rule[FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN]) {
                 parsedRule[FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN] = `${rule[FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN]}`;
+            }
+
+            // check allowed values
+            if(rule.onlyAllowedValues && rule.onlyAllowedValues.length) {
+                parsedRule.onlyAllowedValues = rule.onlyAllowedValues;
             }
 
             // If valid rule

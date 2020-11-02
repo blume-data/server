@@ -1,7 +1,13 @@
 import React, {useEffect, useState} from "react";
 import {Grid} from "@material-ui/core";
 import {AlertType, Form} from "../../../../../../components/common/Form";
-import {CHECKBOX, ConfigField, DROPDOWN, TEXT} from "../../../../../../components/common/Form/interface";
+import {
+    CHECKBOX,
+    ConfigField,
+    DROPDOWN,
+    FORMATTED_TEXT,
+    TEXT
+} from "../../../../../../components/common/Form/interface";
 import {
     BOOLEAN_FIElD_TYPE,
     CLIENT_USER_NAME,
@@ -70,7 +76,7 @@ export interface PropertiesType {
     [FIELD_CUSTOM_ERROR_MSG_MIN_MAX]: string;
     [FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN]: string;
     [FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN]: string;
-    onlyAllowedValues: string[];
+    onlyAllowedValues: string;
 }
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
@@ -97,6 +103,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
     const [fieldProhibitPattern, setFieldProhibitPattern] = useState<string>('');
     const [fieldMinMaxCustomErrorMessage, setFieldMinMaxCustomErrorMessage] = useState<string>('');
     const [fieldOnlySpecifiedValues, setFieldOnlySpecifiedValues] = useState<string>('');
+    const [fieldDefaultValue, setFieldDefaultValue] = useState<string>('');
     const [fieldDisplayName, setFieldDisplayName] = useState<string>('');
     const [fieldIsRequired, setFieldIsRequired] = useState<string>('');
     const [fieldIsUnique, setFieldIsUnique] = useState<string>('');
@@ -126,6 +133,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
     const FIELD_ID = 'fieldId';
     const FIELD_MATCH_SPECIFIC_PATTERN_STRING = 'matchSpecificPatternString';
     const FIELD_ONLY_SPECIFIED_VALUES = 'onlyAllowedValues';
+    const FIELD_DEFAULT_VALUE = 'default';
 
     const FIELD_MATCH_SPECIFIC_PATTERN = 'matchSpecificPattern';
     const FIELD_PROHIBIT_SPECIFIC_PATTERN = 'prohibitSpecificPattern';
@@ -300,6 +308,20 @@ const CreateDataModel = (props: CreateDataModelType) => {
             });
         }
 
+        if(fieldType !== REFERENCE_FIELD_TYPE && fieldType !== JSON_FIELD_TYPE && fieldType) {
+            hello.push({
+                required: false,
+                placeholder: 'Default value',
+                value: fieldDefaultValue,
+                className: 'is-unique-check-box',
+                name: 'default',
+                label: 'Default value',
+                type: fieldType === INTEGER_FIElD_TYPE || fieldType === DECIMAL_FIELD_TYPE ? 'number' : 'text',
+                inputType: fieldType === LONG_STRING_FIELD_TYPE ? FORMATTED_TEXT : TEXT,
+                descriptionText: 'Default value if the field is left blank'
+            });
+        }
+
         if(fieldType === SHORT_STRING_FIElD_TYPE || fieldType === INTEGER_FIElD_TYPE || fieldType === DECIMAL_FIELD_TYPE) {
             hello.push({
                 required: false,
@@ -402,9 +424,14 @@ const CreateDataModel = (props: CreateDataModelType) => {
             let propertyProhibitPatternError = '';
             let propertyMatchPatternString = '';
             let propertyOnlySpecifiedValues = '';
+            let propertyDefaultValue = '';
             values.forEach((value: any) => {
                 const v = value.value;
                 switch (value.name) {
+                    case FIELD_DEFAULT_VALUE: {
+                        propertyDefaultValue = v;
+                        break;
+                    }
                     case FIELD_ONLY_SPECIFIED_VALUES: {
                         propertyOnlySpecifiedValues = v;
                         break;
@@ -471,7 +498,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                     displayName: propertyName,
                     required: propertyIsRequired === 'true',
                     type: fieldType,
-                    default: '',
+                    default: fieldDefaultValue,
                     matchSpecificPattern: propertyMatchPattern ? propertyMatchPattern : propertyMatchPatternString,
                     prohibitSpecificPattern: propertyProhibitPattern,
                     description: propertyDescription,
@@ -480,7 +507,8 @@ const CreateDataModel = (props: CreateDataModelType) => {
                     [FIELD_MIN]: propertyMin,
                     [FIELD_MAX]: propertyMax,
                     [IS_FIELD_UNIQUE]: propertyIsUnique === 'true',
-                    [FIELD_CUSTOM_ERROR_MSG_MIN_MAX]: propertyMinMaxCustomErrorMessage
+                    [FIELD_CUSTOM_ERROR_MSG_MIN_MAX]: propertyMinMaxCustomErrorMessage,
+                    onlyAllowedValues: propertyOnlySpecifiedValues
                 };
 
                 const tempProperties = JSON.parse(JSON.stringify(properties ? properties : []));
@@ -674,14 +702,18 @@ const CreateDataModel = (props: CreateDataModelType) => {
             setFieldName(property.name);
             setFieldDescription(property.description);
             setFieldIsRequired(property.required ? 'true' : 'false');
-            setFieldMax(property.max || '');
-            setFieldMin(property.min || '');
+            if(fieldType === SHORT_STRING_FIElD_TYPE || fieldType === INTEGER_FIElD_TYPE || fieldType === DECIMAL_FIELD_TYPE) {
+                setFieldMax(property.max || '');
+                setFieldMin(property.min || '');
+                setFieldMinMaxCustomErrorMessage(property[FIELD_CUSTOM_ERROR_MSG_MIN_MAX] || '');
+                setFieldOnlySpecifiedValues(property.onlyAllowedValues)
+            }
             setFieldIsUnique(property.unique ? 'true' : 'false');
             if(fieldType === SHORT_STRING_FIElD_TYPE) {
                 setFieldMatchPattern(property.matchSpecificPattern || '');
                 setFieldProhibitPattern(property.prohibitSpecificPattern || '');
             }
-            setFieldMinMaxCustomErrorMessage(property[FIELD_CUSTOM_ERROR_MSG_MIN_MAX] || '');
+
         }
 
         const rows = properties && properties.map(property => {

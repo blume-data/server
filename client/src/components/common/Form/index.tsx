@@ -307,6 +307,11 @@ export const Form = (props: FormType) => {
 
             return (
                 <HtmlEditor
+                    placeholder={placeholder}
+                    className={'html-editor'}
+                    required={required}
+                    name={name}
+                    label={label}
                     setValue={(str: string) => setHtmlEditorValue(str, label, SET_VALUE_ACTION)}
                     value={value}
                 />

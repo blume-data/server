@@ -9,7 +9,7 @@ import FroalaEditor from 'react-froala-wysiwyg';
 import './style.scss';
 
 
-export const PagalEditor = ({value, setValue}) => {
+export const PagalEditor = ({value, setValue, placeholder = 'Edit Your Content Here!'}) => {
 
     const handleChange = (str) => {
         setValue(str);
@@ -26,7 +26,7 @@ export const PagalEditor = ({value, setValue}) => {
         },*/
         //imageUploadMethod: 'POST',
         //imageUploadURL: '/api/d/cms/uploads/image',
-        placeholderText: 'Edit Your Content Here!',
+        placeholderText: placeholder,
         pluginsEnabled: [
             'align',
             'charCounter',
