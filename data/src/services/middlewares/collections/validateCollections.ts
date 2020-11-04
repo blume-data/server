@@ -9,10 +9,22 @@ import {errorStatus} from "@ranjodhbirkaur/common";
 import {
     DECIMAL_FIELD_TYPE,
     FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN,
-    FIELD_CUSTOM_ERROR_MSG_MIN_MAX, FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN, INTEGER_FIElD_TYPE,
+    FIELD_CUSTOM_ERROR_MSG_MIN_MAX,
+    FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN,
+    INTEGER_FIElD_TYPE,
+    JSON_FIELD_TYPE, REFERENCE_FIELD_TYPE,
     SHORT_STRING_FIElD_TYPE,
     SUPPORTED_FIELDS_TYPE
 } from "@ranjodhbirkaur/constants";
+
+function hasSIDType(type: string) {
+    const SID = [INTEGER_FIElD_TYPE, DECIMAL_FIELD_TYPE, SHORT_STRING_FIElD_TYPE];
+    return SID.includes(type);
+}
+
+function isSSType(type: string) {
+    return SHORT_STRING_FIElD_TYPE === type;
+}
 
 export async function validateCollections(req: Request, res: Response, next: NextFunction) {
 
@@ -103,7 +115,7 @@ export async function validateCollections(req: Request, res: Response, next: Nex
             }
 
             // check max property
-            if(rule.max && [INTEGER_FIElD_TYPE, DECIMAL_FIELD_TYPE, SHORT_STRING_FIElD_TYPE].includes(rule.type)) {
+            if(rule.max && hasSIDType(rule.type)) {
                 if(Number(rule.max) > 50000 && rule.type === SHORT_STRING_FIElD_TYPE) {
                     parsedRule.max = 50000;
                 }
@@ -113,7 +125,7 @@ export async function validateCollections(req: Request, res: Response, next: Nex
             }
 
             // check min property
-            if(rule.min && [INTEGER_FIElD_TYPE, DECIMAL_FIELD_TYPE, SHORT_STRING_FIElD_TYPE].includes(rule.type)) {
+            if(rule.min && hasSIDType(rule.type)) {
                 if(parsedRule.max < Number(rule.min)) {
                     isValidBody = false;
                     inValidMessage.push({
@@ -126,37 +138,37 @@ export async function validateCollections(req: Request, res: Response, next: Nex
             }
 
             // check default in property
-            if(rule.default) {
+            if(rule.default && ![JSON_FIELD_TYPE, REFERENCE_FIELD_TYPE].includes(rule.type)) {
                 parsedRule.default = `${rule.default}`;
             }
 
             //check match specific pattern property
-            if(rule.matchSpecificPattern) {
+            if(rule.matchSpecificPattern && isSSType(rule.type)) {
                 parsedRule.matchSpecificPattern = `${rule.matchSpecificPattern}`;
             }
 
             //check match prohibited pattern property
-            if(rule.prohibitSpecificPattern) {
+            if(rule.prohibitSpecificPattern && isSSType(rule.type)) {
                 parsedRule.prohibitSpecificPattern = `${rule.prohibitSpecificPattern}`;
             }
 
             //check FIELD_CUSTOM_ERROR_MSG_MIN_MAX property
-            if(rule[FIELD_CUSTOM_ERROR_MSG_MIN_MAX]) {
+            if(rule[FIELD_CUSTOM_ERROR_MSG_MIN_MAX] && hasSIDType(rule.type)) {
                 parsedRule[FIELD_CUSTOM_ERROR_MSG_MIN_MAX] = `${rule[FIELD_CUSTOM_ERROR_MSG_MIN_MAX]}`;
             }
 
             //check FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN property
-            if(rule[FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN]) {
+            if(rule[FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN] && isSSType(rule.type)) {
                 parsedRule[FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN] = `${rule[FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN]}`;
             }
 
             //check FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN property
-            if(rule[FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN]) {
+            if(rule[FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN] && isSSType(rule.type)) {
                 parsedRule[FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN] = `${rule[FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN]}`;
             }
 
             // check allowed values
-            if(rule.onlyAllowedValues && rule.onlyAllowedValues.length) {
+            if(rule.onlyAllowedValues && hasSIDType(rule.type)) {
                 parsedRule.onlyAllowedValues = rule.onlyAllowedValues;
             }
 

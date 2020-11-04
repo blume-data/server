@@ -247,9 +247,20 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 label: 'Is required',
                 inputType: CHECKBOX,
                 descriptionText: 'You won\'t be able to publish an entry if this field is empty'
+            },
+            {
+                required: false,
+                placeholder: 'Is unique',
+                value: fieldIsUnique,
+                className: 'is-unique-check-box',
+                name: IS_FIELD_UNIQUE,
+                label: 'Is unique',
+                inputType: CHECKBOX,
+                descriptionText: 'You won\'t be able to publish an entry if there is an existing entry with identical content\n'
             }
         ];
 
+        // Allow only specific pattern and prohibit a specific pattern
         if(fieldType === SHORT_STRING_FIElD_TYPE) {
             // select pattern
             const emailReg = '^\\w[\\w.-]*@([\\w-]+\\.)+[\\w-]+$';
@@ -308,6 +319,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
             });
         }
 
+        // Default Value field
         if(fieldType !== REFERENCE_FIELD_TYPE && fieldType !== JSON_FIELD_TYPE && fieldType) {
             hello.push({
                 required: false,
@@ -322,7 +334,9 @@ const CreateDataModel = (props: CreateDataModelType) => {
             });
         }
 
+        // Min max and only allowed values
         if(fieldType === SHORT_STRING_FIElD_TYPE || fieldType === INTEGER_FIElD_TYPE || fieldType === DECIMAL_FIELD_TYPE) {
+            // Max count
             hello.push({
                 required: false,
                 placeholder: fieldType ===SHORT_STRING_FIElD_TYPE ? 'Max character count' : 'Max value',
@@ -334,6 +348,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 inputType: TEXT,
                 descriptionText: fieldType === SHORT_STRING_FIElD_TYPE ? 'Specify a maximum allowed number of characters' : 'Specify a maximum allowed value'
             });
+            // Min count
             hello.push({
                 required: false,
                 placeholder: fieldType ===SHORT_STRING_FIElD_TYPE ? 'Min character count' : 'Min value',
@@ -345,6 +360,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 inputType: TEXT,
                 descriptionText: fieldType === SHORT_STRING_FIElD_TYPE ? 'Specify a minimum allowed number of characters' : 'Specify a minimum allowed value'
             });
+            // Max Min Custom count
             hello.push({
                 required: false,
                 placeholder: fieldType === SHORT_STRING_FIElD_TYPE ? 'Character count custom error message' : 'Allowed value custom error message',
@@ -356,6 +372,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 descriptionText: `Specify a custom error message if ${fieldType === SHORT_STRING_FIElD_TYPE ? 'characters are' : 'value is'} not within specified range`,
                 inputType: TEXT
             });
+            // only allowed values
             hello.push({
                 required: false,
                 placeholder: 'Accept only specified values',
@@ -368,17 +385,6 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 descriptionText: 'An entry won\'t be valid if the field value is not in the list of specified values (Add values separated by comma)'
             });
         }
-
-        hello.push({
-            required: false,
-            placeholder: 'Is unique',
-            value: fieldIsUnique,
-            className: 'is-unique-check-box',
-            name: IS_FIELD_UNIQUE,
-            label: 'Is unique',
-            inputType: CHECKBOX,
-            descriptionText: 'You won\'t be able to publish an entry if there is an existing entry with identical content\n'
-        });
 
         return hello;
     };
