@@ -16,7 +16,9 @@ import {
     DESCRIPTION,
     DISPLAY_NAME,
     ErrorMessagesType,
+    FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN,
     FIELD_CUSTOM_ERROR_MSG_MIN_MAX,
+    FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN,
     FIELD_MAX,
     FIELD_MIN,
     INTEGER_FIElD_TYPE,
@@ -31,9 +33,6 @@ import {
     REFERENCE_FIELD_TYPE,
     SHORT_STRING_FIElD_TYPE,
     trimCharactersAndNumbers,
-    FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN,
-    FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN,
-
 } from "@ranjodhbirkaur/constants";
 import TextFieldsIcon from '@material-ui/icons/TextFields';
 import './style.scss';
@@ -100,8 +99,11 @@ const CreateDataModel = (props: CreateDataModelType) => {
     const [fieldMax, setFieldMax] = useState<number | string>('');
     const [fieldMin, setFieldMin] = useState<number | string>('');
     const [fieldMatchPattern, setFieldMatchPattern] = useState<string>('');
+    const [fieldMatchCustomPattern, setFieldMatchCustomPattern] = useState<string>('');
     const [fieldProhibitPattern, setFieldProhibitPattern] = useState<string>('');
     const [fieldMinMaxCustomErrorMessage, setFieldMinMaxCustomErrorMessage] = useState<string>('');
+    const [fieldMatchPatternCustomError, setFieldMatchPatternCustomError] = useState<string>('');
+    const [fieldProhibitPatternCustomError, setFieldProhibitPatternCustomError] = useState<string>('');
     const [fieldOnlySpecifiedValues, setFieldOnlySpecifiedValues] = useState<string>('');
     const [fieldDefaultValue, setFieldDefaultValue] = useState<string>('');
     const [fieldDisplayName, setFieldDisplayName] = useState<string>('');
@@ -271,6 +273,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
             const HHTimeReg = '^(0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9](:[0-5][0-9])?$';
             const usPhoneReg = '^\\d[ -.]?\\(?\\d\\d\\d\\)?[ -.]?\\d\\d\\d[ -.]?\\d\\d\\d\\d$';
             const usZipReg = '^\\d{5}$|^\\d{5}-\\d{4}$}';
+            // select allowed pattern
             hello.push({
                 required: false,
                 placeholder: 'Match a specific pattern',
@@ -292,17 +295,30 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 inputType: DROPDOWN,
                 descriptionText: 'Make this field match a pattern: e-mail address, URI, or a custom regular expression'
             });
-            // allowed pattern
+            // allowed custom pattern
             hello.push({
                 required: false,
                 placeholder: 'Match a custom specific pattern',
-                value: `${fieldMatchPattern}`,
+                value: `${fieldMatchCustomPattern}`,
                 className: 'field-min-count',
                 type: 'string',
                 name: FIELD_MATCH_SPECIFIC_PATTERN_STRING,
                 label: 'Match a custom specific pattern',
                 inputType: TEXT,
                 descriptionText: 'Make this field match a custom regular expression'
+            });
+
+            // allowed pattern custom error message
+            hello.push({
+                required: false,
+                placeholder: 'Match specific pattern custom error message',
+                value: `${fieldMatchPatternCustomError}`,
+                className: 'field-min-count',
+                type: 'string',
+                name: FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN,
+                label: 'Match specific pattern custom error message',
+                inputType: TEXT,
+                descriptionText: 'This message will be sent if the value does not match pattern'
             });
 
             // prohibit pattern
@@ -316,6 +332,19 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 label: 'Prohibit a specific pattern',
                 inputType: TEXT,
                 descriptionText: 'Make this field invalid when a pattern is matched: custom regular expression (e.g. bad word list)'
+            });
+
+            // prohibit pattern custom error message
+            hello.push({
+                required: false,
+                placeholder: 'Prohibit specific pattern custom error message',
+                value: `${fieldProhibitPatternCustomError}`,
+                className: 'field-min-count',
+                type: 'string',
+                name: FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN,
+                label: 'Prohibit specific pattern custom error message',
+                inputType: TEXT,
+                descriptionText: 'Custom message will be sent if the value matches this pattern'
             });
         }
 
@@ -505,7 +534,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                     required: propertyIsRequired === 'true',
                     type: fieldType,
                     default: fieldDefaultValue,
-                    matchSpecificPattern: propertyMatchPattern ? propertyMatchPattern : propertyMatchPatternString,
+                    matchSpecificPattern: propertyMatchPatternString ? propertyMatchPatternString : propertyMatchPattern,
                     prohibitSpecificPattern: propertyProhibitPattern,
                     description: propertyDescription,
                     [FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN]: propertyProhibitPatternError,
@@ -700,25 +729,32 @@ const CreateDataModel = (props: CreateDataModelType) => {
         ];
 
         function onClickEdit(property: PropertiesType) {
-            setSettingFieldName(true);
-            setAddingField(false);
+            console.log('pr', property, fieldType);
             setFieldType(property.type);
-            setFieldEditMode(true);
-            setFieldDisplayName(property.displayName);
-            setFieldName(property.name);
-            setFieldDescription(property.description);
-            setFieldIsRequired(property.required ? 'true' : 'false');
-            if(fieldType === SHORT_STRING_FIElD_TYPE || fieldType === INTEGER_FIElD_TYPE || fieldType === DECIMAL_FIELD_TYPE) {
-                setFieldMax(property.max || '');
-                setFieldMin(property.min || '');
-                setFieldMinMaxCustomErrorMessage(property[FIELD_CUSTOM_ERROR_MSG_MIN_MAX] || '');
-                setFieldOnlySpecifiedValues(property.onlyAllowedValues)
-            }
-            setFieldIsUnique(property.unique ? 'true' : 'false');
-            if(fieldType === SHORT_STRING_FIElD_TYPE) {
-                setFieldMatchPattern(property.matchSpecificPattern || '');
-                setFieldProhibitPattern(property.prohibitSpecificPattern || '');
-            }
+            setTimeout(() => {
+
+                setSettingFieldName(true);
+                setAddingField(false);
+                setFieldEditMode(true);
+                setFieldDisplayName(property.displayName);
+                setFieldName(property.name);
+                setFieldDescription(property.description);
+                setFieldIsRequired(property.required ? 'true' : 'false');
+                setFieldIsUnique(property.unique ? 'true' : 'false');
+
+                if(property.type === SHORT_STRING_FIElD_TYPE || property.type === INTEGER_FIElD_TYPE || property.type === DECIMAL_FIELD_TYPE) {
+                    setFieldMax(property.max || '');
+                    setFieldMin(property.min || '');
+                    setFieldMinMaxCustomErrorMessage(property[FIELD_CUSTOM_ERROR_MSG_MIN_MAX] || '');
+                    setFieldOnlySpecifiedValues(property.onlyAllowedValues)
+                }
+                if(property.type === SHORT_STRING_FIElD_TYPE) {
+                    setFieldMatchCustomPattern(property.matchSpecificPattern || '');
+                    setFieldProhibitPattern(property.prohibitSpecificPattern || '');
+                    setFieldMatchPatternCustomError(property[FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN] || '');
+                    setFieldProhibitPatternCustomError(property[FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN] || '');
+                }
+            });
 
         }
 
@@ -781,6 +817,8 @@ const CreateDataModel = (props: CreateDataModelType) => {
         return null;
 
     }
+
+    console.log('fieldMatchCustomPattern', fieldMatchCustomPattern);
 
     return (
         <Grid>

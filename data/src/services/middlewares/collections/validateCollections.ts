@@ -16,6 +16,7 @@ import {
     SHORT_STRING_FIElD_TYPE,
     SUPPORTED_FIELDS_TYPE
 } from "@ranjodhbirkaur/constants";
+import {isValidRegEx} from "../../../util/methods";
 
 function hasSIDType(type: string) {
     const SID = [INTEGER_FIElD_TYPE, DECIMAL_FIELD_TYPE, SHORT_STRING_FIElD_TYPE];
@@ -144,12 +145,30 @@ export async function validateCollections(req: Request, res: Response, next: Nex
 
             //check match specific pattern property
             if(rule.matchSpecificPattern && isSSType(rule.type)) {
-                parsedRule.matchSpecificPattern = `${rule.matchSpecificPattern}`;
+                if(isValidRegEx(rule.matchSpecificPattern)) {
+                    parsedRule.matchSpecificPattern = `${rule.matchSpecificPattern}`;
+                }
+                else {
+                    isValidBody = false;
+                    inValidMessage.push({
+                        message: `${rule.name}'s matchSpecificPattern is not a valid Regex`,
+                        field: 'rules'
+                    })
+                }
             }
 
             //check match prohibited pattern property
             if(rule.prohibitSpecificPattern && isSSType(rule.type)) {
-                parsedRule.prohibitSpecificPattern = `${rule.prohibitSpecificPattern}`;
+                if(isValidRegEx(rule.prohibitSpecificPattern)) {
+                    parsedRule.prohibitSpecificPattern = `${rule.prohibitSpecificPattern}`;
+                }
+                else {
+                    isValidBody = false;
+                    inValidMessage.push({
+                        message: `${rule.name}'s prohibitSpecificPattern is not a valid Regex`,
+                        field: 'rules'
+                    })
+                }
             }
 
             //check FIELD_CUSTOM_ERROR_MSG_MIN_MAX property

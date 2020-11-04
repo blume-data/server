@@ -18,7 +18,7 @@ import {Model} from "mongoose";
 import moment from 'moment';
 import {getRanjodhBirData, writeRanjodhBirData} from "../util/databaseApi";
 import {
-    BOOLEAN_FIElD_TYPE,
+    BOOLEAN_FIElD_TYPE, FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN,
     FIELD_CUSTOM_ERROR_MSG_MIN_MAX,
     INTEGER_FIElD_TYPE,
     SHORT_STRING_FIElD_TYPE
@@ -170,6 +170,22 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
                                 ? (rule[FIELD_CUSTOM_ERROR_MSG_MIN_MAX])
                                 : `${rule.name} should have maximum ${rule.max} characters`)
                         });
+                    }
+
+                    // check match Pattern
+                    if(rule.matchSpecificPattern) {
+                        const newReg = new RegExp(rule.matchSpecificPattern);
+                        console.log('test value', newReg.test(reqBody[rule.name]), reqBody[rule.name], newReg);
+                        if(!newReg.test(reqBody[rule.name])) {
+                            isValid = false;
+                            errorMessages.push({
+                                field: rule.name,
+                                message: (rule[FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN]
+                                    ? (rule[FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN])
+                                    : `${rule.name} does not match regex ${rule.matchSpecificPattern}`)
+                            });
+
+                        }
                     }
                     break;
                 }
