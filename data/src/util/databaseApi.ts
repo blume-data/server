@@ -1,43 +1,37 @@
 import axios from 'axios';
 import {addDataBaseUrl, dataBaseRootUrl, getDataBaseUrl, schemaDataBaseUrl} from "./urls";
+import {RANJODHBIR_KAUR_DATABASE_URL} from "./constants";
 
 export const storeSchema = async (
     modelName: string,
     clientUserName: string,
-    connectionName: string,
-    containerName: string,
     applicationName: string
 ) => {
     const data = {
         modelName,
         clientUserName,
-        containerName,
         applicationName
     };
-    const response = await axios.post(`${connectionName}/${schemaDataBaseUrl}`, data);
+    const response = await axios.post(`${RANJODHBIR_KAUR_DATABASE_URL}/${schemaDataBaseUrl}`, data);
     return response.data;
 };
 
 export const writeRanjodhBirData = async (
     modelName: string,
     clientUserName: string,
-    connectionName: string,
-    containerName: string,
     applicationName: string,
     language: string,
     storeData: any
 ) => {
 
-    const data = {modelName, clientUserName, containerName, data: storeData, applicationName, language};
-    const response = await axios.post(`${connectionName}/${addDataBaseUrl}`, data);
+    const data = {modelName, clientUserName, data: storeData, applicationName, language};
+    const response = await axios.post(`${RANJODHBIR_KAUR_DATABASE_URL}/${addDataBaseUrl}`, data);
     return response.data;
 };
 
 export const getRanjodhBirData = async (
     modelName: string,
     clientUserName: string,
-    connectionName: string,
-    containerName: string,
     applicationName: string,
     language: string,
     conditions?: { where?: any; getOnly?: string[]; skip: number; limit: number }
@@ -45,11 +39,10 @@ export const getRanjodhBirData = async (
     const data = {
         modelName,
         clientUserName,
-        containerName,
         conditions,
         applicationName,
         language
     };
-    const response = await axios.post(`${connectionName}/${getDataBaseUrl}`, data);
+    const response = await axios.post(`${RANJODHBIR_KAUR_DATABASE_URL}/${getDataBaseUrl}`, data);
     return response.data;
 };

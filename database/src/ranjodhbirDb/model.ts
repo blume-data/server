@@ -25,8 +25,8 @@ export class RanjodhbirModel extends RanjodhbirSchema {
 
     readonly language: string;
 
-    constructor(name: string, clientUserName: string, containerName: string, applicationName: string, language: string) {
-        super(name, clientUserName, containerName, applicationName);
+    constructor(name: string, clientUserName: string, applicationName: string, language: string) {
+        super(name, clientUserName, applicationName);
         this.language = language;
     }
 
@@ -35,7 +35,7 @@ export class RanjodhbirModel extends RanjodhbirSchema {
         const task = TasksModel.build({
             clientUserName: this.clientUserName,
             modelName: this.name,
-            containerName: this.containerName,
+            containerName: '',
             applicationName: this.applicationName,
             action,
             query: JSON.stringify(item)

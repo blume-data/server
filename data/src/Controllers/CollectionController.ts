@@ -1,9 +1,12 @@
 import {Request, Response} from 'express';
 import {BadRequestError, ID, okayStatus, sendSingleError, USER_NAME} from "@ranjodhbirkaur/common";
 import {
-    MAX_COLLECTION_LIMIT, MAX_USER_LIMIT, MODEL_LOGGER_NAME, MONGO_DB_DATA_CONNECTIONS_AVAILABLE, STORE_CONNECTIONS
+    MAX_COLLECTION_LIMIT,
+    MAX_USER_LIMIT,
+    MODEL_LOGGER_NAME,
+    MONGO_DB_DATA_CONNECTIONS_AVAILABLE,
+    RANJODHBIR_KAUR_DATABASE_URL,
 } from "../util/constants";
-import _ from 'lodash';
 import {CollectionModel} from "../models/Collection";
 import {
     ALL_CONNECTIONS_AND_DB_CAPACITY_FULL,
@@ -12,7 +15,6 @@ import {
 } from "./Messages";
 
 import {storeSchema} from "../util/databaseApi";
-import {RANDOM_COLLECTION_NAME} from "../util/methods";
 import {trimCharactersAndNumbers} from "@ranjodhbirkaur/constants";
 import {UserConnectionModel} from "../models/UserConnection";
 import {ConnectionModel} from "../models/Connections";
@@ -52,9 +54,6 @@ export async function createCollectionSchema(req: Request, res: Response) {
 
         const newDbConnection: {connectionName: string} = await assignConnection(clientUserName);
 
-        const containerName = `${RANDOM_COLLECTION_NAME(1, 1000)}`;
-        const storeConnection = _.sample(STORE_CONNECTIONS);
-        const connectionName = (storeConnection && storeConnection.url) ? storeConnection.url : '';
         const newCollection = CollectionModel.build({
             clientUserName,
             isPublic: false,
@@ -63,15 +62,13 @@ export async function createCollectionSchema(req: Request, res: Response) {
             name: reqBody.name,
             displayName: reqBody.displayName,
             env,
-            connectionName,
+            connectionName: newDbConnection.connectionName,
             updatedBy: `${req.currentUser[ID]}-${req.currentUser[USER_NAME]}`,
-            description: reqBody.description,
-            containerName
+            description: reqBody.description
         });
 
-        const store = await storeSchema(reqBody.name, clientUserName, connectionName, containerName, applicationName);
-        const storeTwo = await storeSchema(`${reqBody.name}-${MODEL_LOGGER_NAME}`, clientUserName, connectionName, containerName, applicationName);
-        const nreCollection = await newCollection.save();
+        await storeSchema(`${reqBody.name}`, clientUserName, applicationName);
+        await newCollection.save();
 
         res.status(okayStatus).send(newCollection);
     }
@@ -102,7 +99,7 @@ export async function createCollectionSchema(req: Request, res: Response) {
 
         }
         else {
-            return sendSingleError(res, 'Model not foundc');
+            return sendSingleError(res, 'Model not found');
         }
     }
 }

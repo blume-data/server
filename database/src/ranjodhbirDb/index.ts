@@ -5,20 +5,18 @@ export class RanjodhbirSchema {
 
     name: string;
     readonly clientUserName: string;
-    readonly containerName: string;
     readonly applicationName: string;
     private readonly dataBaseDirectory: string;
 
-    constructor(name: string, clientUserName: string, containerName: string, applicationName: string) {
+    constructor(name: string, clientUserName: string, applicationName: string) {
         this.name = name;
-        this.containerName = containerName;
         this.applicationName = applicationName;
-        this.dataBaseDirectory = `database/${containerName}`;
+        this.dataBaseDirectory = `database`;
         this.clientUserName = clientUserName;
     }
 
     getModelPath(): string {
-        return `${this.dataBaseDirectory}/${this.applicationName}/${this.clientUserName}/${this.name}`;
+        return `${this.dataBaseDirectory}/${this.clientUserName}/${this.applicationName}/${this.name}`;
     }
 
     async writeFile(data: string, fileName: string) {

@@ -11,12 +11,7 @@ export const MAX_COLLECTION_LIMIT = 1000;
 
 export const PER_PAGE = 10;
 
-const dataBaseSrvOne = 'dataBaseSrvOne';
-
-export const STORE_CONNECTIONS = [{
-    name: dataBaseSrvOne,
-    url: 'http://database-srv:3000/store'
-}];
+export const RANJODHBIR_KAUR_DATABASE_URL = 'http://database-srv:3000/store';
 
 export const MONGO_DB_DATA_CONNECTIONS_AVAILABLE = ['one','two'];
 

@@ -17,7 +17,6 @@ interface ConnectionDoc extends mongoose.Document {
     count: number;
     name: string;
     type: string;
-    created_at?: string;
 }
 
 const Connection = new mongoose.Schema(
@@ -33,8 +32,7 @@ const Connection = new mongoose.Schema(
         type: {
             type: String,
             required: true
-        },
-        created_at : { type: Date, default: Date.now }
+        }
     },
     {
         toJSON: {

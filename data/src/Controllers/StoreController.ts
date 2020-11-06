@@ -11,7 +11,7 @@ import {
     okayStatus
 } from "@ranjodhbirkaur/common";
 
-import {MODEL_LOGGER_NAME, PER_PAGE} from "../util/constants";
+import {MODEL_LOGGER_NAME, PER_PAGE, RANJODHBIR_KAUR_DATABASE_URL} from "../util/constants";
 import {COLLECTION_NOT_FOUND, PARAM_SHOULD_BE_UNIQUE} from "./Messages";
 import {ModelLoggerBodyType, RuleType} from "../util/interface";
 import {Model} from "mongoose";
@@ -61,10 +61,8 @@ export async function createStoreRecord(req: Request, res: Response) {
                 }
 
                 await writeRanjodhBirData(
-                    `${collection.name}-${MODEL_LOGGER_NAME}`,
+                    `${collection.name}`,
                     collection.clientUserName,
-                    collection.connectionName,
-                    collection.containerName,
                     collection.applicationName,
                     EnglishLanguage,
                     logBody
@@ -102,8 +100,6 @@ export async function getStoreRecord(req: Request, res: Response) {
             const response = await getRanjodhBirData(
                 collectionName,
                 collection.clientUserName,
-                collection.connectionName,
-                collection.containerName,
                 collection[APPLICATION_NAME],
                 language,
                 {

@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 
 import { app } from './app';
+import {initClientDbConnection} from "./util/connections";
 
 const start = async () => {
   if (!process.env.JWT_KEY) {
@@ -18,6 +19,9 @@ const start = async () => {
       useFindAndModify: false
     });
     console.log('Data Service: Connected to MongoDb');
+    await initClientDbConnection(() => {
+      console.log('all connections were created');
+    });
   } catch (err) {
     console.error(err);
   }

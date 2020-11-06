@@ -1,6 +1,6 @@
 import express, {Response, Request, NextFunction} from "express";
 import {RanjodhbirModel} from "../ranjodhbirDb/model";
-import {APPLICATION_NAME, errorStatus, FIELD, MESSAGE, okayStatus} from "@ranjodhbirkaur/common";
+import {EnglishLanguage, errorStatus, FIELD, MESSAGE, okayStatus} from "@ranjodhbirkaur/common";
 import {rootUrl} from "../utils/constants";
 import {addDataUrl, getDataUrl, schemaUrl} from "../utils/urls";
 import {RanjodhbirSchema} from "../ranjodhbirDb";
@@ -45,8 +45,8 @@ route.post(`${rootUrl}/${schemaUrl}`,
 
     async (req: Request, res: Response) => {
 
-    const {modelName='', clientUserName='', containerName, applicationName} = req.body;
-    const db = new RanjodhbirSchema(modelName, clientUserName, containerName, applicationName);
+    const {modelName='', clientUserName='', applicationName} = req.body;
+    const db = new RanjodhbirSchema(modelName, clientUserName, applicationName);
     await db.createSchema();
     res.status(okayStatus).send(true);
 
@@ -57,9 +57,9 @@ route.post(`${rootUrl}/${getDataUrl}`,
 
     async (req: Request, res: Response) => {
 
-    const {modelName='', clientUserName='', containerName, conditions={}, applicationName, language} = req.body;
+    const {modelName='', clientUserName='', conditions={}, applicationName, language=EnglishLanguage} = req.body;
     const {skip=0, limit=10, where={}, getOnly={}} = conditions;
-    const db = new RanjodhbirModel(modelName, clientUserName, containerName, applicationName, language);
+    const db = new RanjodhbirModel(modelName, clientUserName, applicationName, language);
     const data = await db.readData({skip, limit, where ,getOnly});
     res.status(okayStatus).send(data);
 
@@ -71,8 +71,8 @@ route.post(`${rootUrl}/${addDataUrl}`,
 
     async (req: Request, res: Response) => {
 
-    const {modelName='', data={}, clientUserName='', containerName, applicationName, language} = req.body;
-    const db = new RanjodhbirModel(modelName, clientUserName, containerName, applicationName, language);
+    const {modelName='', data={}, clientUserName='', applicationName, language=EnglishLanguage} = req.body;
+    const db = new RanjodhbirModel(modelName, clientUserName, applicationName, language);
     await db.mutateData({
         action: "post",
         item: data
