@@ -23,6 +23,7 @@ import {
     INTEGER_FIElD_TYPE,
     SHORT_STRING_FIElD_TYPE
 } from "@ranjodhbirkaur/constants";
+import {createModel} from "../util/methods";
 
 // Create Record
 export async function createStoreRecord(req: Request, res: Response) {
@@ -34,34 +35,47 @@ export async function createStoreRecord(req: Request, res: Response) {
         const rules = JSON.parse(collection.rules);
         let body = checkBodyAndRules(rules, req, res);
         if(body) {
-            // add some alternate for unique params here
-            const response = await writeRanjodhBirData(
-                collection.name,
-                collection.clientUserName,
-                collection.connectionName,
-                collection.containerName,
-                collection.applicationName,
-                language,
-                body);
 
-            const logBody: ModelLoggerBodyType = {
-                modelName: collection.name,
-                action: "create",
-                actor: req.currentUser[ID],
-                time: `${new Date()}`,
-                [clientType]: req.currentUser[clientType],
+            const model: any = createModel({
+                rules,
+                connectionName: collection.connectionName,
+                name: collection.name
+            });
+
+
+            const hasError = await validateUniqueParam(model, rules, body);
+
+            if (!hasError) {
+                const item = new model(body);
+                await item.save();
+                // close db connection
+                //await model.dbConnection.close();
+                res.status(okayStatus).send(item);
+
+                const logBody: ModelLoggerBodyType = {
+                    modelName: collection.name,
+                    action: "create",
+                    actor: req.currentUser[ID],
+                    time: `${new Date()}`,
+                    [clientType]: req.currentUser[clientType],
+                }
+
+                await writeRanjodhBirData(
+                    `${collection.name}-${MODEL_LOGGER_NAME}`,
+                    collection.clientUserName,
+                    collection.connectionName,
+                    collection.containerName,
+                    collection.applicationName,
+                    EnglishLanguage,
+                    logBody
+                )
+            }
+            else {
+                res.status(errorStatus).send({
+                    errors: [hasError]
+                });
             }
 
-            await writeRanjodhBirData(
-                `${collection.name}-${MODEL_LOGGER_NAME}`,
-                collection.clientUserName,
-                collection.connectionName,
-                collection.containerName,
-                collection.applicationName,
-                EnglishLanguage,
-                logBody
-            )
-            res.status(okayStatus).send(response);
         }
     }
     else {

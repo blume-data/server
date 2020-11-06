@@ -1,8 +1,7 @@
 import { randomBytes } from 'crypto';
-/*import { RuleType } from './interface';
 import mongoose from 'mongoose';
-import { DATE_TYPE, HTML_TYPE } from './constants';
-import { getConnection } from './connections';*/
+import { getConnection } from './connections';
+import {RuleType} from "./interface";
 
 export const RANDOM_STRING = function (minSize=10) {
     return randomBytes(minSize).toString('hex')
@@ -22,20 +21,19 @@ export function isValidRegEx(reg: string) {
     return isValid;
 }
 
-/*interface CreateModelType {
-    rules: {name: string; type: string}[];
+interface CreateModelType {
+    rules: RuleType[];
     connectionName: string;
     name: string;
-}*/
+}
 
-/*
 export function createModel(params: CreateModelType) {
     const {rules, name, connectionName} = params;
     const CollectionName = name.split(' ').join('_');
     const Schema = mongoose.Schema;
     let schemaData = {};
     // Create the schema
-    rules.forEach((rule: RuleType) => {
+    rules.forEach((rule: any) => {
         switch (rule.type) {
             case 'string': {
                 schemaData = {
@@ -66,26 +64,6 @@ export function createModel(params: CreateModelType) {
                         type: Boolean,
                         required: !!rule.required,
                         unique: !!rule.unique
-                    }
-                };
-                break;
-            }
-            case DATE_TYPE: {
-                schemaData = {
-                    ...schemaData,
-                    [rule.name]: {
-                        type: Date,
-                        required: !!rule.required,
-                    }
-                };
-                break;
-            }
-            case HTML_TYPE: {
-                schemaData = {
-                    ...schemaData,
-                    [rule.name]: {
-                        type: String,
-                        required: !!rule.required,
                     }
                 };
                 break;
@@ -133,4 +111,4 @@ export function createModel(params: CreateModelType) {
 
         return dbConnection.model(CollectionName, schema);
     }
-}*/
+}
