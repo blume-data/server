@@ -14,19 +14,26 @@ import {
 import {
     ENTRY_CREATED_AT,
     ENTRY_LANGUAGE_PROPERTY_NAME,
-    PER_PAGE,
-    RANJODHBIR_KAUR_DATABASE_URL
+    PER_PAGE
 } from "../util/constants";
 import {COLLECTION_NOT_FOUND, PARAM_SHOULD_BE_UNIQUE} from "./Messages";
 import {ModelLoggerBodyType, RuleType} from "../util/interface";
 import {Model} from "mongoose";
 import moment from 'moment';
-import {getRanjodhBirData, writeRanjodhBirData} from "../util/databaseApi";
+import {writeRanjodhBirData} from "../util/databaseApi";
 import {
-    BOOLEAN_FIElD_TYPE, ErrorMessagesType, FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN,
-    FIELD_CUSTOM_ERROR_MSG_MIN_MAX, FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN,
+    BOOLEAN_FIElD_TYPE, dateEuropeReg, DateEuropeRegName, dateUsReg,
+    DateUsRegName,
+    emailReg,
+    EmailRegName,
+    ErrorMessagesType,
+    FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN,
+    FIELD_CUSTOM_ERROR_MSG_MIN_MAX,
+    FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN, HHTimeReg, hhTimeReg, HHTimeRegName, HhTimeRegName,
     INTEGER_FIElD_TYPE,
-    SHORT_STRING_FIElD_TYPE
+    SHORT_STRING_FIElD_TYPE,
+    urlReg,
+    UrlRegName, usPhoneReg, UsPhoneRegName, usZipReg, UsZipRegName
 } from "@ranjodhbirkaur/constants";
 import {createModel} from "../util/methods";
 
@@ -170,7 +177,46 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
     const errorMessages: ErrorMessagesType[] = [];
 
     function checkPattern(pattern: string, rule: RuleType, shouldMatch=true) {
-        const newReg = new RegExp(pattern);
+
+        let matchPattern = '';
+        switch (pattern) {
+            case EmailRegName: {
+                matchPattern = emailReg;
+                break;
+            }
+            case UrlRegName: {
+                matchPattern = urlReg;
+                break;
+            }
+            case DateUsRegName: {
+                matchPattern = dateUsReg;
+                break;
+            }
+            case DateEuropeRegName: {
+                matchPattern = dateEuropeReg;
+                break;
+            }
+            case HhTimeRegName: {
+                matchPattern = hhTimeReg;
+                break;
+            }
+            case HHTimeRegName: {
+                matchPattern = HHTimeReg;
+                break;
+            }
+            case UsZipRegName: {
+                matchPattern = usZipReg;
+                break;
+            }
+            case UsPhoneRegName: {
+                matchPattern = usPhoneReg;
+                break;
+            }
+            default: {
+                matchPattern = pattern;
+            }
+        }
+        const newReg = new RegExp(matchPattern);
         if(!newReg.test(reqBody[rule.name]) && shouldMatch) {
 
             let message: string = '';
@@ -178,12 +224,12 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
             if(shouldMatch) {
                 message = (rule[FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN]
                     ? (rule[FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN])
-                    : `${rule.name} should match regex ${pattern}`)
+                    : `${rule.name} should match regex ${matchPattern}`)
             }
             else {
                 message = (rule[FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN]
                     ? (rule[FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN])
-                    : `${rule.name} should not match regex ${pattern}`)
+                    : `${rule.name} should not match regex ${matchPattern}`)
             }
             isValid = false;
             errorMessages.push({
@@ -279,6 +325,7 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
                         checkOnlyAllowedValues(rule);
                     }
 
+                    console.log('rule', rule);
                     if(isValid && rule.default) {
                         checkDefaultValue(rule, "string");
                     }
@@ -383,6 +430,7 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
         }
     });
     if (isValid) {
+        console.log('body', body)
         return body;
     }
     else {

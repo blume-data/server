@@ -548,7 +548,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                     displayName: propertyName,
                     required: propertyIsRequired === 'true',
                     type: fieldType,
-                    default: fieldDefaultValue,
+                    default: propertyDefaultValue,
                     matchSpecificPattern: propertyMatchPattern,
                     prohibitSpecificPattern: propertyProhibitPattern,
                     description: propertyDescription,
