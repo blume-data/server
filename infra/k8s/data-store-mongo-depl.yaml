@@ -1,59 +1,28 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: data-mongo-one-depl
+  name: data-store-mongo-depl
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: data-mongo-one
+      app: data-store-mongo
   template:
     metadata:
       labels:
-        app: data-mongo-one
+        app: data-store-mongo
     spec:
       containers:
-        - name: data-mongo-one
+        - name: data-store-mongo
           image: mongo
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: data-mongo-one-srv
+  name: data-store-mongo-srv
 spec:
   selector:
-    app: data-mongo-one
-  ports:
-    - name: db
-      protocol: TCP
-      port: 27017
-      targetPort: 27017
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: data-mongo-two-depl
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: data-mongo-two
-  template:
-    metadata:
-      labels:
-        app: data-mongo-two
-    spec:
-      containers:
-        - name: data-mongo-two
-          image: mongo
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: data-mongo-two-srv
-spec:
-  selector:
-    app: data-mongo-two
+    app: data-store-mongo
   ports:
     - name: db
       protocol: TCP

@@ -1,7 +1,8 @@
 import { randomBytes } from 'crypto';
 import mongoose from 'mongoose';
-import { getConnection } from './connections';
+import {storeMongoConnection} from './connections';
 import {RuleType} from "./interface";
+import {BOOLEAN_FIElD_TYPE, DECIMAL_FIELD_TYPE, INTEGER_FIElD_TYPE} from "@ranjodhbirkaur/constants";
 
 export const RANDOM_STRING = function (minSize=10) {
     return randomBytes(minSize).toString('hex')
@@ -23,59 +24,54 @@ export function isValidRegEx(reg: string) {
 
 interface CreateModelType {
     rules: RuleType[];
-    connectionName: string;
     name: string;
 }
 
 export function createModel(params: CreateModelType) {
-    const {rules, name, connectionName} = params;
+    const {rules, name} = params;
     const CollectionName = name.split(' ').join('_');
     const Schema = mongoose.Schema;
     let schemaData = {};
     // Create the schema
     rules.forEach((rule: any) => {
-        switch (rule.type) {
-            case 'string': {
-                schemaData = {
-                    ...schemaData,
-                    [rule.name]: {
-                        type: String,
-                        required: !!rule.required,
-                        unique: !!rule.unique
-                    }
-                };
-                break;
-            }
-            case 'number': {
-                schemaData = {
-                    ...schemaData,
-                    [rule.name] : {
-                        type: Number,
-                        required: !!rule.required,
-                        unique: !!rule.unique
-                    },
-                };
-                break;
-            }
-            case 'boolean': {
-                schemaData = {
-                    ...schemaData,
-                    [rule.name]: {
-                        type: Boolean,
-                        required: !!rule.required,
-                        unique: !!rule.unique
-                    }
-                };
-                break;
-            }
+
+        if(rule.type === INTEGER_FIElD_TYPE || rule.type === DECIMAL_FIELD_TYPE) {
+            schemaData = {
+                ...schemaData,
+                [rule.name] : {
+                    type: Number,
+                    required: !!rule.required,
+                    unique: !!rule.unique
+                },
+            };
+        }
+        else if(rule.type === BOOLEAN_FIElD_TYPE) {
+            schemaData = {
+                ...schemaData,
+                [rule.name]: {
+                    type: Boolean,
+                    required: !!rule.required,
+                    unique: !!rule.unique
+                }
+            };
+        }
+        else {
+            schemaData = {
+                ...schemaData,
+                [rule.name]: {
+                    type: String,
+                    required: !!rule.required,
+                    unique: !!rule.unique
+                }
+            };
         }
     });
 
     schemaData = {
         ...schemaData,
-        created_at : { type: Date },
-        updated_at : { type: Date },
-        deleted_at : { type: Date },
+        createdAt : { type: Date },
+        updatedAt : { type: Date },
+        deletedAt : { type: Date },
     };
 
     const schema = new Schema(schemaData, {
@@ -89,17 +85,17 @@ export function createModel(params: CreateModelType) {
     });
 
     if (process.env.NODE_ENV !== 'test') {
-        const dbConnection = getConnection(connectionName);
+        const dbConnection = storeMongoConnection;
         try {
             if (dbConnection) {
-                return dbConnection.model(connectionName, schema);
+                return dbConnection.model(name, schema);
             }
             else {
                 return null;
             }
         }
         catch (e) {
-            return dbConnection.model(connectionName);
+            return dbConnection.model(name);
         }
     }
     else {

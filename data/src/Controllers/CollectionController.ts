@@ -52,7 +52,7 @@ export async function createCollectionSchema(req: Request, res: Response) {
             throw new BadRequestError(COLLECTION_ALREADY_EXIST);
         }
 
-        const newDbConnection: {connectionName: string} = await assignConnection(clientUserName);
+        /*const newDbConnection: {connectionName: string} = await assignConnection(clientUserName);*/
 
         const newCollection = CollectionModel.build({
             clientUserName,
@@ -62,7 +62,6 @@ export async function createCollectionSchema(req: Request, res: Response) {
             name: reqBody.name,
             displayName: reqBody.displayName,
             env,
-            connectionName: newDbConnection.connectionName,
             updatedBy: `${req.currentUser[ID]}-${req.currentUser[USER_NAME]}`,
             description: reqBody.description
         });
@@ -174,7 +173,8 @@ export async function getCollectionSchema(req: Request, res: Response) {
 }
 
 
-/*Helper methods*/
+/*
+/!*Helper methods*!/
 async function assignConnection(clientUserName: string) : Promise<any> {
 
     const userConnectionExist = await UserConnectionModel.findOne({
@@ -235,4 +235,4 @@ async function createNewConnection(allConnectionsLength: number, clientUserName:
     else {
         throw new Error(ALL_CONNECTIONS_AND_DB_CAPACITY_FULL);
     }
-}
+}*/

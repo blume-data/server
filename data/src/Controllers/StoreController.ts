@@ -38,7 +38,6 @@ export async function createStoreRecord(req: Request, res: Response) {
 
             const model: any = createModel({
                 rules,
-                connectionName: collection.connectionName,
                 name: collection.name
             });
 
@@ -97,19 +96,15 @@ export async function getStoreRecord(req: Request, res: Response) {
 
         if (validateParams(req, res, rules)) {
             const {where, getOnly} = req.body;
-            const response = await getRanjodhBirData(
-                collectionName,
-                collection.clientUserName,
-                collection[APPLICATION_NAME],
-                language,
-                {
-                    skip: Number(skip),
-                    limit: Number(limit),
-                    where,
-                    getOnly
-                }
-            );
-            res.status(okayStatus).send(response);
+
+
+            const model: any = createModel({
+                rules,
+                name: collection.name
+            });
+
+            const collections = await model.find(where, getOnly).skip(skip).limit(limit);
+            res.status(okayStatus).send(collections);
         }
     }
     else {
@@ -131,7 +126,7 @@ async function getCollection(req: Request) {
 
     return CollectionModel.findOne(
         {clientUserName, name, applicationName},
-        ['name', CLIENT_USER_NAME, 'connectionName', 'containerName', APPLICATION_NAME, 'rules']
+        ['name', CLIENT_USER_NAME, 'connectionName', APPLICATION_NAME, 'rules']
         );
 }
 

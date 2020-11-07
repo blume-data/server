@@ -8,7 +8,6 @@ interface CollectionAttrs {
 
     rules: string;
     name: string;
-    connectionName: string;
     description: string;
     displayName: string;
     isPublic: boolean;
@@ -30,7 +29,6 @@ interface CollectionDoc extends mongoose.Document {
 
     rules: string;
     name: string;
-    connectionName: string;
     description: string;
     displayName: string;
     isPublic: boolean;
@@ -63,11 +61,6 @@ const Collection = new mongoose.Schema(
             type: String,
             required: true
         },
-        connectionName: {
-            type: String,
-            required: true
-        },
-
         description: {
             type: String,
             default: ''
