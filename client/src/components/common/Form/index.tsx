@@ -424,7 +424,7 @@ export const Form = (props: FormType) => {
                     const exist = fields.filter(ranjod => ranjod.groupName === groupName);
                     if(exist && exist.length) {
                         return (
-                            <AccordianCommon name={groupName}>
+                            <AccordianCommon name={groupName} className={'common-form-accordian'}>
                                 {fields.map((option: ConfigField, index) => {
                                     if(option.groupName === groupName) {
                                         return renderFields(option, index, groupName)

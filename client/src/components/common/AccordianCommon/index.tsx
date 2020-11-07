@@ -12,10 +12,11 @@ const Accordion = loadable(() => import('@material-ui/core/Accordion'));
 interface AccordianCommonProps {
     children: any;
     name: string;
+    className?: string;
     shouldExpand?: boolean;
 }
 export const AccordianCommon = (props: AccordianCommonProps) => {
-    const {children, name, shouldExpand=false} = props;
+    const {children, name, shouldExpand=false, className=''} = props;
     const id = randomString();
 
     const [expanded, setExpanded] = React.useState<string | false>('');
@@ -31,7 +32,10 @@ export const AccordianCommon = (props: AccordianCommonProps) => {
     };
 
     return (
-        <Accordion className={'accordian-common-container'} expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
+        <Accordion
+            className={`accordian-common-container ${className ? className : ''}`}
+            expanded={expanded === 'panel1'}
+            onChange={handleChange('panel1')}>
             <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
                 aria-controls={`${id}-content`}
