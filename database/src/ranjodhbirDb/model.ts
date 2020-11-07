@@ -1,11 +1,7 @@
 import {RanjodhbirSchema} from "./index";
 import {Data} from "./data";
-import {randomNumber} from "../utils/methods";
 import {RANDOM_STRING} from "@ranjodhbirkaur/common";
-import {DataBaseModelsModel} from "../models/models";
-import {TasksModel} from "../models/tasks";
-import {eventEmitter, setWritable} from "../worker";
-import {NUMBER_OF_CONTAINERS, SPACE_APPLICATION_LANGUAGE, START_TASK} from "../utils/constants";
+
 import fs from 'fs';
 import es from 'event-stream';
 
@@ -23,52 +19,15 @@ interface MutateType {
 
 export class RanjodhbirModel extends RanjodhbirSchema {
 
-    readonly language: string;
-
-    constructor(name: string, clientUserName: string, applicationName: string, language: string) {
+    constructor(name: string, clientUserName: string, applicationName: string) {
         super(name, clientUserName, applicationName);
-        this.language = language;
-    }
-
-    private async addTask(params: MutateType) {
-        const {action,item} = params;
-        const task = TasksModel.build({
-            clientUserName: this.clientUserName,
-            modelName: this.name,
-            containerName: '',
-            applicationName: this.applicationName,
-            action,
-            query: JSON.stringify(item)
-        });
-        await task.save();
-    }
-
-    private async checkIsModelWritable() {
-        return DataBaseModelsModel.findOne({
-            clientUserName: this.clientUserName,
-            modelName: this.name
-        }, 'isWritable');
     }
 
     /*
     * Check if the model is writable then store data
     * */
     async mutateData(params: MutateType) {
-        const {action,item} = params;
-        // check if this model is not under write mode
-        const isWritable = await this.checkIsModelWritable();
-        if (isWritable) {
-            await setWritable(this.clientUserName, this.name, false);
-            switch (action) {
-                case "post": {
-                    await this.storeData(item);
-                    break;
-                }
-            }
-        }
-        else {
-            await this.addTask({action, item});
-        }
+        await this.storeData(params.item);
     }
 
     /*
@@ -76,7 +35,7 @@ export class RanjodhbirModel extends RanjodhbirSchema {
     * */
     async storeData(item: object) {
         const id = `${RANDOM_STRING(10)}`;
-        const newData = new Data(id, this.language);
+        const newData = new Data(id);
         const data = Object.assign(item, newData);
 
         await this.writeFile(JSON.stringify(data)+'\n', `${0}.txt`);
@@ -89,7 +48,6 @@ export class RanjodhbirModel extends RanjodhbirSchema {
         let count = 0;
         let skipped = 0;
         const rootPath = this.getModelPath();
-        const language = this.language;
         let isCollectionCompleted = false;
 
         function pushData(item: any) {
@@ -100,7 +58,7 @@ export class RanjodhbirModel extends RanjodhbirSchema {
                 // skip space application language property
                 let dataObject: any = {};
                 for(let propertyItem in item) {
-                    if(item.hasOwnProperty(propertyItem) && propertyItem !== SPACE_APPLICATION_LANGUAGE) {
+                    if(item.hasOwnProperty(propertyItem)) {
                         dataObject[propertyItem] = item[propertyItem];
                     }
                 }
@@ -142,8 +100,7 @@ export class RanjodhbirModel extends RanjodhbirSchema {
             if (content && typeof content === "string") {
                 try {
                     const item = JSON.parse(content);
-                    // If the language matches
-                    if (item && item[SPACE_APPLICATION_LANGUAGE] === language) {
+                    if (item) {
                         // If there is where condition
                         if (where && typeof where === 'object') {
                             whereCondition(item);

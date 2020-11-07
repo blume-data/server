@@ -3,8 +3,6 @@ import {BadRequestError, ID, okayStatus, sendSingleError, USER_NAME} from "@ranj
 import {
     MAX_COLLECTION_LIMIT,
     MAX_USER_LIMIT,
-    MODEL_LOGGER_NAME,
-    MONGO_DB_DATA_CONNECTIONS_AVAILABLE,
     RANJODHBIR_KAUR_DATABASE_URL,
 } from "../util/constants";
 import {CollectionModel} from "../models/Collection";

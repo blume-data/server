@@ -59,7 +59,7 @@ route.post(`${rootUrl}/${getDataUrl}`,
 
     const {modelName='', clientUserName='', conditions={}, applicationName, language=EnglishLanguage} = req.body;
     const {skip=0, limit=10, where={}, getOnly={}} = conditions;
-    const db = new RanjodhbirModel(modelName, clientUserName, applicationName, language);
+    const db = new RanjodhbirModel(modelName, clientUserName, applicationName);
     const data = await db.readData({skip, limit, where ,getOnly});
     res.status(okayStatus).send(data);
 
@@ -72,7 +72,7 @@ route.post(`${rootUrl}/${addDataUrl}`,
     async (req: Request, res: Response) => {
 
     const {modelName='', data={}, clientUserName='', applicationName, language=EnglishLanguage} = req.body;
-    const db = new RanjodhbirModel(modelName, clientUserName, applicationName, language);
+    const db = new RanjodhbirModel(modelName, clientUserName, applicationName);
     await db.mutateData({
         action: "post",
         item: data

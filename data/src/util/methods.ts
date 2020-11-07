@@ -4,6 +4,7 @@ import {storeMongoConnection} from './connections';
 import {RuleType} from "./interface";
 import {BOOLEAN_FIElD_TYPE, DECIMAL_FIELD_TYPE, INTEGER_FIElD_TYPE} from "@ranjodhbirkaur/constants";
 import {ENTRY_LANGUAGE_PROPERTY_NAME} from "./constants";
+import {APPLICATION_NAME, CLIENT_USER_NAME} from "@ranjodhbirkaur/common";
 
 export const RANDOM_STRING = function (minSize=10) {
     return randomBytes(minSize).toString('hex')
@@ -26,11 +27,13 @@ export function isValidRegEx(reg: string) {
 interface CreateModelType {
     rules: RuleType[];
     name: string;
+    [APPLICATION_NAME]: string;
+    [CLIENT_USER_NAME]: string;
 }
 
 export function createModel(params: CreateModelType) {
-    const {rules, name} = params;
-    const CollectionName = name.split(' ').join('_');
+    const {rules, name, applicationName, clientUserName} = params;
+    const CollectionName = `${name}_${applicationName}_${clientUserName}`;
     const Schema = mongoose.Schema;
     let schemaData = {};
     // Create the schema

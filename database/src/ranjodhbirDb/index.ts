@@ -1,5 +1,4 @@
 import fs  from 'fs';
-import {DataBaseModelsModel} from "../models/models";
 
 export class RanjodhbirSchema {
 
@@ -45,14 +44,6 @@ export class RanjodhbirSchema {
                             reject(err);
                         }
                         else {
-                            const mongoModel = DataBaseModelsModel.build({
-                                clientUserName: this.clientUserName,
-                                modelName: this.name,
-                                applicationName: this.applicationName,
-                                isWritable: true
-                            });
-                            await mongoModel.save();
-
                             // create empty file
                             await this.writeFile('', `${0}.txt`);
                             resolve();

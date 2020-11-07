@@ -1,5 +1,4 @@
 import { app } from './app';
-import './worker';
 import mongoose from "mongoose";
 
 const start = async () => {

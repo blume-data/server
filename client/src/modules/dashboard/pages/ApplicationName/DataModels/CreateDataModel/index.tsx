@@ -33,6 +33,8 @@ import {
     REFERENCE_FIELD_TYPE,
     SHORT_STRING_FIElD_TYPE,
     trimCharactersAndNumbers,
+    EmailRegName, UrlRegName, DateUsRegName, DateEuropeRegName, HhTimeRegName, HHTimeRegName, usPhoneRegName, UsZipRegName,
+    emailReg, urlReg, dateUsReg, dateEuropeReg, hhTimeReg, HHTimeReg, usPhoneReg, usZipReg
 } from "@ranjodhbirkaur/constants";
 import TextFieldsIcon from '@material-ui/icons/TextFields';
 import './style.scss';
@@ -264,15 +266,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
 
         // Allow only specific pattern and prohibit a specific pattern
         if(fieldType === SHORT_STRING_FIElD_TYPE) {
-            // select pattern
-            const emailReg = '^\\w[\\w.-]*@([\\w-]+\\.)+[\\w-]+$';
-            const urlReg = '^(ftp|http|https):\\/\\/(\\w+:{0,1}\\w*@)?(\\S+)(:[0-9]+)?(\\/|\\/([\\w#!:.?+=&%@!\\-/]))?$';
-            const dataUsReg = '^(0?[1-9]|1[012])[- /.](0?[1-9]|[12][0-9]|3[01])[- /.](19|20)?\\d\\d$';
-            const dateERREG = '^(0?[1-9]|[12][0-9]|3[01])[- /.](0?[1-9]|1[012])[- /.](19|20)?\\d\\d$';
-            const hhTimeReg = '^(0?[1-9]|1[012]):[0-5][0-9](:[0-5][0-9])?\\s*[aApP][mM]$';
-            const HHTimeReg = '^(0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9](:[0-5][0-9])?$';
-            const usPhoneReg = '^\\d[ -.]?\\(?\\d\\d\\d\\)?[ -.]?\\d\\d\\d[ -.]?\\d\\d\\d\\d$';
-            const usZipReg = '^\\d{5}$|^\\d{5}-\\d{4}$}';
+
             // select allowed pattern
             hello.push({
                 required: false,
@@ -285,8 +279,8 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 options:[
                     {label: `Email (${emailReg})`, value: emailReg},
                     {label: `Url (${urlReg})`, value: urlReg},
-                    {label: `Date US (${dataUsReg})`, value: dataUsReg},
-                    {label: `Date European (${dateERREG})`, value: dateERREG},
+                    {label: `Date US (${dateUsReg})`, value: dateUsReg},
+                    {label: `Date European (${dateEuropeReg})`, value: dateEuropeReg},
                     {label: `12h Time (${hhTimeReg})`, value: hhTimeReg},
                     {label: `24h Time (${HHTimeReg})`, value: HHTimeReg},
                     {label: `Us phone number (${usPhoneReg})`, value: usPhoneReg},

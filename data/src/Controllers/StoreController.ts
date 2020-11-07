@@ -33,6 +33,9 @@ import {createModel} from "../util/methods";
 // Create Record
 export async function createStoreRecord(req: Request, res: Response) {
 
+    const clientUserName = req.params[CLIENT_USER_NAME];
+    const applicationName = req.params[APPLICATION_NAME]
+
     // get collection
     const collection = await getCollection(req);
     if (collection) {
@@ -42,7 +45,9 @@ export async function createStoreRecord(req: Request, res: Response) {
 
             const model: any = createModel({
                 rules,
-                name: collection.name
+                name: collection.name,
+                applicationName,
+                clientUserName
             });
 
 
@@ -90,6 +95,8 @@ export async function createStoreRecord(req: Request, res: Response) {
 export async function getStoreRecord(req: Request, res: Response) {
 
     const language = req.params.language;
+    const clientUserName = req.params[CLIENT_USER_NAME];
+    const applicationName = req.params[APPLICATION_NAME]
 
     // get collection
     const collection = await getCollection(req);
@@ -104,13 +111,14 @@ export async function getStoreRecord(req: Request, res: Response) {
 
             const model: any = createModel({
                 rules,
+                clientUserName,
+                applicationName,
                 name: collection.name
             });
 
             const collections = await model.find(where, getOnly).skip(skip).limit(limit);
-            /*
 
-            const response2 = await getRanjodhBirData(
+            /*const response2 = await getRanjodhBirData(
                 collection.name,
                 collection.clientUserName,
                 collection[APPLICATION_NAME],
