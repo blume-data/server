@@ -13,6 +13,7 @@ import {CommonCheckBoxField} from "./CommonCheckBoxField";
 import {CommonButton} from "../CommonButton";
 
 import loadable from "@loadable/component";
+import {AccordianCommon} from "../AccordianCommon";
 const HtmlEditor = loadable(() => import('../HtmlEditor'));
 
 interface FormState {
@@ -41,7 +42,7 @@ export const Form = (props: FormType) => {
     const [alert, setAlertMessage] = React.useState<AlertType>({message: ''});
 
     const [formState, setFormState] = useState<FormState[]>([]);
-    const {className, fields, onSubmit, submitButtonName, response='', clearOnSubmit=false, showClearButton=false} = props;
+    const {className, groups, fields, onSubmit, submitButtonName, response='', clearOnSubmit=false, showClearButton=false} = props;
 
     function setErrorMessage(name: string) {
         return `${name} is required`;
@@ -188,8 +189,17 @@ export const Form = (props: FormType) => {
         });
     }
 
-    function renderFields(field: ConfigField, index: number) {
-        const {inputType, options, id, className, name, placeholder, required, type='text', label, disabled=false, descriptionText=''} = field;
+    function renderFields(field: ConfigField, index: number, groupId?: string) {
+        const {inputType, options, groupName='', id, className, name, placeholder, required, type='text', label, disabled=false, descriptionText=''} = field;
+
+        //console.log('group', groupName, groupId)
+        /*If group Id: Field is not grouped*/
+        if(groupId && groupName !== groupId) {
+            return null;
+        }
+        else if(!groupId && groupName) {
+            return null;
+        }
 
         function onChange(e: ChangeEvent<any>) {
             changeValue(e, label, SET_VALUE_ACTION)
@@ -406,6 +416,28 @@ export const Form = (props: FormType) => {
             {fields.map((option: ConfigField, index) => {
                 return renderFields(option, index);
             })}
+
+            {/*Render Group Fields*/}
+            {
+                groups && groups.length
+                ? groups.map(groupName => {
+                    const exist = fields.filter(ranjod => ranjod.groupName === groupName);
+                    if(exist && exist.length) {
+                        return (
+                            <AccordianCommon name={groupName}>
+                                {fields.map((option: ConfigField, index) => {
+                                    if(option.groupName === groupName) {
+                                        return renderFields(option, index, groupName)
+                                    }
+                                    return null;
+                                })}
+                            </AccordianCommon>
+                        );
+                    }
+                    return  null;
+                  })
+                : null
+            }
 
             <Grid container className={'button-section'}>
                 {

@@ -142,6 +142,15 @@ const CreateDataModel = (props: CreateDataModelType) => {
     const FIELD_MATCH_SPECIFIC_PATTERN = 'matchSpecificPattern';
     const FIELD_PROHIBIT_SPECIFIC_PATTERN = 'prohibitSpecificPattern';
 
+    /*Field Group Names*/
+    const FIELD_NAME_GROUP = 'Name';
+    const FIELD_LIMIT_CHARACTER_COUNT_GROUP = 'Limit character count';
+    const FIELD_LIMIT_VALUE_GROUP = 'Limit value';
+    const FIELD_MATCH_SPECIFIC_PATTERN_GROUP = 'Match specific pattern';
+    const FIELD_PROHIBIT_SPECIFIC_PATTERN_GROUP = 'Prohibit specific pattern';
+    const FIELD_ALLOW_ONLY_SPECIFIC_VALUES_GROUP = 'Accept only specific values';
+    const FIELD_DEFAULT_VALUE_GROUP = 'Default value';
+
     const {env, CollectionUrl, applicationName, onCreateDataModel,
         modelProperties, modelId,
         modelName, modelDescription='', modelDisplayName,} = props;
@@ -213,7 +222,8 @@ const CreateDataModel = (props: CreateDataModelType) => {
             max: MAX_VALUE,
             label: 'Field Name',
             inputType: TEXT,
-            descriptionText: 'Name of the field'
+            descriptionText: 'Name of the field',
+            groupName: FIELD_NAME_GROUP
             },
             {
                 disabled: fieldEditMode,
@@ -228,6 +238,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 min: MIN_VALUE,
                 max: MAX_VALUE,
                 descriptionText: 'Generated from name (uniquely identify field)',
+                groupName: FIELD_NAME_GROUP
             },
             {
                 required: false,
@@ -240,7 +251,8 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 inputType: TEXT,
                 min: MIN_VALUE,
                 max: MAX_VALUE,
-                descriptionText: 'Description of field'
+                descriptionText: 'Description of field',
+                groupName: FIELD_NAME_GROUP
             },
             {
                 required: false,
@@ -250,7 +262,8 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 name: IS_FIELD_REQUIRED,
                 label: 'Is required',
                 inputType: CHECKBOX,
-                descriptionText: 'You won\'t be able to publish an entry if this field is empty'
+                descriptionText: 'You won\'t be able to publish an entry if this field is empty',
+                groupName: FIELD_NAME_GROUP
             },
             {
                 required: false,
@@ -260,6 +273,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 name: IS_FIELD_UNIQUE,
                 label: 'Is unique',
                 inputType: CHECKBOX,
+                groupName: FIELD_NAME_GROUP,
                 descriptionText: 'You won\'t be able to publish an entry if there is an existing entry with identical content\n'
             }
         ];
@@ -269,6 +283,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
 
             // select allowed pattern
             hello.push({
+                groupName: FIELD_MATCH_SPECIFIC_PATTERN_GROUP,
                 required: false,
                 placeholder: 'Match a specific pattern',
                 value: `${fieldMatchPattern}`,
@@ -299,7 +314,8 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 name: FIELD_MATCH_SPECIFIC_PATTERN_STRING,
                 label: 'Match a custom specific pattern',
                 inputType: TEXT,
-                descriptionText: 'Make this field match a custom regular expression'
+                descriptionText: 'Make this field match a custom regular expression',
+                groupName: FIELD_MATCH_SPECIFIC_PATTERN_GROUP,
             });
 
             // allowed pattern custom error message
@@ -312,7 +328,8 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 name: FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN,
                 label: 'Match specific pattern custom error message',
                 inputType: TEXT,
-                descriptionText: 'This message will be sent if the value does not match pattern'
+                descriptionText: 'This message will be sent if the value does not match pattern',
+                groupName: FIELD_MATCH_SPECIFIC_PATTERN_GROUP,
             });
 
             // prohibit pattern
@@ -325,6 +342,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 name: FIELD_PROHIBIT_SPECIFIC_PATTERN,
                 label: 'Prohibit a specific pattern',
                 inputType: TEXT,
+                groupName: FIELD_PROHIBIT_SPECIFIC_PATTERN_GROUP,
                 descriptionText: 'Make this field invalid when a pattern is matched: custom regular expression (e.g. bad word list)'
             });
 
@@ -338,7 +356,8 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 name: FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN,
                 label: 'Prohibit specific pattern custom error message',
                 inputType: TEXT,
-                descriptionText: 'Custom message will be sent if the value matches this pattern'
+                descriptionText: 'Custom message will be sent if the value matches this pattern',
+                groupName: FIELD_PROHIBIT_SPECIFIC_PATTERN_GROUP,
             });
         }
 
@@ -353,7 +372,8 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 label: 'Default value',
                 type: fieldType === INTEGER_FIElD_TYPE || fieldType === DECIMAL_FIELD_TYPE ? 'number' : 'text',
                 inputType: fieldType === LONG_STRING_FIELD_TYPE ? FORMATTED_TEXT : TEXT,
-                descriptionText: 'Default value if the field is left blank'
+                descriptionText: 'Default value if the field is left blank',
+                groupName: FIELD_DEFAULT_VALUE_GROUP
             });
         }
 
@@ -369,6 +389,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 name: FIELD_MAX,
                 label: fieldType === SHORT_STRING_FIElD_TYPE ? 'Max character count' : 'Max value',
                 inputType: TEXT,
+                groupName: fieldType === SHORT_STRING_FIElD_TYPE ? FIELD_LIMIT_CHARACTER_COUNT_GROUP : FIELD_LIMIT_VALUE_GROUP,
                 descriptionText: fieldType === SHORT_STRING_FIElD_TYPE ? 'Specify a maximum allowed number of characters' : 'Specify a maximum allowed value'
             });
             // Min count
@@ -381,6 +402,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 name: FIELD_MIN,
                 label: fieldType === SHORT_STRING_FIElD_TYPE ? 'Min character count' : 'Min value',
                 inputType: TEXT,
+                groupName: fieldType === SHORT_STRING_FIElD_TYPE ? FIELD_LIMIT_CHARACTER_COUNT_GROUP : FIELD_LIMIT_VALUE_GROUP,
                 descriptionText: fieldType === SHORT_STRING_FIElD_TYPE ? 'Specify a minimum allowed number of characters' : 'Specify a minimum allowed value'
             });
             // Max Min Custom count
@@ -391,6 +413,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 className: 'field-custom-error-message',
                 type: 'text',
                 name: FIELD_CUSTOM_ERROR_MSG_MIN_MAX,
+                groupName: fieldType === SHORT_STRING_FIElD_TYPE ? FIELD_LIMIT_CHARACTER_COUNT_GROUP : FIELD_LIMIT_VALUE_GROUP,
                 label: fieldType === SHORT_STRING_FIElD_TYPE ? 'Character count custom error message' : 'Allowed value custom error message',
                 descriptionText: `Specify a custom error message if ${fieldType === SHORT_STRING_FIElD_TYPE ? 'characters are' : 'value is'} not within specified range`,
                 inputType: TEXT
@@ -405,6 +428,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 name: FIELD_ONLY_SPECIFIED_VALUES,
                 label: 'Accept only specified values',
                 inputType: TEXT,
+                groupName: FIELD_ALLOW_ONLY_SPECIFIC_VALUES_GROUP,
                 descriptionText: 'An entry won\'t be valid if the field value is not in the list of specified values (Add values separated by comma)'
             });
         }
@@ -883,6 +907,17 @@ const CreateDataModel = (props: CreateDataModelType) => {
                             </Grid>
                             <Grid item>
                                 <Form
+                                    groups={
+                                        [
+                                            FIELD_ALLOW_ONLY_SPECIFIC_VALUES_GROUP,
+                                            FIELD_LIMIT_CHARACTER_COUNT_GROUP,
+                                            FIELD_LIMIT_VALUE_GROUP,
+                                            FIELD_DEFAULT_VALUE_GROUP,
+                                            FIELD_MATCH_SPECIFIC_PATTERN_GROUP,
+                                            FIELD_PROHIBIT_SPECIFIC_PATTERN_GROUP,
+                                            FIELD_NAME_GROUP
+                                        ]
+                                    }
                                     response={response}
                                     submitButtonName={'Save field'}
                                     onSubmit={onSubmitFieldProperty}

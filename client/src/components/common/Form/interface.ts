@@ -10,6 +10,7 @@ export const FORMATTED_TEXT = 'formatted-text'
 export interface FormType {
     className: string;
     fields: ConfigField[];
+    groups?: string[];
     submitButtonName?: string;
     onSubmit: (values: object[]) => void;
     response: string | ErrorMessagesType[];
@@ -42,4 +43,5 @@ export interface FieldType {
 
 export interface ConfigField extends FieldType{
     inputType: string,
+    groupName?: string;
 }

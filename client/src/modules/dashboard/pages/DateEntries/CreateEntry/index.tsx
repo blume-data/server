@@ -60,6 +60,8 @@ const CreateEntry = (props: PropsFromRedux) => {
 
     let fields: ConfigField[] = [];
 
+    console.log('rules', rules);
+
     if(rules) {
         rules.forEach(rule => {
 
