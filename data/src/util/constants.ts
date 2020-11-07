@@ -13,7 +13,7 @@ export const PER_PAGE = 10;
 
 export const RANJODHBIR_KAUR_DATABASE_URL = 'http://database-srv:3000/store';
 
-export const MONGO_DB_DATA_CONNECTIONS_AVAILABLE = ['one','two'];
-
-export const AUTHORIZATION_TOKEN = 'authorization';
-export const MODEL_LOGGER_NAME = 'model-logs-schema-space-i-love-ranjodh-bir-kaur';
+export const ENTRY_LANGUAGE_PROPERTY_NAME = 'ranjodhbir-kaur-language-property-name';
+export const ENTRY_CREATED_AT = 'createdAt';
+export const ENTRY_UPDATED_AT = 'updatedAt';
+export const ENTRY_DELETED_AT = 'deletedAt';

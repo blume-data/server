@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import {storeMongoConnection} from './connections';
 import {RuleType} from "./interface";
 import {BOOLEAN_FIElD_TYPE, DECIMAL_FIELD_TYPE, INTEGER_FIElD_TYPE} from "@ranjodhbirkaur/constants";
+import {ENTRY_LANGUAGE_PROPERTY_NAME} from "./constants";
 
 export const RANDOM_STRING = function (minSize=10) {
     return randomBytes(minSize).toString('hex')
@@ -69,6 +70,7 @@ export function createModel(params: CreateModelType) {
 
     schemaData = {
         ...schemaData,
+        [ENTRY_LANGUAGE_PROPERTY_NAME]: String,
         createdAt : { type: Date },
         updatedAt : { type: Date },
         deletedAt : { type: Date },

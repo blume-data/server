@@ -11,14 +11,19 @@ import {
     okayStatus
 } from "@ranjodhbirkaur/common";
 
-import {MODEL_LOGGER_NAME, PER_PAGE, RANJODHBIR_KAUR_DATABASE_URL} from "../util/constants";
+import {
+    ENTRY_CREATED_AT,
+    ENTRY_LANGUAGE_PROPERTY_NAME,
+    PER_PAGE,
+    RANJODHBIR_KAUR_DATABASE_URL
+} from "../util/constants";
 import {COLLECTION_NOT_FOUND, PARAM_SHOULD_BE_UNIQUE} from "./Messages";
 import {ModelLoggerBodyType, RuleType} from "../util/interface";
 import {Model} from "mongoose";
 import moment from 'moment';
 import {getRanjodhBirData, writeRanjodhBirData} from "../util/databaseApi";
 import {
-    BOOLEAN_FIElD_TYPE, FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN,
+    BOOLEAN_FIElD_TYPE, ErrorMessagesType, FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN,
     FIELD_CUSTOM_ERROR_MSG_MIN_MAX,
     INTEGER_FIElD_TYPE,
     SHORT_STRING_FIElD_TYPE
@@ -28,7 +33,6 @@ import {createModel} from "../util/methods";
 // Create Record
 export async function createStoreRecord(req: Request, res: Response) {
 
-    const language = req.params.language;
     // get collection
     const collection = await getCollection(req);
     if (collection) {
@@ -59,13 +63,15 @@ export async function createStoreRecord(req: Request, res: Response) {
                     [clientType]: req.currentUser[clientType],
                 }
 
-                await writeRanjodhBirData(
+                /*Log it*/
+                /*Ignore await*/
+                writeRanjodhBirData(
                     `${collection.name}`,
                     collection.clientUserName,
                     collection.applicationName,
                     EnglishLanguage,
                     logBody
-                )
+                );
             }
             else {
                 res.status(errorStatus).send({
@@ -87,7 +93,6 @@ export async function getStoreRecord(req: Request, res: Response) {
 
     // get collection
     const collection = await getCollection(req);
-    const collectionName = req.params && req.params.modelName;
     const {limit=PER_PAGE} = req.query;
     let skip: number = (req.query && Number(req.query.skip)) || 0;
 
@@ -97,13 +102,28 @@ export async function getStoreRecord(req: Request, res: Response) {
         if (validateParams(req, res, rules)) {
             const {where, getOnly} = req.body;
 
-
             const model: any = createModel({
                 rules,
                 name: collection.name
             });
 
             const collections = await model.find(where, getOnly).skip(skip).limit(limit);
+            /*
+
+            const response2 = await getRanjodhBirData(
+                collection.name,
+                collection.clientUserName,
+                collection[APPLICATION_NAME],
+                language,
+                {
+                    skip: Number(skip),
+                    limit: Number(limit),
+                    where,
+                    getOnly
+                }
+            );
+
+            console.log('re', response2);*/
             res.status(okayStatus).send(collections);
         }
     }
@@ -122,7 +142,7 @@ async function getCollection(req: Request) {
     const modelName = req.params && req.params.modelName;
     const applicationName = req.params && req.params[APPLICATION_NAME];
 
-    const name = modelName.split(`-${MODEL_LOGGER_NAME}`)[0];
+    const name = modelName;
 
     return CollectionModel.findOne(
         {clientUserName, name, applicationName},
@@ -133,11 +153,13 @@ async function getCollection(req: Request) {
 function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
 
     const reqBody = req.body;
+    const language = req.params.language;
     let body = {
-        created_at: new Date()
+        [ENTRY_CREATED_AT]: new Date(),
+        [ENTRY_LANGUAGE_PROPERTY_NAME]: language
     };
     let isValid = true;
-    const errorMessages: {field: string, message: string}[] = [];
+    const errorMessages: ErrorMessagesType[] = [];
 
     rules.forEach((rule) => {
         // check for required params
@@ -151,7 +173,6 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
         // check the types
         if (reqBody[rule.name]) {
 
-            const type = typeof reqBody[rule.name];
             switch (rule.type) {
                 case SHORT_STRING_FIElD_TYPE: {
                     reqBody[rule.name]= `${reqBody[rule.name]}`;
