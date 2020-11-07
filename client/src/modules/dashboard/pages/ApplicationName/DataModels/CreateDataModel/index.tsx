@@ -143,7 +143,6 @@ const CreateDataModel = (props: CreateDataModelType) => {
     const FIELD_PROHIBIT_SPECIFIC_PATTERN = 'prohibitSpecificPattern';
 
     /*Field Group Names*/
-    const FIELD_NAME_GROUP = 'Name';
     const FIELD_LIMIT_CHARACTER_COUNT_GROUP = 'Limit character count';
     const FIELD_LIMIT_VALUE_GROUP = 'Limit value';
     const FIELD_MATCH_SPECIFIC_PATTERN_GROUP = 'Match specific pattern';
@@ -212,18 +211,17 @@ const CreateDataModel = (props: CreateDataModelType) => {
 
         const hello: ConfigField[] = [
             {
-            required: true,
-            placeholder: 'Field Name',
-            value: fieldDisplayName,
-            className: 'create-content-model-name-text-field',
-            type: 'text',
-            name: FIELD_NAME,
-            min: MIN_VALUE,
-            max: MAX_VALUE,
-            label: 'Field Name',
-            inputType: TEXT,
-            descriptionText: 'Name of the field',
-            groupName: FIELD_NAME_GROUP
+                required: true,
+                placeholder: 'Field Name',
+                value: fieldDisplayName,
+                className: 'create-content-model-name-text-field',
+                type: 'text',
+                name: FIELD_NAME,
+                min: MIN_VALUE,
+                max: MAX_VALUE,
+                label: 'Field Name',
+                inputType: TEXT,
+                descriptionText: 'Name of the field',
             },
             {
                 disabled: fieldEditMode,
@@ -238,7 +236,6 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 min: MIN_VALUE,
                 max: MAX_VALUE,
                 descriptionText: 'Generated from name (uniquely identify field)',
-                groupName: FIELD_NAME_GROUP
             },
             {
                 required: false,
@@ -252,7 +249,6 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 min: MIN_VALUE,
                 max: MAX_VALUE,
                 descriptionText: 'Description of field',
-                groupName: FIELD_NAME_GROUP
             },
             {
                 required: false,
@@ -263,7 +259,6 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 label: 'Is required',
                 inputType: CHECKBOX,
                 descriptionText: 'You won\'t be able to publish an entry if this field is empty',
-                groupName: FIELD_NAME_GROUP
             },
             {
                 required: false,
@@ -273,7 +268,6 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 name: IS_FIELD_UNIQUE,
                 label: 'Is unique',
                 inputType: CHECKBOX,
-                groupName: FIELD_NAME_GROUP,
                 descriptionText: 'You won\'t be able to publish an entry if there is an existing entry with identical content\n'
             }
         ];
@@ -836,7 +830,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
 
     }
 
-    console.log('fieldMatchCustomPattern', fieldMatchCustomPattern);
+    //console.log('fieldMatchCustomPattern', fieldMatchCustomPattern);
 
     return (
         <Grid>
@@ -909,13 +903,12 @@ const CreateDataModel = (props: CreateDataModelType) => {
                                 <Form
                                     groups={
                                         [
-                                            FIELD_ALLOW_ONLY_SPECIFIC_VALUES_GROUP,
                                             FIELD_LIMIT_CHARACTER_COUNT_GROUP,
                                             FIELD_LIMIT_VALUE_GROUP,
+                                            FIELD_ALLOW_ONLY_SPECIFIC_VALUES_GROUP,
                                             FIELD_DEFAULT_VALUE_GROUP,
                                             FIELD_MATCH_SPECIFIC_PATTERN_GROUP,
-                                            FIELD_PROHIBIT_SPECIFIC_PATTERN_GROUP,
-                                            FIELD_NAME_GROUP
+                                            FIELD_PROHIBIT_SPECIFIC_PATTERN_GROUP
                                         ]
                                     }
                                     response={response}
