@@ -799,8 +799,19 @@ const CreateDataModel = (props: CreateDataModelType) => {
         setFieldDescription('');
         setFieldDisplayName('');
         setFieldEditMode(false);
-        setFieldIsRequired('');
         setSettingFieldName(false);
+        setFieldMatchPattern('');
+        setFieldMax('');
+        setFieldMin('');
+        setFieldIsUnique('');
+        setFieldIsRequired('');
+        setFieldDefaultValue('');
+        setFieldOnlySpecifiedValues('');
+        setFieldProhibitPatternCustomError('');
+        setFieldMatchPatternCustomError('');
+        setFieldMinMaxCustomErrorMessage('');
+        setFieldProhibitPattern('');
+        setFieldMatchCustomPattern('');
     }
 
     function renderAddFieldsAndSaveModelButtonGroup() {
