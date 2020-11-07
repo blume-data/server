@@ -14,7 +14,7 @@ import {
     INTEGER_FIElD_TYPE,
     JSON_FIELD_TYPE, REFERENCE_FIELD_TYPE,
     SHORT_STRING_FIElD_TYPE,
-    SUPPORTED_FIELDS_TYPE
+    SUPPORTED_FIELDS_TYPE, trimCharactersAndNumbers
 } from "@ranjodhbirkaur/constants";
 import {isValidRegEx} from "../../../util/methods";
 
@@ -203,7 +203,10 @@ export async function validateCollections(req: Request, res: Response, next: Nex
 
             // check allowed values
             if(rule.onlyAllowedValues && hasSIDType(rule.type)) {
-                parsedRule.onlyAllowedValues = rule.onlyAllowedValues;
+                const allowedValues = rule.onlyAllowedValues.split(',').map((allowedValue: string) => {
+                    return trimCharactersAndNumbers(allowedValue);
+                })
+                parsedRule.onlyAllowedValues = allowedValues.join(',');
             }
 
             // If valid rule

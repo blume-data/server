@@ -24,7 +24,7 @@ import moment from 'moment';
 import {getRanjodhBirData, writeRanjodhBirData} from "../util/databaseApi";
 import {
     BOOLEAN_FIElD_TYPE, ErrorMessagesType, FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN,
-    FIELD_CUSTOM_ERROR_MSG_MIN_MAX,
+    FIELD_CUSTOM_ERROR_MSG_MIN_MAX, FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN,
     INTEGER_FIElD_TYPE,
     SHORT_STRING_FIElD_TYPE
 } from "@ranjodhbirkaur/constants";
@@ -169,6 +169,63 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
     let isValid = true;
     const errorMessages: ErrorMessagesType[] = [];
 
+    function checkPattern(pattern: string, rule: RuleType, shouldMatch=true) {
+        const newReg = new RegExp(pattern);
+        if(!newReg.test(reqBody[rule.name]) && shouldMatch) {
+
+            let message: string = '';
+
+            if(shouldMatch) {
+                message = (rule[FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN]
+                    ? (rule[FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN])
+                    : `${rule.name} should match regex ${pattern}`)
+            }
+            else {
+                message = (rule[FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN]
+                    ? (rule[FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN])
+                    : `${rule.name} should not match regex ${pattern}`)
+            }
+            isValid = false;
+            errorMessages.push({
+                field: rule.name,
+                message
+            });
+        }
+    }
+
+    function checkOnlyAllowedValues(rule: RuleType, stringMode = true) {
+        const allowedValues = rule.onlyAllowedValues.split(',');
+        const exist = allowedValues.find(allowedValue => {
+            if(!stringMode) {
+                return (Number(reqBody[rule.name]) === Number(allowedValue.trim()))
+            }
+            return (`${reqBody[rule.name]}` === allowedValue.trim())
+        });
+        if(!exist) {
+            isValid = false;
+            errorMessages.push({
+                field: rule.name,
+                message: `${rule.name} is not a allowed value`
+            })
+        }
+    }
+
+    function checkDefaultValue(rule: RuleType, type: 'string' | 'number' | 'boolean') {
+        const value = reqBody[rule.name];
+        if(!value && value !== 0) {
+            if(type === 'string') {
+                reqBody[rule.name] = rule.default;
+            }
+            else if(type === 'number') {
+                reqBody[rule.name] = Number(rule.default);
+            }
+            else if(type === 'boolean') {
+                reqBody[rule.name] = rule.default === 'true';
+            }
+
+        }
+    }
+
     rules.forEach((rule) => {
         // check for required params
         if ((!reqBody[rule.name] && rule.required)) {
@@ -208,18 +265,22 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
 
                     // check match Pattern
                     if(rule.matchSpecificPattern) {
-                        const newReg = new RegExp(rule.matchSpecificPattern);
-                        console.log('test value', newReg.test(reqBody[rule.name]), reqBody[rule.name], newReg);
-                        if(!newReg.test(reqBody[rule.name])) {
-                            isValid = false;
-                            errorMessages.push({
-                                field: rule.name,
-                                message: (rule[FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN]
-                                    ? (rule[FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN])
-                                    : `${rule.name} does not match regex ${rule.matchSpecificPattern}`)
-                            });
+                        checkPattern(rule.matchSpecificPattern, rule);
+                    }
+                    if(rule.matchCustomSpecificPattern) {
+                        checkPattern(rule.matchCustomSpecificPattern, rule);
+                    }
+                    // check prohibit patter
+                    if(rule.prohibitSpecificPattern) {
+                        checkPattern(rule.prohibitSpecificPattern, rule, false);
+                    }
+                    // only allowed values
+                    if(isValid && rule.onlyAllowedValues && reqBody[rule.name] !== undefined) {
+                        checkOnlyAllowedValues(rule);
+                    }
 
-                        }
+                    if(isValid && rule.default) {
+                        checkDefaultValue(rule, "string");
                     }
                     break;
                 }
@@ -248,6 +309,15 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
                         });
                     }
 
+                    // only allowed values
+                    if(isValid && rule.onlyAllowedValues && reqBody[rule.name] !== undefined) {
+                        checkOnlyAllowedValues(rule);
+                    }
+
+                    if(isValid && rule.default) {
+                        checkDefaultValue(rule, "number");
+                    }
+
                     break;
                 }
                 case BOOLEAN_FIElD_TYPE: {
@@ -257,6 +327,9 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
                             field: rule.name,
                             message: `${rule.name} should be of type ${rule.type}`
                         });
+                    }
+                    if(isValid && rule.default) {
+                        checkDefaultValue(rule, "boolean");
                     }
                     break;
                 }
