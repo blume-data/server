@@ -33,7 +33,7 @@ import {
     REFERENCE_FIELD_TYPE,
     SHORT_STRING_FIElD_TYPE,
     trimCharactersAndNumbers,
-    EmailRegName, UrlRegName, DateUsRegName, DateEuropeRegName, HhTimeRegName, HHTimeRegName, usPhoneRegName, UsZipRegName,
+    EmailRegName, UrlRegName, DateUsRegName, DateEuropeRegName, HhTimeRegName, HHTimeRegName, UsPhoneRegName, UsZipRegName,
     emailReg, urlReg, dateUsReg, dateEuropeReg, hhTimeReg, HHTimeReg, usPhoneReg, usZipReg
 } from "@ranjodhbirkaur/constants";
 import TextFieldsIcon from '@material-ui/icons/TextFields';
@@ -150,9 +150,11 @@ const CreateDataModel = (props: CreateDataModelType) => {
     const FIELD_ALLOW_ONLY_SPECIFIC_VALUES_GROUP = 'Accept only specific values';
     const FIELD_DEFAULT_VALUE_GROUP = 'Default value';
 
-    const {env, CollectionUrl, applicationName, onCreateDataModel,
+    const {
+        env, CollectionUrl, applicationName, onCreateDataModel,
         modelProperties, modelId,
-        modelName, modelDescription='', modelDisplayName,} = props;
+        modelName, modelDescription='', modelDisplayName
+    } = props;
 
     useEffect(() => {
         if(modelId && modelName && modelProperties && modelDisplayName) {
@@ -286,14 +288,14 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 name: FIELD_MATCH_SPECIFIC_PATTERN,
                 label: 'Match a specific pattern',
                 options:[
-                    {label: `Email (${emailReg})`, value: emailReg},
-                    {label: `Url (${urlReg})`, value: urlReg},
-                    {label: `Date US (${dateUsReg})`, value: dateUsReg},
-                    {label: `Date European (${dateEuropeReg})`, value: dateEuropeReg},
-                    {label: `12h Time (${hhTimeReg})`, value: hhTimeReg},
-                    {label: `24h Time (${HHTimeReg})`, value: HHTimeReg},
-                    {label: `Us phone number (${usPhoneReg})`, value: usPhoneReg},
-                    {label: `Us zip code (${usZipReg})`, value: usZipReg}
+                    {label: `Email (${emailReg})`, value: EmailRegName},
+                    {label: `Url (${urlReg})`, value: UrlRegName},
+                    {label: `Date US (${dateUsReg})`, value: DateUsRegName},
+                    {label: `Date European (${dateEuropeReg})`, value: DateEuropeRegName},
+                    {label: `12h Time (${hhTimeReg})`, value: HhTimeRegName},
+                    {label: `24h Time (${HHTimeReg})`, value: HHTimeRegName},
+                    {label: `Us phone number (${usPhoneReg})`, value: UsPhoneRegName},
+                    {label: `Us zip code (${usZipReg})`, value: UsZipRegName}
                 ],
                 inputType: DROPDOWN,
                 descriptionText: 'Make this field match a pattern: e-mail address, URI, or a custom regular expression'
