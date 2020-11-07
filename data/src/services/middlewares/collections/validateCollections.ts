@@ -55,6 +55,7 @@ export async function validateCollections(req: Request, res: Response, next: Nex
                 [FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN]: '',
                 matchSpecificPattern: '',
                 prohibitSpecificPattern: '',
+                matchCustomSpecificPattern: '',
                 onlyAllowedValues: ''
             };
 
@@ -154,6 +155,20 @@ export async function validateCollections(req: Request, res: Response, next: Nex
                         message: `${rule.name}'s matchSpecificPattern is not a valid Regex`,
                         field: 'rules'
                     })
+                }
+            }
+
+            //check match custom specific pattern property
+            if(rule.matchCustomSpecificPattern && isSSType(rule.type)) {
+                if(isValidRegEx(rule.matchCustomSpecificPattern)) {
+                    parsedRule.matchCustomSpecificPattern = `${rule.matchCustomSpecificPattern}`;
+                }
+                else {
+                    isValidBody = false;
+                    inValidMessage.push({
+                        message: `${rule.name}'s matchCustomSpecificPattern is not a valid Regex`,
+                        field: 'rules'
+                    });
                 }
             }
 

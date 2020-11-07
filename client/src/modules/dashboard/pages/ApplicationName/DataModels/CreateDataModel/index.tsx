@@ -73,6 +73,7 @@ export interface PropertiesType {
     min: number;
     max: number;
     matchSpecificPattern: string;
+    matchCustomSpecificPattern: string;
     prohibitSpecificPattern: string;
     [FIELD_CUSTOM_ERROR_MSG_MIN_MAX]: string;
     [FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN]: string;
@@ -548,7 +549,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                     required: propertyIsRequired === 'true',
                     type: fieldType,
                     default: fieldDefaultValue,
-                    matchSpecificPattern: propertyMatchPatternString ? propertyMatchPatternString : propertyMatchPattern,
+                    matchSpecificPattern: propertyMatchPattern,
                     prohibitSpecificPattern: propertyProhibitPattern,
                     description: propertyDescription,
                     [FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN]: propertyProhibitPatternError,
@@ -557,7 +558,8 @@ const CreateDataModel = (props: CreateDataModelType) => {
                     [FIELD_MAX]: propertyMax,
                     [IS_FIELD_UNIQUE]: propertyIsUnique === 'true',
                     [FIELD_CUSTOM_ERROR_MSG_MIN_MAX]: propertyMinMaxCustomErrorMessage,
-                    onlyAllowedValues: propertyOnlySpecifiedValues
+                    onlyAllowedValues: propertyOnlySpecifiedValues,
+                    matchCustomSpecificPattern: propertyMatchPatternString
                 };
 
                 const tempProperties = JSON.parse(JSON.stringify(properties ? properties : []));
@@ -763,6 +765,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                     setFieldOnlySpecifiedValues(property.onlyAllowedValues)
                 }
                 if(property.type === SHORT_STRING_FIElD_TYPE) {
+                    setFieldMatchPattern(property.matchSpecificPattern || '');
                     setFieldMatchCustomPattern(property.matchSpecificPattern || '');
                     setFieldProhibitPattern(property.prohibitSpecificPattern || '');
                     setFieldMatchPatternCustomError(property[FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN] || '');
@@ -843,7 +846,8 @@ const CreateDataModel = (props: CreateDataModelType) => {
 
     }
 
-    //console.log('fieldMatchCustomPattern', fieldMatchCustomPattern);
+    /*console.log('fieldMatchCustomPattern', fieldMatchCustomPattern);
+    console.log('fieldMatchPattern', fieldMatchPattern);*/
 
     return (
         <Grid>
