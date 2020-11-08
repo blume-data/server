@@ -1,6 +1,7 @@
 import {MAX_COLLECTION_LIMIT} from "../util/constants";
 
 export const COLLECTION_ALREADY_EXIST = 'collection already exist';
+
 export const INVALID_RULES_MESSAGE = 'Body should be array of type and name properties';
 export const REQUIRED_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN = 'required property in the rules should be boolean';
 export const UNIQUE_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN = 'unique property in the rules should be boolean';
@@ -12,6 +13,7 @@ export const DEFAULT_VALUE_SHOULD_BE_OF_SPECIFIED_TYPE = 'default value should b
 export const CANNOT_CREATE_COLLECTIONS_MORE_THAN_LIMIT = 'cannot create more than '+MAX_COLLECTION_LIMIT+' collections';
 
 export const COLLECTION_NOT_FOUND = 'Collection not found';
+export const ALL_CONNECTIONS_AND_DB_CAPACITY_FULL = 'ALL CONNECTIONS AND DB CAPACITY FULL';
 
 export const PARAM_SHOULD_BE_UNIQUE = 'should be unique';
 
@@ -28,3 +30,5 @@ export const PERMISSION_NAME_EXIST = 'permission with same name and type exist';
 /*ENV*/
 
 export const ENV_IS_NOT_SUPPORTED = 'env is not supported';
+
+export const APPLICATION_NAME_ALREADY_EXIST = 'Application name already exist';

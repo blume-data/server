@@ -3,11 +3,21 @@ import {ErrorMessagesType} from "@ranjodhbirkaur/constants";
 export const DROPDOWN = 'dropdown';
 export const BIG_TEXT = 'bigText';
 export const TEXT = 'text';
+export const DATE_FORM_FIELD_TYPE = 'date';
+export const TIME_FORM_FIELD_TYPE = 'time';
+export const RADIO = 'radio';
+export const CHECKBOX = 'check-box';
+export const FORMATTED_TEXT = 'formatted-text'
 
 export interface FormType {
-    className: string
-    fields: ConfigField[]
-    onSubmit: (values: object[]) => Promise<string | ErrorMessagesType[]>;
+    className: string;
+    fields: ConfigField[];
+    groups?: string[];
+    submitButtonName?: string;
+    onSubmit: (values: object[]) => void;
+    response: string | ErrorMessagesType[];
+    clearOnSubmit?: boolean;
+    showClearButton?: boolean;
 }
 
 export interface OptionsType {
@@ -20,6 +30,8 @@ export interface FieldType {
     value: string;
     id?: string;
     options?: OptionsType[];
+    min?: number;
+    max?: number;
     className: string;
     required: boolean;
     name: string;
@@ -27,8 +39,11 @@ export interface FieldType {
     error?: boolean;
     helperText?: string;
     type?: string;
+    disabled?: boolean;
+    descriptionText?: string;
 }
 
 export interface ConfigField extends FieldType{
     inputType: string,
+    groupName?: string;
 }

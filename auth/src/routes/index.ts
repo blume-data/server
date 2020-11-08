@@ -4,6 +4,7 @@ import {validateRequest, stringLimitOptionErrorMessage, stringLimitOptions} from
 import {isUserNameAvailable, verifyEmailToken} from "../Controllers/UserController";
 import {InValidEmailMessage, TOKEN_IS_REQUIRED_MESSAGE} from "../util/errorMessages";
 import {emailVerificationUrl, userNameValidationUrl} from "../util/urls";
+import {validateUserType} from "../middleware/userTypeCheck";
 
 const router = express.Router();
 
@@ -24,6 +25,6 @@ router.get(emailVerificationUrl(), [
         .withMessage(stringLimitOptionErrorMessage('token')),
     query('email').isEmail().withMessage(InValidEmailMessage)
     ],
-    validateRequest, verifyEmailToken);
+    validateRequest, validateUserType,  verifyEmailToken);
 
 export { router as routes };

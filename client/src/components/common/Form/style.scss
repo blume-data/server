@@ -1,4 +1,15 @@
 @import "src/assets/style/index";
-.app-form {
+.app-common-form {
   margin: 20px 0;
+  .button-section {
+    justify-content: flex-end;
+    button {
+      margin: 5px;
+    }
+  }
+  .common-form-accordian {
+    .MuiAccordionDetails-root {
+      flex-direction: column;
+    }
+  }
 }

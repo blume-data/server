@@ -1,8 +1,8 @@
 import {Response, Request} from 'express';
-import {okayStatus} from "@ranjodhbirkaur/common";
+import {clientUserType, okayStatus} from "@ranjodhbirkaur/common";
+
 import {
-    authRootUrl,
-    signUpUrl, signOutUrl, currentUserUrl, emailVerificationUrl, userNameValidationUrl, signInUrl
+    authRootUrl, register, logOut, logIn, currentUser, emailVerification, userNameValidation
 } from "../util/urls";
 export function getAddressUrl(req: Request, res: Response) {
 
@@ -10,12 +10,12 @@ export function getAddressUrl(req: Request, res: Response) {
     return res.status(okayStatus).send({
         auth: {
             authRootUrl,
-            register: signUpUrl(userType),
-            logOut: signOutUrl(userType),
-            logIn: signInUrl(userType),
-            currentUser: currentUserUrl(userType),
-            emailVerification: emailVerificationUrl(userType),
-            userNameValidation: userNameValidationUrl(userType)
+            register,
+            logOut,
+            logIn,
+            currentUser,
+            emailVerification,
+            userNameValidation
         }
     });
 }

@@ -3,26 +3,17 @@ export const stringLimitOptionErrorMessage = (field: string) => field+' must be 
 const ENV = '/:env';
 export const serviceName = '/data';
 export const rootUrl = `${serviceName}${ENV}`;
-export const okayStatus = 202;
-export const errorStatus = 400;
 
 export const AUTH_TOKEN = 'AUTH_TOKEN';
-export const USER_NAME = 'userName';
 
-export const DATE_TYPE = 'date';
-export const HTML_TYPE = 'html';
-export const SUPPORTED_DATA_TYPES = ['string', 'boolean', 'number', 'date', 'html'];
-
-export const MONGO_DB_DATA_CONNECTIONS_AVAILABLE = ['one','two'];
 export const MAX_USER_LIMIT = 1000;
 export const MAX_COLLECTION_LIMIT = 1000;
 
-export const ALL_CONNECTIONS_AND_DB_CAPACITY_FULL = 'All connections and db capacity is full';
-
 export const PER_PAGE = 10;
 
-export const USER_COLLECTION = 'user_collection';
-export const DATA_COLLECTION = 'data_collection';
-export const COLLECTION_TYPES = [USER_COLLECTION, DATA_COLLECTION];
+export const RANJODHBIR_KAUR_DATABASE_URL = 'http://database-srv:3000/store';
 
-export const AUTHORIZATION_TOKEN = 'authorization';
+export const ENTRY_LANGUAGE_PROPERTY_NAME = 'ranjodhbir-kaur-language-property-name';
+export const ENTRY_CREATED_AT = 'createdAt';
+export const ENTRY_UPDATED_AT = 'updatedAt';
+export const ENTRY_DELETED_AT = 'deletedAt';

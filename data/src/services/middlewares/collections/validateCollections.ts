@@ -1,109 +1,221 @@
 import {NextFunction, Request, Response} from "express";
 import {RuleType} from "../../../util/interface";
-import {COLLECTION_TYPES, errorStatus, SUPPORTED_DATA_TYPES} from "../../../util/constants";
 import {
-    DEFAULT_VALUE_SHOULD_BE_OF_SPECIFIED_TYPE,
-    EMAIL_PROPERTY_IN_RULES_SHOULD_BE_STRING, INVALID_RULES_MESSAGE,
-    IS_EMAIL_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN,
-    IS_PASSWORD_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN,
-    PASSWORD_PROPERTY_IN_RULES_SHOULD_BE_STRING,
+    INVALID_RULES_MESSAGE,
     REQUIRED_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN,
     UNIQUE_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN
 } from "../../../Controllers/Messages";
+import {errorStatus} from "@ranjodhbirkaur/common";
+import {
+    DECIMAL_FIELD_TYPE,
+    FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN,
+    FIELD_CUSTOM_ERROR_MSG_MIN_MAX,
+    FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN,
+    INTEGER_FIElD_TYPE,
+    JSON_FIELD_TYPE, REFERENCE_FIELD_TYPE,
+    SHORT_STRING_FIElD_TYPE, shortenString,
+    SUPPORTED_FIELDS_TYPE,
+} from "@ranjodhbirkaur/constants";
+import {isValidRegEx} from "../../../util/methods";
+
+function hasSIDType(type: string) {
+    const SID = [INTEGER_FIElD_TYPE, DECIMAL_FIELD_TYPE, SHORT_STRING_FIElD_TYPE];
+    return SID.includes(type);
+}
+
+function isSSType(type: string) {
+    return SHORT_STRING_FIElD_TYPE === type;
+}
 
 export async function validateCollections(req: Request, res: Response, next: NextFunction) {
 
     const reqBody = req.body;
     let isValidBody = true;
     let inValidMessage = [];
+    const reqMethod = req.method;
+    const parsedRules: RuleType[] = [];
 
     // Validate Rules
     if (reqBody.rules && typeof reqBody.rules === 'object' && reqBody.rules.length) {
-        if (reqBody.collectionType && !COLLECTION_TYPES.includes(reqBody.collectionType)) {
-            isValidBody = false;
-            inValidMessage.push({
-                message: `${reqBody.collectionType} is not a valid collectionType`,
-                field: 'collectionType'
-            });
-        }
 
         reqBody.rules.forEach((rule: RuleType) => {
 
-            // Check required property
-            if (rule.required !== undefined && typeof rule.required !== 'boolean') {
+            let parsedRule: RuleType = {
+                name: `${rule.name}`,
+                type: `${rule.type}`,
+                description: `${rule.description}`,
+                displayName: `${rule.displayName}`,
+                max: 0,
+                min: 0,
+                unique: Boolean(rule.unique),
+                required: Boolean(rule.required),
+                default: ``,
+                [FIELD_CUSTOM_ERROR_MSG_MIN_MAX]: '',
+                [FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN]: '',
+                [FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN]: '',
+                matchSpecificPattern: '',
+                prohibitSpecificPattern: '',
+                matchCustomSpecificPattern: '',
+                onlyAllowedValues: ''
+            };
+
+            // check if name is there
+            if(!rule.name) {
                 isValidBody = false;
                 inValidMessage.push({
-                    message: `${rule.name}: ${REQUIRED_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN}`,
+                    message: `name is required`,
+                    field: 'rules'
+                });
+            }
+            // check if displayName is present
+            if(!rule.displayName) {
+                isValidBody = false;
+                inValidMessage.push({
+                    message: `${rule.name}'s displayName is required`,
+                    field: 'rules'
+                });
+            }
+
+            // check required rule
+            if(!rule.required) {
+                rule.required = false;
+            }
+            else if(typeof rule.required !== 'boolean') {
+                isValidBody = false;
+                inValidMessage.push({
+                    message: `${rule.name}'s ${REQUIRED_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN}`,
+                    field: 'rules'
+                });
+            }
+
+            // check type property
+            if(!rule.type) {
+                isValidBody = false;
+                inValidMessage.push({
+                    message: `${rule.name}'s type is required`,
+                    field: 'rules'
+                });
+            }
+            else if(!SUPPORTED_FIELDS_TYPE.includes(rule.type)) {
+                isValidBody = false;
+                inValidMessage.push({
+                    message: `${rule.name}'s type is not valid`,
                     field: 'rules'
                 });
             }
 
             // Check unique property
-            if (rule.unique !== undefined && typeof rule.unique !== 'boolean') {
+            if(!rule.unique) {
+                rule.unique = false;
+            }
+            else if(typeof rule.unique !== 'boolean') {
                 isValidBody = false;
                 inValidMessage.push({
-                    message: `${rule.name}: ${UNIQUE_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN}`,
+                    message: `${rule.name}'s ${UNIQUE_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN}`,
                     field: 'rules'
                 });
             }
 
-            // Check ifEmail property
-            if (rule.isEmail !== undefined && typeof rule.isEmail !== 'boolean') {
-                isValidBody = false;
-                inValidMessage.push({
-                    message: `${rule.name}: ${IS_EMAIL_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN}`,
-                    field: 'rules'
-                });
+            // check max property
+            if(rule.max && hasSIDType(rule.type)) {
+                if(Number(rule.max) > 50000 && rule.type === SHORT_STRING_FIElD_TYPE) {
+                    parsedRule.max = 50000;
+                }
+                else {
+                    parsedRule.max = Number(rule.max);
+                }
             }
-            else if(rule.isEmail && typeof rule.isEmail === 'boolean' && rule.type !== 'string') {
-                isValidBody = false;
-                inValidMessage.push({
-                    message: `${rule.name}: ${EMAIL_PROPERTY_IN_RULES_SHOULD_BE_STRING}`,
-                    field: 'rules'
+
+            // check min property
+            if(rule.min && hasSIDType(rule.type)) {
+                if(parsedRule.max < Number(rule.min)) {
+                    isValidBody = false;
+                    inValidMessage.push({
+                        message: `${rule.name}'s minimum limit cannot be greater then maximum limit`
+                    });
+                }
+                else {
+                    parsedRule.min = Number(rule.min);
+                }
+            }
+
+            // check default in property
+            if(rule.default && ![JSON_FIELD_TYPE, REFERENCE_FIELD_TYPE].includes(rule.type)) {
+                parsedRule.default = `${rule.default}`;
+            }
+
+            //check match specific pattern property
+            if(rule.matchSpecificPattern && isSSType(rule.type)) {
+                if(isValidRegEx(rule.matchSpecificPattern)) {
+                    parsedRule.matchSpecificPattern = `${rule.matchSpecificPattern}`;
+                }
+                else {
+                    isValidBody = false;
+                    inValidMessage.push({
+                        message: `${rule.name}'s matchSpecificPattern is not a valid Regex`,
+                        field: 'rules'
+                    })
+                }
+            }
+
+            //check match custom specific pattern property
+            if(rule.matchCustomSpecificPattern && isSSType(rule.type)) {
+                if(isValidRegEx(rule.matchCustomSpecificPattern)) {
+                    parsedRule.matchCustomSpecificPattern = `${rule.matchCustomSpecificPattern}`;
+                    parsedRule.matchSpecificPattern = '';
+                }
+                else {
+                    isValidBody = false;
+                    inValidMessage.push({
+                        message: `${rule.name}'s matchCustomSpecificPattern is not a valid Regex`,
+                        field: 'rules'
+                    });
+                }
+            }
+
+            //check match prohibited pattern property
+            if(rule.prohibitSpecificPattern && isSSType(rule.type)) {
+                if(isValidRegEx(rule.prohibitSpecificPattern)) {
+                    parsedRule.prohibitSpecificPattern = `${rule.prohibitSpecificPattern}`;
+                }
+                else {
+                    isValidBody = false;
+                    inValidMessage.push({
+                        message: `${rule.name}'s prohibitSpecificPattern is not a valid Regex`,
+                        field: 'rules'
+                    })
+                }
+            }
+
+            //check FIELD_CUSTOM_ERROR_MSG_MIN_MAX property
+            if(rule[FIELD_CUSTOM_ERROR_MSG_MIN_MAX] && hasSIDType(rule.type)) {
+                parsedRule[FIELD_CUSTOM_ERROR_MSG_MIN_MAX] = `${rule[FIELD_CUSTOM_ERROR_MSG_MIN_MAX]}`;
+            }
+
+            //check FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN property
+            if(rule[FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN] && isSSType(rule.type)) {
+                parsedRule[FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN] = `${rule[FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN]}`;
+            }
+
+            //check FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN property
+            if(rule[FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN] && isSSType(rule.type)) {
+                parsedRule[FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN] = `${rule[FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN]}`;
+            }
+
+            // check allowed values
+            if(rule.onlyAllowedValues && hasSIDType(rule.type)) {
+                const allowedValues = rule.onlyAllowedValues.split(',').map((allowedValue: string) => {
+                    return shortenString(allowedValue);
                 })
+                parsedRule.onlyAllowedValues = allowedValues.join(',');
             }
 
-            // Check isPassword property
-            if (rule.isPassword !== undefined && typeof rule.isPassword !== 'boolean') {
-                isValidBody = false;
-                inValidMessage.push({
-                    message: `${rule.name}: ${IS_PASSWORD_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN}`,
-                    field: 'rules'
-                });
-            }
-            else if(rule.isPassword && typeof rule.isPassword === 'boolean' && rule.type !== 'string') {
-                isValidBody = false;
-                inValidMessage.push({
-                    message: `${rule.name}: ${PASSWORD_PROPERTY_IN_RULES_SHOULD_BE_STRING}`,
-                    field: 'rules'
-                })
-            }
-
-            // check default property
-            if (rule.default && typeof rule.default !== rule.type) {
-                isValidBody = false;
-                inValidMessage.push({
-                    message: `${rule.name}: ${DEFAULT_VALUE_SHOULD_BE_OF_SPECIFIED_TYPE}${rule.type}`,
-                    field: 'rules'
-                });
-            }
-
-            // Validate rule type
-            if (typeof rule.type === 'string' && SUPPORTED_DATA_TYPES.includes(rule.type)) {
-                // remove all the spaces from name
-                rule.name = rule.name.split(' ').join('_');
-            }
-
-            else {
-                isValidBody = false;
-                inValidMessage.push({
-                    message: `${rule.name} is of invalid type ${rule.type}`,
-                    field: 'rules'
-                });
-            }
+            // If valid rule
+            parsedRules.push(parsedRule);
         });
     }
-    else {
+    // rules is option in put request
+    else if(reqMethod === 'POST') {
         isValidBody = false;
         inValidMessage.push({
             message: INVALID_RULES_MESSAGE,
@@ -135,6 +247,7 @@ export async function validateCollections(req: Request, res: Response, next: Nex
         });
     }
     else {
+        reqBody.rules = parsedRules;
         next();
     }
 }

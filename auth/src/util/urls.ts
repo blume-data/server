@@ -4,12 +4,12 @@ export const clusterCheckUser = `${clusterUrl}/check`;
 
 export const authRootUrl = `/auth`;
 
-export const addressUrls = 'auth-routes';
+export const addressUrls = 'routes';
 export const getAddressUrls = (userType?: string) => {
     if (!userType) {
-        return `${authRootUrl}/:userType/${addressUrls}`
+        return `${authRootUrl}/${addressUrls}`
     }
-    return `${authRootUrl}/${userType}/${addressUrls}`
+    return `${authRootUrl}/${addressUrls}`
 };
 export const addressUrlsUrl = `${authRootUrl}/${addressUrls}`;
 
@@ -59,4 +59,12 @@ export const userNameValidationUrl = (userType?: string) => {
         return `${authRootUrl}/:userType/${userNameValidation}`
     }
     return `${authRootUrl}/${userType}/${userNameValidation}`
+};
+
+export const roleRoute = 'role';
+export const roleUrl = (userName?: string) => {
+    if (!userName) {
+        return `${authRootUrl}/:userName/${roleRoute}`
+    }
+    return `${authRootUrl}/${userName}/${roleRoute}`
 };

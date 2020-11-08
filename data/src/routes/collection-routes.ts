@@ -1,12 +1,17 @@
 import express from 'express';
-import {stringLimitOptionErrorMessage, stringLimitOptions} from "../util/constants";
 import {body} from "express-validator";
-import {validateRequest} from "@ranjodhbirkaur/common";
-import {CollectionUrl} from "../util/urls";
-import {createCollectionSchema, deleteCollectionSchema, getCollectionSchema} from "../Controllers/CollectionController";
+import {validateRequest, stringLimitOptionErrorMessage, stringLimitOptions} from "@ranjodhbirkaur/common";
+import {CollectionUrl, GetCollectionNamesUrl} from "../util/urls";
+import {
+    createCollectionSchema,
+    deleteCollectionSchema,
+    getCollectionNames,
+    getCollectionSchema
+} from "../Controllers/CollectionController";
 import {validateCollections} from "../services/middlewares/collections/validateCollections";
 import {checkAuth} from "../services/checkAuth";
 import {validateEnvType} from "../util/enviornmentTypes";
+import {validateApplicationNameMiddleWare} from "../services/validateApplicationNameMiddleWare";
 
 const router = express.Router();
 
@@ -18,9 +23,34 @@ router.post(CollectionUrl, [
         body('name')
             .trim()
             .isLength(stringLimitOptions)
-            .withMessage(stringLimitOptionErrorMessage('name'))
+            .withMessage(stringLimitOptionErrorMessage('name')),
+        body('displayName')
+            .trim()
+            .isLength(stringLimitOptions)
+            .withMessage(stringLimitOptionErrorMessage('displayName')),
+        body('description')
+            .optional()
+            .isLength({ max: 100 })
+            .withMessage('description must be between 1 and 100 characters')
     ],
-    validateRequest, validateEnvType, checkAuth, validateCollections, createCollectionSchema);
+    validateRequest, validateEnvType, checkAuth,
+    validateApplicationNameMiddleWare, validateCollections, createCollectionSchema
+);
+
+router.put(CollectionUrl, [
+        body('id')
+            .notEmpty()
+            .withMessage('id is required')
+    ],
+    validateRequest, validateEnvType, checkAuth,
+    validateApplicationNameMiddleWare, validateCollections, createCollectionSchema
+);
+
+/*get all the models of the application space*/
+router.get(GetCollectionNamesUrl, validateEnvType, checkAuth, validateApplicationNameMiddleWare, getCollectionNames);
+
+/*/!*get info of the data model*!/
+router.get(GetDataModelUrl, validateEnvType, checkAuth, validateApplicationNameMiddleWare, getModel)*/
 
 // Delete Item Schema
 router.delete(CollectionUrl, [

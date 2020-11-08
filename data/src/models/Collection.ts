@@ -1,19 +1,21 @@
 import mongoose from 'mongoose';
+import moment from "moment";
 
 interface CollectionAttrs {
     clientUserName : string;
     applicationName: string;
     env: string;
-    language: string;
 
     rules: string;
     name: string;
-    connectionName: string;
-    collectionType?: string;
+    description: string;
+    displayName: string;
     isPublic: boolean;
     isEnabled?: boolean;
     metaData?: string;
-    created_at?: string;
+
+    updatedBy: string;
+    updatedAt?: string;
 }
 
 interface CollectionModel extends mongoose.Model<CollectionDoc> {
@@ -24,16 +26,17 @@ interface CollectionDoc extends mongoose.Document {
     clientUserName : string;
     applicationName: string;
     env: string;
-    language: string;
 
     rules: string;
     name: string;
-    connectionName: string;
-    collectionType?: string;
+    description: string;
+    displayName: string;
     isPublic: boolean;
-    isEnabled?: boolean;
+    isEnabled: boolean;
     metaData?: string;
-    created_at?: string;
+
+    updatedBy: string;
+    updatedAt: string;
 }
 
 const Collection = new mongoose.Schema(
@@ -50,11 +53,6 @@ const Collection = new mongoose.Schema(
             type: String,
             required: true
         },
-        language: {
-            type: String,
-            default: true
-        },
-
         rules : {
             type: String,
             required: true
@@ -63,11 +61,11 @@ const Collection = new mongoose.Schema(
             type: String,
             required: true
         },
-        connectionName: {
+        description: {
             type: String,
-            required: true
+            default: ''
         },
-        collectionType: {
+        displayName: {
             type: String,
             required: true
         },
@@ -82,7 +80,8 @@ const Collection = new mongoose.Schema(
         metaData : {
             type: String
         },
-        created_at : { type: Date, default: Date.now }
+        updatedBy : { type: String, default: '' },
+        updatedAt : { type: Date, default: moment() },
     },
     {
         toJSON: {

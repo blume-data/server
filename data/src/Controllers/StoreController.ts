@@ -1,41 +1,96 @@
 import {Request, Response} from 'express';
 import {CollectionModel} from "../models/Collection";
-import {BadRequestError} from "@ranjodhbirkaur/common";
-import {createModel} from "../util/methods";
-import {errorStatus, okayStatus, PER_PAGE} from "../util/constants";
+import {
+    APPLICATION_NAME,
+    BadRequestError,
+    CLIENT_USER_NAME,
+    clientType,
+    EnglishLanguage,
+    errorStatus,
+    ID,
+    okayStatus
+} from "@ranjodhbirkaur/common";
+
+import {
+    ENTRY_CREATED_AT,
+    ENTRY_LANGUAGE_PROPERTY_NAME,
+    PER_PAGE
+} from "../util/constants";
 import {COLLECTION_NOT_FOUND, PARAM_SHOULD_BE_UNIQUE} from "./Messages";
-import {RuleType} from "../util/interface";
+import {ModelLoggerBodyType, RuleType} from "../util/interface";
 import {Model} from "mongoose";
 import moment from 'moment';
+import {writeRanjodhBirData} from "../util/databaseApi";
+import {
+    BOOLEAN_FIElD_TYPE, dateEuropeReg, DateEuropeRegName, dateUsReg,
+    DateUsRegName,
+    emailReg,
+    EmailRegName,
+    ErrorMessagesType,
+    FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN,
+    FIELD_CUSTOM_ERROR_MSG_MIN_MAX,
+    FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN, HHTimeReg, hhTimeReg, HHTimeRegName, HhTimeRegName,
+    INTEGER_FIElD_TYPE,
+    SHORT_STRING_FIElD_TYPE,
+    urlReg,
+    UrlRegName, usPhoneReg, UsPhoneRegName, usZipReg, UsZipRegName
+} from "@ranjodhbirkaur/constants";
+import {createModel} from "../util/methods";
 
 // Create Record
 export async function createStoreRecord(req: Request, res: Response) {
+
+    const clientUserName = req.params[CLIENT_USER_NAME];
+    const applicationName = req.params[APPLICATION_NAME]
 
     // get collection
     const collection = await getCollection(req);
     if (collection) {
         const rules = JSON.parse(collection.rules);
         let body = checkBodyAndRules(rules, req, res);
+        if(body) {
 
-        const model: any = createModel({
-            rules,
-            connectionName: collection.connectionName,
-            name: collection.name
-        });
-
-        const hasError = await validateUniqueParam(model, rules, body);
-
-        if (!hasError) {
-            const item = new model(body);
-            await item.save();
-            // close db connection
-            //await model.dbConnection.close();
-            res.status(okayStatus).send(item);
-        }
-        else {
-            res.status(errorStatus).send({
-                errors: [hasError]
+            const model: any = createModel({
+                rules,
+                name: collection.name,
+                applicationName,
+                clientUserName
             });
+
+
+            const hasError = await validateUniqueParam(model, rules, body);
+
+            if (!hasError) {
+                const item = new model(body);
+                await item.save();
+                // close db connection
+                //await model.dbConnection.close();
+                res.status(okayStatus).send(item);
+
+                const logBody: ModelLoggerBodyType = {
+                    modelName: collection.name,
+                    action: "create",
+                    actor: req.currentUser[ID],
+                    time: `${new Date()}`,
+                    [clientType]: req.currentUser[clientType],
+                }
+
+                /*Log it*/
+                /*Ignore await*/
+                writeRanjodhBirData(
+                    `${collection.name}`,
+                    collection.clientUserName,
+                    collection.applicationName,
+                    EnglishLanguage,
+                    logBody
+                );
+            }
+            else {
+                res.status(errorStatus).send({
+                    errors: [hasError]
+                });
+            }
+
         }
     }
     else {
@@ -46,26 +101,44 @@ export async function createStoreRecord(req: Request, res: Response) {
 // Get Record
 export async function getStoreRecord(req: Request, res: Response) {
 
+    const language = req.params.language;
+    const clientUserName = req.params[CLIENT_USER_NAME];
+    const applicationName = req.params[APPLICATION_NAME]
+
     // get collection
     const collection = await getCollection(req);
-    const {perPage=PER_PAGE} = req.query;
-    let pageNo: number = (req.query && Number(req.query.pageNo)) || 1;
-    if (pageNo) {
-        --pageNo;
-    }
+    const {limit=PER_PAGE} = req.query;
+    let skip: number = (req.query && Number(req.query.skip)) || 0;
 
     if (collection) {
         const rules = JSON.parse(collection.rules);
 
         if (validateParams(req, res, rules)) {
             const {where, getOnly} = req.body;
+
             const model: any = createModel({
                 rules,
-                connectionName: collection.connectionName,
+                clientUserName,
+                applicationName,
                 name: collection.name
             });
 
-            const collections = await model.find(where, getOnly).skip(pageNo*10).limit(perPage);
+            const collections = await model.find(where, getOnly).skip(skip).limit(limit);
+
+            /*const response2 = await getRanjodhBirData(
+                collection.name,
+                collection.clientUserName,
+                collection[APPLICATION_NAME],
+                language,
+                {
+                    skip: Number(skip),
+                    limit: Number(limit),
+                    where,
+                    getOnly
+                }
+            );
+
+            console.log('re', response2);*/
             res.status(okayStatus).send(collections);
         }
     }
@@ -80,21 +153,133 @@ export async function getStoreRecord(req: Request, res: Response) {
 
 
 async function getCollection(req: Request) {
-    const userName  = req.params && req.params.userName;
-    const language = req.params && req.params.language;
-    const collectionName = req.params && req.params.collectionName;
+    const clientUserName  = req.params && req.params[CLIENT_USER_NAME];
+    const modelName = req.params && req.params.modelName;
+    const applicationName = req.params && req.params[APPLICATION_NAME];
 
-    return CollectionModel.findOne({clientUserName: userName, name: collectionName, language});
+    const name = modelName;
+
+    return CollectionModel.findOne(
+        {clientUserName, name, applicationName},
+        ['name', CLIENT_USER_NAME, 'connectionName', APPLICATION_NAME, 'rules']
+        );
 }
 
 function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
 
     const reqBody = req.body;
+    const language = req.params.language;
     let body = {
-        created_at: new Date()
+        [ENTRY_CREATED_AT]: new Date(),
+        [ENTRY_LANGUAGE_PROPERTY_NAME]: language
     };
     let isValid = true;
-    const errorMessages: {field: string, message: string}[] = [];
+    const errorMessages: ErrorMessagesType[] = [];
+
+    function checkPattern(pattern: string, rule: RuleType, shouldMatch=true) {
+
+        let matchPattern = '';
+        let errorMessage = '';
+        switch (pattern) {
+            case EmailRegName: {
+                matchPattern = emailReg;
+                errorMessage = 'is not a valid email';
+                break;
+            }
+            case UrlRegName: {
+                matchPattern = urlReg;
+                errorMessage = 'is not a valid url';
+                break;
+            }
+            case DateUsRegName: {
+                matchPattern = dateUsReg;
+                errorMessage = 'is not a valid Us Date';
+                break;
+            }
+            case DateEuropeRegName: {
+                matchPattern = dateEuropeReg;
+                errorMessage = 'is not a valid europe date';
+                break;
+            }
+            case HhTimeRegName: {
+                matchPattern = hhTimeReg;
+                errorMessage = 'is not a valid time in hh format';
+                break;
+            }
+            case HHTimeRegName: {
+                matchPattern = HHTimeReg;
+                errorMessage = 'is not a valid time in HH format';
+                break;
+            }
+            case UsZipRegName: {
+                matchPattern = usZipReg;
+                errorMessage = 'is not a valid us zip code';
+                break;
+            }
+            case UsPhoneRegName: {
+                matchPattern = usPhoneReg;
+                errorMessage = 'is not a valid us phone';
+                break;
+            }
+            default: {
+                matchPattern = pattern;
+            }
+        }
+        const newReg = new RegExp(matchPattern);
+        if(!newReg.test(reqBody[rule.name]) && shouldMatch) {
+
+            let message: string = '';
+
+            if(shouldMatch) {
+                message = (rule[FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN]
+                    ? (rule[FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN])
+                    : errorMessage ? `${rule.name} ${errorMessage}` : `${rule.name} should match regex ${matchPattern}`)
+            }
+            else {
+                message = (rule[FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN]
+                    ? (rule[FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN])
+                    : errorMessage ? `${rule.name} ${errorMessage}` : `${rule.name} should not match regex ${matchPattern}`)
+            }
+            isValid = false;
+            errorMessages.push({
+                field: rule.name,
+                message
+            });
+        }
+    }
+
+    function checkOnlyAllowedValues(rule: RuleType, stringMode = true) {
+        const allowedValues = rule.onlyAllowedValues.split(',');
+        const exist = allowedValues.find(allowedValue => {
+            if(!stringMode) {
+                return (Number(reqBody[rule.name]) === Number(allowedValue.trim()))
+            }
+            return (`${reqBody[rule.name]}` === allowedValue.trim())
+        });
+        if(!exist) {
+            isValid = false;
+            errorMessages.push({
+                field: rule.name,
+                message: `${rule.name} is not a allowed value`
+            })
+        }
+    }
+
+    function checkDefaultValue(rule: RuleType, type: 'string' | 'number' | 'boolean') {
+        const value = reqBody[rule.name];
+        if(!value && value !== 0) {
+            if(type === 'string') {
+                reqBody[rule.name] = rule.default;
+            }
+            else if(type === 'number') {
+                reqBody[rule.name] = Number(rule.default);
+            }
+            else if(type === 'boolean') {
+                reqBody[rule.name] = rule.default === 'true';
+            }
+
+        }
+    }
 
     rules.forEach((rule) => {
         // check for required params
@@ -108,41 +293,99 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
         // check the types
         if (reqBody[rule.name]) {
 
-            const type = typeof reqBody[rule.name];
             switch (rule.type) {
-                case 'string': {
-                    if (!['string','number'].includes(type)) {
+                case SHORT_STRING_FIElD_TYPE: {
+                    reqBody[rule.name]= `${reqBody[rule.name]}`;
+
+                    // check rule min
+                    if(rule.min && reqBody[rule.name].length < Number(rule.min)) {
                         isValid = false;
                         errorMessages.push({
                             field: rule.name,
-                            message: `${rule.name} should be of type ${rule.type}`
+                            message: (rule[FIELD_CUSTOM_ERROR_MSG_MIN_MAX]
+                                ? (rule[FIELD_CUSTOM_ERROR_MSG_MIN_MAX])
+                                : `${rule.name} should have minimum ${rule.min} characters`)
                         });
                     }
-                    else {
-                        reqBody[rule.name]=String(reqBody[rule.name]);
-                    }
-                    break;
-                }
-                case 'number': {
-                    if (!['string', 'number'].includes(type)) {
+                    // check rule max
+                    if(rule.max && reqBody[rule.name].length > Number(rule.max)) {
                         isValid = false;
                         errorMessages.push({
                             field: rule.name,
-                            message: `${rule.name} should be of type ${rule.type}`
+                            message: (rule[FIELD_CUSTOM_ERROR_MSG_MIN_MAX]
+                                ? (rule[FIELD_CUSTOM_ERROR_MSG_MIN_MAX])
+                                : `${rule.name} should have maximum ${rule.max} characters`)
                         });
                     }
-                    else {
-                        reqBody[rule.name] = Number(reqBody[rule.name]);
+
+                    // check match Pattern
+                    if(rule.matchSpecificPattern) {
+                        checkPattern(rule.matchSpecificPattern, rule);
+                    }
+                    if(rule.matchCustomSpecificPattern) {
+                        checkPattern(rule.matchCustomSpecificPattern, rule);
+                    }
+                    // check prohibit patter
+                    if(rule.prohibitSpecificPattern) {
+                        checkPattern(rule.prohibitSpecificPattern, rule, false);
+                    }
+                    // only allowed values
+                    if(isValid && rule.onlyAllowedValues && reqBody[rule.name] !== undefined) {
+                        checkOnlyAllowedValues(rule);
+                    }
+
+                    console.log('rule', rule);
+                    if(isValid && rule.default) {
+                        checkDefaultValue(rule, "string");
                     }
                     break;
                 }
-                case 'boolean': {
+                case INTEGER_FIElD_TYPE: {
+
+                    reqBody[rule.name] = Number(reqBody[rule.name]);
+
+                    // check rule min
+                    if(rule.min && reqBody[rule.name] < Number(rule.min)) {
+                        isValid = false;
+                        errorMessages.push({
+                            field: rule.name,
+                            message: (rule[FIELD_CUSTOM_ERROR_MSG_MIN_MAX]
+                                ? (rule[FIELD_CUSTOM_ERROR_MSG_MIN_MAX])
+                                : `${rule.name} should be a minimum ${rule.min}`)
+                        });
+                    }
+                    // check rule max
+                    if(rule.max && reqBody[rule.name] > (Number(rule.max))) {
+                        isValid = false;
+                        errorMessages.push({
+                            field: rule.name,
+                            message: (rule[FIELD_CUSTOM_ERROR_MSG_MIN_MAX]
+                                ? (rule[FIELD_CUSTOM_ERROR_MSG_MIN_MAX])
+                                : `${rule.name} should be maximum ${rule.max}`)
+                        });
+                    }
+
+                    // only allowed values
+                    if(isValid && rule.onlyAllowedValues && reqBody[rule.name] !== undefined) {
+                        checkOnlyAllowedValues(rule);
+                    }
+
+                    if(isValid && rule.default) {
+                        checkDefaultValue(rule, "number");
+                    }
+
+                    break;
+                }
+                case BOOLEAN_FIElD_TYPE: {
                     if (typeof reqBody[rule.name] !== 'boolean') {
                         isValid = false;
                         errorMessages.push({
                             field: rule.name,
                             message: `${rule.name} should be of type ${rule.type}`
                         });
+                    }
+                    if(isValid && rule.default) {
+                        checkDefaultValue(rule, "boolean");
                     }
                     break;
                 }
@@ -196,6 +439,7 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
         }
     });
     if (isValid) {
+        console.log('body', body)
         return body;
     }
     else {
@@ -294,6 +538,7 @@ function validateParams(req: Request, res: Response, rules: RuleType[]) {
     return true;
 }
 
+// To be deleted
 async function validateUniqueParam(model: Model<any>, rules: RuleType[], reqBody: any) {
     let errorMessage: string | null = null;
     let field: string = '';

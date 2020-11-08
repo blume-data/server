@@ -1,17 +1,31 @@
-import {Request, Response} from 'express';
 import {
     BadRequestError,
-    AUTH_TOKEN,
     okayStatus,
     USER_NAME,
     clientUserType,
-    adminUserType
+    JWT_ID,
+    adminUserType,
+    RANDOM_STRING,
+    ClientUser,
+    AdminUser,
+    FreeUser,
+    CLIENT_USER_NAME,
+    APPLICATION_NAME,
+    generateJwt,
+    sendJwtResponse,
+    clientType,
+    freeUserType,
+    LAST_NAME,
+    FIRST_NAME,
+    PASSWORD,
+    EMAIL,
+    APPLICATION_NAMES,
+    PayloadResponseType, JwtPayloadType, EnglishLanguage
 } from "@ranjodhbirkaur/common";
 import {ClientTempUser} from "../models/clientTempUser";
-import {ClientUser} from "../models/clientUser";
-import jwt from "jsonwebtoken";
+import {Request, Response} from "express";
 import {TOKEN_NOT_VALID, USER_NAME_NOT_AVAILABLE} from "../util/errorMessages";
-import {AdminUser} from "../models/adminUser";
+import {EXAMPLE_APPLICATION_NAME} from "../util/constants";
 
 interface ReqIsUserNameAvailable extends Request{
     body: {
@@ -62,46 +76,101 @@ export const verifyEmailToken = async function (req: ReqValidateEmail, res: Resp
         throw new BadRequestError('Invalid Request');
     }
     else {
+        // TODO check which properties to be taken from here
         const userExist = await ClientTempUser.findOne({email: modelProps.email, verificationToken: modelProps.token});
 
         if (userExist) {
 
-            const newUser = await ClientUser.build({
-                email: userExist.email,
-                password: userExist.password,
-                firstName: userExist.firstName,
-                lastName: userExist.lastName,
-                userName: userExist.userName,
-            });
+            const jwtId = RANDOM_STRING(10);
+            const created_at = `${new Date()}`;
+            const userType = userExist.clientType;
 
-            await newUser.save();
+            if(userType === freeUserType) {
+                const newUser = FreeUser.build({
+                    email: userExist[EMAIL],
+                    jwtId,
+                    created_at,
+                    [CLIENT_USER_NAME]: userExist[CLIENT_USER_NAME] || '',
+                    applicationName: '',
+                    password: userExist[PASSWORD],
+                    userName: userExist[USER_NAME],
+                    clientType: freeUserType,
+                    env: ''
+                });
+    
+                await newUser.save();
 
-            const payload = {
-                id: newUser.id,
-                email: newUser.email,
-                userName: newUser.userName
-            };
+                const response: PayloadResponseType = {
+                    [APPLICATION_NAMES]: [{
+                        name: '',
+                        languages: ['']
+                    }],
+                    [CLIENT_USER_NAME]: newUser[CLIENT_USER_NAME],
+                    [USER_NAME]: newUser[USER_NAME],
+                    [clientType]: freeUserType
+                };
 
-            // Generate JWT
-            const userJwt = jwt.sign(
-                payload,
-                process.env.JWT_KEY!
-            );
+                const payload: JwtPayloadType = {
+                    [JWT_ID]: newUser[JWT_ID],
+                    [clientType]: freeUserType,
+                    [USER_NAME]: newUser[USER_NAME]
+                };
 
-            // Store it on session object
-            req.session = {
-                jwt: userJwt,
-            };
+                return await sendValidateEmailResponse(req, payload, response, res);
+            }
+            else if(userType === clientUserType) {
+                const applicationNames = [{
+                    name: EXAMPLE_APPLICATION_NAME,
+                    languages: [EnglishLanguage]
+                }];
+                const newUser = ClientUser.build({
+                    email: userExist[EMAIL],
+                    jwtId,
+                    created_at,
+                    [APPLICATION_NAMES]: JSON.stringify(applicationNames),
+                    password: userExist[PASSWORD],
+                    firstName: userExist[FIRST_NAME],
+                    lastName: userExist[LAST_NAME],
+                    userName: userExist[USER_NAME],
+                });
+    
+                await newUser.save();
 
-            res.status(okayStatus).send({... payload, [AUTH_TOKEN]: userJwt, [USER_NAME]: newUser.userName});
+                // Pass application names in response
+                const response: PayloadResponseType = {
+                    [CLIENT_USER_NAME]: newUser[USER_NAME],
+                    [clientType]: userType,
+                    [APPLICATION_NAMES]: applicationNames,
+                    [USER_NAME]: newUser[USER_NAME]
+                };
 
-            ClientTempUser.deleteMany({email: modelProps.email}).then(() => {});
+                const payload: JwtPayloadType = {
+                    [JWT_ID]: jwtId,
+                    [USER_NAME]: userExist[USER_NAME] || '',
+                    [clientType]: userExist[clientType] || ''
+                };
 
+                return await sendValidateEmailResponse(req, payload, response, res);
+
+            }
         }
         else {
             throw new BadRequestError(TOKEN_NOT_VALID);
         }
     }
 };
+
+/*Send response on email verification*/
+async function sendValidateEmailResponse(req: Request, payload: JwtPayloadType, responseData: PayloadResponseType, res: Response) {
+
+    const modelProps = req.query;
+    // Generate JWT
+    const userJwt = generateJwt(payload, req);
+
+    // TODO delete user in temp collection
+    //const okDeleted = await ClientTempUser.deleteMany({email: modelProps.email});
+
+    return sendJwtResponse(res, responseData, userJwt);
+}
 
 

@@ -1,5 +1,4 @@
 import React, {ChangeEvent} from "react";
-//import {FormControl, Grid, InputLabel, MenuItem, Select, FormHelperText} from "@material-ui/core";
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
@@ -8,6 +7,7 @@ import Grid from '@material-ui/core/Grid';
 import FormControl from '@material-ui/core/FormControl';
 import './style.scss';
 import {FieldType, OptionsType} from "../interface";
+import {DescriptionText} from "../DescriptionText";
 
 interface DropDownType extends FieldType{
     options: OptionsType[];
@@ -17,14 +17,14 @@ interface DropDownType extends FieldType{
 }
 export const DropDown = (props: DropDownType) => {
 
-    const {options, id, className, name, onChange, onBlur,
-        error=false, helperText,
+    const {options, id, className, name, onChange, onBlur, label,
+        error=false, helperText, disabled=false, descriptionText = '',
         placeholder='', required=false, value, index} = props;
     const randomId = `${name.split(' ').join('-')}-${index}-drop-down-input-label`;
     return (
-        <Grid key={index} className={`${className} app-drop-down`} id={id ? id : undefined}>
-            <FormControl className={'app-drop-down-form-control'} error={error}>
-                <InputLabel id={randomId}>Age</InputLabel>
+        <Grid key={index} className={`${className} app-drop-down`} id={id ? id : ''}>
+            <FormControl className={'app-drop-down-form-control'} error={error} disabled={disabled}>
+                <InputLabel id={randomId}>{label}</InputLabel>
                 <Select
                     className={'app-drop-down-select'}
                     name={name}
@@ -47,7 +47,8 @@ export const DropDown = (props: DropDownType) => {
                     }
                 </Select>
                 {error && helperText ? <FormHelperText>{helperText}</FormHelperText> : null}
+                <DescriptionText description={descriptionText} />
             </FormControl>
         </Grid>
     );
-}
+};

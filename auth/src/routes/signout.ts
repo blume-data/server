@@ -1,10 +1,11 @@
 import express, {Request, Response} from 'express';
 import {okayStatus} from "@ranjodhbirkaur/common";
 import {signOutUrl} from "../util/urls";
+import {validateUserType} from "../middleware/userTypeCheck";
 
 const router = express.Router();
 
-router.post(signOutUrl(), (req: Request, res: Response) => {
+router.post(signOutUrl(), validateUserType, (req: Request, res: Response) => {
   req.session = null;
 
   res.status(okayStatus).send(true);

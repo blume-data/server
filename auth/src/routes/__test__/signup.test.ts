@@ -27,7 +27,7 @@ async function registerWithInvalidEmail(userType: string) {
     let data = getSampleData(userType);
     data = {
         ...data,
-        email: ''
+        email: 'tewr@df@dsf@    '
     };
     const response = await registerUser(userType, data);
     expect(response.status).toBe(errorStatus);
@@ -39,7 +39,7 @@ async function registerWithInvalidPassword(userType: string) {
     let data = getSampleData(userType);
     data = {
         ...data,
-        password: ''
+        password: 'd'
     };
     const response = await registerUser(userType, data);
     expect(response.status).toBe(errorStatus);
@@ -56,7 +56,7 @@ async function registerWithInvalidUserName(userType: string) {
     };
     const response = await registerUser(userType, data);
     expect(response.status).toBe(errorStatus);
-    expect(response.body.errors[0].message).toBe(stringLimitOptionErrorMessage('userName'));
+    expect(response.body.errors[0].message).toBe('userName is required');
     expect(response.body.errors[0].field).toBe('userName');
 }
 

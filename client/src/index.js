@@ -12,6 +12,7 @@ const app = Express();
 app.use(shrinkRay());
 
 if (process.env.NODE_ENV !== 'development') {
+    console.log('Env is production using only https!!');
     app.use(sslRedirect());
 }
 

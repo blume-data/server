@@ -18,7 +18,7 @@ export const Alert = (props: AlertType) => {
     };
 
     return (
-        <Snackbar open={isAlertOpen} autoHideDuration={6000} onClose={handleAlertClose}>
+        <Snackbar open={isAlertOpen} autoHideDuration={3000} onClose={handleAlertClose}>
             <MuiAlert elevation={3} onClose={handleAlertClose} severity={severity}>
                 {message}
             </MuiAlert>

@@ -18,3 +18,5 @@ export * from './utils';
 export * from './interface';
 
 export * from './tools';
+
+export * from './models';

@@ -1,116 +1,168 @@
 import {Request, Response} from 'express';
-import {BadRequestError} from "@ranjodhbirkaur/common";
+import {BadRequestError, ID, okayStatus, sendSingleError, USER_NAME} from "@ranjodhbirkaur/common";
 import {
-    ALL_CONNECTIONS_AND_DB_CAPACITY_FULL, DATA_COLLECTION, MAX_COLLECTION_LIMIT,
-    MAX_USER_LIMIT, MONGO_DB_DATA_CONNECTIONS_AVAILABLE,
-    okayStatus, USER_COLLECTION
+    MAX_COLLECTION_LIMIT,
+    MAX_USER_LIMIT,
+    RANJODHBIR_KAUR_DATABASE_URL,
 } from "../util/constants";
-import _ from 'lodash';
 import {CollectionModel} from "../models/Collection";
-import {CANNOT_CREATE_COLLECTIONS_MORE_THAN_LIMIT, COLLECTION_ALREADY_EXIST} from "./Messages";
-import {ConnectionModel} from "../models/Connections";
-import {UserConnectionModel} from "../models/UserConnection";
-import {RuleType} from "../util/interface";
+import {
+    ALL_CONNECTIONS_AND_DB_CAPACITY_FULL,
+    CANNOT_CREATE_COLLECTIONS_MORE_THAN_LIMIT,
+    COLLECTION_ALREADY_EXIST
+} from "./Messages";
+
+import {storeSchema} from "../util/databaseApi";
+import {trimCharactersAndNumbers} from "@ranjodhbirkaur/constants";
+import {createModel} from "../util/methods";
 
 export async function createCollectionSchema(req: Request, res: Response) {
 
-    const userName  = req.params && req.params.userName;
-    const language = req.params && req.params.language;
+    const clientUserName  = req.params && req.params.clientUserName;
+    const applicationName  = req.params && req.params.applicationName;
     const env = req.params && req.params.env;
+    const reqMethod = req.method;
 
     const reqBody = req.body;
 
-    const isInLimit = await CollectionModel.find({
-        clientUserName: userName
-    },'name');
-    if ((isInLimit && isInLimit.length) > MAX_COLLECTION_LIMIT) {
-        throw new BadRequestError(CANNOT_CREATE_COLLECTIONS_MORE_THAN_LIMIT);
-    }
-
-    // the name of the custom schema collection should not contain any space
-    if (reqBody && reqBody.name && typeof reqBody.name === 'string') {
-        const name = reqBody.name.split(' ').join('_');
-        if (reqBody.collectionType && reqBody.collectionType === USER_COLLECTION) {
-            const hasEmail = reqBody.rules.find((rule: RuleType) => rule.name === 'email');
-            if (!hasEmail) {
-                reqBody.rules.push({
-                    name: 'email',
-                    type: 'string',
-                    unique: true,
-                    required: true,
-                    isEmail: true
-                });
-            }
-            const hasPassword = reqBody.rules.find((rule: RuleType) => rule.name === 'password');
-            if (!hasPassword) {
-                reqBody.rules.push({
-                    name: 'password',
-                    type: 'string',
-                    required: true,
-                    isPassword: true
-                });
-            }
+    if(reqMethod === 'POST') {
+        /*If in create mode*/
+        /*Check collection limit*/
+        const isInLimit = await CollectionModel.find({
+            clientUserName
+        },'name');
+        if ((isInLimit && isInLimit.length) > MAX_COLLECTION_LIMIT) {
+            throw new BadRequestError(CANNOT_CREATE_COLLECTIONS_MORE_THAN_LIMIT);
         }
-        reqBody.name = name;
-    }
 
-    // Check if there is not other collection with same name and user_id
-    const alreadyExist = await CollectionModel.findOne({
-        clientUserName: userName, name: reqBody.name, env
-    }, 'id');
+        // the name of the custom schema collection should not contain any space
+        if (reqBody && reqBody.name && typeof reqBody.name === 'string') {
+            reqBody.name = trimCharactersAndNumbers(reqBody.name);
+        }
 
-    if (alreadyExist) {
-        throw new BadRequestError(COLLECTION_ALREADY_EXIST);
-    }
+        // Check if there is not other collection with same name and user_id
+        const alreadyExist = await CollectionModel.findOne({
+            clientUserName, name: reqBody.name, env, applicationName
+        }, 'id');
 
-    const newDbConnection: {connectionName: string} = await assignConnection(userName);
+        if (alreadyExist) {
+            throw new BadRequestError(COLLECTION_ALREADY_EXIST);
+        }
 
-    if (newDbConnection) {
         const newCollection = CollectionModel.build({
-            clientUserName: userName,
+            clientUserName,
             isPublic: false,
-            applicationName: 'some name',
+            applicationName,
             rules: JSON.stringify(reqBody.rules),
             name: reqBody.name,
+            displayName: reqBody.displayName,
             env,
-            connectionName: newDbConnection.connectionName,
-            collectionType: (reqBody.collectionType ? reqBody.collectionType : DATA_COLLECTION),
-            language
+            updatedBy: `${req.currentUser[ID]}-${req.currentUser[USER_NAME]}`,
+            description: reqBody.description
         });
 
+        await storeSchema(`${reqBody.name}`, clientUserName, applicationName);
         await newCollection.save();
 
         res.status(okayStatus).send(newCollection);
     }
     else {
-        res.status(500).send('Db capacity full');
+
+        const exist = await CollectionModel.findOne({
+            _id: reqBody.id
+        },
+            ['name', 'displayName', 'description', 'rules']);
+
+        if(exist) {
+            const update: any = {};
+            if(reqBody.rules) {
+                update.rules = JSON.stringify(reqBody.rules);
+            }
+            if(reqBody.description) {
+                update.description = reqBody.description;
+            }
+            if(reqBody.displayName) {
+                update.displayName = reqBody.displayName;
+            }
+
+            await CollectionModel.findOneAndUpdate({
+                _id: reqBody.id
+            }, update);
+
+            return res.status(okayStatus).send('done');
+
+        }
+        else {
+            return sendSingleError(res, 'Model not found');
+        }
     }
 }
 
-export async function deleteCollectionSchema(req: Request, res: Response) {
-    const userName  = req.params && req.params.userName;
+/*Return the list of collections in an application name*/
+export async function getCollectionNames(req: Request, res: Response) {
+
+    const clientUserName  = req.params && req.params.clientUserName;
+    const applicationName  = req.params && req.params.applicationName;
     const language = req.params && req.params.language;
+    const env = req.params && req.params.env;
+    const name = req.query.name;
+    const where: any = {
+        clientUserName,
+        applicationName,
+        language,
+        env
+    };
+    const get: string[] = ['rules'];
+
+    if(name) {
+        where.name = name;
+    }
+    else {
+        get.push('name');
+        get.push('description');
+        get.push('updatedAt');
+        get.push('updatedBy');
+        get.push('displayName')
+    }
+
+    const collections = await CollectionModel.find(where, get);
+
+    res.status(okayStatus).send(collections);
+}
+
+export async function deleteCollectionSchema(req: Request, res: Response) {
+    const clientUserName  = req.params && req.params.clientUserName;
+    const applicationName  = req.params && req.params.applicationName;
     const env = req.params && req.params.env;
 
     const reqBody = req.body;
 
     const itemSchema = await CollectionModel.findOne({
-        clientUserName: userName,
+        clientUserName,
         name: reqBody.name,
-        language
-    });
+        applicationName,
+        env
+    }, ['rules', 'name']);
 
     if (itemSchema) {
         await CollectionModel.deleteOne({
-            userName: userName,
-            name: reqBody.name
+            clientUserName,
+            name: reqBody.name,
+            applicationName,
+            env
         });
-        /*await DbsModel.deleteOne({
-            name: userName
+
+        const parsedRules = JSON.parse(itemSchema.rules);
+
+        const model: any = createModel({
+            rules: parsedRules,
+            name: itemSchema.name,
+            applicationName,
+            clientUserName
         });
-        // calculate the exact length of the dbs
-        const dbs = await DbsModel.find({connectionName: itemSchema.connectionName}, 'id');
-        await ConnectionModel.updateOne({name: itemSchema.connectionName}, {count: dbs.length});*/
+
+        await model.remove({});
+
     }
     else {
         throw new BadRequestError('Collection not found');
@@ -129,6 +181,9 @@ export async function getCollectionSchema(req: Request, res: Response) {
     res.status(okayStatus).send(collections);
 }
 
+
+/*
+/!*Helper methods*!/
 async function assignConnection(clientUserName: string) : Promise<any> {
 
     const userConnectionExist = await UserConnectionModel.findOne({
@@ -189,5 +244,4 @@ async function createNewConnection(allConnectionsLength: number, clientUserName:
     else {
         throw new Error(ALL_CONNECTIONS_AND_DB_CAPACITY_FULL);
     }
-}
-
+}*/
