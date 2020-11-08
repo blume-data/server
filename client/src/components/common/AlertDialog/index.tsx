@@ -30,11 +30,15 @@ export const AlertDialog = (props: AlertDialogProps) => {
             aria-describedby="alert-dialog-description"
         >
             <DialogTitle id="alert-dialog-title">{title}</DialogTitle>
-            <DialogContent>
-                <DialogContentText id="alert-dialog-description">
-                    {subTitle}
-                </DialogContentText>
-            </DialogContent>
+            {
+                subTitle
+                ? <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        {subTitle}
+                    </DialogContentText>
+                  </DialogContent>
+                : null
+            }
             <DialogActions>
                 <Button onClick={onCancel} color="secondary">
                     Cancel

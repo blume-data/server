@@ -33,8 +33,23 @@ import {
     REFERENCE_FIELD_TYPE,
     SHORT_STRING_FIElD_TYPE,
     trimCharactersAndNumbers,
-    EmailRegName, UrlRegName, DateUsRegName, DateEuropeRegName, HhTimeRegName, HHTimeRegName, UsPhoneRegName, UsZipRegName,
-    emailReg, urlReg, dateUsReg, dateEuropeReg, hhTimeReg, HHTimeReg, usPhoneReg, usZipReg
+    EmailRegName,
+    UrlRegName,
+    DateUsRegName,
+    DateEuropeRegName,
+    HhTimeRegName,
+    HHTimeRegName,
+    UsPhoneRegName,
+    UsZipRegName,
+    emailReg,
+    urlReg,
+    dateUsReg,
+    dateEuropeReg,
+    hhTimeReg,
+    HHTimeReg,
+    usPhoneReg,
+    usZipReg,
+    TIME_FIElD_TYPE
 } from "@ranjodhbirkaur/constants";
 import TextFieldsIcon from '@material-ui/icons/TextFields';
 import './style.scss';
@@ -49,6 +64,7 @@ import CodeIcon from '@material-ui/icons/Code';
 import PermMediaIcon from '@material-ui/icons/PermMedia';
 import LinkIcon from '@material-ui/icons/Link';
 import EditIcon from '@material-ui/icons/Edit';
+import AccessTimeIcon from '@material-ui/icons/AccessTime';
 import ButtonGroup from "@material-ui/core/ButtonGroup";
 import {RootState} from "../../../../../../rootReducer";
 import {connect, ConnectedProps} from "react-redux";
@@ -61,6 +77,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import IconButton from "@material-ui/core/IconButton";
 import Paper from "@material-ui/core/Paper";
 import {Alert} from "../../../../../../components/common/Toast";
+import {AlertDialog} from "../../../../../../components/common/AlertDialog";
 
 export interface PropertiesType {
     type: string;
@@ -101,10 +118,6 @@ const CreateDataModel = (props: CreateDataModelType) => {
     const [fieldDescription, setFieldDescription] = useState<string>('');
     const [fieldMax, setFieldMax] = useState<number | string>('');
     const [fieldMin, setFieldMin] = useState<number | string>('');
-
-    const [fieldDate, setFieldDate] = useState<string>('');
-    const [fieldTime, setFieldTime] = useState<string>('');
-
     const [fieldMatchPattern, setFieldMatchPattern] = useState<string>('');
     const [fieldMatchCustomPattern, setFieldMatchCustomPattern] = useState<string>('');
     const [fieldProhibitPattern, setFieldProhibitPattern] = useState<string>('');
@@ -117,8 +130,8 @@ const CreateDataModel = (props: CreateDataModelType) => {
     const [fieldIsRequired, setFieldIsRequired] = useState<string>('');
     const [fieldIsUnique, setFieldIsUnique] = useState<string>('');
     const [fieldType, setFieldType] = useState<string>('');
-    const [fieldEditMode, setFieldEditMode] = useState<boolean>(false);
 
+    const [fieldEditMode, setFieldEditMode] = useState<boolean>(false);
 
     const [hideNames, setHideNames] = useState<boolean>(false);
 
@@ -134,6 +147,8 @@ const CreateDataModel = (props: CreateDataModelType) => {
     // to show alerts
     const [isAlertOpen, setIsAlertOpen] = React.useState<boolean>(false);
     const [alert, setAlertMessage] = React.useState<AlertType>({message: ''});
+    const [confirmDialogOpen, setConfirmDialogOpen] = useState<boolean>(false);
+    const [deleteEntryName, setDeleteEntryName] = useState<string>('');
 
     const FIELD_NAME = 'fieldName';
     const MIN_VALUE = 1;
@@ -387,6 +402,11 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 }
                 case DATE_FIElD_TYPE: {
                     inputType = DATE_FORM_FIELD_TYPE;
+                    placeholder = '';
+                    break;
+                }
+                case TIME_FIElD_TYPE: {
+                    inputType = TIME_FORM_FIELD_TYPE;
                     placeholder = '';
                     break;
                 }
@@ -769,6 +789,16 @@ const CreateDataModel = (props: CreateDataModelType) => {
         )
     }
 
+    function onClickDeleteProperty(propertyName: string) {
+        if(properties) {
+            const tempProperties = properties.filter(propertyItem => {
+                return propertyItem.name !== propertyName;
+
+            });
+            setProperties(tempProperties);
+        }
+    }
+
     function renderPropertiesSection() {
 
         const tableRows = [
@@ -778,6 +808,11 @@ const CreateDataModel = (props: CreateDataModelType) => {
             {name: 'Edit', value: 'edit', onClick: true},
             {name: 'Delete', value: 'delete', onClick: true}
         ];
+
+        function openConfirmAlert(property: PropertiesType) {
+            setDeleteEntryName(property.name);
+            setConfirmDialogOpen(true);
+        }
 
         function onClickEdit(property: PropertiesType) {
 
@@ -821,7 +856,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 ...property,
                 edit: <IconButton><EditIcon /></IconButton>,
                 delete: <IconButton><DeleteIcon /></IconButton>,
-                'delete-click': () => console.log('delete is clicked'),
+                'delete-click': () => openConfirmAlert(property),
                 'edit-click': () => onClickEdit(property),
             }
         })
@@ -936,6 +971,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                                 <Looks4Icon />
                                 <Looks5Icon />
                             </Grid>, DECIMAL_FIELD_TYPE )}
+                            {fieldItem('Time', 'time', <AccessTimeIcon />, TIME_FORM_FIELD_TYPE)}
                             {fieldItem('Date and time', 'time, date, days, events', <DateRangeIcon />, DATE_FIElD_TYPE)}
                             {fieldItem('Location', 'coordinates', <LocationOnIcon />, LOCATION_FIELD_TYPE)}
                             {fieldItem('Boolean', 'true or false', <ToggleOffIcon />, BOOLEAN_FIElD_TYPE)}
@@ -983,6 +1019,24 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 }
 
             </Grid>
+            <AlertDialog
+                onClose={() => {
+                    setConfirmDialogOpen(false);
+                    setDeleteEntryName('');
+                }}
+                open={confirmDialogOpen}
+                onConfirm={() => {
+                    onClickDeleteProperty(deleteEntryName);
+                    setDeleteEntryName('');
+                    setConfirmDialogOpen(false);
+                }}
+                onCancel={() => {
+                    setConfirmDialogOpen(false);
+                    setDeleteEntryName('');
+                }}
+                title={'Confirm Delete'}
+                subTitle={'Please confirm if you want to delete'}
+            />
             <Alert
                 isAlertOpen={isAlertOpen}
                 onAlertClose={setIsAlertOpen}
