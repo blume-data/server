@@ -420,12 +420,12 @@ export const Form = (props: FormType) => {
             {/*Render Group Fields*/}
             {
                 groups && groups.length
-                ? groups.map(groupName => {
+                ? groups.map((groupName, index) => {
                     const exist = fields.filter(ranjod => ranjod.groupName === groupName);
                     if(exist && exist.length) {
                         return (
-                            <AccordianCommon name={groupName} className={'common-form-accordian'}>
-                                {fields.map((option: ConfigField, index) => {
+                            <AccordianCommon shouldExpand={index === 0} name={groupName} className={'common-form-accordian'}>
+                                {exist.map((option: ConfigField, index) => {
                                     if(option.groupName === groupName) {
                                         return renderFields(option, index, groupName)
                                     }

@@ -105,6 +105,7 @@ const DataModels = (props: PropsFromRedux) => {
     }
 
     function onClickAddModel() {
+        // redirect to create model page
         setIsModalOpen(true)
         setModelData(null);
     }

@@ -146,6 +146,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
     /*Field Group Names*/
     const FIELD_LIMIT_CHARACTER_COUNT_GROUP = 'Limit character count';
     const FIELD_LIMIT_VALUE_GROUP = 'Limit value';
+    const FIELD_NAME_GROUP = 'Name';
     const FIELD_MATCH_SPECIFIC_PATTERN_GROUP = 'Match specific pattern';
     const FIELD_PROHIBIT_SPECIFIC_PATTERN_GROUP = 'Prohibit specific pattern';
     const FIELD_ALLOW_ONLY_SPECIFIC_VALUES_GROUP = 'Accept only specific values';
@@ -225,6 +226,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 label: 'Field Name',
                 inputType: TEXT,
                 descriptionText: 'Name of the field',
+                groupName: FIELD_NAME_GROUP
             },
             {
                 disabled: fieldEditMode,
@@ -239,6 +241,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 min: MIN_VALUE,
                 max: MAX_VALUE,
                 descriptionText: 'Generated from name (uniquely identify field)',
+                groupName: FIELD_NAME_GROUP
             },
             {
                 required: false,
@@ -252,6 +255,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 min: MIN_VALUE,
                 max: MAX_VALUE,
                 descriptionText: 'Description of field',
+                groupName: FIELD_NAME_GROUP
             },
             {
                 required: false,
@@ -262,6 +266,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 label: 'Is required',
                 inputType: CHECKBOX,
                 descriptionText: 'You won\'t be able to publish an entry if this field is empty',
+                groupName: FIELD_NAME_GROUP
             },
             {
                 required: false,
@@ -271,7 +276,8 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 name: IS_FIELD_UNIQUE,
                 label: 'Is unique',
                 inputType: CHECKBOX,
-                descriptionText: 'You won\'t be able to publish an entry if there is an existing entry with identical content\n'
+                descriptionText: 'You won\'t be able to publish an entry if there is an existing entry with identical content\n',
+                groupName: FIELD_NAME_GROUP
             }
         ];
 
@@ -360,6 +366,21 @@ const CreateDataModel = (props: CreateDataModelType) => {
 
         // Default Value field
         if(fieldType !== REFERENCE_FIELD_TYPE && fieldType !== JSON_FIELD_TYPE && fieldType) {
+            let inputType = '';
+            switch (fieldType) {
+                case LONG_STRING_FIELD_TYPE: {
+                    inputType = FORMATTED_TEXT;
+                    break;
+                }
+                case BOOLEAN_FIElD_TYPE: {
+                    inputType = CHECKBOX;
+                    break;
+                }
+                default: {
+                    inputType = TEXT;
+                    break;
+                }
+            }
             hello.push({
                 required: false,
                 placeholder: 'Default value',
@@ -368,7 +389,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 name: 'default',
                 label: 'Default value',
                 type: fieldType === INTEGER_FIElD_TYPE || fieldType === DECIMAL_FIELD_TYPE ? 'number' : 'text',
-                inputType: fieldType === LONG_STRING_FIELD_TYPE ? FORMATTED_TEXT : TEXT,
+                inputType,
                 descriptionText: 'Default value if the field is left blank',
                 groupName: FIELD_DEFAULT_VALUE_GROUP
             });
@@ -745,7 +766,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
         ];
 
         function onClickEdit(property: PropertiesType) {
-            console.log('pr', property, fieldType);
+
             setFieldType(property.type);
             setTimeout(() => {
 
@@ -757,6 +778,12 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 setFieldDescription(property.description);
                 setFieldIsRequired(property.required ? 'true' : 'false');
                 setFieldIsUnique(property.unique ? 'true' : 'false');
+                if(property.type === BOOLEAN_FIElD_TYPE) {
+                    setFieldDefaultValue(property.default === 'true' ? 'true' : 'false');
+                }
+                else {
+                    setFieldDefaultValue(property.default || '');
+                }
 
                 if(property.type === SHORT_STRING_FIElD_TYPE || property.type === INTEGER_FIElD_TYPE || property.type === DECIMAL_FIELD_TYPE) {
                     setFieldMax(property.max || '');
@@ -920,6 +947,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                                 <Form
                                     groups={
                                         [
+                                            FIELD_NAME_GROUP,
                                             FIELD_LIMIT_CHARACTER_COUNT_GROUP,
                                             FIELD_LIMIT_VALUE_GROUP,
                                             FIELD_ALLOW_ONLY_SPECIFIC_VALUES_GROUP,

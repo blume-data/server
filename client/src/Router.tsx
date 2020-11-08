@@ -10,7 +10,7 @@ import {
     dashboardApplicationNamesUrl,
     dashboardApplicationNameUrl,
     dashboardHomeUrl,
-    dashboardDataModelsUrl, dashboardDataEntriesUrl, dashboardCreateDataEntryUrl
+    dashboardDataModelsUrl, dashboardDataEntriesUrl, dashboardCreateDataEntryUrl, dashboardCreateDataModelsUrl
 } from "./utils/urls";
 import ApplicationNames from "./modules/dashboard/pages/applicationNames";
 import ApplicationName from "./modules/dashboard/pages/ApplicationName";
