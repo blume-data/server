@@ -13,8 +13,8 @@ import {
     FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN,
     INTEGER_FIElD_TYPE,
     JSON_FIELD_TYPE, REFERENCE_FIELD_TYPE,
-    SHORT_STRING_FIElD_TYPE,
-    SUPPORTED_FIELDS_TYPE, trimCharactersAndNumbers
+    SHORT_STRING_FIElD_TYPE, shortenString,
+    SUPPORTED_FIELDS_TYPE,
 } from "@ranjodhbirkaur/constants";
 import {isValidRegEx} from "../../../util/methods";
 
@@ -162,6 +162,7 @@ export async function validateCollections(req: Request, res: Response, next: Nex
             if(rule.matchCustomSpecificPattern && isSSType(rule.type)) {
                 if(isValidRegEx(rule.matchCustomSpecificPattern)) {
                     parsedRule.matchCustomSpecificPattern = `${rule.matchCustomSpecificPattern}`;
+                    parsedRule.matchSpecificPattern = '';
                 }
                 else {
                     isValidBody = false;
@@ -204,7 +205,7 @@ export async function validateCollections(req: Request, res: Response, next: Nex
             // check allowed values
             if(rule.onlyAllowedValues && hasSIDType(rule.type)) {
                 const allowedValues = rule.onlyAllowedValues.split(',').map((allowedValue: string) => {
-                    return trimCharactersAndNumbers(allowedValue);
+                    return shortenString(allowedValue);
                 })
                 parsedRule.onlyAllowedValues = allowedValues.join(',');
             }

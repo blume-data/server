@@ -1496,9 +1496,9 @@
     mkdirp "^1.0.4"
 
 "@ranjodhbirkaur/constants@*":
-  version "1.0.94"
-  resolved "https://registry.yarnpkg.com/@ranjodhbirkaur/constants/-/constants-1.0.94.tgz#5436fdfeb4d90e6b43b892992db73f7a871a768b"
-  integrity sha512-Nfvk9GaVOLjF1170QgxZ1wWzQ1KgsH6xVHc1m9XmrxYcTQBZTjnGLrB6M50eEn5aaI/5qCjp6r6EvNZ3E1yh7Q==
+  version "1.0.96"
+  resolved "https://registry.yarnpkg.com/@ranjodhbirkaur/constants/-/constants-1.0.96.tgz#c58e859ed0e1664a6122209e9cb33c8df9d6b81e"
+  integrity sha512-z1U2bEGVEVbN5IUWdw3YT2er1duUrOzDdhkGrRRi/zm+M8wIyPyxTY7IyNG7P9pwthcIBj8MwVfS/boIhZk/Vw==
 
 "@sheerun/mutationobserver-shim@^0.3.2":
   version "0.3.3"

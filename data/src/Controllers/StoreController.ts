@@ -179,37 +179,46 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
     function checkPattern(pattern: string, rule: RuleType, shouldMatch=true) {
 
         let matchPattern = '';
+        let errorMessage = '';
         switch (pattern) {
             case EmailRegName: {
                 matchPattern = emailReg;
+                errorMessage = 'is not a valid email';
                 break;
             }
             case UrlRegName: {
                 matchPattern = urlReg;
+                errorMessage = 'is not a valid url';
                 break;
             }
             case DateUsRegName: {
                 matchPattern = dateUsReg;
+                errorMessage = 'is not a valid Us Date';
                 break;
             }
             case DateEuropeRegName: {
                 matchPattern = dateEuropeReg;
+                errorMessage = 'is not a valid europe date';
                 break;
             }
             case HhTimeRegName: {
                 matchPattern = hhTimeReg;
+                errorMessage = 'is not a valid time in hh format';
                 break;
             }
             case HHTimeRegName: {
                 matchPattern = HHTimeReg;
+                errorMessage = 'is not a valid time in HH format';
                 break;
             }
             case UsZipRegName: {
                 matchPattern = usZipReg;
+                errorMessage = 'is not a valid us zip code';
                 break;
             }
             case UsPhoneRegName: {
                 matchPattern = usPhoneReg;
+                errorMessage = 'is not a valid us phone';
                 break;
             }
             default: {
@@ -224,12 +233,12 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
             if(shouldMatch) {
                 message = (rule[FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN]
                     ? (rule[FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN])
-                    : `${rule.name} should match regex ${matchPattern}`)
+                    : errorMessage ? `${rule.name} ${errorMessage}` : `${rule.name} should match regex ${matchPattern}`)
             }
             else {
                 message = (rule[FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN]
                     ? (rule[FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN])
-                    : `${rule.name} should not match regex ${matchPattern}`)
+                    : errorMessage ? `${rule.name} ${errorMessage}` : `${rule.name} should not match regex ${matchPattern}`)
             }
             isValid = false;
             errorMessages.push({
