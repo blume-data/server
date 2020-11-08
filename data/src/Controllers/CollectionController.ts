@@ -14,8 +14,7 @@ import {
 
 import {storeSchema} from "../util/databaseApi";
 import {trimCharactersAndNumbers} from "@ranjodhbirkaur/constants";
-import {UserConnectionModel} from "../models/UserConnection";
-import {ConnectionModel} from "../models/Connections";
+import {createModel} from "../util/methods";
 
 export async function createCollectionSchema(req: Request, res: Response) {
 
@@ -49,8 +48,6 @@ export async function createCollectionSchema(req: Request, res: Response) {
         if (alreadyExist) {
             throw new BadRequestError(COLLECTION_ALREADY_EXIST);
         }
-
-        /*const newDbConnection: {connectionName: string} = await assignConnection(clientUserName);*/
 
         const newCollection = CollectionModel.build({
             clientUserName,
@@ -134,23 +131,37 @@ export async function getCollectionNames(req: Request, res: Response) {
 }
 
 export async function deleteCollectionSchema(req: Request, res: Response) {
-    const userName  = req.params && req.params.userName;
-    const language = req.params && req.params.language;
+    const clientUserName  = req.params && req.params.clientUserName;
+    const applicationName  = req.params && req.params.applicationName;
     const env = req.params && req.params.env;
 
     const reqBody = req.body;
 
     const itemSchema = await CollectionModel.findOne({
-        clientUserName: userName,
+        clientUserName,
         name: reqBody.name,
-        language
-    });
+        applicationName,
+        env
+    }, ['rules', 'name']);
 
     if (itemSchema) {
         await CollectionModel.deleteOne({
-            userName: userName,
-            name: reqBody.name
+            clientUserName,
+            name: reqBody.name,
+            applicationName,
+            env
         });
+
+        const parsedRules = JSON.parse(itemSchema.rules);
+
+        const model: any = createModel({
+            rules: parsedRules,
+            name: itemSchema.name,
+            applicationName,
+            clientUserName
+        });
+
+        await model.remove({});
 
     }
     else {
