@@ -1,0 +1,9 @@
+@import "src/assets/style/index";
+.appLayout {
+
+  .app-child-container {
+    max-width: 1440px;
+    margin: 0 auto;
+    min-height: calc(100vh);
+  }
+}
