@@ -707,7 +707,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 setIsAlertOpen(true);
                 let message = '';
                 response.errors.map((errorItem: ErrorMessagesType, index: number) => {
-                    message+=`${index + 1}: ${errorItem[MESSAGE]} \n`
+                    return message+=`${index + 1}: ${errorItem[MESSAGE]} \n`
                 });
                 setAlertMessage({
                     message,
@@ -966,11 +966,11 @@ const CreateDataModel = (props: CreateDataModelType) => {
                                 <Looks4Icon />
                                 <Looks5Icon />
                             </Grid>, INTEGER_FIElD_TYPE )}
-                            {fieldItem('Decimal', 'decimals like quantity, currency', <Grid className={'numbers'}>
+                            {/*{fieldItem('Decimal', 'decimals like quantity, currency', <Grid className={'numbers'}>
                                 <Looks3Icon />
                                 <Looks4Icon />
                                 <Looks5Icon />
-                            </Grid>, DECIMAL_FIELD_TYPE )}
+                            </Grid>, DECIMAL_FIELD_TYPE )}*/}
                             {fieldItem('Time', 'time', <AccessTimeIcon />, TIME_FORM_FIELD_TYPE)}
                             {fieldItem('Date and time', 'time, date, days, events', <DateRangeIcon />, DATE_FIElD_TYPE)}
                             {fieldItem('Location', 'coordinates', <LocationOnIcon />, LOCATION_FIELD_TYPE)}
