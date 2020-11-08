@@ -3,7 +3,17 @@ import Grid from '@material-ui/core/Grid';
 
 import {TextBox} from "./TextBox";
 import {DropDown} from "./DropDown";
-import {BIG_TEXT, CHECKBOX, ConfigField, DROPDOWN, FORMATTED_TEXT, FormType, RADIO, TEXT} from "./interface";
+import {
+    BIG_TEXT,
+    CHECKBOX,
+    ConfigField,
+    DATE_FORM_FIELD_TYPE,
+    DROPDOWN,
+    FORMATTED_TEXT,
+    FormType,
+    RADIO,
+    TEXT, TIME_FORM_FIELD_TYPE
+} from "./interface";
 import './style.scss';
 import {ErrorMessagesType, FIELD, MESSAGE} from "@ranjodhbirkaur/constants";
 import {Alert} from "../Toast";
@@ -214,6 +224,46 @@ export const Form = (props: FormType) => {
         const error = hasError(label);
 
 
+        if(inputType === TIME_FORM_FIELD_TYPE) {
+            return (
+                <TextBox
+                    descriptionText={descriptionText}
+                    type={'time'}
+                    key={index}
+                    name={name}
+                    disabled={disabled}
+                    error={error}
+                    required={required}
+                    placeholder={placeholder}
+                    helperText={helperText}
+                    onChange={onChange}
+                    onBlur={onBlur}
+                    label={label}
+                    id={id}
+                    value={value}
+                    className={className} />
+            );
+        }
+        if(inputType === DATE_FORM_FIELD_TYPE) {
+            return (
+                <TextBox
+                    descriptionText={descriptionText}
+                    type={'date'}
+                    key={index}
+                    name={name}
+                    disabled={disabled}
+                    error={error}
+                    required={required}
+                    placeholder={placeholder}
+                    helperText={helperText}
+                    onChange={onChange}
+                    onBlur={onBlur}
+                    label={label}
+                    id={id}
+                    value={value}
+                    className={className} />
+            );
+        }
         if (inputType === TEXT) {
             return (
                 <TextBox

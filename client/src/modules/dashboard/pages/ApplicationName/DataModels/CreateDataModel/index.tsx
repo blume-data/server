@@ -3,10 +3,10 @@ import {Grid} from "@material-ui/core";
 import {AlertType, Form} from "../../../../../../components/common/Form";
 import {
     CHECKBOX,
-    ConfigField,
+    ConfigField, DATE_FORM_FIELD_TYPE,
     DROPDOWN,
     FORMATTED_TEXT,
-    TEXT
+    TEXT, TIME_FORM_FIELD_TYPE
 } from "../../../../../../components/common/Form/interface";
 import {
     BOOLEAN_FIElD_TYPE,
@@ -101,6 +101,10 @@ const CreateDataModel = (props: CreateDataModelType) => {
     const [fieldDescription, setFieldDescription] = useState<string>('');
     const [fieldMax, setFieldMax] = useState<number | string>('');
     const [fieldMin, setFieldMin] = useState<number | string>('');
+
+    const [fieldDate, setFieldDate] = useState<string>('');
+    const [fieldTime, setFieldTime] = useState<string>('');
+
     const [fieldMatchPattern, setFieldMatchPattern] = useState<string>('');
     const [fieldMatchCustomPattern, setFieldMatchCustomPattern] = useState<string>('');
     const [fieldProhibitPattern, setFieldProhibitPattern] = useState<string>('');
@@ -267,8 +271,11 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 inputType: CHECKBOX,
                 descriptionText: 'You won\'t be able to publish an entry if this field is empty',
                 groupName: FIELD_NAME_GROUP
-            },
-            {
+            }
+        ];
+
+        if(![DATE_FIElD_TYPE, JSON_FIELD_TYPE, REFERENCE_FIELD_TYPE, FORMATTED_TEXT, MEDIA_FIELD_TYPE].includes(fieldType)) {
+            hello.push({
                 required: false,
                 placeholder: 'Is unique',
                 value: fieldIsUnique,
@@ -278,8 +285,8 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 inputType: CHECKBOX,
                 descriptionText: 'You won\'t be able to publish an entry if there is an existing entry with identical content\n',
                 groupName: FIELD_NAME_GROUP
-            }
-        ];
+            });
+        }
 
         // Allow only specific pattern and prohibit a specific pattern
         if(fieldType === SHORT_STRING_FIElD_TYPE) {
@@ -365,8 +372,9 @@ const CreateDataModel = (props: CreateDataModelType) => {
         }
 
         // Default Value field
-        if(fieldType !== REFERENCE_FIELD_TYPE && fieldType !== JSON_FIELD_TYPE && fieldType) {
+        if(fieldType !== REFERENCE_FIELD_TYPE && fieldType !== JSON_FIELD_TYPE) {
             let inputType = '';
+            let placeholder = 'Default value';
             switch (fieldType) {
                 case LONG_STRING_FIELD_TYPE: {
                     inputType = FORMATTED_TEXT;
@@ -374,6 +382,12 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 }
                 case BOOLEAN_FIElD_TYPE: {
                     inputType = CHECKBOX;
+                    placeholder = 'true';
+                    break;
+                }
+                case DATE_FIElD_TYPE: {
+                    inputType = DATE_FORM_FIELD_TYPE;
+                    placeholder = '';
                     break;
                 }
                 default: {
@@ -383,11 +397,11 @@ const CreateDataModel = (props: CreateDataModelType) => {
             }
             hello.push({
                 required: false,
-                placeholder: 'Default value',
+                placeholder: placeholder,
                 value: fieldDefaultValue,
-                className: 'is-unique-check-box',
+                className: '',
                 name: 'default',
-                label: 'Default value',
+                label: placeholder,
                 type: fieldType === INTEGER_FIElD_TYPE || fieldType === DECIMAL_FIELD_TYPE ? 'number' : 'text',
                 inputType,
                 descriptionText: 'Default value if the field is left blank',
