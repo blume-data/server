@@ -1,3 +1,13 @@
-.nav-bar-application-names-list {
+@import "src/assets/style/index";
+.menu-list-container {
+  button {
+    max-width: 300px;
+    span {
+      @include trim(1);
+    }
+  }
+  .menu-list-item {
+
+  }
 
 }

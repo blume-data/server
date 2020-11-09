@@ -3,6 +3,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
 import {Grid} from "@material-ui/core";
 import Button from "@material-ui/core/Button";
+import './menu-list.scss';
 
 interface ApplicationNamesListProps {
     onSelectMenuItem: (name: string) => void;
@@ -32,7 +33,7 @@ export const MenuList = (props: ApplicationNamesListProps) => {
 
 
     return (
-        <Grid container justify={"flex-start"}>
+        <Grid container justify={"flex-start"} className={'menu-list-container'}>
             <Button
                 aria-controls={id}
                 aria-haspopup="true"
@@ -52,6 +53,7 @@ export const MenuList = (props: ApplicationNamesListProps) => {
                     menuItems && menuItems.map((menuItem, index) => {
                         return (
                             <MenuItem
+                                className={'menu-list-item'}
                                 onClick={() => onSelect(menuItem)}
                                 key={index}>
                                 {menuItem}
