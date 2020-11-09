@@ -12,7 +12,6 @@ import {setAuthentication, setEnv, setLanguage} from "../../../modules/authentic
 import {fetchDataRouteAddresses} from "../../../modules/dashboard/pages/home/actions";
 import {getItemFromLocalStorage} from "../../../utils/tools";
 import {LOCAL_STORAGE_ENV, LOCAL_STORAGE_LANGUAGE} from "../../../utils/constants";
-import {UnAuthenticatedHeader} from "../UnAuthenticatedHeader";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type AppProps = PropsFromRedux & {
