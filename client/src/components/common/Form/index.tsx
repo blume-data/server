@@ -24,6 +24,7 @@ import {CommonButton} from "../CommonButton";
 
 import loadable from "@loadable/component";
 import {AccordianCommon} from "../AccordianCommon";
+import {DateField} from "./DateField";
 const HtmlEditor = loadable(() => import('../HtmlEditor'));
 
 interface FormState {
@@ -246,7 +247,7 @@ export const Form = (props: FormType) => {
         }
         if(inputType === DATE_FORM_FIELD_TYPE) {
             return (
-                <TextBox
+                <DateField
                     descriptionText={descriptionText}
                     type={'date'}
                     key={index}
@@ -261,7 +262,8 @@ export const Form = (props: FormType) => {
                     label={label}
                     id={id}
                     value={value}
-                    className={className} />
+                    className={className}
+                />
             );
         }
         if (inputType === TEXT) {

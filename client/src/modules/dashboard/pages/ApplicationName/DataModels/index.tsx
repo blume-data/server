@@ -11,7 +11,6 @@ import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import ModalDialog from "../../../../../components/common/ModalDialog";
 import CreateDataModel, {PropertiesType} from "./CreateDataModel";
-import Paper from "@material-ui/core/Paper";
 import {RootState} from "../../../../../rootReducer";
 import {connect, ConnectedProps} from "react-redux";
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -114,23 +113,21 @@ const DataModels = (props: PropsFromRedux) => {
     return (
         <Grid className={'store-list-container'}>
 
-            <Paper elevation={2}>
-                <Grid className={'filter-section'} container justify={"space-between"}>
-                    <Grid item>
-                        <TextField id="filter-stores" label="Filter" />
-                    </Grid>
-                    <Grid item className={'add-store-button'}>
-                        {/*open model and clear model data*/}
-                        <Button
-                            onClick={onClickAddModel}
-                            variant="contained"
-                            color={'primary'}>
-                            Add model
-                        </Button>
-                    </Grid>
-
+            <Grid className={'filter-section'} container justify={"space-between"}>
+                <Grid item>
+                    <TextField id="filter-stores" label="Filter" />
                 </Grid>
-            </Paper>
+                <Grid item className={'add-store-button'}>
+                    {/*open model and clear model data*/}
+                    <Button
+                        onClick={onClickAddModel}
+                        variant="contained"
+                        color={'primary'}>
+                        Add model
+                    </Button>
+                </Grid>
+
+            </Grid>
 
             <Grid container justify={"center"} className={'stores-list'} direction={"column"}>
 
