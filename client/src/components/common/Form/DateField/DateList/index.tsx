@@ -6,6 +6,7 @@ import { FixedSizeList, ListChildComponentProps } from 'react-window';
 import {validMomentTimezones} from '@ranjodhbirkaur/constants';
 import TextField from "@material-ui/core/TextField";
 import {Grid} from "@material-ui/core";
+import './style.scss';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -49,7 +50,12 @@ export const DateList = () => {
         }
 
         return (
-            <ListItem button style={style} key={index} onClick={onClick}>
+            <ListItem
+                button
+                style={style}
+                className={`${timeZones[index] === selectedValue ? 'selected' : ''}`}
+                key={index}
+                onClick={onClick}>
                 <ListItemText primary={`${timeZones[index]}`} />
             </ListItem>
         );
@@ -58,7 +64,7 @@ export const DateList = () => {
     console.log('selc', selectedValue);
 
     return (
-        <Grid className={'date-list'}>
+        <Grid className={'search-menu-list'}>
             <TextField value={search} placeholder={'Search Timezone'} onChange={onChange} />
             <div className={classes.root}>
                 <FixedSizeList height={300} width={300} itemSize={46} itemCount={timeZones.length}>
