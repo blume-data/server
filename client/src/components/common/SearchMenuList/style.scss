@@ -1,0 +1,11 @@
+@import "../../../assets/style/index";
+.search-menu-list {
+  position: relative;
+  .MuiListItem-button.selected {
+    border: 1px solid;
+  }
+  .list {
+    position: absolute;
+    width: auto;
+  }
+}

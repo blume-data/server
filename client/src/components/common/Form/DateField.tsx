@@ -3,11 +3,8 @@ import {Grid} from "@material-ui/core";
 import {TextBox} from "./TextBox";
 import {FieldType} from "./interface";
 import FormControl from "@material-ui/core/FormControl";
-import Select from "@material-ui/core/Select";
-import MenuItem from "@material-ui/core/MenuItem";
-import {validMomentTimezones} from '@ranjodhbirkaur/constants';
-import TextField from "@material-ui/core/TextField";
-import {DateList} from "./DateField/DateList";
+import {SearchMenuList} from "../SearchMenuList";
+import {validMomentTimezones} from "@ranjodhbirkaur/constants";
 
 interface DateFieldType extends FieldType{
     onChange: (event: ChangeEvent<any>) => void;
@@ -20,7 +17,7 @@ export const DateField = (props: DateFieldType) => {
         onChange, error=false, value='', placeholder=''} = props;
 
     const [dateValue, setDateValue] = useState<string>('');
-    console.log('d', validMomentTimezones)
+
     return (
         <Grid>
             <TextBox
@@ -56,7 +53,12 @@ export const DateField = (props: DateFieldType) => {
                 className={className}
             />
             <FormControl>
-                <DateList />
+                <SearchMenuList options={validMomentTimezones.map(timeZone => {
+                    return {
+                        value: timeZone,
+                        label: timeZone
+                    }
+                })} />
             </FormControl>
         </Grid>
     );

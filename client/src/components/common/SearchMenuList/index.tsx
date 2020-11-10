@@ -3,7 +3,6 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import { FixedSizeList, ListChildComponentProps } from 'react-window';
-import {validMomentTimezones} from '@ranjodhbirkaur/constants';
 import TextField from "@material-ui/core/TextField";
 import {Grid} from "@material-ui/core";
 import './style.scss';
@@ -19,22 +18,34 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
-export const DateList = () => {
+interface OptionType {
+    label: string;
+    value: string;
+}
+
+interface SearchMenuListProps {
+    options: OptionType[]
+}
+
+export const SearchMenuList = (props: SearchMenuListProps) => {
     const [search, setSearch] = useState<string>('');
     const [selectedValue, setSelectedValue] = useState<string>('');
-    const [timeZones, setTimeZones] = useState<string[]>([]);
+    const [timeZones, setTimeZones] = useState<OptionType[]>([]);
+    const [hide, setHide] = useState<boolean>(true);
     const classes = useStyles();
+
+    const {options} = props;
 
     useEffect(() => {
 
         if(search) {
-            const filteredTimeZones = validMomentTimezones.filter(timeZone => {
-                return timeZone.toLowerCase().includes(search.toLowerCase());
+            const filteredTimeZones = options.filter(timeZone => {
+                return timeZone.value.toLowerCase().includes(search.toLowerCase());
             });
             setTimeZones(filteredTimeZones);
         }
         else {
-            setTimeZones(validMomentTimezones);
+            setTimeZones(options);
         }
     }, [search]);
 
@@ -46,17 +57,17 @@ export const DateList = () => {
         const { index, style } = props;
 
         function onClick() {
-            setSelectedValue(timeZones[index]);
+            setSelectedValue(timeZones[index].value);
         }
 
         return (
             <ListItem
                 button
                 style={style}
-                className={`${timeZones[index] === selectedValue ? 'selected' : ''}`}
+                className={`${timeZones[index].value === selectedValue ? 'selected' : ''}`}
                 key={index}
                 onClick={onClick}>
-                <ListItemText primary={`${timeZones[index]}`} />
+                <ListItemText primary={`${timeZones[index].value}`} />
             </ListItem>
         );
     }
@@ -65,12 +76,18 @@ export const DateList = () => {
 
     return (
         <Grid className={'search-menu-list'}>
-            <TextField value={search} placeholder={'Search Timezone'} onChange={onChange} />
-            <div className={classes.root}>
-                <FixedSizeList height={300} width={300} itemSize={46} itemCount={timeZones.length}>
+            <TextField
+                onFocus={() => setHide(false)}
+                onBlur={() => setHide(true)}
+                value={hide ? selectedValue : search}
+                placeholder={'Search'}
+                onChange={onChange} />
+            <div className={`${classes.root} list`} style={{display: `${hide ? 'none' : 'block'}`}}>
+                <FixedSizeList height={200} width={300} itemSize={46} itemCount={timeZones.length}>
                     {renderRow}
                 </FixedSizeList>
             </div>
+            <h2>df</h2>
         </Grid>
     );
 }
