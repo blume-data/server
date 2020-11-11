@@ -1,10 +1,11 @@
 import React, {ChangeEvent, useState} from "react";
-import {Grid} from "@material-ui/core";
+import {FormLabel, Grid} from "@material-ui/core";
 import {TextBox} from "./TextBox";
 import {FieldType} from "./interface";
 import FormControl from "@material-ui/core/FormControl";
 import {SearchMenuList} from "../SearchMenuList";
 import {validMomentTimezones} from "@ranjodhbirkaur/constants";
+import {DescriptionText} from "./DescriptionText";
 
 interface DateFieldType extends FieldType{
     onChange: (event: ChangeEvent<any>) => void;
@@ -17,9 +18,15 @@ export const DateField = (props: DateFieldType) => {
         onChange, error=false, value='', placeholder=''} = props;
 
     const [dateValue, setDateValue] = useState<string>('');
+    const [time, setTime] = useState<string>('');
+    const [timeZone, setTimeZone] = useState<string>('UCT');
+
+    console.log('time', timeZone);
 
     return (
-        <Grid>
+        <Grid className={'date-field'}>
+            {/*Date*/}
+            <FormLabel component="legend">{'date'}</FormLabel>
             <TextBox
                 descriptionText={descriptionText}
                 type={'date'}
@@ -36,6 +43,10 @@ export const DateField = (props: DateFieldType) => {
                 value={value}
                 className={className}
             />
+            <DescriptionText description={'date'}/>
+
+            {/*Time*/}
+            <FormLabel component="legend">{'time'}</FormLabel>
             <TextBox
                 descriptionText={descriptionText}
                 type={'time'}
@@ -52,14 +63,20 @@ export const DateField = (props: DateFieldType) => {
                 value={value}
                 className={className}
             />
-            <FormControl>
-                <SearchMenuList options={validMomentTimezones.map(timeZone => {
-                    return {
-                        value: timeZone,
-                        label: timeZone
-                    }
-                })} />
-            </FormControl>
+            <DescriptionText description={'time'} />
+
+            {/*Timezone*/}
+            <FormLabel component="legend">{'timezone'}</FormLabel>
+            <SearchMenuList
+                value={timeZone}
+                onMenuChange={(value) => setTimeZone(value)}
+                options={validMomentTimezones.map(timeZone => {
+                return {
+                    value: timeZone,
+                    label: timeZone
+                }
+            })} />
+            <DescriptionText description={'timezone'} />
         </Grid>
     );
 }

@@ -24,7 +24,9 @@ interface OptionType {
 }
 
 interface SearchMenuListProps {
-    options: OptionType[]
+    options: OptionType[];
+    value: string;
+    onMenuChange: (value: string) => void;
 }
 
 export const SearchMenuList = (props: SearchMenuListProps) => {
@@ -34,7 +36,11 @@ export const SearchMenuList = (props: SearchMenuListProps) => {
     const [hide, setHide] = useState<boolean>(true);
     const classes = useStyles();
 
-    const {options} = props;
+    const {options, value, onMenuChange} = props;
+
+    useEffect(() => {
+        setSelectedValue(value);
+    }, [])
 
     useEffect(() => {
 
@@ -58,6 +64,10 @@ export const SearchMenuList = (props: SearchMenuListProps) => {
 
         function onClick() {
             setSelectedValue(timeZones[index].value);
+            setHide(true);
+            setTimeout(() => {
+                onMenuChange(selectedValue);
+            });
         }
 
         return (
@@ -78,7 +88,6 @@ export const SearchMenuList = (props: SearchMenuListProps) => {
         <Grid className={'search-menu-list'}>
             <TextField
                 onFocus={() => setHide(false)}
-                onBlur={() => setHide(true)}
                 value={hide ? selectedValue : search}
                 placeholder={'Search'}
                 onChange={onChange} />
@@ -87,7 +96,6 @@ export const SearchMenuList = (props: SearchMenuListProps) => {
                     {renderRow}
                 </FixedSizeList>
             </div>
-            <h2>df</h2>
         </Grid>
     );
 }
