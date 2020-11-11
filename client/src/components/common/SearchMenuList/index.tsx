@@ -82,8 +82,6 @@ export const SearchMenuList = (props: SearchMenuListProps) => {
         );
     }
 
-    console.log('selc', selectedValue);
-
     return (
         <Grid className={'search-menu-list'}>
             <TextField

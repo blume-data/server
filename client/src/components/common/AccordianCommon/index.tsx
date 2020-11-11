@@ -7,7 +7,8 @@ import {randomString} from "../../../utils/tools";
 import loadable from "@loadable/component";
 import './index.scss';
 
-const Accordion = loadable(() => import('@material-ui/core/Accordion'));
+import Accordion from "@material-ui/core/Accordion";
+//const Accordion = loadable(() => import('@material-ui/core/Accordion'));
 
 interface AccordianCommonProps {
     children: any;

@@ -246,6 +246,7 @@ export const Form = (props: FormType) => {
             );
         }
         if(inputType === DATE_FORM_FIELD_TYPE) {
+            console.log('value', value);
             return (
                 <DateField
                     descriptionText={descriptionText}
@@ -257,7 +258,7 @@ export const Form = (props: FormType) => {
                     required={required}
                     placeholder={placeholder}
                     helperText={helperText}
-                    onChange={onChange}
+                    onChange={(value: any) => {changeValue({target: {value}}, label, SET_VALUE_ACTION)}}
                     onBlur={onBlur}
                     label={label}
                     id={id}
