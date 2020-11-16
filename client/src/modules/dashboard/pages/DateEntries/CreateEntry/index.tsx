@@ -5,7 +5,7 @@ import {connect, ConnectedProps} from "react-redux";
 import {getItemFromLocalStorage} from "../../../../../utils/tools";
 import {
     APPLICATION_NAME,
-    CLIENT_USER_NAME, ErrorMessagesType,
+    CLIENT_USER_NAME, DATE_FIElD_TYPE, ErrorMessagesType,
     INTEGER_FIElD_TYPE, LONG_STRING_FIELD_TYPE,
     SHORT_STRING_FIElD_TYPE
 } from "@ranjodhbirkaur/constants";
@@ -13,7 +13,7 @@ import {doGetRequest, doPostRequest} from "../../../../../utils/baseApi";
 import {getBaseUrl} from "../../../../../utils/urls";
 import {RuleType} from "../../../../../../../data/src/util/interface";
 import Loader from "../../../../../components/common/Loader";
-import {ConfigField, FORMATTED_TEXT, TEXT} from "../../../../../components/common/Form/interface";
+import {ConfigField, DATE_FORM_FIELD_TYPE, FORMATTED_TEXT, TEXT} from "../../../../../components/common/Form/interface";
 import {Form} from "../../../../../components/common/Form";
 import {useParams} from "react-router";
 
@@ -81,6 +81,11 @@ const CreateEntry = (props: PropsFromRedux) => {
                 case INTEGER_FIElD_TYPE: {
                     inputType = TEXT;
                     type = 'number';
+                    break;
+                }
+                case DATE_FIElD_TYPE: {
+                    inputType = DATE_FORM_FIELD_TYPE;
+                    type = 'date';
                     break;
                 }
 

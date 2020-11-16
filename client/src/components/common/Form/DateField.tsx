@@ -68,7 +68,7 @@ export const DateField = (props: DateFieldType) => {
                 helperText={helperText}
                 onChange={onChangeDate}
                 onBlur={onBlur}
-                label={label}
+                label={''}
                 id={id}
                 value={dateValue}
                 className={className}
@@ -88,7 +88,7 @@ export const DateField = (props: DateFieldType) => {
                 helperText={helperText}
                 onChange={onChangeTime}
                 onBlur={onBlur}
-                label={label}
+                label={''}
                 id={`${id}-time`}
                 value={time}
                 className={className}

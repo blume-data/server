@@ -1,16 +1,19 @@
 import {ConfigField, TEXT} from "../../../../components/common/Form/interface";
 import {SIGN_IN, SIGN_UP, VERIFY_EMAIL} from "./index";
 
-const email = {
+function getEmail(value: string) {
+    return {
         inputType: TEXT,
         placeholder: 'Email',
         label: 'Email',
         name: 'email',
         type: 'email',
         required: true,
-        value: '',
+        value: value ? value: '',
         className: 'auth-email-text-box',
-    };
+    }
+}
+
 const password = {
         inputType: TEXT,
         placeholder: 'Password',
@@ -52,30 +55,36 @@ const userName = {
         value: '',
         className: 'auth-user-name-text-box',
     };
-const token = {
-    inputType: TEXT,
-    placeholder: 'verification token',
-    label: 'token',
-    name: 'verificationToken',
-    type: 'text',
-    required: true,
-    value: '',
-    className: 'auth-user-name-text-box',
-};
 
-export function getFieldConfiguration(step: string): ConfigField[] {
+/*Get Token Fields*/
+function getToken(value: string) {
+    return {
+        inputType: TEXT,
+        placeholder: 'verification token',
+        label: 'token',
+        name: 'verificationToken',
+        type: 'text',
+        required: true,
+        value: value ? value : '',
+        className: 'auth-user-name-text-box',
+    };
+}
+
+export function getFieldConfiguration(step: string, defaultValues?: any ): ConfigField[] {
     let fields: ConfigField[] = [];
 
+    const defaultEmailValue = (defaultValues && defaultValues.email) ? defaultValues.email : '';
+    const defaultTokenValue = (defaultValues && defaultValues.token) ? defaultValues.token : '';
     switch (step) {
         case SIGN_UP: {
-            fields = [firstName, lastName, userName, email, password];
+            fields = [firstName, lastName, userName, getEmail(defaultEmailValue), password];
             return fields;
         }
         case SIGN_IN: {
-            return [email, password];
+            return [getEmail(defaultEmailValue), password];
         }
         case VERIFY_EMAIL: {
-            return [email, token];
+            return [getEmail(defaultEmailValue), getToken(defaultTokenValue)];
         }
     }
 
