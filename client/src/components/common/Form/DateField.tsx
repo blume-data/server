@@ -1,11 +1,17 @@
 import React, {ChangeEvent, useEffect, useState} from "react";
-import {FormLabel, Grid} from "@material-ui/core";
-import {TextBox} from "./TextBox";
+import {Grid} from "@material-ui/core";
 import {FieldType} from "./interface";
 
 import {SearchMenuList} from "../SearchMenuList";
 import {validMomentTimezones} from "@ranjodhbirkaur/constants";
 import {DescriptionText} from "./DescriptionText";
+import DateFnsUtils from '@date-io/date-fns';
+import {
+    MuiPickersUtilsProvider,
+    KeyboardTimePicker,
+    KeyboardDatePicker,
+} from '@material-ui/pickers';
+import { DateTime } from 'luxon';
 
 interface DateFieldType extends FieldType{
     onChange: (event: string) => void;
@@ -22,81 +28,69 @@ export const DateField = (props: DateFieldType) => {
     const [time, setTime] = useState<string>('00:00');
     const [timeZone, setTimeZone] = useState<string>('UCT');
 
+    const [selectedDate, setSelectedDate] = React.useState<Date | null>(
+        new Date(),
+    );
+
     useEffect(() => {
-        onChange(`${dateValue}_${time}_${timeZone}`);
-    }, [time, dateValue, timeZone]);
+        if(selectedDate) {
+            try {
+                const timeStamp = DateTime.fromISO(selectedDate.toISOString()).setZone(timeZone, { keepLocalTime: true });
+                //timeStamp.setZone(timeZone);
+                console.log('time stamp changed', timeStamp.toISO(), timeZone);
+                onChange(timeStamp.toString());
+            }
+            catch (e) {
+
+            }
+        }
+    }, [selectedDate]);
 
     useEffect(() => {
         if(value) {
-            const splitedValue = value.split('_');
-            if(splitedValue && splitedValue.length) {
-                if(splitedValue[0]) {
-                    setDateValue(splitedValue[0]);
-                }
-                if(splitedValue[1]) {
-                    setTime(splitedValue[1]);
-                }
-                if(splitedValue[2]) {
-                    setTimeZone(splitedValue[2]);
-                }
-            }
+            const timeStamp = DateTime.fromISO(value, {zone: timeZone});
+            const hour = timeStamp.toFormat('hh:mm:a');
+            setSelectedDate(new Date(`${timeStamp.toISODate()} ${hour}`));
         }
-    }, [value]);
+        else {
+            setSelectedDate(new Date());
+        }
+    }, []);
 
-    function onChangeDate(e: any) {
-        console.log('event', e.target.value);
-        setDateValue(e.target.value);
-    }
-
-    function onChangeTime(e: any) {
-        console.log('time', e.target.value);
-        setTime(e.target.value);
-    }
+    const handleDateChange = (date: Date | null) => {
+        setSelectedDate(date);
+    };
 
     return (
         <Grid className={'date-field'}>
-            {/*Date*/}
-            <FormLabel component="legend">{'date'}</FormLabel>
-            <TextBox
-                descriptionText={descriptionText}
-                type={'date'}
-                name={name}
-                disabled={disabled}
-                error={error}
-                required={required}
-                placeholder={placeholder}
-                helperText={helperText}
-                onChange={onChangeDate}
-                onBlur={onBlur}
-                label={''}
-                id={id}
-                value={dateValue}
-                className={className}
-            />
-            <DescriptionText description={'date'}/>
 
-            {/*Time*/}
-            <FormLabel component="legend">{'time'}</FormLabel>
-            <TextBox
-                descriptionText={descriptionText}
-                type={'time'}
-                name={name}
-                disabled={disabled}
-                error={error}
-                required={required}
-                placeholder={placeholder}
-                helperText={helperText}
-                onChange={onChangeTime}
-                onBlur={onBlur}
-                label={''}
-                id={`${id}-time`}
-                value={time}
-                className={className}
-            />
-            <DescriptionText description={'time'} />
 
-            {/*Timezone*/}
-            <FormLabel component="legend">{'timezone'}</FormLabel>
+            <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                <Grid container justify="space-around">
+                    <KeyboardDatePicker
+                        margin="normal"
+                        id="date-picker-dialog"
+                        label="Date picker dialog"
+                        format="MM/dd/yyyy"
+                        value={selectedDate}
+                        onChange={handleDateChange}
+                        KeyboardButtonProps={{
+                            'aria-label': 'change date',
+                        }}
+                    />
+                    <KeyboardTimePicker
+                        margin="normal"
+                        id="time-picker"
+                        label="Time picker"
+                        value={selectedDate}
+                        onChange={handleDateChange}
+                        KeyboardButtonProps={{
+                            'aria-label': 'change time',
+                        }}
+                    />
+                </Grid>
+            </MuiPickersUtilsProvider>
+
             <SearchMenuList
                 value={timeZone}
                 onMenuChange={(value) => setTimeZone(value)}

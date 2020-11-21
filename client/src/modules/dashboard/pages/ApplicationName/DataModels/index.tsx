@@ -6,7 +6,7 @@ import './store-list.scss';
 import {getItemFromLocalStorage} from "../../../../../utils/tools";
 import {doGetRequest} from "../../../../../utils/baseApi";
 import BasicTableMIUI from "../../../../../components/common/BasicTableMIUI";
-import moment from "moment";
+
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import ModalDialog from "../../../../../components/common/ModalDialog";
@@ -61,7 +61,7 @@ const DataModels = (props: PropsFromRedux) => {
             const response = await doGetRequest(fullUrl, null, true);
             if(response && Array.isArray(response)) {
                 setStores(response.map(item => {
-                    const updatedAt = moment(item.updatedAt).fromNow();
+                    const updatedAt = 'now time';
                     const updatedBy = item.updatedBy.split('-')[1];
                     return {
                         ...item,

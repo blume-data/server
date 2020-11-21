@@ -55,12 +55,7 @@ const CreateEntry = (props: PropsFromRedux) => {
         getData();
     }, [GetCollectionNamesUrl]);
 
-    console.log('rules', rules);
-
-
     let fields: ConfigField[] = [];
-
-    console.log('rules', rules);
 
     if(rules) {
         rules.forEach(rule => {
@@ -125,13 +120,12 @@ const CreateEntry = (props: PropsFromRedux) => {
 
 
             const res = await doPostRequest(`${getBaseUrl()}${url}`, data, true);
-            console.log('respnse', res);
+
         }
 
     }
 
     function onsubmit(values: any) {
-        console.log('values', values);
         createEntry(values);
 
     }

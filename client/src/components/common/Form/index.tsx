@@ -246,7 +246,7 @@ export const Form = (props: FormType) => {
             );
         }
         if(inputType === DATE_FORM_FIELD_TYPE) {
-            console.log('value', value);
+
             return (
                 <DateField
                     descriptionText={descriptionText}

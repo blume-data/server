@@ -66,7 +66,7 @@ export const SearchMenuList = (props: SearchMenuListProps) => {
             setSelectedValue(timeZones[index].value);
             setHide(true);
             setTimeout(() => {
-                onMenuChange(selectedValue);
+                onMenuChange(timeZones[index].value);
             });
         }
 
