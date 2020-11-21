@@ -65,6 +65,7 @@ export async function createStoreRecord(req: Request, res: Response) {
                 await item.save();
                 // close db connection
                 //await model.dbConnection.close();
+                console.log('ite', item);
                 res.status(okayStatus).send(item);
 
                 const logBody: ModelLoggerBodyType = {
@@ -123,7 +124,9 @@ export async function getStoreRecord(req: Request, res: Response) {
                 name: collection.name
             });
 
-            const collections = await model.find(where, getOnly).skip(skip).limit(limit);
+            const collections = await model.find(where/*{
+                "dae": {"$gte": new Date(2032, 7, 14)}
+            }*/, getOnly).skip(skip).limit(limit);
 
             /*const response2 = await getRanjodhBirData(
                 collection.name,
@@ -438,7 +441,6 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
         }
     });
     if (isValid) {
-        console.log('body', body)
         return body;
     }
     else {
