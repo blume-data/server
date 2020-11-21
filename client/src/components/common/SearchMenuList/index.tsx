@@ -90,7 +90,7 @@ export const SearchMenuList = (props: SearchMenuListProps) => {
                 placeholder={'Search'}
                 onChange={onChange} />
             <div className={`${classes.root} list`} style={{display: `${hide ? 'none' : 'block'}`}}>
-                <FixedSizeList height={200} width={300} itemSize={46} itemCount={timeZones.length}>
+                <FixedSizeList className={'fixed-size-list'} height={200} width={300} itemSize={46} itemCount={timeZones.length}>
                     {renderRow}
                 </FixedSizeList>
             </div>

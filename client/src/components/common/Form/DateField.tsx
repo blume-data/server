@@ -24,27 +24,32 @@ export const DateField = (props: DateFieldType) => {
         onBlur, helperText, disabled=false, descriptionText='',
         onChange, error=false, value='', placeholder=''} = props;
 
-    const [dateValue, setDateValue] = useState<string>('');
-    const [time, setTime] = useState<string>('00:00');
     const [timeZone, setTimeZone] = useState<string>('UCT');
+    const [finalValue, setFinalValue] = useState<string>('');
 
     const [selectedDate, setSelectedDate] = React.useState<Date | null>(
         new Date(),
     );
 
-    useEffect(() => {
+    function updateFinalValue() {
         if(selectedDate) {
             try {
                 const timeStamp = DateTime.fromISO(selectedDate.toISOString()).setZone(timeZone, { keepLocalTime: true });
-                //timeStamp.setZone(timeZone);
-                console.log('time stamp changed', timeStamp.toISO(), timeZone);
-                onChange(timeStamp.toString());
+                const value = timeStamp.toString();
+                onChange(value);
+                setFinalValue(value);
             }
             catch (e) {
-
+                setFinalValue('');
             }
         }
-    }, [selectedDate]);
+    }
+
+    useEffect(() => {
+        if(selectedDate) {
+            updateFinalValue();
+        }
+    }, [selectedDate, timeZone]);
 
     useEffect(() => {
         if(value) {
@@ -53,7 +58,10 @@ export const DateField = (props: DateFieldType) => {
             setSelectedDate(new Date(`${timeStamp.toISODate()} ${hour}`));
         }
         else {
-            setSelectedDate(new Date());
+            setSelectedDate(null);
+            setTimeout(() => {
+                setSelectedDate(new Date());
+            });
         }
     }, []);
 
@@ -64,9 +72,10 @@ export const DateField = (props: DateFieldType) => {
     return (
         <Grid className={'date-field'}>
 
+            <h3>Timestamp value: {finalValue}</h3>
 
             <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                <Grid container justify="space-around">
+                <Grid container justify="space-around" direction={"column"}>
                     <KeyboardDatePicker
                         margin="normal"
                         id="date-picker-dialog"
@@ -88,19 +97,22 @@ export const DateField = (props: DateFieldType) => {
                             'aria-label': 'change time',
                         }}
                     />
+                    <Grid>
+                        <SearchMenuList
+                            value={timeZone}
+                            onMenuChange={(value) => setTimeZone(value)}
+                            options={validMomentTimezones.map(timeZone => {
+                                return {
+                                    value: timeZone,
+                                    label: timeZone
+                                }
+                            })} />
+                        <DescriptionText description={'timezone'} />
+                    </Grid>
                 </Grid>
             </MuiPickersUtilsProvider>
 
-            <SearchMenuList
-                value={timeZone}
-                onMenuChange={(value) => setTimeZone(value)}
-                options={validMomentTimezones.map(timeZone => {
-                    return {
-                        value: timeZone,
-                        label: timeZone
-                    }
-            })} />
-            <DescriptionText description={'timezone'} />
+
         </Grid>
     );
 }
