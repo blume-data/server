@@ -1,5 +1,5 @@
 import { randomBytes } from 'crypto';
-import mongoose from 'mongoose';
+import mongoose, {Schema} from 'mongoose';
 import {storeMongoConnection} from './connections';
 import {RuleType} from "./interface";
 import {BOOLEAN_FIElD_TYPE, DECIMAL_FIELD_TYPE, INTEGER_FIElD_TYPE} from "@ranjodhbirkaur/constants";
@@ -56,6 +56,15 @@ export function createModel(params: CreateModelType) {
                     type: Boolean,
                     required: !!rule.required,
                     unique: !!rule.unique
+                }
+            };
+        }
+        else if(rule.type === DECIMAL_FIELD_TYPE) {
+            schemaData = {
+                ...schemaData,
+                [rule.name]: {
+                    type: Date,
+                    required: !!rule.required,
                 }
             };
         }

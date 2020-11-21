@@ -19,10 +19,10 @@ import {
 import {COLLECTION_NOT_FOUND, PARAM_SHOULD_BE_UNIQUE} from "./Messages";
 import {ModelLoggerBodyType, RuleType} from "../util/interface";
 import {Model} from "mongoose";
-import moment from 'moment';
+import {DateTime} from 'luxon';
 import {writeRanjodhBirData} from "../util/databaseApi";
 import {
-    BOOLEAN_FIElD_TYPE, dateEuropeReg, DateEuropeRegName, dateUsReg,
+    BOOLEAN_FIElD_TYPE, DATE_FIElD_TYPE, dateEuropeReg, DateEuropeRegName, dateUsReg,
     DateUsRegName,
     emailReg,
     EmailRegName,
@@ -389,7 +389,7 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
                     }
                     break;
                 }
-                case 'date': {
+                case DATE_FIElD_TYPE: {
                     if (typeof reqBody[rule.name] !== 'string') {
                         isValid = false;
                         errorMessages.push({
@@ -398,12 +398,11 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
                         });
                     }
                     else {
-                        const date = moment(reqBody[rule.name],'YYYY/MM/DD hh:mm:ss').format();
-                        const timestamp = Date.parse(date);
-                        if (!isNaN(timestamp)) {
-                            reqBody[rule.name] = new Date(timestamp);
+                        try {
+                            const timeStamp = DateTime.fromISO(reqBody[rule.name]);
+                            reqBody[rule.name] = timeStamp.toString();
                         }
-                        else {
+                        catch (e) {
                             isValid = false;
                             errorMessages.push({
                                 field: rule.name,
