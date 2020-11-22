@@ -2,7 +2,7 @@ import { randomBytes } from 'crypto';
 import mongoose, {Schema} from 'mongoose';
 import {storeMongoConnection} from './connections';
 import {RuleType} from "./interface";
-import {BOOLEAN_FIElD_TYPE, DECIMAL_FIELD_TYPE, INTEGER_FIElD_TYPE} from "@ranjodhbirkaur/constants";
+import {BOOLEAN_FIElD_TYPE, DATE_FIElD_TYPE, DECIMAL_FIELD_TYPE, INTEGER_FIElD_TYPE} from "@ranjodhbirkaur/constants";
 import {ENTRY_LANGUAGE_PROPERTY_NAME} from "./constants";
 import {APPLICATION_NAME, CLIENT_USER_NAME} from "@ranjodhbirkaur/common";
 
@@ -59,11 +59,11 @@ export function createModel(params: CreateModelType) {
                 }
             };
         }
-        else if(rule.type === DECIMAL_FIELD_TYPE) {
+        else if(rule.type === DATE_FIElD_TYPE) {
             schemaData = {
                 ...schemaData,
                 [rule.name]: {
-                    type: Date,
+                    type: String,
                     required: !!rule.required,
                 }
             };
@@ -83,9 +83,9 @@ export function createModel(params: CreateModelType) {
     schemaData = {
         ...schemaData,
         [ENTRY_LANGUAGE_PROPERTY_NAME]: String,
-        createdAt : { type: Date },
-        updatedAt : { type: Date },
-        deletedAt : { type: Date },
+        createdAt : { type: String },
+        updatedAt : { type: String },
+        deletedAt : { type: String },
     };
 
     const schema = new Schema(schemaData, {

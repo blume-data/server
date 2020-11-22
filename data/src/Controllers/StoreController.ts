@@ -65,7 +65,6 @@ export async function createStoreRecord(req: Request, res: Response) {
                 await item.save();
                 // close db connection
                 //await model.dbConnection.close();
-                console.log('ite', item);
                 res.status(okayStatus).send(item);
 
                 const logBody: ModelLoggerBodyType = {
@@ -124,9 +123,7 @@ export async function getStoreRecord(req: Request, res: Response) {
                 name: collection.name
             });
 
-            const collections = await model.find(where/*{
-                "dae": {"$gte": new Date(2032, 7, 14)}
-            }*/, getOnly).skip(skip).limit(limit);
+            const collections = await model.find(where, getOnly).skip(skip).limit(limit);
 
             /*const response2 = await getRanjodhBirData(
                 collection.name,
@@ -172,8 +169,9 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
 
     const reqBody = req.body;
     const language = req.params.language;
+    const createdAt = DateTime.local().setZone('UTC').toString();
     let body = {
-        [ENTRY_CREATED_AT]: new Date(),
+        [ENTRY_CREATED_AT]: createdAt,
         [ENTRY_LANGUAGE_PROPERTY_NAME]: language
     };
     let isValid = true;
@@ -401,11 +399,9 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
                         });
                     }
                     else {
-                        try {
-                            const timeStamp = DateTime.fromISO(reqBody[rule.name]);
-                            reqBody[rule.name] = timeStamp.toString();
-                        }
-                        catch (e) {
+                        // validate date
+                        const luxonTime = DateTime.fromISO(reqBody[rule.name]);
+                        if(luxonTime.invalidReason) {
                             isValid = false;
                             errorMessages.push({
                                 field: rule.name,
