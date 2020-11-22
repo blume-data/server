@@ -4,7 +4,7 @@ import {RootState} from "../../../../../rootReducer";
 import {connect, ConnectedProps} from "react-redux";
 import {getItemFromLocalStorage} from "../../../../../utils/tools";
 import {
-    APPLICATION_NAME,
+    APPLICATION_NAME, BOOLEAN_FIElD_TYPE,
     CLIENT_USER_NAME, DATE_FIElD_TYPE, ErrorMessagesType,
     INTEGER_FIElD_TYPE, LONG_STRING_FIELD_TYPE,
     SHORT_STRING_FIElD_TYPE
@@ -13,7 +13,13 @@ import {doGetRequest, doPostRequest} from "../../../../../utils/baseApi";
 import {getBaseUrl} from "../../../../../utils/urls";
 import {RuleType} from "../../../../../../../data/src/util/interface";
 import Loader from "../../../../../components/common/Loader";
-import {ConfigField, DATE_FORM_FIELD_TYPE, FORMATTED_TEXT, TEXT} from "../../../../../components/common/Form/interface";
+import {
+    CHECKBOX,
+    ConfigField,
+    DATE_FORM_FIELD_TYPE,
+    FORMATTED_TEXT,
+    TEXT
+} from "../../../../../components/common/Form/interface";
 import {Form} from "../../../../../components/common/Form";
 import {useParams} from "react-router";
 
@@ -83,6 +89,11 @@ const CreateEntry = (props: PropsFromRedux) => {
                     type = 'date';
                     break;
                 }
+                case BOOLEAN_FIElD_TYPE: {
+                    inputType = CHECKBOX;
+                    type = 'text';
+                    break;
+                }
 
             }
 
@@ -115,8 +126,21 @@ const CreateEntry = (props: PropsFromRedux) => {
             let data: any = {};
 
             values.forEach((valueItem: {name: string; value: string}) => {
-                data[valueItem.name] = valueItem.value;
+
+                if(rules && rules.length) {
+                    const exist = rules.find(rule => rule.name === valueItem.name);
+                    if(exist) {
+                        if(exist.type === BOOLEAN_FIElD_TYPE) {
+                            data[valueItem.name] = valueItem.value === 'true';
+                        }
+                        else {
+                            data[valueItem.name] = valueItem.value;
+                        }
+                    }
+                }
             });
+
+            console.log('data', data, values, rules);
 
 
             const res = await doPostRequest(`${getBaseUrl()}${url}`, data, true);
