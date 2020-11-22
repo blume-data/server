@@ -276,7 +276,9 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
                 reqBody[rule.name] = Number(rule.default);
             }
             else if(type === 'boolean') {
-                reqBody[rule.name] = rule.default === 'true';
+                if(value !== false) {
+                    reqBody[rule.name] = rule.default === 'true';
+                }
             }
 
         }
@@ -284,7 +286,7 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
 
     rules.forEach((rule) => {
         // check for required params
-        if ((!reqBody[rule.name] && rule.required)) {
+        if (((reqBody[rule.name] === undefined || reqBody[rule.name] === null)  && rule.required)) {
             isValid = false;
             errorMessages.push({
                 field: rule.name,
@@ -292,7 +294,7 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
             });
         }
         // check the types
-        if (reqBody[rule.name]) {
+        if (reqBody[rule.name] !== undefined) {
 
             switch (rule.type) {
                 case SHORT_STRING_FIElD_TYPE: {
@@ -429,9 +431,12 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
                 [rule.name] : reqBody[rule.name]
             };
             if (!reqBody[rule.name] && rule.default) {
+                const defaultValue = rule.type === BOOLEAN_FIElD_TYPE
+                    ? rule.default === 'true'
+                    : rule.default
                 body = {
                     ...body,
-                    [rule.name] : rule.default
+                    [rule.name] : defaultValue
                 };
             }
         }
