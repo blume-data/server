@@ -49,8 +49,6 @@ router.put(CollectionUrl, [
 /*get all the models of the application space*/
 router.get(GetCollectionNamesUrl, validateEnvType, checkAuth, validateApplicationNameMiddleWare, getCollectionNames);
 
-/*/!*get info of the data model*!/
-router.get(GetDataModelUrl, validateEnvType, checkAuth, validateApplicationNameMiddleWare, getModel)*/
 
 // Delete Item Schema
 router.delete(CollectionUrl, [
@@ -62,6 +60,6 @@ router.delete(CollectionUrl, [
     validateRequest, validateEnvType, checkAuth, deleteCollectionSchema);
 
 // Get Item Schema
-router.get(CollectionUrl, checkAuth, getCollectionSchema);
+//router.get(CollectionUrl, checkAuth, getCollectionSchema);
 
 export { router as CollectionRoutes };

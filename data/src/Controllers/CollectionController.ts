@@ -14,7 +14,8 @@ import {
 
 import {storeSchema} from "../util/databaseApi";
 import {trimCharactersAndNumbers} from "@ranjodhbirkaur/constants";
-import {createModel} from "../util/methods";
+import {createModel, createStoreModelName} from "../util/methods";
+import {storeMongoConnection} from "../util/connections";
 
 export async function createCollectionSchema(req: Request, res: Response) {
 
@@ -161,8 +162,7 @@ export async function deleteCollectionSchema(req: Request, res: Response) {
             clientUserName
         });
 
-        await model.remove({});
-
+        await model.collection.drop();
     }
     else {
         throw new BadRequestError('Collection not found');
@@ -170,15 +170,13 @@ export async function deleteCollectionSchema(req: Request, res: Response) {
     res.status(okayStatus).send(true);
 }
 
+/*Doubt full -- to be deleted*/
 export async function getCollectionSchema(req: Request, res: Response) {
     
     const userName  = req.params && req.params.userName;
     const language = req.params && req.params.language;
-
-    const reqBody = req.body;
-
     const collections = await CollectionModel.find({userName, language});
-    res.status(okayStatus).send(collections);
+    //res.status(okayStatus).send(collections);
 }
 
 

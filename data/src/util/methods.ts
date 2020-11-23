@@ -31,9 +31,13 @@ interface CreateModelType {
     [CLIENT_USER_NAME]: string;
 }
 
+export function createStoreModelName(name: string, applicationName: string, clientUserName: string) {
+    return `${name}_${applicationName}_${clientUserName}`;
+}
+
 export function createModel(params: CreateModelType) {
     const {rules, name, applicationName, clientUserName} = params;
-    const CollectionName = `${name}_${applicationName}_${clientUserName}`;
+    const CollectionName = createStoreModelName(name, applicationName, clientUserName);
     const Schema = mongoose.Schema;
     let schemaData = {};
     // Create the schema
@@ -105,10 +109,10 @@ export function createModel(params: CreateModelType) {
         const dbConnection = storeMongoConnection;
         if(dbConnection) {
             try {
-                return dbConnection.model(name, schema);
+                return dbConnection.model(CollectionName, schema);
             }
             catch (e) {
-                return dbConnection.model(name);
+                return dbConnection.model(CollectionName);
             }
         }
         else {
