@@ -4,7 +4,7 @@ import {dashboardDataEntriesUrl, getBaseUrl} from "../../../../../utils/urls";
 import {APPLICATION_NAME, CLIENT_USER_NAME} from "@ranjodhbirkaur/constants";
 import './store-list.scss';
 import {getItemFromLocalStorage} from "../../../../../utils/tools";
-import {doGetRequest} from "../../../../../utils/baseApi";
+import {doDeleteRequest, doGetRequest} from "../../../../../utils/baseApi";
 import BasicTableMIUI from "../../../../../components/common/BasicTableMIUI";
 
 import TextField from "@material-ui/core/TextField";
@@ -16,6 +16,8 @@ import {connect, ConnectedProps} from "react-redux";
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import IconButton from "@material-ui/core/IconButton";
+import {AlertDialog} from "../../../../../components/common/AlertDialog";
+import Loader from "../../../../../components/common/Loader";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
@@ -28,10 +30,12 @@ interface ModelDataType {
 }
 
 const DataModels = (props: PropsFromRedux) => {
-    const {applicationName, env, language, GetCollectionNamesUrl} = props;
+    const {applicationName, env, language, GetCollectionNamesUrl, CollectionUrl} = props;
     const [stores, setStores] = useState<any>(null);
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-
+    const [confirmDialogOpen, setConfirmDialogOpen] = useState<boolean>(false);
+    const [deleteEntryName, setDeleteEntryName] = useState<string>('');
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const [modelData, setModelData] = useState<ModelDataType | null>(null);
 
@@ -47,7 +51,15 @@ const DataModels = (props: PropsFromRedux) => {
     }
 
     async function getCollectionNames() {
+
+        function openConfirmAlert(modelName: string) {
+            setDeleteEntryName(modelName);
+            setConfirmDialogOpen(true);
+        }
+
         if(GetCollectionNamesUrl) {
+
+            setIsLoading(true);
 
             const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
 
@@ -71,13 +83,14 @@ const DataModels = (props: PropsFromRedux) => {
                         }`,
                         edit: <IconButton><EditIcon /></IconButton>,
                         delete: <IconButton><DeleteIcon /></IconButton>,
-                        'delete-click': () => alert('delete clicked'),
+                        'delete-click': () => openConfirmAlert(item.name),
                         'edit-click': () => onClickEdit(item.id, item.name, item.description, item.displayName, JSON.parse(item.rules)),
                         updatedAt,
                         updatedBy
                     }
                 }));
             }
+            setIsLoading(false);
         }
     }
 
@@ -94,6 +107,26 @@ const DataModels = (props: PropsFromRedux) => {
         {name: 'Delete', value: 'delete', onClick: true}
     ]
 
+    async function onClickConfirmDeleteModel(modelName: string) {
+
+        if(CollectionUrl) {
+            setIsLoading(true);
+            const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
+
+            const url = CollectionUrl
+                .replace(`:${CLIENT_USER_NAME}`, clientUserName ? clientUserName : '')
+                .replace(':env', env)
+                .replace(':language', language)
+                .replace(`:${APPLICATION_NAME}`,applicationName);
+            const response = await doDeleteRequest(`${getBaseUrl()}${url}`, {name: modelName}, true);
+            if(response) {
+                await getCollectionNames();
+            }
+        }
+
+
+    }
+
     function closeModal() {
         setIsModalOpen(false);
     }
@@ -109,9 +142,15 @@ const DataModels = (props: PropsFromRedux) => {
         setModelData(null);
     }
 
+    console.log('CollectionUrl', CollectionUrl)
+
 
     return (
         <Grid className={'store-list-container'}>
+
+            {
+                isLoading ? <Loader /> : null
+            }
 
             <Grid className={'filter-section'} container justify={"space-between"}>
                 <Grid item>
@@ -154,6 +193,25 @@ const DataModels = (props: PropsFromRedux) => {
                 />
             </ModalDialog>
 
+            <AlertDialog
+                onClose={() => {
+                    setConfirmDialogOpen(false);
+                    setDeleteEntryName('');
+                }}
+                open={confirmDialogOpen}
+                onConfirm={() => {
+                    onClickConfirmDeleteModel(deleteEntryName);
+                    setDeleteEntryName('');
+                    setConfirmDialogOpen(false);
+                }}
+                onCancel={() => {
+                    setConfirmDialogOpen(false);
+                    setDeleteEntryName('');
+                }}
+                title={'Confirm delete action'}
+                subTitle={`Please confirm if you want to delete ${deleteEntryName} model?`}
+            />
+
         </Grid>
     );
 };
@@ -163,7 +221,8 @@ const mapState = (state: RootState) => {
         env: state.authentication.env,
         language: state.authentication.language,
         applicationName: state.authentication.applicationName,
-        GetCollectionNamesUrl: state.routeAddress.routes.data?.GetCollectionNamesUrl
+        GetCollectionNamesUrl: state.routeAddress.routes.data?.GetCollectionNamesUrl,
+        CollectionUrl: state.routeAddress.routes.data?.CollectionUrl
     }
 };
 

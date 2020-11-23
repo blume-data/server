@@ -162,7 +162,12 @@ export async function deleteCollectionSchema(req: Request, res: Response) {
             clientUserName
         });
 
-        await model.collection.drop();
+        try {
+            await model.collection.drop();
+        }
+        catch (e) {
+            // console.log('here is no record man')
+        }
     }
     else {
         throw new BadRequestError('Collection not found');
