@@ -345,7 +345,6 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
                         checkOnlyAllowedValues(rule);
                     }
 
-                    console.log('rule', rule);
                     if(isValid && rule.default) {
                         checkDefaultValue(rule, "string");
                     }
@@ -419,10 +418,7 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
                             });
                         }
                         else {
-                            const newDate = new Date(luxonTime.year, luxonTime.month, luxonTime.day,luxonTime.hour, luxonTime.minute, luxonTime.second, luxonTime.millisecond);
-                            const JS_DATE = DateTime.fromISO(reqBody[rule.name]).setZone('UTC').toJSDate();
-                            console.log('new date', newDate, new Date());
-                            reqBody[rule.name] = JS_DATE;
+                            reqBody[rule.name] = DateTime.fromISO(reqBody[rule.name]).setZone('UTC').toJSDate();
                         }
                     }
                     break;

@@ -84,8 +84,10 @@ export function createModel(params: CreateModelType) {
         ...schemaData,
         [ENTRY_LANGUAGE_PROPERTY_NAME]: String,
         createdAt : { type: Date },
-        updatedAt : { type: String },
-        deletedAt : { type: String },
+        updatedAt : { type: Date },
+        deletedAt : { type: Date },
+        isDeleted: {type: Boolean, default: false},
+        isPublished: {type: Boolean, default: true},
     };
 
     const schema = new Schema(schemaData, {
@@ -95,21 +97,22 @@ export function createModel(params: CreateModelType) {
                 delete ret._id;
                 delete ret.__v;
             }
-        }
+        },
+        strict: false
     });
 
     if (process.env.NODE_ENV !== 'test') {
         const dbConnection = storeMongoConnection;
-        try {
-            if (dbConnection) {
+        if(dbConnection) {
+            try {
                 return dbConnection.model(name, schema);
             }
-            else {
-                return null;
+            catch (e) {
+                return dbConnection.model(name);
             }
         }
-        catch (e) {
-            return dbConnection.model(name);
+        else {
+            return null;
         }
     }
     else {

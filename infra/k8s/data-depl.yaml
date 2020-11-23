@@ -17,11 +17,14 @@ spec:
           image: taranjeetsingh/data
           env:
             - name: MONGO_URI
-              value: 'mongodb://data-mongo-srv:27017/data'
+              value: 'mongodb+srv://all:all@cluster0.a6c0l.mongodb.net/data?retryWrites=true&w=majority'
+              #value: 'mongodb://data-mongo-srv:27017/data'
             - name: MONGO_STORE_URI
-              value: 'mongodb://data-store-mongo-srv:27017/data'
+              value: 'mongodb+srv://all:all@cluster0.a6c0l.mongodb.net/store?retryWrites=true&w=majority'
+              #value: 'mongodb://data-store-mongo-srv:27017/data'
             - name: MONGO_URI_AUTH
-              value: 'mongodb://auth-mongo-srv:27017/authentication'
+              value: 'mongodb+srv://all:all@cluster0.a6c0l.mongodb.net/auth?retryWrites=true&w=majority'
+              #value: 'mongodb://auth-mongo-srv:27017/authentication'
             - name: JWT_KEY
               valueFrom:
                 secretKeyRef:
