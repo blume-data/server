@@ -63,7 +63,7 @@ export function createModel(params: CreateModelType) {
             schemaData = {
                 ...schemaData,
                 [rule.name]: {
-                    type: String,
+                    type: Date,
                     required: !!rule.required,
                 }
             };
@@ -83,7 +83,7 @@ export function createModel(params: CreateModelType) {
     schemaData = {
         ...schemaData,
         [ENTRY_LANGUAGE_PROPERTY_NAME]: String,
-        createdAt : { type: String },
+        createdAt : { type: Date },
         updatedAt : { type: String },
         deletedAt : { type: String },
     };

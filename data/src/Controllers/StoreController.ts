@@ -11,29 +11,37 @@ import {
     okayStatus
 } from "@ranjodhbirkaur/common";
 
-import {
-    ENTRY_CREATED_AT,
-    ENTRY_LANGUAGE_PROPERTY_NAME,
-    PER_PAGE
-} from "../util/constants";
+import {ENTRY_CREATED_AT, ENTRY_LANGUAGE_PROPERTY_NAME, PER_PAGE} from "../util/constants";
 import {COLLECTION_NOT_FOUND, PARAM_SHOULD_BE_UNIQUE} from "./Messages";
 import {ModelLoggerBodyType, RuleType} from "../util/interface";
 import {Model} from "mongoose";
 import {DateTime} from 'luxon';
 import {writeRanjodhBirData} from "../util/databaseApi";
 import {
-    BOOLEAN_FIElD_TYPE, DATE_FIElD_TYPE, dateEuropeReg, DateEuropeRegName, dateUsReg,
+    BOOLEAN_FIElD_TYPE,
+    DATE_FIElD_TYPE,
+    dateEuropeReg,
+    DateEuropeRegName,
+    dateUsReg,
     DateUsRegName,
     emailReg,
     EmailRegName,
     ErrorMessagesType,
     FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN,
     FIELD_CUSTOM_ERROR_MSG_MIN_MAX,
-    FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN, HHTimeReg, hhTimeReg, HHTimeRegName, HhTimeRegName,
+    FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN,
+    HHTimeReg,
+    hhTimeReg,
+    HHTimeRegName,
+    HhTimeRegName,
     INTEGER_FIElD_TYPE,
     SHORT_STRING_FIElD_TYPE,
     urlReg,
-    UrlRegName, usPhoneReg, UsPhoneRegName, usZipReg, UsZipRegName
+    UrlRegName,
+    usPhoneReg,
+    UsPhoneRegName,
+    usZipReg,
+    UsZipRegName
 } from "@ranjodhbirkaur/constants";
 import {createModel} from "../util/methods";
 
@@ -169,7 +177,7 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
 
     const reqBody = req.body;
     const language = req.params.language;
-    const createdAt = DateTime.local().setZone('UTC').toString();
+    const createdAt = DateTime.local().setZone('UTC').toJSDate();
     let body = {
         [ENTRY_CREATED_AT]: createdAt,
         [ENTRY_LANGUAGE_PROPERTY_NAME]: language
@@ -402,13 +410,19 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
                     }
                     else {
                         // validate date
-                        const luxonTime = DateTime.fromISO(reqBody[rule.name]);
+                        const luxonTime = DateTime.fromISO(reqBody[rule.name]).setZone('UCT');
                         if(luxonTime.invalidReason) {
                             isValid = false;
                             errorMessages.push({
                                 field: rule.name,
                                 message: `${rule.name} is not a valid date`
                             });
+                        }
+                        else {
+                            const newDate = new Date(luxonTime.year, luxonTime.month, luxonTime.day,luxonTime.hour, luxonTime.minute, luxonTime.second, luxonTime.millisecond);
+                            const JS_DATE = DateTime.fromISO(reqBody[rule.name]).setZone('UTC').toJSDate();
+                            console.log('new date', newDate, new Date());
+                            reqBody[rule.name] = JS_DATE;
                         }
                     }
                     break;

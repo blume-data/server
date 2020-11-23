@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-import {DateTime} from "luxon";
 
 interface CollectionAttrs {
     clientUserName : string;
