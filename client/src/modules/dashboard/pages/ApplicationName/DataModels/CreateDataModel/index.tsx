@@ -922,9 +922,6 @@ const CreateDataModel = (props: CreateDataModelType) => {
 
     }
 
-    /*console.log('fieldMatchCustomPattern', fieldMatchCustomPattern);
-    console.log('fieldMatchPattern', fieldMatchPattern);*/
-
     return (
         <Grid>
             <Grid className="create-content-model">
