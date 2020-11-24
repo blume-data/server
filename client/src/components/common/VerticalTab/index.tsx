@@ -30,7 +30,14 @@ export function VerticalTabPanel(props: VerticalTabPanelProps) {
             className={'vertical-tab-panel'}
             {...other}
         >
-            {value === index && (<Box p={3}>{children}</Box>)}
+            {value === index
+            && (
+                <Box
+                    className={'vertical-tab-box-container'}
+                    p={3}>
+                    {children}
+                </Box>
+            )}
         </div>
     );
 }
@@ -47,6 +54,7 @@ const useStyles = makeStyles((theme: Theme) => ({
         flexGrow: 1,
         backgroundColor: theme.palette.background.paper,
         display: 'flex',
+        height: '400px'
     },
     tabs: {
         borderRight: `1px solid ${theme.palette.divider}`,
