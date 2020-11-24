@@ -4,4 +4,9 @@
   .vertical-tab-panel {
     width: 100%;
   }
+  button.selected {
+    span.MuiTab-wrapper {
+      color: $pink;
+    }
+  }
 }

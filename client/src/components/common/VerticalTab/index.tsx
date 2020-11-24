@@ -3,7 +3,7 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
-import {Grid} from "@material-ui/core";
+import './style.scss';
 
 interface VerticalTabPanelProps {
     children?: React.ReactNode;
@@ -72,7 +72,11 @@ export const VerticalTab = (props: VerticalTabProps) => {
                 className={classes.tabs}
             >
                 {tabs.map((tab, index) => {
-                    return <Tab label={tab} {...a11yProps(index)} />
+                    return <Tab
+                        className={value === index ? 'selected' : ''}
+                        label={tab}
+                        {...a11yProps(index)}
+                    />
                 })}
 
             </Tabs>
