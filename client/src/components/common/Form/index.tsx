@@ -25,6 +25,7 @@ import {CommonButton} from "../CommonButton";
 import loadable from "@loadable/component";
 import {AccordianCommon} from "../AccordianCommon";
 import {DateField} from "./DateField";
+import {VerticalTab, VerticalTabPanel} from "../VerticalTab";
 const HtmlEditor = loadable(() => import('../HtmlEditor'));
 
 interface FormState {
@@ -51,6 +52,7 @@ export const Form = (props: FormType) => {
 
     const [isAlertOpen, setIsAlertOpen] = React.useState<boolean>(false);
     const [alert, setAlertMessage] = React.useState<AlertType>({message: ''});
+    const [tabValue, setTabValue] = React.useState<number>(0);
 
     const [formState, setFormState] = useState<FormState[]>([]);
     const {className, groups, fields, onSubmit, submitButtonName, response='', clearOnSubmit=false, showClearButton=false} = props;
@@ -473,22 +475,32 @@ export const Form = (props: FormType) => {
             {/*Render Group Fields*/}
             {
                 groups && groups.length
-                ? groups.map((groupName, index) => {
-                    const exist = fields.filter(ranjod => ranjod.groupName === groupName);
-                    if(exist && exist.length) {
-                        return (
-                            <AccordianCommon shouldExpand={index === 0} name={groupName} className={'common-form-accordian'}>
-                                {exist.map((option: ConfigField, index) => {
-                                    if(option.groupName === groupName) {
-                                        return renderFields(option, index, groupName)
+                    ? <VerticalTab value={tabValue} setValue={setTabValue} tabs={groups}>
+                        {
+                            groups && groups.length
+                                ? groups.map((groupName, index) => {
+                                    const exist = fields.filter(ranjod => ranjod.groupName === groupName);
+                                    if(exist && exist.length) {
+                                        return (
+                                            <VerticalTabPanel value={tabValue} index={index}>
+                                                {exist.map((option: ConfigField) => {
+                                                    if(option.groupName === groupName) {
+                                                        return (
+                                                            <>
+                                                                {renderFields(option, index, groupName)}
+                                                            </>
+                                                        );
+                                                    }
+                                                    return null;
+                                                })}
+                                            </VerticalTabPanel>
+                                        );
                                     }
-                                    return null;
-                                })}
-                            </AccordianCommon>
-                        );
-                    }
-                    return  null;
-                  })
+                                    return  null;
+                                })
+                                : null
+                        }
+                      </VerticalTab>
                 : null
             }
 
@@ -510,7 +522,8 @@ export const Form = (props: FormType) => {
                 isAlertOpen={isAlertOpen}
                 onAlertClose={setIsAlertOpen}
                 severity={alert.severity}
-                message={alert.message} />
+                message={alert.message}
+            />
         </Grid>
     );
 };

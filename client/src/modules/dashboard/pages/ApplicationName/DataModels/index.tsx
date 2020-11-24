@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {Grid} from "@material-ui/core";
-import {dashboardDataEntriesUrl, getBaseUrl} from "../../../../../utils/urls";
+import {dashboardCreateDataModelsUrl, dashboardDataEntriesUrl, getBaseUrl} from "../../../../../utils/urls";
 import {APPLICATION_NAME, CLIENT_USER_NAME} from "@ranjodhbirkaur/constants";
 import './store-list.scss';
 import {getItemFromLocalStorage} from "../../../../../utils/tools";
@@ -18,6 +18,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import IconButton from "@material-ui/core/IconButton";
 import {AlertDialog} from "../../../../../components/common/AlertDialog";
 import Loader from "../../../../../components/common/Loader";
+import {Link} from "react-router-dom";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
@@ -32,7 +33,7 @@ interface ModelDataType {
 const DataModels = (props: PropsFromRedux) => {
     const {applicationName, env, language, GetCollectionNamesUrl, CollectionUrl} = props;
     const [stores, setStores] = useState<any>(null);
-    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+    //const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [confirmDialogOpen, setConfirmDialogOpen] = useState<boolean>(false);
     const [deleteEntryName, setDeleteEntryName] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -47,7 +48,7 @@ const DataModels = (props: PropsFromRedux) => {
             modelName: name,
             modelProperties: rules
         });
-        setIsModalOpen(true);
+        //setIsModalOpen(true);
     }
 
     async function getCollectionNames() {
@@ -127,22 +128,23 @@ const DataModels = (props: PropsFromRedux) => {
 
     }
 
-    function closeModal() {
+    /*function closeModal() {
         setIsModalOpen(false);
-    }
+    }*/
 
-    function onCreateDataModel() {
+    /*function onCreateDataModel() {
         closeModal();
         getCollectionNames();
-    }
+    }*/
 
-    function onClickAddModel() {
+    /*function onClickAddModel() {
         // redirect to create model page
         setIsModalOpen(true)
         setModelData(null);
-    }
+    }*/
 
-    console.log('CollectionUrl', CollectionUrl)
+    console.log('CollectionUrl', CollectionUrl);
+    const createModelUrl = dashboardCreateDataModelsUrl.replace(`:${APPLICATION_NAME}`, applicationName);
 
 
     return (
@@ -158,12 +160,13 @@ const DataModels = (props: PropsFromRedux) => {
                 </Grid>
                 <Grid item className={'add-store-button'}>
                     {/*open model and clear model data*/}
-                    <Button
-                        onClick={onClickAddModel}
-                        variant="contained"
-                        color={'primary'}>
-                        Add model
-                    </Button>
+                    <Link to={createModelUrl}>
+                        <Button
+                            variant="contained"
+                            color={'primary'}>
+                            Add model
+                        </Button>
+                    </Link>
                 </Grid>
 
             </Grid>
@@ -178,20 +181,6 @@ const DataModels = (props: PropsFromRedux) => {
                     /> : <p>No models</p>
                 }
             </Grid>
-
-            <ModalDialog
-                isOpen={isModalOpen}
-                title={'Data Model'}
-                handleClose={closeModal}>
-                <CreateDataModel
-                    modelId={modelData?.modelId}
-                    modelDescription={modelData?.modelDescription}
-                    modelDisplayName={modelData?.modelDisplayName}
-                    modelName={modelData?.modelName}
-                    modelProperties={modelData?.modelProperties}
-                    onCreateDataModel={onCreateDataModel}
-                />
-            </ModalDialog>
 
             <AlertDialog
                 onClose={() => {

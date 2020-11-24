@@ -49,7 +49,7 @@ import {
     HHTimeReg,
     usPhoneReg,
     usZipReg,
-    TIME_FIElD_TYPE
+    TIME_FIElD_TYPE, APPLICATION_NAME
 } from "@ranjodhbirkaur/constants";
 import TextFieldsIcon from '@material-ui/icons/TextFields';
 import './style.scss';
@@ -68,7 +68,7 @@ import AccessTimeIcon from '@material-ui/icons/AccessTime';
 import ButtonGroup from "@material-ui/core/ButtonGroup";
 import {RootState} from "../../../../../../rootReducer";
 import {connect, ConnectedProps} from "react-redux";
-import {doPostRequest, doPutRequest} from "../../../../../../utils/baseApi";
+import {doGetRequest, doPostRequest, doPutRequest} from "../../../../../../utils/baseApi";
 import {getItemFromLocalStorage} from "../../../../../../utils/tools";
 import {getBaseUrl} from "../../../../../../utils/urls";
 import {AccordianCommon} from "../../../../../../components/common/AccordianCommon";
@@ -100,19 +100,13 @@ export interface PropertiesType {
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type CreateDataModelType = PropsFromRedux & {
-    onCreateDataModel: () => void;
     modelName?: string;
-    modelId?: string;
-    modelDescription?: string;
-    modelDisplayName?: string;
-    modelProperties?: PropertiesType[];
 }
 
 const CreateDataModel = (props: CreateDataModelType) => {
 
     const [settingFieldName, setSettingFieldName] = useState<boolean>(false);
     const [addingField, setAddingField] = useState<boolean>(false);
-
 
     const [fieldName, setFieldName] = useState<string>('');
     const [fieldDescription, setFieldDescription] = useState<string>('');
@@ -172,18 +166,46 @@ const CreateDataModel = (props: CreateDataModelType) => {
     const FIELD_DEFAULT_VALUE_GROUP = 'Default value';
 
     const {
-        env, CollectionUrl, applicationName, onCreateDataModel,
-        modelProperties, modelId,
-        modelName, modelDescription='', modelDisplayName
+        env, CollectionUrl, applicationName, GetCollectionNamesUrl, language,
+        modelName,
     } = props;
 
+    async function getData() {
+        if(GetCollectionNamesUrl && modelName) {
+            const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
+            //setIsLoading(true);
+            const url = GetCollectionNamesUrl
+                .replace(`:${CLIENT_USER_NAME}`, clientUserName ? clientUserName : '')
+                .replace(':env', env)
+                .replace(':language', language)
+                .replace(`:${APPLICATION_NAME}`,applicationName);
+
+            const response = await doGetRequest(
+                `${getBaseUrl()}${url}?name=${modelName ? modelName : ''}`,
+                {},
+                true
+            );
+            if(response && !response.errors && response.length) {
+                setProperties(JSON.parse(response[0].rules));
+                console.log('properties', JSON.parse(response[0].rules));
+            }
+            console.log('model res', response);
+            //setIsLoading(false);
+        }
+    }
+
     useEffect(() => {
-        if(modelId && modelName && modelProperties && modelDisplayName) {
-            setContentModelDescription(modelDescription);
-            setContentModelDisplayName(modelDisplayName);
+        getData();
+    }, [GetCollectionNamesUrl, modelName])
+
+    useEffect(() => {
+        if(modelName) {
             setContentModelName(modelName);
-            setProperties(modelProperties);
-            setContentModelId(modelId);
+
+            //setContentModelDescription(modelDescription);
+            //setContentModelDisplayName(modelDisplayName);
+            // setProperties(modelProperties);
+            // setContentModelId(modelId);
         }
     }, []);
 
@@ -210,7 +232,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
             className: 'create-content-model-name-identifier',
             type: 'text',
             name: NAME,
-            disabled: !!modelId,
+            disabled: !!modelName,
             label: 'Name Identifier',
             descriptionText: 'Generated from name (uniquely identify model)',
             inputType: TEXT,
@@ -701,7 +723,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
 
             if(response && !response.errors) {
                 // close the modal
-                onCreateDataModel();
+                // redirect back
             }
             else if(response.errors && response.errors.length) {
                 setIsAlertOpen(true);
@@ -1047,7 +1069,9 @@ const mapState = (state: RootState) => {
     return {
         env: state.authentication.env,
         applicationName: state.authentication.applicationName,
-        CollectionUrl: state.routeAddress.routes.data?.CollectionUrl
+        language: state.authentication.language,
+        CollectionUrl: state.routeAddress.routes.data?.CollectionUrl,
+        GetCollectionNamesUrl: state.routeAddress.routes.data?.GetCollectionNamesUrl,
     }
 };
 
