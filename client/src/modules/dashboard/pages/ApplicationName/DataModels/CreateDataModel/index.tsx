@@ -1048,9 +1048,6 @@ const CreateDataModel = (props: CreateDataModelType) => {
                     }
 
                 </Grid>
-                <Grid item>
-                    Right
-                </Grid>
             </Grid>
             <AlertDialog
                 onClose={() => {

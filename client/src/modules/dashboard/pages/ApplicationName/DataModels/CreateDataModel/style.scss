@@ -4,6 +4,9 @@
   justify-content: space-between;
   .create-content-model {
     width: 80%;
+    @include mobileAndTablet {
+      width: 100%;
+    }
 
     .fields-container {
       margin-top: 20px;
