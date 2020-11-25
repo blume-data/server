@@ -203,10 +203,6 @@ const CreateDataModel = (props: CreateDataModelType) => {
         if(modelName) {
             setContentModelName(modelName);
 
-            //setContentModelDescription(modelDescription);
-            //setContentModelDisplayName(modelDisplayName);
-            // setProperties(modelProperties);
-            // setContentModelId(modelId);
         }
     }, []);
 
@@ -952,7 +948,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 <Grid item className="create-content-model">
 
                     <CenterTab
-                        headings={['Name', 'Fields']}
+                        headings={['Model Name', 'Fields']}
                         items={[
                             <Grid>
                                 {
@@ -973,7 +969,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                                 {
                                     contentModelDisplayName
                                         ? renderPropertiesSection()
-                                        : null
+                                        : 'Please add name for the model'
                                 }
                             </Grid>
 

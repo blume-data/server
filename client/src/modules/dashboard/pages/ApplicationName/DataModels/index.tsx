@@ -33,7 +33,6 @@ interface ModelDataType {
 const DataModels = (props: PropsFromRedux) => {
     const {applicationName, env, language, GetCollectionNamesUrl, CollectionUrl} = props;
     const [stores, setStores] = useState<any>(null);
-    //const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [confirmDialogOpen, setConfirmDialogOpen] = useState<boolean>(false);
     const [deleteEntryName, setDeleteEntryName] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -48,7 +47,7 @@ const DataModels = (props: PropsFromRedux) => {
             modelName: name,
             modelProperties: rules
         });
-        //setIsModalOpen(true);
+
     }
 
     async function getCollectionNames() {
@@ -128,22 +127,6 @@ const DataModels = (props: PropsFromRedux) => {
 
     }
 
-    /*function closeModal() {
-        setIsModalOpen(false);
-    }*/
-
-    /*function onCreateDataModel() {
-        closeModal();
-        getCollectionNames();
-    }*/
-
-    /*function onClickAddModel() {
-        // redirect to create model page
-        setIsModalOpen(true)
-        setModelData(null);
-    }*/
-
-    console.log('CollectionUrl', CollectionUrl);
     const createModelUrl = dashboardCreateDataModelsUrl.replace(`:${APPLICATION_NAME}`, applicationName);
 
 
