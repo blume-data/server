@@ -12,7 +12,8 @@ import {
     FORMATTED_TEXT,
     FormType,
     RADIO,
-    TEXT, TIME_FORM_FIELD_TYPE
+    TEXT,
+    TIME_FORM_FIELD_TYPE
 } from "./interface";
 import './style.scss';
 import {ErrorMessagesType, FIELD, MESSAGE} from "@ranjodhbirkaur/constants";
@@ -23,9 +24,9 @@ import {CommonCheckBoxField} from "./CommonCheckBoxField";
 import {CommonButton} from "../CommonButton";
 
 import loadable from "@loadable/component";
-import {AccordianCommon} from "../AccordianCommon";
 import {DateField} from "./DateField";
 import {VerticalTab, VerticalTabPanel} from "../VerticalTab";
+
 const HtmlEditor = loadable(() => import('../HtmlEditor'));
 
 interface FormState {
@@ -53,6 +54,7 @@ export const Form = (props: FormType) => {
     const [isAlertOpen, setIsAlertOpen] = React.useState<boolean>(false);
     const [alert, setAlertMessage] = React.useState<AlertType>({message: ''});
     const [tabValue, setTabValue] = React.useState<number>(0);
+    const [filteredGroups, setFilteredGroups] = useState<string[]>([]);
 
     const [formState, setFormState] = useState<FormState[]>([]);
     const {className, groups, fields, onSubmit, submitButtonName, response='', clearOnSubmit=false, showClearButton=false} = props;
@@ -162,7 +164,17 @@ export const Form = (props: FormType) => {
                 showAlert({message: PLEASE_PROVIDE_VALID_VALUES, severity: "error"});
             }
     }
-    }, [response, clearOnSubmit])
+    }, [response, clearOnSubmit]);
+
+    /*Filter groups which have at least one child element*/
+    useEffect(() => {
+        if(groups && groups.length) {
+            const h = groups.filter(group => {
+                return fields.find(field => field.groupName === group);
+            });
+            setFilteredGroups(h);
+        }
+    }, [groups, fields]);
 
     function getValue(label: string) {
         const value = formState.find(item => item.label === label);
@@ -474,11 +486,11 @@ export const Form = (props: FormType) => {
 
             {/*Render Group Fields*/}
             {
-                groups && groups.length
-                    ? <VerticalTab value={tabValue} setValue={setTabValue} tabs={groups}>
+                filteredGroups && filteredGroups.length
+                    ? <VerticalTab value={tabValue} setValue={setTabValue} tabs={filteredGroups}>
                         {
-                            groups && groups.length
-                                ? groups.map((groupName, index) => {
+                            filteredGroups && filteredGroups.length
+                                ? filteredGroups.map((groupName, index) => {
                                     const exist = fields.filter(ranjod => ranjod.groupName === groupName);
                                     if(exist && exist.length) {
                                         return (
