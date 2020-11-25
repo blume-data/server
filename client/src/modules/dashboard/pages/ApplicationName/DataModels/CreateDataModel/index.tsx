@@ -991,11 +991,6 @@ const CreateDataModel = (props: CreateDataModelType) => {
                                         <Looks4Icon />
                                         <Looks5Icon />
                                     </Grid>, INTEGER_FIElD_TYPE )}
-                                    {/*{fieldItem('Decimal', 'decimals like quantity, currency', <Grid className={'numbers'}>
-                                <Looks3Icon />
-                                <Looks4Icon />
-                                <Looks5Icon />
-                            </Grid>, DECIMAL_FIELD_TYPE )}*/}
                                     {fieldItem('Time', 'time', <AccessTimeIcon />, TIME_FORM_FIELD_TYPE)}
                                     {fieldItem('Date and time', 'time, date, days, events', <DateRangeIcon />, DATE_FIElD_TYPE)}
                                     {fieldItem('Location', 'coordinates', <LocationOnIcon />, LOCATION_FIELD_TYPE)}
