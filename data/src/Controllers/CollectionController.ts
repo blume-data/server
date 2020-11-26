@@ -115,17 +115,10 @@ export async function getCollectionNames(req: Request, res: Response) {
         language,
         env
     };
-    const get: string[] = ['rules'];
+    const get: string[] = ['rules', 'name', 'description', 'displayName', 'updatedAt', 'updatedBy'];
 
     if(name) {
         where.name = name;
-    }
-    else {
-        get.push('name');
-        get.push('description');
-        get.push('updatedAt');
-        get.push('updatedBy');
-        get.push('displayName')
     }
 
     const collections = await CollectionModel.find(where, get);

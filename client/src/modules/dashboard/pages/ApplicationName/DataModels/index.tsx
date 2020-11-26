@@ -9,8 +9,7 @@ import BasicTableMIUI from "../../../../../components/common/BasicTableMIUI";
 
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
-import ModalDialog from "../../../../../components/common/ModalDialog";
-import CreateDataModel, {PropertiesType} from "./CreateDataModel";
+import {PropertiesType} from "./CreateDataModel";
 import {RootState} from "../../../../../rootReducer";
 import {connect, ConnectedProps} from "react-redux";
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -19,6 +18,7 @@ import IconButton from "@material-ui/core/IconButton";
 import {AlertDialog} from "../../../../../components/common/AlertDialog";
 import Loader from "../../../../../components/common/Loader";
 import {Link} from "react-router-dom";
+import {useHistory} from "react-router";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
@@ -38,17 +38,7 @@ const DataModels = (props: PropsFromRedux) => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const [modelData, setModelData] = useState<ModelDataType | null>(null);
-
-    function onClickEdit(id: string, name: string, description: string, displayName: string, rules: any) {
-        setModelData({
-            modelId: id,
-            modelDescription: description,
-            modelDisplayName: displayName,
-            modelName: name,
-            modelProperties: rules
-        });
-
-    }
+    const history = useHistory();
 
     async function getCollectionNames() {
 
@@ -84,7 +74,7 @@ const DataModels = (props: PropsFromRedux) => {
                         edit: <IconButton><EditIcon /></IconButton>,
                         delete: <IconButton><DeleteIcon /></IconButton>,
                         'delete-click': () => openConfirmAlert(item.name),
-                        'edit-click': () => onClickEdit(item.id, item.name, item.description, item.displayName, JSON.parse(item.rules)),
+                        'edit-click': () => onClickEdit(item.name),
                         updatedAt,
                         updatedBy
                     }
@@ -129,6 +119,9 @@ const DataModels = (props: PropsFromRedux) => {
 
     const createModelUrl = dashboardCreateDataModelsUrl.replace(`:${APPLICATION_NAME}`, applicationName);
 
+    function onClickEdit(name: string) {
+        history.push(`${createModelUrl}?name=${name}`);
+    }
 
     return (
         <Grid className={'store-list-container'}>

@@ -71,7 +71,7 @@ import {connect, ConnectedProps} from "react-redux";
 import {doGetRequest, doPostRequest, doPutRequest} from "../../../../../../utils/baseApi";
 import {getItemFromLocalStorage} from "../../../../../../utils/tools";
 import {getBaseUrl} from "../../../../../../utils/urls";
-import {AccordianCommon} from "../../../../../../components/common/AccordianCommon";
+import Loader from "../../../../../../components/common/Loader";
 import BasicTableMIUI from "../../../../../../components/common/BasicTableMIUI";
 import DeleteIcon from "@material-ui/icons/Delete";
 import IconButton from "@material-ui/core/IconButton";
@@ -100,9 +100,7 @@ export interface PropertiesType {
 }
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
-type CreateDataModelType = PropsFromRedux & {
-    modelName?: string;
-}
+type CreateDataModelType = PropsFromRedux;
 
 const CreateDataModel = (props: CreateDataModelType) => {
 
@@ -138,6 +136,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
     const [properties, setProperties] = useState<PropertiesType[] | null>(null);
 
     const [response, setResponse] = useState<string | ErrorMessagesType[]>('');
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     // to show alerts
     const [isAlertOpen, setIsAlertOpen] = React.useState<boolean>(false);
@@ -168,13 +167,13 @@ const CreateDataModel = (props: CreateDataModelType) => {
 
     const {
         env, CollectionUrl, applicationName, GetCollectionNamesUrl, language,
-        modelName,
     } = props;
 
     async function getData() {
-        if(GetCollectionNamesUrl && modelName) {
+        if(GetCollectionNamesUrl && contentModelName) {
+            setIsLoading(true);
             const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
-            //setIsLoading(true);
+
             const url = GetCollectionNamesUrl
                 .replace(`:${CLIENT_USER_NAME}`, clientUserName ? clientUserName : '')
                 .replace(':env', env)
@@ -182,27 +181,34 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 .replace(`:${APPLICATION_NAME}`,applicationName);
 
             const response = await doGetRequest(
-                `${getBaseUrl()}${url}?name=${modelName ? modelName : ''}`,
+                `${getBaseUrl()}${url}?name=${contentModelName ? contentModelName : ''}`,
                 {},
                 true
             );
             if(response && !response.errors && response.length) {
                 setProperties(JSON.parse(response[0].rules));
-                console.log('properties', JSON.parse(response[0].rules));
+                setContentModelDisplayName(response[0].displayName);
+                setContentModelDescription(response[0].description);
+                setContentModelId(response[0].id);
             }
-            console.log('model res', response);
-            //setIsLoading(false);
+            setIsLoading(false);
         }
     }
 
     useEffect(() => {
         getData();
-    }, [GetCollectionNamesUrl, modelName])
+    }, [GetCollectionNamesUrl, contentModelName])
 
     useEffect(() => {
-        if(modelName) {
-            setContentModelName(modelName);
+        if(contentModelName) {
+            setContentModelName(contentModelName);
 
+        }
+        const urlParams = new URLSearchParams(window.location.search);
+        const Name = urlParams.get('name');
+        if(Name) {
+            setContentModelName(Name);
+            setFieldEditMode(true);
         }
     }, []);
 
@@ -229,7 +235,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
             className: 'create-content-model-name-identifier',
             type: 'text',
             name: NAME,
-            disabled: !!modelName,
+            disabled: !!contentModelName,
             label: 'Name Identifier',
             descriptionText: 'Generated from name (uniquely identify model)',
             inputType: TEXT,
@@ -943,7 +949,10 @@ const CreateDataModel = (props: CreateDataModelType) => {
 
     return (
         <Grid>
-            <h1>Create Model</h1>
+            {
+                isLoading ? <Loader /> :  null
+            }
+            <h1>{fieldEditMode ? 'Edit' : 'Create'} Model</h1>
             <Grid container className="create-model-container">
                 <Grid item className="create-content-model">
 
