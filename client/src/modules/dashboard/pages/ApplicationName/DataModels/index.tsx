@@ -9,7 +9,6 @@ import BasicTableMIUI from "../../../../../components/common/BasicTableMIUI";
 
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
-import {PropertiesType} from "./CreateDataModel";
 import {RootState} from "../../../../../rootReducer";
 import {connect, ConnectedProps} from "react-redux";
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -22,14 +21,6 @@ import {useHistory} from "react-router";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
-interface ModelDataType {
-    modelId: string;
-    modelName: string;
-    modelDescription: string;
-    modelDisplayName: string;
-    modelProperties: PropertiesType[]
-}
-
 const DataModels = (props: PropsFromRedux) => {
     const {applicationName, env, language, GetCollectionNamesUrl, CollectionUrl} = props;
     const [stores, setStores] = useState<any>(null);
@@ -37,7 +28,6 @@ const DataModels = (props: PropsFromRedux) => {
     const [deleteEntryName, setDeleteEntryName] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    const [modelData, setModelData] = useState<ModelDataType | null>(null);
     const history = useHistory();
 
     async function getCollectionNames() {

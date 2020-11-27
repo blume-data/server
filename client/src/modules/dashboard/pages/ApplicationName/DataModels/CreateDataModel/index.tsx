@@ -70,7 +70,7 @@ import {RootState} from "../../../../../../rootReducer";
 import {connect, ConnectedProps} from "react-redux";
 import {doGetRequest, doPostRequest, doPutRequest} from "../../../../../../utils/baseApi";
 import {getItemFromLocalStorage} from "../../../../../../utils/tools";
-import {getBaseUrl} from "../../../../../../utils/urls";
+import {dashboardDataModelsUrl, getBaseUrl} from "../../../../../../utils/urls";
 import Loader from "../../../../../../components/common/Loader";
 import BasicTableMIUI from "../../../../../../components/common/BasicTableMIUI";
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -79,6 +79,7 @@ import Paper from "@material-ui/core/Paper";
 import {Alert} from "../../../../../../components/common/Toast";
 import {AlertDialog} from "../../../../../../components/common/AlertDialog";
 import {CenterTab} from "../../../../../../components/common/CenterTab";
+import {useHistory} from "react-router";
 
 export interface PropertiesType {
     type: string;
@@ -168,6 +169,8 @@ const CreateDataModel = (props: CreateDataModelType) => {
     const {
         env, CollectionUrl, applicationName, GetCollectionNamesUrl, language,
     } = props;
+
+    const history = useHistory();
 
     async function getData() {
         if(GetCollectionNamesUrl && contentModelName) {
@@ -725,8 +728,8 @@ const CreateDataModel = (props: CreateDataModelType) => {
             }
 
             if(response && !response.errors) {
-                // close the modal
-                // redirect back
+                const url = dashboardDataModelsUrl.replace(`:${APPLICATION_NAME}`, applicationName);
+                history.push(url);
             }
             else if(response.errors && response.errors.length) {
                 setIsAlertOpen(true);
