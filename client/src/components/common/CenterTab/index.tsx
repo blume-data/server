@@ -76,7 +76,7 @@ export const CenterTab = (props: CenterTabProps) => {
                 >
                     {
                         headings.map((heading, index) => {
-                            return <Tab label={heading} {...a11yProps(index)} />
+                            return <Tab key={index} label={heading} {...a11yProps(index)} />
                         })
                     }
                 </Tabs>
@@ -90,7 +90,7 @@ export const CenterTab = (props: CenterTabProps) => {
                 {
                     items.map((item, index) => {
                         return (
-                            <TabPanel value={value} index={index} dir={theme.direction}>
+                            <TabPanel key={index} value={value} index={index} dir={theme.direction}>
                                 {item}
                             </TabPanel>
                         );

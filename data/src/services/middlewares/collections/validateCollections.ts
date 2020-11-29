@@ -7,7 +7,6 @@ import {
 } from "../../../Controllers/Messages";
 import {errorStatus} from "@ranjodhbirkaur/common";
 import {
-    DECIMAL_FIELD_TYPE,
     FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN,
     FIELD_CUSTOM_ERROR_MSG_MIN_MAX,
     FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN,
@@ -19,7 +18,7 @@ import {
 import {isValidRegEx} from "../../../util/methods";
 
 function hasSIDType(type: string) {
-    const SID = [INTEGER_FIElD_TYPE, DECIMAL_FIELD_TYPE, SHORT_STRING_FIElD_TYPE];
+    const SID = [INTEGER_FIElD_TYPE, SHORT_STRING_FIElD_TYPE];
     return SID.includes(type);
 }
 

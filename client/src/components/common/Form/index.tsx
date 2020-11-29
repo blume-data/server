@@ -16,7 +16,7 @@ import {
     TIME_FORM_FIELD_TYPE
 } from "./interface";
 import './style.scss';
-import {ErrorMessagesType, FIELD, MESSAGE} from "@ranjodhbirkaur/constants";
+import {ErrorMessagesType, FIELD, MESSAGE, trimCharactersAndNumbers} from "@ranjodhbirkaur/constants";
 import {Alert} from "../Toast";
 import {PLEASE_PROVIDE_VALID_VALUES} from "../../../modules/authentication/pages/Auth/constants";
 import {CommonRadioField} from "./CommonRadioField";
