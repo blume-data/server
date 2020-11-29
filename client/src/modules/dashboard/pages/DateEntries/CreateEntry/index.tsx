@@ -6,7 +6,7 @@ import {getItemFromLocalStorage} from "../../../../../utils/tools";
 import {
     APPLICATION_NAME, BOOLEAN_FIElD_TYPE,
     CLIENT_USER_NAME, DATE_FIElD_TYPE, ErrorMessagesType,
-    INTEGER_FIElD_TYPE, LONG_STRING_FIELD_TYPE,
+    INTEGER_FIElD_TYPE, JSON_FIELD_TYPE, LONG_STRING_FIELD_TYPE,
     SHORT_STRING_FIElD_TYPE
 } from "@ranjodhbirkaur/constants";
 import {doGetRequest, doPostRequest} from "../../../../../utils/baseApi";
@@ -17,7 +17,7 @@ import {
     CHECKBOX,
     ConfigField,
     DATE_FORM_FIELD_TYPE,
-    FORMATTED_TEXT,
+    FORMATTED_TEXT, JSON_TEXT,
     TEXT
 } from "../../../../../components/common/Form/interface";
 import {Form} from "../../../../../components/common/Form";
@@ -91,6 +91,11 @@ const CreateEntry = (props: PropsFromRedux) => {
                 }
                 case BOOLEAN_FIElD_TYPE: {
                     inputType = CHECKBOX;
+                    type = 'text';
+                    break;
+                }
+                case JSON_FIELD_TYPE: {
+                    inputType = JSON_TEXT;
                     type = 'text';
                     break;
                 }

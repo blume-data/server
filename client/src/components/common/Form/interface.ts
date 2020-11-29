@@ -7,7 +7,8 @@ export const DATE_FORM_FIELD_TYPE = 'date';
 export const TIME_FORM_FIELD_TYPE = 'time';
 export const RADIO = 'radio';
 export const CHECKBOX = 'check-box';
-export const FORMATTED_TEXT = 'formatted-text'
+export const FORMATTED_TEXT = 'formatted-text';
+export const JSON_TEXT = 'json';
 
 export interface FormType {
     className: string;

@@ -10,13 +10,13 @@ import {
     DATE_FORM_FIELD_TYPE,
     DROPDOWN,
     FORMATTED_TEXT,
-    FormType,
+    FormType, JSON_TEXT,
     RADIO,
     TEXT,
     TIME_FORM_FIELD_TYPE
 } from "./interface";
 import './style.scss';
-import {ErrorMessagesType, FIELD, MESSAGE, trimCharactersAndNumbers} from "@ranjodhbirkaur/constants";
+import {ErrorMessagesType, IsJsonString, FIELD, JSON_FIELD_TYPE, MESSAGE} from "@ranjodhbirkaur/constants";
 import {Alert} from "../Toast";
 import {PLEASE_PROVIDE_VALID_VALUES} from "../../../modules/authentication/pages/Auth/constants";
 import {CommonRadioField} from "./CommonRadioField";
@@ -26,6 +26,7 @@ import {CommonButton} from "../CommonButton";
 import loadable from "@loadable/component";
 import {DateField} from "./DateField";
 import {VerticalTab, VerticalTabPanel} from "../VerticalTab";
+import {JsonEditor} from "./JsonEditor";
 
 const HtmlEditor = loadable(() => import('../HtmlEditor'));
 
@@ -97,6 +98,11 @@ export const Form = (props: FormType) => {
                             return `${label} should be minimum ${min}`;
                         }
                     }
+                }
+            }
+            if(inputType === JSON_TEXT) {
+                if(!IsJsonString(value)) {
+                    return `${label} is not a valid JSON`;
                 }
             }
 
@@ -331,6 +337,27 @@ export const Form = (props: FormType) => {
                     name={name}
                     error={error}
                     multiline={true}
+                    required={required}
+                    placeholder={placeholder}
+                    helperText={helperText}
+                    onBlur={onBlur}
+                    onChange={onChange}
+                    label={label}
+                    value={value}
+                    id={id}
+                    className={className}
+                />
+            );
+        }
+        if(inputType === JSON_TEXT) {
+            return (
+                <JsonEditor
+                    descriptionText={descriptionText}
+                    disabled={disabled}
+                    type={type}
+                    key={index}
+                    name={name}
+                    error={error}
                     required={required}
                     placeholder={placeholder}
                     helperText={helperText}

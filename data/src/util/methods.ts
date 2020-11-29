@@ -1,8 +1,8 @@
 import { randomBytes } from 'crypto';
-import mongoose, {Schema} from 'mongoose';
+import mongoose from 'mongoose';
 import {storeMongoConnection} from './connections';
 import {RuleType} from "./interface";
-import {BOOLEAN_FIElD_TYPE, DATE_FIElD_TYPE, INTEGER_FIElD_TYPE} from "@ranjodhbirkaur/constants";
+import {BOOLEAN_FIElD_TYPE, DATE_FIElD_TYPE, INTEGER_FIElD_TYPE, JSON_FIELD_TYPE} from "@ranjodhbirkaur/constants";
 import {ENTRY_LANGUAGE_PROPERTY_NAME} from "./constants";
 import {APPLICATION_NAME, CLIENT_USER_NAME} from "@ranjodhbirkaur/common";
 
@@ -71,6 +71,16 @@ export function createModel(params: CreateModelType) {
                     required: !!rule.required,
                 }
             };
+        }
+        else if(rule.type === JSON_FIELD_TYPE) {
+
+            schemaData = {
+                ...schemaData,
+                [rule.name]: {
+                    type: Object,
+                    required: !!rule.required
+                }
+            }
         }
         else {
             schemaData = {

@@ -34,7 +34,7 @@ import {
     hhTimeReg,
     HHTimeRegName,
     HhTimeRegName,
-    INTEGER_FIElD_TYPE,
+    INTEGER_FIElD_TYPE, IsJsonString, JSON_FIELD_TYPE,
     SHORT_STRING_FIElD_TYPE,
     urlReg,
     UrlRegName,
@@ -71,8 +71,7 @@ export async function createStoreRecord(req: Request, res: Response) {
             if (!hasError) {
                 const item = new model(body);
                 await item.save();
-                // close db connection
-                //await model.dbConnection.close();
+
                 res.status(okayStatus).send(item);
 
                 const logBody: ModelLoggerBodyType = {
