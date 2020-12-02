@@ -1009,8 +1009,8 @@ const CreateDataModel = (props: CreateDataModelType) => {
                                         <Looks4Icon />
                                         <Looks5Icon />
                                     </Grid>, INTEGER_FIElD_TYPE )}
-                                    {fieldItem('Date', 'only date, years, months, days', <AccessTimeIcon />, DATE_FIElD_TYPE)}
-                                    {fieldItem('Date and time', 'date with time, days, hours, events', <DateRangeIcon />, DATE_AND_TIME_FIElD_TYPE)}
+                                    {fieldItem('Date', 'only date, years, months, days', <DateRangeIcon />, DATE_FIElD_TYPE)}
+                                    {fieldItem('Date and time', 'date with time, days, hours, events', <AccessTimeIcon />, DATE_AND_TIME_FIElD_TYPE)}
                                     {fieldItem('Location', 'coordinates', <LocationOnIcon />, LOCATION_FIELD_TYPE)}
                                     {fieldItem('Boolean', 'true or false', <ToggleOffIcon />, BOOLEAN_FIElD_TYPE)}
                                     {fieldItem('Json', 'json data', <CodeIcon />, JSON_FIELD_TYPE)}
