@@ -5,7 +5,7 @@ import {connect, ConnectedProps} from "react-redux";
 import {getItemFromLocalStorage} from "../../../../../utils/tools";
 import {
     APPLICATION_NAME, BOOLEAN_FIElD_TYPE,
-    CLIENT_USER_NAME, DATE_FIElD_TYPE, ErrorMessagesType,
+    CLIENT_USER_NAME, DATE_AND_TIME_FIElD_TYPE, DATE_FIElD_TYPE, ErrorMessagesType,
     INTEGER_FIElD_TYPE, JSON_FIELD_TYPE, LONG_STRING_FIELD_TYPE,
     SHORT_STRING_FIElD_TYPE
 } from "@ranjodhbirkaur/constants";
@@ -17,7 +17,7 @@ import {
     CHECKBOX,
     ConfigField,
     DATE_FORM_FIELD_TYPE,
-    FORMATTED_TEXT, JSON_TEXT,
+    FORMATTED_TEXT, JSON_TEXT, ONLY_DATE_FORM_FIELD_TYPE,
     TEXT
 } from "../../../../../components/common/Form/interface";
 import {Form} from "../../../../../components/common/Form";
@@ -85,8 +85,13 @@ const CreateEntry = (props: PropsFromRedux) => {
                     break;
                 }
                 case DATE_FIElD_TYPE: {
-                    inputType = DATE_FORM_FIELD_TYPE;
-                    type = 'date';
+                    inputType = ONLY_DATE_FORM_FIELD_TYPE;
+                    type = ONLY_DATE_FORM_FIELD_TYPE;
+                    break;
+                }
+                case DATE_AND_TIME_FIElD_TYPE: {
+                    inputType = DATE_FIElD_TYPE;
+                    type = DATE_FIElD_TYPE;
                     break;
                 }
                 case BOOLEAN_FIElD_TYPE: {

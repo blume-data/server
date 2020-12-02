@@ -13,7 +13,7 @@ import {
     FormType, JSON_TEXT,
     RADIO,
     TEXT,
-    TIME_FORM_FIELD_TYPE
+    ONLY_DATE_FORM_FIELD_TYPE
 } from "./interface";
 import './style.scss';
 import {ErrorMessagesType, IsJsonString, FIELD, JSON_FIELD_TYPE, MESSAGE} from "@ranjodhbirkaur/constants";
@@ -245,11 +245,11 @@ export const Form = (props: FormType) => {
         const error = hasError(label);
 
 
-        if(inputType === TIME_FORM_FIELD_TYPE) {
+        if(inputType === ONLY_DATE_FORM_FIELD_TYPE) {
             return (
-                <TextBox
+                <DateField
                     descriptionText={descriptionText}
-                    type={'time'}
+                    type={ONLY_DATE_FORM_FIELD_TYPE}
                     key={index}
                     name={name}
                     disabled={disabled}
@@ -257,12 +257,13 @@ export const Form = (props: FormType) => {
                     required={required}
                     placeholder={placeholder}
                     helperText={helperText}
-                    onChange={onChange}
+                    onChange={(value: any) => {changeValue({target: {value}}, label, SET_VALUE_ACTION)}}
                     onBlur={onBlur}
                     label={label}
                     id={id}
                     value={value}
-                    className={className} />
+                    className={className}
+                />
             );
         }
         if(inputType === DATE_FORM_FIELD_TYPE) {
@@ -270,7 +271,7 @@ export const Form = (props: FormType) => {
             return (
                 <DateField
                     descriptionText={descriptionText}
-                    type={'date'}
+                    type={DATE_FORM_FIELD_TYPE}
                     key={index}
                     name={name}
                     disabled={disabled}

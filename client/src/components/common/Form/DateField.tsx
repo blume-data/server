@@ -1,6 +1,6 @@
 import React, {ChangeEvent, useEffect, useState} from "react";
 import {Grid} from "@material-ui/core";
-import {FieldType} from "./interface";
+import {FieldType, ONLY_DATE_FORM_FIELD_TYPE} from "./interface";
 
 import {SearchMenuList} from "../SearchMenuList";
 import {validMomentTimezones} from "@ranjodhbirkaur/constants";
@@ -20,7 +20,7 @@ interface DateFieldType extends FieldType{
 }
 
 export const DateField = (props: DateFieldType) => {
-    const {id, className, label, required=false, name,
+    const {id, className, label, required=false, name, type,
         onBlur, helperText, disabled=false, descriptionText='',
         onChange, error=false, value='', placeholder=''} = props;
 
@@ -70,32 +70,35 @@ export const DateField = (props: DateFieldType) => {
     };
 
     return (
-        <Grid className={'date-field'}>
+        <Grid id={id ? id : ''} className={`date-field ${className ? className : ''}`}>
 
-            <h3>Timestamp value: {finalValue}</h3>
+            <h3>{label}: {finalValue}</h3>
 
             <MuiPickersUtilsProvider utils={DateFnsUtils}>
                 <Grid container justify="space-around" direction={"column"}>
                     <KeyboardDatePicker
                         margin="normal"
                         id="date-picker-dialog"
-                        label="Date picker dialog"
+                        label="Date"
                         format="MM/dd/yyyy"
                         value={selectedDate}
                         onChange={handleDateChange}
                         KeyboardButtonProps={{
                             'aria-label': 'change date',
                         }}
+                        disabled={disabled}
                     />
                     <KeyboardTimePicker
+                        disabled={disabled}
                         margin="normal"
                         id="time-picker"
-                        label="Time picker"
+                        label="Time"
                         value={selectedDate}
                         onChange={handleDateChange}
                         KeyboardButtonProps={{
                             'aria-label': 'change time',
                         }}
+                        style={{display: `${type === ONLY_DATE_FORM_FIELD_TYPE ? 'none' : 'block' }`}}
                     />
                     <Grid>
                         <SearchMenuList
@@ -111,7 +114,6 @@ export const DateField = (props: DateFieldType) => {
                     </Grid>
                 </Grid>
             </MuiPickersUtilsProvider>
-
 
         </Grid>
     );

@@ -6,13 +6,12 @@ import {
     ConfigField, DATE_FORM_FIELD_TYPE,
     DROPDOWN,
     FORMATTED_TEXT,
-    TEXT, TIME_FORM_FIELD_TYPE
+    TEXT, ONLY_DATE_FORM_FIELD_TYPE
 } from "../../../../../../components/common/Form/interface";
 import {
     BOOLEAN_FIElD_TYPE,
     CLIENT_USER_NAME,
     DATE_FIElD_TYPE,
-    DECIMAL_FIELD_TYPE,
     DESCRIPTION,
     DISPLAY_NAME,
     ErrorMessagesType,
@@ -49,7 +48,7 @@ import {
     HHTimeReg,
     usPhoneReg,
     usZipReg,
-    TIME_FIElD_TYPE, APPLICATION_NAME
+    APPLICATION_NAME, DATE_AND_TIME_FIElD_TYPE
 } from "@ranjodhbirkaur/constants";
 import TextFieldsIcon from '@material-ui/icons/TextFields';
 import './style.scss';
@@ -418,7 +417,12 @@ const CreateDataModel = (props: CreateDataModelType) => {
         if(fieldType !== REFERENCE_FIELD_TYPE && fieldType !== JSON_FIELD_TYPE) {
             let inputType = '';
             let placeholder = 'Default value';
+            let type = 'string';
             switch (fieldType) {
+                case INTEGER_FIElD_TYPE:{
+                    type = 'number';
+                    break;
+                }
                 case LONG_STRING_FIELD_TYPE: {
                     inputType = FORMATTED_TEXT;
                     break;
@@ -428,14 +432,16 @@ const CreateDataModel = (props: CreateDataModelType) => {
                     placeholder = 'true';
                     break;
                 }
-                case DATE_FIElD_TYPE: {
+                case DATE_AND_TIME_FIElD_TYPE: {
                     inputType = DATE_FORM_FIELD_TYPE;
-                    placeholder = '';
+                    placeholder = 'Default Date';
+                    type = DATE_AND_TIME_FIElD_TYPE;
                     break;
                 }
-                case TIME_FIElD_TYPE: {
-                    inputType = TIME_FORM_FIELD_TYPE;
-                    placeholder = '';
+                case DATE_FIElD_TYPE: {
+                    inputType = ONLY_DATE_FORM_FIELD_TYPE;
+                    placeholder = 'Default Date';
+                    type = ONLY_DATE_FORM_FIELD_TYPE
                     break;
                 }
                 default: {
@@ -450,7 +456,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 className: '',
                 name: 'default',
                 label: placeholder,
-                type: fieldType === INTEGER_FIElD_TYPE || fieldType === DECIMAL_FIELD_TYPE ? 'number' : 'text',
+                type,
                 inputType,
                 descriptionText: 'Default value if the field is left blank',
                 groupName: FIELD_DEFAULT_VALUE_GROUP
@@ -458,7 +464,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
         }
 
         // Min max and only allowed values
-        if(fieldType === SHORT_STRING_FIElD_TYPE || fieldType === INTEGER_FIElD_TYPE || fieldType === DECIMAL_FIELD_TYPE) {
+        if(fieldType === SHORT_STRING_FIElD_TYPE || fieldType === INTEGER_FIElD_TYPE) {
             // Max count
             hello.push({
                 required: false,
@@ -862,7 +868,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                     setFieldDefaultValue(property.default || '');
                 }
 
-                if(property.type === SHORT_STRING_FIElD_TYPE || property.type === INTEGER_FIElD_TYPE || property.type === DECIMAL_FIELD_TYPE) {
+                if(property.type === SHORT_STRING_FIElD_TYPE || property.type === INTEGER_FIElD_TYPE) {
                     setFieldMax(property.max || '');
                     setFieldMin(property.min || '');
                     setFieldMinMaxCustomErrorMessage(property[FIELD_CUSTOM_ERROR_MSG_MIN_MAX] || '');
@@ -1003,8 +1009,8 @@ const CreateDataModel = (props: CreateDataModelType) => {
                                         <Looks4Icon />
                                         <Looks5Icon />
                                     </Grid>, INTEGER_FIElD_TYPE )}
-                                    {fieldItem('Time', 'time', <AccessTimeIcon />, TIME_FORM_FIELD_TYPE)}
-                                    {fieldItem('Date and time', 'time, date, days, events', <DateRangeIcon />, DATE_FIElD_TYPE)}
+                                    {fieldItem('Date', 'only date, years, months, days', <AccessTimeIcon />, DATE_FIElD_TYPE)}
+                                    {fieldItem('Date and time', 'date with time, days, hours, events', <DateRangeIcon />, DATE_AND_TIME_FIElD_TYPE)}
                                     {fieldItem('Location', 'coordinates', <LocationOnIcon />, LOCATION_FIELD_TYPE)}
                                     {fieldItem('Boolean', 'true or false', <ToggleOffIcon />, BOOLEAN_FIElD_TYPE)}
                                     {fieldItem('Json', 'json data', <CodeIcon />, JSON_FIELD_TYPE)}
