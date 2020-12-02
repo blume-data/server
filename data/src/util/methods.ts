@@ -2,7 +2,13 @@ import { randomBytes } from 'crypto';
 import mongoose from 'mongoose';
 import {storeMongoConnection} from './connections';
 import {RuleType} from "./interface";
-import {BOOLEAN_FIElD_TYPE, DATE_FIElD_TYPE, INTEGER_FIElD_TYPE, JSON_FIELD_TYPE} from "@ranjodhbirkaur/constants";
+import {
+    BOOLEAN_FIElD_TYPE,
+    DATE_AND_TIME_FIElD_TYPE,
+    DATE_FIElD_TYPE,
+    INTEGER_FIElD_TYPE,
+    JSON_FIELD_TYPE
+} from "@ranjodhbirkaur/constants";
 import {ENTRY_LANGUAGE_PROPERTY_NAME} from "./constants";
 import {APPLICATION_NAME, CLIENT_USER_NAME} from "@ranjodhbirkaur/common";
 
@@ -63,7 +69,7 @@ export function createModel(params: CreateModelType) {
                 }
             };
         }
-        else if(rule.type === DATE_FIElD_TYPE) {
+        else if(rule.type === DATE_FIElD_TYPE || rule.type === DATE_AND_TIME_FIElD_TYPE) {
             schemaData = {
                 ...schemaData,
                 [rule.name]: {

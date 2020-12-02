@@ -18,7 +18,7 @@ import {Model} from "mongoose";
 import {DateTime} from 'luxon';
 import {writeRanjodhBirData} from "../util/databaseApi";
 import {
-    BOOLEAN_FIElD_TYPE,
+    BOOLEAN_FIElD_TYPE, DATE_AND_TIME_FIElD_TYPE,
     DATE_FIElD_TYPE,
     dateEuropeReg,
     DateEuropeRegName,
@@ -291,6 +291,30 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
         }
     }
 
+    function checkForDate(rule: RuleType) {
+        if (typeof reqBody[rule.name] !== 'string') {
+            isValid = false;
+            errorMessages.push({
+                field: rule.name,
+                message: `${rule.name} should be of type string`
+            });
+        }
+        else {
+            // validate date
+            const luxonTime = DateTime.fromISO(reqBody[rule.name]).setZone('UCT');
+            if(luxonTime.invalidReason) {
+                isValid = false;
+                errorMessages.push({
+                    field: rule.name,
+                    message: `${rule.name} is not a valid date`
+                });
+            }
+            else {
+                reqBody[rule.name] = DateTime.fromISO(reqBody[rule.name]).setZone('UTC').toJSDate();
+            }
+        }
+    }
+
     rules.forEach((rule) => {
         // check for required params
         if (((reqBody[rule.name] === undefined || reqBody[rule.name] === null)  && rule.required)) {
@@ -399,27 +423,11 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
                     break;
                 }
                 case DATE_FIElD_TYPE: {
-                    if (typeof reqBody[rule.name] !== 'string') {
-                        isValid = false;
-                        errorMessages.push({
-                            field: rule.name,
-                            message: `${rule.name} should be of type string`
-                        });
-                    }
-                    else {
-                        // validate date
-                        const luxonTime = DateTime.fromISO(reqBody[rule.name]).setZone('UCT');
-                        if(luxonTime.invalidReason) {
-                            isValid = false;
-                            errorMessages.push({
-                                field: rule.name,
-                                message: `${rule.name} is not a valid date`
-                            });
-                        }
-                        else {
-                            reqBody[rule.name] = DateTime.fromISO(reqBody[rule.name]).setZone('UTC').toJSDate();
-                        }
-                    }
+                    checkForDate(rule);
+                    break;
+                }
+                case DATE_AND_TIME_FIElD_TYPE: {
+                    checkForDate(rule);
                     break;
                 }
                 case 'html': {
