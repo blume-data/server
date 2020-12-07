@@ -24,3 +24,5 @@ export const dashboardDataEntriesUrl = '/dashboard/:applicationName/entries/:mod
 export const dashboardCreateDataEntryUrl = '/dashboard/:applicationName/create-entry/:modelName';
 
 export const authUrl = '/auth';
+
+export const assetsUrl = '/assets';
