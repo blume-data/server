@@ -1,8 +1,10 @@
 import {Router} from 'express';
-import {AssetsGetAssetsUrl, AssetsGetSignedUrl, AssetsRoutesUrl} from "../utils/urls";
-import {getAssets, getSignedUrl, getAssetsRoutes} from "../Controllers/assets";
+import {AssetsFetchAssetUrl, AssetsGetAssetsUrl, AssetsGetSignedUrl, AssetsRoutesUrl} from "../utils/urls";
+import {getAssets, getSignedUrl, getAssetsRoutes, fetchAsset} from "../Controllers/assets";
 
 const router = Router();
+
+router.get(AssetsFetchAssetUrl, fetchAsset);
 
 router.get(AssetsRoutesUrl, getAssetsRoutes);
 

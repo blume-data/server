@@ -37,12 +37,13 @@ export const AssetsComponent = (props: PropsFromRedux) => {
             }
         };
         const url = response && response.data && response.data.url;
-        const awsREsp = await axios.put(url, file[0], config);
-        console.log('dsfs', awsREsp);
+        const awsREsp = await axios.put(url, file, config);
+        console.log('awsResp', awsREsp);
     }
 
     return (
         <div>
+            <img src="https://dev.ranjod.com/assets/fetch?name=c3486564-Mobile.PNG" alt=""/>
             <Input onChange={onChangeFile} type="file"/>
         </div>
     );
