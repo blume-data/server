@@ -1,8 +1,28 @@
-import React from "react";
+import React, {useEffect} from "react";
 import {getBaseUrl} from "../../utils/urls";
+import {Input} from '@material-ui/core';
 import axios from 'axios';
+import {doGetRequest} from "../../utils/baseApi";
+import {connect, ConnectedProps} from "react-redux";
+import {RootState} from "../../rootReducer";
 
-export const Assets = () => {
+type PropsFromRedux = ConnectedProps<typeof connector>;
+export const AssetsComponent = (props: PropsFromRedux) => {
+
+    const {assetsUrls} = props;
+
+    // Fetch Assets
+    async function fetchAssets() {
+        if(assetsUrls){
+            const response = await doGetRequest(`${getBaseUrl()}${assetsUrls}`, null);
+            console.log('res', response);
+        }
+
+    }
+    // fetch assets
+    useEffect(() => {
+        fetchAssets();
+    }, [assetsUrls]);
 
     async function onChangeFile(e: any) {
         const file = e.target.files[0];
@@ -23,7 +43,16 @@ export const Assets = () => {
 
     return (
         <div>
-            <input onChange={onChangeFile} type="file"/>
+            <Input onChange={onChangeFile} type="file"/>
         </div>
     );
 }
+
+const mapState = (state: RootState) => {
+    return {
+        assetsUrls: state.routeAddress.routes.assets?.getAssets
+    }
+};
+
+const connector = connect(mapState);
+export const Assets = connector(AssetsComponent);

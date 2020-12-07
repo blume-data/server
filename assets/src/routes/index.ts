@@ -1,50 +1,16 @@
-import {Router, Response, Request} from 'express';
-import AWS from 'aws-sdk';
-import {accessKeyId, secretAccessKey, AwsBucketName, AwsRegionCode, AwsImageRootUrl} from '../config';
-import {okayStatus, RANDOM_STRING} from "@ranjodhbirkaur/common";
-import {FileModel} from "../models/file-models";
-
-const s3 = new AWS.S3({
-    accessKeyId,
-    secretAccessKey,
-    region: AwsRegionCode,
-    endpoint: `s3-${AwsRegionCode}.amazonaws.com`,
-    signatureVersion: 'v4',
-})
+import {Router} from 'express';
+import {AssetsGetAssetsUrl, AssetsGetSignedUrl, AssetsRoutesUrl} from "../utils/urls";
+import {getAssets, getSignedUrl, getAssetsRoutes} from "../Controllers/assets";
 
 const router = Router();
 
+router.get(AssetsRoutesUrl, getAssetsRoutes);
 
-router.post('/assets/get-signed-url', async (req: Request, res: Response) => {
+router.get(AssetsGetAssetsUrl, getAssets);
 
-    const {ContentType = 'image', name} = req.body;
-    const imageName = `${RANDOM_STRING()}-${name}`;
+router.post(AssetsGetSignedUrl, getSignedUrl);
 
-    s3.getSignedUrl('putObject', {
-        Bucket: AwsBucketName,
-        ContentType,
-        Key: imageName,
-    }, async (err, url) => {
-
-        const imageUrl = `${AwsImageRootUrl}${imageName}`;
-
-        const newFile = FileModel.build({
-            url: imageUrl,
-            name
-        });
-
-        await newFile.save();
-
-        res.send({
-            url,
-            imageUrl
-        });
-    });
-
-    console.log('working');
-});
-
-router.put('/assets/upload-image', async (req: Request, res: Response) => {
+/*router.put('/assets/upload-image', async (req: Request, res: Response) => {
 
     const body = req.files;
     console.log('body', body);
@@ -66,6 +32,6 @@ router.put('/assets/upload-image', async (req: Request, res: Response) => {
     res.status(okayStatus).send({
         link: 'https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png'
     });
-});
+});*/
 
-export {router as uploadRoutes};
+export {router as assetsRoutes};

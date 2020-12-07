@@ -4,7 +4,7 @@ import {authenticationReducer} from "./modules/authentication/pages/Auth/authent
 
 export const rootReducer = combineReducers({
     routeAddress: routeAddressReducer,
-    authentication: authenticationReducer
+    authentication: authenticationReducer,
 });
 
 export type RouteAddressStateType = ReturnType<typeof routeAddressReducer>;

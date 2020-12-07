@@ -1,8 +1,8 @@
 import {errorHandler, NotFoundError, serverApp} from '@ranjodhbirkaur/common';
-import {uploadRoutes} from './routes';
+import {assetsRoutes} from './routes';
 import fileUpload from "express-fileupload";
 
-serverApp.use(uploadRoutes);
+serverApp.use(assetsRoutes);
 
 serverApp.use(fileUpload({
   useTempFiles : true,

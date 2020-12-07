@@ -4,6 +4,10 @@ export function getBaseUrl() {
     return ROOT_URL;
 }
 
+export function getAssetsRoutes() {
+    return `${getBaseUrl()}/assets/routes`;
+}
+
 export function getAuthRoutes() {
     return `${getBaseUrl()}/auth/routes/`;
 }
