@@ -9,12 +9,11 @@ export async function fetchAsset(req: Request, res: Response) {
 
     const {name = 'some-name'} = req.query;
     if(name) {
-        console.log('body', name);
         const fileName = `${name}`;
         const asset = await FileModel.findOne({
             name: fileName
         }, ['name']);
-        if(asset && asset.url) {
+        if(asset && asset.name) {
             const options = {
                 Bucket: AwsBucketName,
                 Key: fileName
@@ -47,33 +46,21 @@ export async function getAssets(req: Request, res: Response) {
 
 export async function getSignedUrl(req: Request, res: Response) {
     const {ContentType = 'image', name} = req.body;
-    const imageName = `${RANDOM_STRING()}-${name}`;
+    const imageName = `${RANDOM_STRING(10)}-${name}`;
 
-    const exist = await FileModel.findOne({
-        name
-    }, ['name']);
-
-    if(exist) {
-        sendSingleError(res, 'Image with same name already exist');
-    }
-    else {
-        s3.getSignedUrl('putObject', {
-            Bucket: AwsBucketName,
-            ContentType,
-            Key: imageName,
-        }, async (err, url) => {
-
-            const imageUrl = `${AwsImageRootUrl}${imageName}`;
-            const newFile = FileModel.build({
-                url: imageUrl,
-                name: imageName
-            });
-            await newFile.save();
-            res.send({
-                url,
-                imageUrl
-            });
+    s3.getSignedUrl('putObject', {
+        Bucket: AwsBucketName,
+        ContentType,
+        Key: imageName,
+    }, async (err, url) => {
+        const imageUrl = `${AwsImageRootUrl}${imageName}`;
+        const newFile = FileModel.build({
+            url: imageUrl,
+            name: imageName
         });
-
-    }
+        await newFile.save();
+        res.send({
+            url
+        });
+    });
 }
