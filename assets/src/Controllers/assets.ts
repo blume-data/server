@@ -1,21 +1,9 @@
 import {Response, Request} from 'express';
 import {okayStatus, RANDOM_STRING, sendSingleError} from "@ranjodhbirkaur/common";
-import httpProxy from 'http-proxy';
 import {FileModel} from "../models/file-models";
 import {s3} from "../utils/methods";
 import {AwsBucketName, AwsImageRootUrl} from "../config";
 import {AssetsGetAssetsUrl, AssetsGetSignedUrl} from "../utils/urls";
-
-const proxy = httpProxy.createProxyServer({
-    secure: false,
-    changeOrigin: true,
-    xfwd: true,
-});
-
-// on Error
-proxy.on('error', function(e) {
-    console.log('Error in proxy server', e);
-});
 
 export async function fetchAsset(req: Request, res: Response) {
 
