@@ -18,6 +18,9 @@ spec:
           env:
             - name: MONGO_URI
               value: 'mongodb+srv://all:all@cluster0.a6c0l.mongodb.net/assets?retryWrites=true&w=majority'
+            - name: MONGO_URI_AUTH
+              value: 'mongodb+srv://all:all@cluster0.a6c0l.mongodb.net/auth?retryWrites=true&w=majority'
+              #value: 'mongodb://auth-mongo-srv:27017/authentication'
             - name: JWT_KEY
               valueFrom:
                 secretKeyRef:

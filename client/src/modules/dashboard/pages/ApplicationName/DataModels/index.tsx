@@ -87,10 +87,6 @@ const DataModels = (props: PropsFromRedux) => {
         {name: 'Delete', value: 'delete', onClick: true}
     ]
 
-    async function handleFileChange(e: any) {
-        console.log('e', e.target.files);
-    }
-
     async function onClickConfirmDeleteModel(modelName: string) {
 
         if(CollectionUrl) {
@@ -127,7 +123,6 @@ const DataModels = (props: PropsFromRedux) => {
             <Grid className={'filter-section'} container justify={"space-between"}>
                 <Grid item>
                     <TextField id="filter-stores" label="Filter" />
-                    <input type="file" onChange={handleFileChange} />
                 </Grid>
                 <Grid item className={'add-store-button'}>
                     {/*open model and clear model data*/}

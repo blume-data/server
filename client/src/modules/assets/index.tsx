@@ -2,19 +2,25 @@ import React, {useEffect} from "react";
 import {getBaseUrl} from "../../utils/urls";
 import {Input} from '@material-ui/core';
 import axios from 'axios';
-import {doGetRequest} from "../../utils/baseApi";
+import {doGetRequest, doPostRequest} from "../../utils/baseApi";
 import {connect, ConnectedProps} from "react-redux";
 import {RootState} from "../../rootReducer";
+import {CLIENT_USER_NAME} from "@ranjodhbirkaur/constants";
+import {getItemFromLocalStorage} from "../../utils/tools";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 export const AssetsComponent = (props: PropsFromRedux) => {
 
     const {assetsUrls} = props;
 
+    console.log('asdf', assetsUrls);
+
     // Fetch Assets
     async function fetchAssets() {
-        if(assetsUrls){
-            const response = await doGetRequest(`${getBaseUrl()}${assetsUrls}`, null);
+        const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
+        if(assetsUrls && clientUserName){
+            const url = assetsUrls.replace(`:${CLIENT_USER_NAME}`, clientUserName);
+            const response = await doGetRequest(`${getBaseUrl()}${url}`, null, true);
             console.log('res', response);
         }
 
@@ -27,10 +33,10 @@ export const AssetsComponent = (props: PropsFromRedux) => {
     async function onChangeFile(e: any) {
         const file = e.target.files[0];
         const fileType = file.type;
-        const response = await axios.post(`${getBaseUrl()}/assets/get-signed-url`, {
+        const response = await doPostRequest(`${getBaseUrl()}/assets/get-signed-url`, {
             ContentType: file.type,
             name: file.name
-        });
+        }, true);
         const config = {
             headers: {
                 'Content-Type': fileType
@@ -43,7 +49,6 @@ export const AssetsComponent = (props: PropsFromRedux) => {
 
     return (
         <div>
-            <img src="https://dev.ranjod.com/assets/fetch?name=c3486564-Mobile.PNG" alt=""/>
             <Input onChange={onChangeFile} type="file"/>
         </div>
     );

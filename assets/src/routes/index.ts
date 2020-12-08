@@ -1,16 +1,17 @@
 import {Router} from 'express';
 import {AssetsFetchAssetUrl, AssetsGetAssetsUrl, AssetsGetSignedUrl, AssetsRoutesUrl} from "../utils/urls";
 import {getAssets, getSignedUrl, getAssetsRoutes, fetchAsset} from "../Controllers/assets";
+import {checkAuth} from "../middleware/checkAuth";
 
 const router = Router();
 
-router.get(AssetsFetchAssetUrl, fetchAsset);
-
 router.get(AssetsRoutesUrl, getAssetsRoutes);
 
-router.get(AssetsGetAssetsUrl, getAssets);
+router.get(AssetsFetchAssetUrl, fetchAsset);
 
-router.post(AssetsGetSignedUrl, getSignedUrl);
+router.get(AssetsGetAssetsUrl, checkAuth, getAssets);
+
+router.post(AssetsGetSignedUrl, checkAuth, getSignedUrl);
 
 /*router.put('/assets/upload-image', async (req: Request, res: Response) => {
 

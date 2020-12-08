@@ -35,12 +35,12 @@ export async function getAssetsRoutes(req: Request, res: Response) {
     res.status(okayStatus).send({
         getSignedUrl: AssetsGetSignedUrl,
         getAssets: AssetsGetAssetsUrl
-    })
+    });
 }
 
 export async function getAssets(req: Request, res: Response) {
 
-    const assets = await FileModel.find({});
+    const assets = await FileModel.find({}).skip(0).limit(10);
     res.status(okayStatus).send(assets);
 }
 

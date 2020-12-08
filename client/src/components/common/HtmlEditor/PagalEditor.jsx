@@ -7,6 +7,7 @@ import 'froala-editor/js/plugins.pkgd.min.js';
 import FroalaEditor from 'react-froala-wysiwyg';
 
 import './style.scss';
+import Paper from "@material-ui/core/Paper";
 
 
 export const PagalEditor = ({value, setValue, placeholder = 'Edit Your Content Here!'}) => {
@@ -95,15 +96,27 @@ export const PagalEditor = ({value, setValue, placeholder = 'Edit Your Content H
         events: {
             "image.beforeUpload": function(files) {
                 const editor = this;
+                let isValid = true;
                 if (files.length) {
                     const reader = new FileReader();
                     reader.onload = function(e) {
-                        const result = e.target.result;
-                        editor.image.insert(result, null, null, editor.image.get());
+                        if(e.total > 10000) {
+                            isValid = false;
+                            alert('Please do not upload image more than 10kb, instead use image links');
+                        }
+                        else {
+                            const result = e.target.result;
+                            console.log('total size', e.total);
+                            editor.image.insert(result, null, null, editor.image.get());
+                        }
                     };
-                    reader.readAsDataURL(files[0]);
+                    if(isValid) {
+                        reader.readAsDataURL(files[0]);
+                    }
                 }
-                editor.popups.hideAll();
+                if(isValid) {
+                    editor.popups.hideAll();
+                }
                 return false;
             }
         }
@@ -111,13 +124,14 @@ export const PagalEditor = ({value, setValue, placeholder = 'Edit Your Content H
 
     return(
         <div className={'text-editor field input-text-component'}>
-            <div className="control">
+            <Paper elevation={3} className="control">
                 <FroalaEditor
                     config={config}
                     model={value}
                     onModelChange={handleChange}
-                    tag='textarea' />
-            </div>
+                    tag='textarea'
+                />
+            </Paper>
         </div>
     );
 };

@@ -16,6 +16,7 @@ function setLoading(status: boolean, dispatch: Dispatch) {
 
 export const fetchAssetsRouteAddress = (): AppThunk => async (dispatch: ThunkDispatch<any, any, AnyAction>) => {
     const response = await doGetRequest(getAssetsRoutes(), {}, false);
+    console.log('res', response);
     if (response && !response.errors) {
         dispatch({
             type: ACTION_FETCH_ASSETS_ADDRESS_ROUTES,
