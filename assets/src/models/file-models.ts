@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose, {Schema} from 'mongoose';
 
 interface FileAttrs {
     clientUserName: string;
@@ -6,6 +6,7 @@ interface FileAttrs {
     isVerified: boolean;
     type: string;
     url: string;
+    createdBy: string;
 }
 
 interface FileModelType extends mongoose.Model<FileDoc> {
@@ -18,6 +19,7 @@ interface FileDoc extends mongoose.Document {
     isVerified: boolean;
     type: string;
     url: string;
+    createdBy: string;
 }
 
 const File = new mongoose.Schema(
@@ -40,6 +42,11 @@ const File = new mongoose.Schema(
         },
         type: {
             type: String,
+            required: true
+        },
+        createdBy: {
+            type: Schema.Types.ObjectId,
+            ref: 'ClientUser',
             required: true
         }
     },

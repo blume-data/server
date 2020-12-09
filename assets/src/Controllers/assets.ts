@@ -3,7 +3,7 @@ import {CLIENT_USER_NAME, okayStatus, RANDOM_STRING, sendSingleError} from "@ran
 import {FileModel} from "../models/file-models";
 import {s3} from "../utils/methods";
 import {AwsBucketName, AwsImageRootUrl} from "../config";
-import {AssetsGetAssetsUrl, AssetsGetSignedUrl} from "../utils/urls";
+import {AssetsGetAssetsUrl, AssetsGetSignedUrl, AssetsVerifyUrl} from "../utils/urls";
 
 export async function fetchAsset(req: Request, res: Response) {
 
@@ -34,7 +34,8 @@ export async function fetchAsset(req: Request, res: Response) {
 export async function getAssetsRoutes(req: Request, res: Response) {
     res.status(okayStatus).send({
         getSignedUrl: AssetsGetSignedUrl,
-        getAssets: AssetsGetAssetsUrl
+        getAssets: AssetsGetAssetsUrl,
+        verifyAssets: AssetsVerifyUrl
     });
 }
 
@@ -48,6 +49,7 @@ export async function getSignedUrl(req: Request, res: Response) {
     const {ContentType = 'image', name} = req.body;
     const clientUserName = req.params[CLIENT_USER_NAME];
     const fileName = `${RANDOM_STRING(10)}-${name}`;
+    const currentUser = req.currentUser;
 
     s3.getSignedUrl('putObject', {
         Bucket: AwsBucketName,
@@ -60,11 +62,24 @@ export async function getSignedUrl(req: Request, res: Response) {
             type: ContentType,
             clientUserName,
             isVerified: false,
+            createdBy: currentUser.id ? currentUser.id : '',
             url: fileUrl
         });
         await newFile.save();
-        res.send({
-            url
-        });
+        res.send({url, fileName});
     });
+}
+
+export async function verifyAssets(req: Request, res: Response) {
+    const {fileName} = req.query;
+    const clientUserName = req.params[CLIENT_USER_NAME];
+
+    await FileModel.update({
+        fileName: `${fileName}`,
+        clientUserName
+
+    }, {isVerified: true});
+
+    res.status(okayStatus).send(true);
+
 }
