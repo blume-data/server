@@ -17,7 +17,7 @@ spec:
           image: taranjeetsingh/auth
           env:
             - name: MONGO_URI
-              value: 'mongodb+srv://all:all@cluster0.a6c0l.mongodb.net/auth?retryWrites=true&w=majority'
+              value: 'mongodb+srv://all:all@cluster0.a6c0l.mongodb.net/ranjodh?retryWrites=true&w=majority'
             - name: JWT_KEY
               valueFrom:
                 secretKeyRef:

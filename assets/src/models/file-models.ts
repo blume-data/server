@@ -1,8 +1,11 @@
 import mongoose from 'mongoose';
 
 interface FileAttrs {
+    clientUserName: string;
+    fileName: string; //unique
+    isVerified: boolean;
+    type: string;
     url: string;
-    name: string;
 }
 
 interface FileModelType extends mongoose.Model<FileDoc> {
@@ -10,17 +13,32 @@ interface FileModelType extends mongoose.Model<FileDoc> {
 }
 
 interface FileDoc extends mongoose.Document {
+    clientUserName: string;
+    fileName: string; //unique
+    isVerified: boolean;
+    type: string;
     url: string;
-    name: string;
 }
 
 const File = new mongoose.Schema(
     {
-        name: {
+        url: {
             type: String,
             required: true
         },
-        url: {
+        clientUserName: {
+            type: String,
+            required: true
+        },
+        fileName: {
+            type: String,
+            required: true
+        },
+        isVerified: {
+            type: Boolean,
+            default: false
+        },
+        type: {
             type: String,
             required: true
         }

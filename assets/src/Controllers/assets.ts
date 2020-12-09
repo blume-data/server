@@ -1,5 +1,5 @@
 import {Response, Request} from 'express';
-import {okayStatus, RANDOM_STRING, sendSingleError} from "@ranjodhbirkaur/common";
+import {CLIENT_USER_NAME, okayStatus, RANDOM_STRING, sendSingleError} from "@ranjodhbirkaur/common";
 import {FileModel} from "../models/file-models";
 import {s3} from "../utils/methods";
 import {AwsBucketName, AwsImageRootUrl} from "../config";
@@ -11,9 +11,9 @@ export async function fetchAsset(req: Request, res: Response) {
     if(name) {
         const fileName = `${name}`;
         const asset = await FileModel.findOne({
-            name: fileName
-        }, ['name']);
-        if(asset && asset.name) {
+            fileName
+        }, ['url']);
+        if(asset && asset.url) {
             const options = {
                 Bucket: AwsBucketName,
                 Key: fileName
@@ -46,17 +46,21 @@ export async function getAssets(req: Request, res: Response) {
 
 export async function getSignedUrl(req: Request, res: Response) {
     const {ContentType = 'image', name} = req.body;
-    const imageName = `${RANDOM_STRING(10)}-${name}`;
+    const clientUserName = req.params[CLIENT_USER_NAME];
+    const fileName = `${RANDOM_STRING(10)}-${name}`;
 
     s3.getSignedUrl('putObject', {
         Bucket: AwsBucketName,
         ContentType,
-        Key: imageName,
+        Key: fileName,
     }, async (err, url) => {
-        const imageUrl = `${AwsImageRootUrl}${imageName}`;
+        const fileUrl = `${AwsImageRootUrl}${fileName}`;
         const newFile = FileModel.build({
-            url: imageUrl,
-            name: imageName
+            fileName: fileName,
+            type: ContentType,
+            clientUserName,
+            isVerified: false,
+            url: fileUrl
         });
         await newFile.save();
         res.send({

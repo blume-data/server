@@ -12,14 +12,15 @@ type PropsFromRedux = ConnectedProps<typeof connector>;
 export const AssetsComponent = (props: PropsFromRedux) => {
 
     const {assetsUrls} = props;
+    const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
 
-    console.log('asdf', assetsUrls);
+    console.log('asdf', props);
 
     // Fetch Assets
     async function fetchAssets() {
-        const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
-        if(assetsUrls && clientUserName){
-            const url = assetsUrls.replace(`:${CLIENT_USER_NAME}`, clientUserName);
+
+        if(clientUserName && assetsUrls && assetsUrls.getAssets){
+            const url = assetsUrls.getAssets.replace(`:${CLIENT_USER_NAME}`, clientUserName);
             const response = await doGetRequest(`${getBaseUrl()}${url}`, null, true);
             console.log('res', response);
         }
@@ -33,18 +34,24 @@ export const AssetsComponent = (props: PropsFromRedux) => {
     async function onChangeFile(e: any) {
         const file = e.target.files[0];
         const fileType = file.type;
-        const response = await doPostRequest(`${getBaseUrl()}/assets/get-signed-url`, {
-            ContentType: file.type,
-            name: file.name
-        }, true);
-        const config = {
-            headers: {
-                'Content-Type': fileType
+
+        if(clientUserName && assetsUrls && assetsUrls.getSignedUrl) {
+            const signedUrl = assetsUrls.getSignedUrl.replace(`:${CLIENT_USER_NAME}`, clientUserName);
+            const awsSignedUrl = await doPostRequest(`${getBaseUrl()}${signedUrl}`, {
+                ContentType: file.type,
+                name: file.name
+            }, true);
+            const config = {
+                headers: {
+                    'Content-Type': fileType
+                }
+            };
+            if(awsSignedUrl && awsSignedUrl.url) {
+                const awsREsp = await axios.put(awsSignedUrl.url, file, config);
+                console.log('awsResp', awsREsp);
             }
-        };
-        const url = response && response.data && response.data.url;
-        const awsREsp = await axios.put(url, file, config);
-        console.log('awsResp', awsREsp);
+        }
+
     }
 
     return (
@@ -56,7 +63,7 @@ export const AssetsComponent = (props: PropsFromRedux) => {
 
 const mapState = (state: RootState) => {
     return {
-        assetsUrls: state.routeAddress.routes.assets?.getAssets
+        assetsUrls: state.routeAddress.routes.assets
     }
 };
 
