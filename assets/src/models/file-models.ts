@@ -5,7 +5,6 @@ interface FileAttrs {
     fileName: string; //unique
     isVerified: boolean;
     type: string;
-    url: string;
     createdBy: string;
 }
 
@@ -18,16 +17,12 @@ interface FileDoc extends mongoose.Document {
     fileName: string; //unique
     isVerified: boolean;
     type: string;
-    url: string;
     createdBy: string;
 }
 
 const File = new mongoose.Schema(
     {
-        url: {
-            type: String,
-            required: true
-        },
+
         clientUserName: {
             type: String,
             required: true

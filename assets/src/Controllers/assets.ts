@@ -7,13 +7,12 @@ import {AssetsGetAssetsUrl, AssetsGetSignedUrl, AssetsVerifyUrl} from "../utils/
 
 export async function fetchAsset(req: Request, res: Response) {
 
-    const {name = 'some-name'} = req.query;
-    if(name) {
-        const fileName = `${name}`;
+    const {fileName} = req.params;
+    if(fileName) {
         const asset = await FileModel.findOne({
             fileName
-        }, ['url']);
-        if(asset && asset.url) {
+        }, ['fileName']);
+        if(asset && asset.fileName) {
             const options = {
                 Bucket: AwsBucketName,
                 Key: fileName
@@ -22,11 +21,11 @@ export async function fetchAsset(req: Request, res: Response) {
             s3.getObject(options).createReadStream().pipe(res);
         }
         else {
-            sendSingleError(res, 'asset is not found', 'name');
+            sendSingleError(res, 'asset is not found');
         }
     }
     else {
-        sendSingleError(res, 'name is required', 'name');
+        sendSingleError(res, 'name is required');
     }
 
 }
@@ -56,14 +55,14 @@ export async function getSignedUrl(req: Request, res: Response) {
         ContentType,
         Key: fileName,
     }, async (err, url) => {
-        const fileUrl = `${AwsImageRootUrl}${fileName}`;
+        
         const newFile = FileModel.build({
             fileName: fileName,
             type: ContentType,
             clientUserName,
             isVerified: false,
             createdBy: currentUser.id ? currentUser.id : '',
-            url: fileUrl
+
         });
         await newFile.save();
         res.send({url, fileName});
