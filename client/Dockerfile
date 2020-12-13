@@ -11,4 +11,4 @@ RUN yarn install --only=prod
 RUN yarn build
 COPY . .
 
-CMD ["yarn", "start.win"]
+CMD ["yarn", "start"]

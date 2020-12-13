@@ -1,4 +1,3 @@
-const cookieSession = require('cookie-session');
 const path = require('path');
 const Express = require('express');
 const shrinkRay = require('shrink-ray-current');
@@ -11,11 +10,6 @@ const webExtractor = new ChunkExtractor({statsFile: assets});
 
 const app = Express();
 app.use(shrinkRay());
-
-app.use(cookieSession({
-    signed: false,
-    secure: false
-}))
 
 if (process.env.NODE_ENV !== 'development') {
     console.log('Env is production using only https!!');

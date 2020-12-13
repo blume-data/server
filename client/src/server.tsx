@@ -20,11 +20,10 @@ const serverMiddleware = (webExtractor: ChunkExtractor) => {
 
         const promises = matchRoutes(Routes, req.path)
             .map(({ route }) => {
-                /*if (route.path === '/') {
+                if (route.path === '/') {
                     const pageNo = req.query.page || 1;
                     return route.loadData ? route.loadData(store, Number(pageNo)) : null;
-                }*/
-                console.log('session',req.session);
+                }
                 return route.loadData ? route.loadData(store) : null;
             })
             .map(promise => {

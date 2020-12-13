@@ -1,39 +1,34 @@
-import express, {Request, Response} from 'express';
-import {body} from 'express-validator';
+import express, { Request, Response } from 'express';
+import { body } from 'express-validator';
 import {
-  AdminUser,
-  adminUserType,
-  APPLICATION_NAME,
-  APPLICATION_NAMES,
+  validateRequest,
   BadRequestError,
-  CLIENT_USER_NAME,
-  clientType,
-  clientUserType,
-  EnglishLanguage,
-  FreeUser,
-  freeUserType,
   generateJwt,
-  JWT_ID,
-  JwtPayloadType,
-  PASSWORD,
-  PayloadResponseType,
   sendJwtResponse,
-  sendSingleError,
-  stringLimitOptionErrorMessage,
-  stringLimitOptions,
+  ClientUser,
+  AdminUser,
+  FreeUser,
+  clientUserType,
+  adminUserType,
+  freeUserType,
   superVisorUserType,
   supportUserType,
+  stringLimitOptionErrorMessage,
+  stringLimitOptions,
+  JWT_ID,
   USER_NAME,
-  validateRequest
+  CLIENT_USER_NAME,
+  clientType,
+  APPLICATION_NAME,
+  APPLICATION_NAMES, PayloadResponseType, JwtPayloadType, PASSWORD, sendSingleError
 } from '@ranjodhbirkaur/common';
-import {Password} from '../services/password';
+import { Password } from '../services/password';
+
 import {InValidEmailMessage, InvalidLoginCredentialsMessage} from "../util/errorMessages";
 import {ExistingUserType, passwordLimitOptionErrorMessage, passwordLimitOptions} from "../util/constants";
+
 import {signInUrl} from "../util/urls";
 import {validateUserType} from "../middleware/userTypeCheck";
-import {SessionModel} from "../models/sessionModel";
-import {PRODUCTION_ENV} from "@ranjodhbirkaur/constants";
-import {MainUserModel} from "../models/mainUser";
 
 const router = express.Router();
 
@@ -58,24 +53,6 @@ async function sendResponse(req: Request, res: Response, responseData: PayloadRe
   };
 
   const userJwt = generateJwt(payload, req);
-
-  const session = await SessionModel.build({
-    clientUserName: responseData[CLIENT_USER_NAME],
-    clientType: responseData[clientType],
-    selectedLanguage: EnglishLanguage,
-    selectedEnv: PRODUCTION_ENV,
-    selectedApplicationName: '',
-    userName: responseData[USER_NAME],
-    authToken: userJwt,
-    createdAt: `${new Date()}`
-  });
-  await session.save();
-
-  console.log('session', session);
-
-  if(req.session) {
-    req.session.id = session.id;
-  }
 
   return sendJwtResponse(res, responseData, userJwt);
 }
@@ -105,7 +82,7 @@ router.post(
 
     switch (userType) {
       case clientUserType: {
-        existingUser = await MainUserModel.findOne({email}, [APPLICATION_NAMES, USER_NAME, PASSWORD, JWT_ID]);
+        existingUser = await ClientUser.findOne({email}, [APPLICATION_NAMES, USER_NAME, PASSWORD, JWT_ID]);
         if(existingUser) {
           responseData = {
             [clientType]: userType,
@@ -137,7 +114,6 @@ router.post(
               [CLIENT_USER_NAME]: existingUser[CLIENT_USER_NAME],
               [USER_NAME]: existingUser[USER_NAME]
             }
-
             return sendResponse(req, res, responseData, existingUser, password, userType);
           }
         }

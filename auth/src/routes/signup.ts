@@ -16,6 +16,7 @@ import {
     supportUserType,
     EMAIL,
     USER_NAME,
+    ClientUser,
     AdminUser,
     FreeUser,
     ErrorMessages,
@@ -39,7 +40,6 @@ import {validateUserTypeSignUp} from "../middleware/userTypeCheck-Signup";
 import {APPLICATION_NAME_NOT_VALID, CLIENT_USER_NAME_NOT_VALID, EmailInUseMessage, InValidEmailMessage, UserNameNotAvailableMessage} from "../util/errorMessages";
 import {signUpUrl} from "../util/urls";
 import {trimCharactersAndNumbers} from "@ranjodhbirkaur/constants";
-import {MainUserModel} from "../models/mainUser";
 
 const
     router = express.Router();
@@ -104,7 +104,7 @@ async function validateClientUserName(req: Request): Promise<{isValid: boolean; 
     const userType = req.params.userType;
     let errorMessages: ErrorMessages[] = [];
     
-    const userExist = await MainUserModel.findOne({
+    const userExist = await ClientUser.findOne({
         userName: reqBody[CLIENT_USER_NAME]
     }, [USER_NAME, APPLICATION_NAMES]);
     
@@ -150,7 +150,7 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
     // Check if the email is not taken
     switch (type) {
         case clientUserType: {
-            existingUser = await MainUserModel.findOne({email});
+            existingUser = await ClientUser.findOne({email});
             break;
         }
         case adminUserType: {
@@ -173,7 +173,7 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
     existingUser = null;
     switch (type) {
         case clientUserType: {
-            existingUser = await MainUserModel.findOne({userName});
+            existingUser = await ClientUser.findOne({userName});
             break;
         }
         case adminUserType: {
