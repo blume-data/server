@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: assets-depl
+  name: client-depl
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: assets
+      app: client
   template:
     metadata:
       labels:
-        app: assets
+        app: client
     spec:
       containers:
-        - name: assets
-          image: taranjeetsingh/assets
+        - name: client
+          image: taranjeetsingh/client
           env:
             - name: MONGO_URI
               value: 'mongodb+srv://all:all@cluster0.a6c0l.mongodb.net/ranjodh?retryWrites=true&w=majority'
@@ -24,21 +24,21 @@ spec:
                 secretKeyRef:
                   name: jwt-secret
                   key: JWT_KEY
-            - name: AWS_SECRET_ACCESS_KEY
+            - name: AWS_SECRET_ACCESS_KEY_2
               valueFrom:
                 secretKeyRef:
-                  name: aws-secret-access-key
-                  key: AWS_SECRET_ACCESS_KEY
+                  name: aws-secret-access-key-2
+                  key: AWS_SECRET_ACCESS_KEY_2
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: assets-srv
+  name: client-srv
 spec:
   selector:
-    app: assets
+    app: client
   ports:
-    - name: assets
+    - name: client
       protocol: TCP
       port: 3000
       targetPort: 3000

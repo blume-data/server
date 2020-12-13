@@ -1,7 +1,8 @@
 import express, {Response, Request, NextFunction} from 'express';
-import {BadRequestError, getCurrentUser, okayStatus, ClientUser} from '@ranjodhbirkaur/common';
+import {BadRequestError, getCurrentUser, okayStatus} from '@ranjodhbirkaur/common';
 
 import {currentUserUrl} from "../util/urls";
+import {MainUserModel} from "../models/mainUser";
 
 const router = express.Router();
 
@@ -9,7 +10,7 @@ async function checkIsEnabled(req: Request, res: Response, next: NextFunction) {
 
   if (req.currentUser) {
     const email = req.currentUser.email;
-    const userExist = await ClientUser.find({email, isEnabled: true}, 'id');
+    const userExist = await MainUserModel.find({email, isEnabled: true}, 'id');
     if (!userExist) {
       req.currentUser = undefined;
       req.session = null;
