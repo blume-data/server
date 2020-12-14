@@ -20,7 +20,7 @@ import {
     PASSWORD,
     EMAIL,
     APPLICATION_NAMES,
-    PayloadResponseType, JwtPayloadType, EnglishLanguage
+    PayloadResponseType, JwtPayloadType, EnglishLanguage, SESSION_ID
 } from "@ranjodhbirkaur/common";
 import {ClientTempUser} from "../models/clientTempUser";
 import {Request, Response} from "express";
@@ -101,6 +101,7 @@ export const verifyEmailToken = async function (req: ReqValidateEmail, res: Resp
                 await newUser.save();
 
                 const response: PayloadResponseType = {
+                    [SESSION_ID]: '',
                     [APPLICATION_NAMES]: [{
                         name: '',
                         languages: ['']
@@ -138,6 +139,7 @@ export const verifyEmailToken = async function (req: ReqValidateEmail, res: Resp
 
                 // Pass application names in response
                 const response: PayloadResponseType = {
+                    [SESSION_ID]: '',
                     [CLIENT_USER_NAME]: newUser[USER_NAME],
                     [clientType]: userType,
                     [APPLICATION_NAMES]: applicationNames,

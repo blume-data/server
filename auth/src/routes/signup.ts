@@ -27,7 +27,7 @@ import {
     sendErrors,
     clientType,
     JWT_ID,
-    JwtPayloadType, PayloadResponseType,
+    JwtPayloadType, PayloadResponseType, SESSION_ID,
 } from '@ranjodhbirkaur/common';
 import {
     passwordLimitOptionErrorMessage,
@@ -206,6 +206,7 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
                 [clientType]: type
             };
             const responseData: PayloadResponseType = {
+                [SESSION_ID]: '',
                 [CLIENT_USER_NAME]: userName,
                 [clientType]: type,
                 [USER_NAME]: userName,
@@ -245,6 +246,7 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
                 [JWT_ID]: user.jwtId
             };
             const responseData: PayloadResponseType = {
+                [SESSION_ID]: '',
                 [CLIENT_USER_NAME]: clientUserName,
                 [clientType]: type,
                 [USER_NAME]: userName,
@@ -262,6 +264,7 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
                 [USER_NAME]: userName
             };
             const responseData: PayloadResponseType = {
+                [SESSION_ID]: '',
                 [CLIENT_USER_NAME]: clientUserName,
                 [clientType]: type,
                 [USER_NAME]: userName,
