@@ -5,7 +5,6 @@ import {
   BadRequestError,
   generateJwt,
   sendJwtResponse,
-  ClientUser,
   AdminUser,
   FreeUser,
   clientUserType,
@@ -29,6 +28,7 @@ import {ExistingUserType, passwordLimitOptionErrorMessage, passwordLimitOptions}
 
 import {signInUrl} from "../util/urls";
 import {validateUserType} from "../middleware/userTypeCheck";
+import {MainUserModel} from "../models/MainUserModel";
 
 const router = express.Router();
 
@@ -82,7 +82,7 @@ router.post(
 
     switch (userType) {
       case clientUserType: {
-        existingUser = await ClientUser.findOne({email}, [APPLICATION_NAMES, USER_NAME, PASSWORD, JWT_ID]);
+        existingUser = await MainUserModel.findOne({email}, [APPLICATION_NAMES, USER_NAME, PASSWORD, JWT_ID]);
         if(existingUser) {
           responseData = {
             [clientType]: userType,
