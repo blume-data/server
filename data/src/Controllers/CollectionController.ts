@@ -38,9 +38,7 @@ export async function createCollectionSchema(req: Request, res: Response) {
 
         // the name of the custom schema collection should not contain any space
         if (reqBody && reqBody.name && typeof reqBody.name === 'string') {
-            //console.log('name', reqBody.name, trimCharactersAndNumbers(reqBody.name));
             reqBody.name = trimCharactersAndNumbers(reqBody.name);
-            //console.log('re', reqBody.name)
         }
 
         // Check if there is not other collection with same name and user_id
