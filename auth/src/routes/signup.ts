@@ -215,7 +215,7 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
                     languages: ['']
                 }],
             }
-            const userJwt = generateJwt(payload, req);
+            const userJwt = generateJwt(payload, res);
             return sendJwtResponse(res, responseData, userJwt);
         }
         case clientUserType: {
@@ -252,7 +252,7 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
                 [USER_NAME]: userName,
                 [APPLICATION_NAMES]: [applicationName]
             }
-            const userJwt = generateJwt(jwt, req);
+            const userJwt = generateJwt(jwt, res);
             return sendJwtResponse(res, responseData, userJwt);
         }
         case supportUserType: {
@@ -270,7 +270,7 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
                 [USER_NAME]: userName,
                 [APPLICATION_NAMES]: [applicationName]
             }
-            const userJwt = generateJwt(jwt, req);
+            const userJwt = generateJwt(jwt, res);
             return sendJwtResponse(res, responseData, userJwt);
         }
     }

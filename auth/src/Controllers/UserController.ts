@@ -167,7 +167,7 @@ async function sendValidateEmailResponse(req: Request, payload: JwtPayloadType, 
 
     const modelProps = req.query;
     // Generate JWT
-    const userJwt = generateJwt(payload, req);
+    const userJwt = generateJwt(payload, res);
 
     // TODO delete user in temp collection
     //const okDeleted = await ClientTempUser.deleteMany({email: modelProps.email});

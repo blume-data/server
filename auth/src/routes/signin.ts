@@ -54,7 +54,7 @@ async function sendResponse(req: Request, res: Response, responseData: PayloadRe
     [JWT_ID]: existingUser.jwtId
   };
 
-  const userJwt = generateJwt(payload, req);
+  const userJwt = generateJwt(payload, res);
 
   const newSession = SessionModel.build({
     clientType: userType,
@@ -71,7 +71,7 @@ async function sendResponse(req: Request, res: Response, responseData: PayloadRe
 
   responseData = {
     ...responseData,
-    [SESSION_ID]: newSession.id
+    [SESSION_ID]: newSession.id || ''
   }
 
   return sendJwtResponse(res, responseData, userJwt);
