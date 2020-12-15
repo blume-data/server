@@ -97,6 +97,8 @@ export interface PropertiesType {
     [FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN]: string;
     [FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN]: string;
     onlyAllowedValues: string;
+    referenceModelName: string;
+    referenceModelType: string;
 }
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
@@ -104,6 +106,7 @@ type CreateDataModelType = PropsFromRedux;
 
 const CreateDataModel = (props: CreateDataModelType) => {
 
+    const [modelNames, setModelNames] = useState<{label: string; value: string}[]>([]);
     const [settingFieldName, setSettingFieldName] = useState<boolean>(false);
     const [addingField, setAddingField] = useState<boolean>(false);
 
@@ -155,6 +158,9 @@ const CreateDataModel = (props: CreateDataModelType) => {
 
     const FIELD_MATCH_SPECIFIC_PATTERN = 'matchSpecificPattern';
     const FIELD_PROHIBIT_SPECIFIC_PATTERN = 'prohibitSpecificPattern';
+    const FIELD_REFERENCE_MODEL_NAME = 'referenceModelName';
+    // one to many or one to one
+    const FIELD_REFERENCE_MODEL_TYPE = 'referenceModelType';
 
     /*Field Group Names*/
     const FIELD_LIMIT_CHARACTER_COUNT_GROUP = 'Limit character count';
@@ -164,6 +170,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
     const FIELD_PROHIBIT_SPECIFIC_PATTERN_GROUP = 'Prohibit specific pattern';
     const FIELD_ALLOW_ONLY_SPECIFIC_VALUES_GROUP = 'Accept only specific values';
     const FIELD_DEFAULT_VALUE_GROUP = 'Default value';
+    const FIELD_REFERENCE_MODEL_GROUP = 'Reference model name';
 
     const {
         env, CollectionUrl, applicationName, GetCollectionNamesUrl, language,
@@ -197,8 +204,32 @@ const CreateDataModel = (props: CreateDataModelType) => {
         }
     }
 
+    async function getCollectionNames() {
+        const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
+
+        if(GetCollectionNamesUrl) {
+            const url = GetCollectionNamesUrl
+                .replace(`:${CLIENT_USER_NAME}`, clientUserName ? clientUserName : '')
+                .replace(':env', env)
+                .replace(':language', language)
+                .replace(`:${APPLICATION_NAME}`,applicationName);
+
+            const fullUrl = `${getBaseUrl()}${url}?get=displayName,name`;
+            const response = await doGetRequest(fullUrl, null, true);
+            if(response && response.length) {
+                setModelNames(response.map((item: {displayName: string; name: string}) => {
+                    return {
+                        label: item.displayName,
+                        value: item.name
+                    }
+                }));
+            }
+        }
+    }
+
     useEffect(() => {
         getData();
+        getCollectionNames();
     }, [GetCollectionNamesUrl, contentModelName])
 
     useEffect(() => {
@@ -519,6 +550,42 @@ const CreateDataModel = (props: CreateDataModelType) => {
             });
         }
 
+        if(fieldType === REFERENCE_FIELD_TYPE) {
+
+            const ONE_TO_ONE_RELATION = 'one-to-one-relation';
+            const ONE_TO_MANY_RELATION = 'one-to-many-relation';
+
+            hello.push({
+                groupName: FIELD_REFERENCE_MODEL_GROUP,
+                required: false,
+                placeholder: 'Select reference model name',
+                value: ``,
+                className: 'field-min-count',
+                type: 'string',
+                name: FIELD_REFERENCE_MODEL_NAME,
+                label: 'Select reference model name',
+                options: modelNames,
+                inputType: DROPDOWN,
+                descriptionText: 'Select a model name to add reference to'
+            });
+            hello.push({
+                groupName: FIELD_REFERENCE_MODEL_GROUP,
+                required: false,
+                placeholder: 'Select type of reference',
+                value: `${fieldMatchPattern}`,
+                className: 'field-min-count',
+                type: 'string',
+                name: FIELD_REFERENCE_MODEL_TYPE,
+                label: 'Select type of reference',
+                options: [
+                    {label: 'one to one relation', value: ONE_TO_ONE_RELATION},
+                    {label: 'one to many relation', value: ONE_TO_MANY_RELATION}
+                ],
+                inputType: DROPDOWN,
+                descriptionText: 'Select type of reference'
+            });
+        }
+
         return hello;
     };
 
@@ -564,6 +631,8 @@ const CreateDataModel = (props: CreateDataModelType) => {
             let propertyMatchPatternString = '';
             let propertyOnlySpecifiedValues = '';
             let propertyDefaultValue = '';
+            let propertyReferenceModelName = '';
+            let propertyReferenceModelType = '';
             values.forEach((value: any) => {
                 const v = value.value;
                 switch (value.name) {
@@ -628,6 +697,14 @@ const CreateDataModel = (props: CreateDataModelType) => {
                         propertyIsUnique = v;
                         break;
                     }
+                    case FIELD_REFERENCE_MODEL_NAME: {
+                        propertyReferenceModelName = v;
+                        break;
+                    }
+                    case FIELD_REFERENCE_MODEL_TYPE: {
+                        propertyReferenceModelType = v;
+                        break;
+                    }
                 }
             });
 
@@ -648,7 +725,9 @@ const CreateDataModel = (props: CreateDataModelType) => {
                     [IS_FIELD_UNIQUE]: propertyIsUnique === 'true',
                     [FIELD_CUSTOM_ERROR_MSG_MIN_MAX]: propertyMinMaxCustomErrorMessage,
                     onlyAllowedValues: propertyOnlySpecifiedValues,
-                    matchCustomSpecificPattern: propertyMatchPatternString
+                    matchCustomSpecificPattern: propertyMatchPatternString,
+                    referenceModelName: propertyReferenceModelName,
+                    referenceModelType: propertyReferenceModelType
                 };
 
                 const tempProperties = JSON.parse(JSON.stringify(properties ? properties : []));
@@ -1041,7 +1120,8 @@ const CreateDataModel = (props: CreateDataModelType) => {
                                                     FIELD_ALLOW_ONLY_SPECIFIC_VALUES_GROUP,
                                                     FIELD_DEFAULT_VALUE_GROUP,
                                                     FIELD_MATCH_SPECIFIC_PATTERN_GROUP,
-                                                    FIELD_PROHIBIT_SPECIFIC_PATTERN_GROUP
+                                                    FIELD_PROHIBIT_SPECIFIC_PATTERN_GROUP,
+                                                    FIELD_REFERENCE_MODEL_GROUP
                                                 ]
                                             }
                                             response={response}

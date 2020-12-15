@@ -107,17 +107,23 @@ export async function getCollectionNames(req: Request, res: Response) {
     const language = req.params && req.params.language;
     const env = req.params && req.params.env;
     const name = req.query.name;
+    const getOnly = `${req.query.get}`;
     const where: any = {
         clientUserName,
         applicationName,
         language,
         env
     };
-    const get: string[] = ['rules', 'name', 'description', 'displayName', 'updatedAt', 'updatedBy'];
+    let get: string[] = ['rules', 'name', 'description', 'displayName', 'updatedAt', 'updatedBy'];
 
     if(name) {
         where.name = name;
     }
+    if(req.query.get && getOnly) {
+        get = getOnly.split(',')
+    }
+
+    console.log('get', get);
 
     const collections = await CollectionModel.find(where, get);
 
