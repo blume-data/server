@@ -6,7 +6,6 @@ import {
     createCollectionSchema,
     deleteCollectionSchema,
     getCollectionNames,
-    getCollectionSchema
 } from "../Controllers/CollectionController";
 import {validateCollections} from "../services/middlewares/collections/validateCollections";
 import {checkAuth} from "../services/checkAuth";
@@ -58,8 +57,5 @@ router.delete(CollectionUrl, [
             .withMessage(stringLimitOptionErrorMessage('name'))
     ],
     validateRequest, validateEnvType, checkAuth, deleteCollectionSchema);
-
-// Get Item Schema
-//router.get(CollectionUrl, checkAuth, getCollectionSchema);
 
 export { router as CollectionRoutes };

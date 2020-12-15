@@ -7,10 +7,10 @@ import {
     DATE_AND_TIME_FIElD_TYPE,
     DATE_FIElD_TYPE,
     INTEGER_FIElD_TYPE,
-    JSON_FIELD_TYPE
+    JSON_FIELD_TYPE, ONE_TO_MANY_RELATION, ONE_TO_ONE_RELATION, REFERENCE_FIELD_TYPE
 } from "@ranjodhbirkaur/constants";
 import {ENTRY_LANGUAGE_PROPERTY_NAME} from "./constants";
-import {APPLICATION_NAME, CLIENT_USER_NAME} from "@ranjodhbirkaur/common";
+import {APPLICATION_NAME, CLIENT_USER_NAME} from "@ranjodhbirkaur/common"
 
 export const RANDOM_STRING = function (minSize=10) {
     return randomBytes(minSize).toString('hex')
@@ -85,6 +85,23 @@ export function createModel(params: CreateModelType) {
                 [rule.name]: {
                     type: Object,
                     required: !!rule.required
+                }
+            }
+        }
+        else if(rule.type === REFERENCE_FIELD_TYPE) {
+
+            const ref = createStoreModelName(rule.referenceModelName, applicationName, clientUserName);
+
+            if(rule.referenceModelType === ONE_TO_MANY_RELATION) {
+                schemaData = {
+                    ...schemaData,
+                    [rule.name]: [{ type: Schema.Types.ObjectId, ref }]
+                }
+            }
+            else if(rule.referenceModelType === ONE_TO_ONE_RELATION) {
+                schemaData = {
+                    ...schemaData,
+                    [rule.name]: { type: Schema.Types.ObjectId, ref }
                 }
             }
         }

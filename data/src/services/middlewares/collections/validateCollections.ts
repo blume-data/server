@@ -55,7 +55,9 @@ export async function validateCollections(req: Request, res: Response, next: Nex
                 matchSpecificPattern: '',
                 prohibitSpecificPattern: '',
                 matchCustomSpecificPattern: '',
-                onlyAllowedValues: ''
+                onlyAllowedValues: '',
+                referenceModelName: '',
+                referenceModelType: ''
             };
 
             // check if name is there
@@ -207,6 +209,25 @@ export async function validateCollections(req: Request, res: Response, next: Nex
                     return shortenString(allowedValue);
                 })
                 parsedRule.onlyAllowedValues = allowedValues.join(',');
+            }
+
+            if(rule.type === REFERENCE_FIELD_TYPE) {
+
+                if(!rule.referenceModelName || !rule.referenceModelType) {
+                    isValidBody = false;
+                    inValidMessage.push({
+                        message: `referenceModelName is required`,
+                        field: 'rules'
+                    });
+                    inValidMessage.push({
+                        message: 'referenceModelType is required',
+                        field: 'rules'
+                    });
+                }
+                else {
+                    parsedRule.referenceModelName = rule.referenceModelName;
+                    parsedRule.referenceModelType = rule.referenceModelType;
+                }
             }
 
             // If valid rule
