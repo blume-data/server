@@ -58,6 +58,7 @@ export async function createCollectionSchema(req: Request, res: Response) {
             description: reqBody.description
         });
 
+        // log in data base
         await storeSchema(`${reqBody.name}`, clientUserName, applicationName);
         await newCollection.save();
 

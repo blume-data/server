@@ -99,6 +99,68 @@ async function createEntry(rules: RuleType[], req: Request, res: Response, colle
 
 }
 
+interface GetEntriesProps {
+    req: Request;
+    res: Response;
+    findWhere: any;
+    getOnlyThese: string[] | string | null;
+    modelName?: string;
+    limitEntries?: number;
+    skipEntries?: number;
+}
+
+async function getEntries(props: GetEntriesProps) {
+
+    const {req, res, limitEntries, modelName, skipEntries, getOnlyThese, findWhere} = props;
+
+    const language = req.params.language;
+    const clientUserName = req.params[CLIENT_USER_NAME];
+    const applicationName = req.params[APPLICATION_NAME]
+
+    // get collection
+    const collection = await getCollection(req, modelName);
+    const limit = limitEntries ? limitEntries : ((req.query && Number(req.query.limit))  || PER_PAGE);
+    let skip: number = skipEntries ? skipEntries : ((req.query && Number(req.query.skip)) || 0);
+
+    if (collection) {
+        const rules = JSON.parse(collection.rules);
+        const params = validateParams(req, res, rules, findWhere, getOnlyThese);
+        if (params) {
+            const {where, getOnly} = params;
+            const model: any = createModel({
+                rules,
+                clientUserName,
+                applicationName,
+                name: collection.name
+            });
+            return await model
+                .find(where, getOnly)
+                .skip(skip)
+                .limit(limit);
+
+            /*
+            const response2 = await getRanjodhBirData(
+                collection.name,
+                collection.clientUserName,
+                collection[APPLICATION_NAME],
+                language,
+                {
+                    skip: Number(skip),
+                    limit: Number(limit),
+                    where,
+                    getOnly
+                }
+            );
+
+            console.log('re', response2);
+            //res.status(okayStatus).send(collections);
+            */
+        }
+    }
+    else {
+        throw new BadRequestError(COLLECTION_NOT_FOUND);
+    }
+}
 // Create Record
 export async function createStoreRecord(req: Request, res: Response) {
 
@@ -199,48 +261,17 @@ export async function getStoreRecord(req: Request, res: Response) {
 
     const language = req.params.language;
     const clientUserName = req.params[CLIENT_USER_NAME];
-    const applicationName = req.params[APPLICATION_NAME]
+    const applicationName = req.params[APPLICATION_NAME];
 
-    // get collection
-    const collection = await getCollection(req);
-    const {limit=PER_PAGE} = req.query;
-    let skip: number = (req.query && Number(req.query.skip)) || 0;
+    let items = [];
 
-    if (collection) {
-        const rules = JSON.parse(collection.rules);
+    items = await getEntries({
+        req, res, findWhere: req.body.where, getOnlyThese: req.body.getOnly
+    });
 
-        if (validateParams(req, res, rules)) {
-            const {where, getOnly} = req.body;
+    return res.status(okayStatus).send(items);
 
-            const model: any = createModel({
-                rules,
-                clientUserName,
-                applicationName,
-                name: collection.name
-            });
 
-            const collections = await model.find(where, getOnly).skip(skip).limit(limit);
-
-            /*const response2 = await getRanjodhBirData(
-                collection.name,
-                collection.clientUserName,
-                collection[APPLICATION_NAME],
-                language,
-                {
-                    skip: Number(skip),
-                    limit: Number(limit),
-                    where,
-                    getOnly
-                }
-            );
-
-            console.log('re', response2);*/
-            res.status(okayStatus).send(collections);
-        }
-    }
-    else {
-        throw new BadRequestError(COLLECTION_NOT_FOUND);
-    }
 }
 
 // create reference
@@ -253,12 +284,12 @@ export async function createStoreReferenceRecord(req: Request, res: Response) {
 // Delete Record
 
 
-async function getCollection(req: Request, referenceModelName?: string) {
+async function getCollection(req: Request, specificModelName?: string) {
     const clientUserName  = req.params && req.params[CLIENT_USER_NAME];
     const modelName = req.params && req.params.modelName;
     const applicationName = req.params && req.params[APPLICATION_NAME];
 
-    const name = referenceModelName ? referenceModelName : modelName;
+    const name = specificModelName ? specificModelName : modelName;
 
     return CollectionModel.findOne(
         {clientUserName, name, applicationName},
@@ -573,32 +604,22 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
 }
 
 // Validate Params for where and getOnly
-function validateParams(req: Request, res: Response, rules: RuleType[]) {
-    const reqBody = req.body;
+function validateParams(req: Request, res: Response, rules: RuleType[], findWhere: any, getOnly: string[] | string | null) {
     let isValid = true;
     const errorMessages = [];
-    if (reqBody.where && typeof reqBody.where === 'object') {
+    if (findWhere && typeof findWhere === 'object') {
         let where = {};
         // Iterate where
-        for(const condition in reqBody.where) {
-            if (reqBody.where.hasOwnProperty(condition)) {
+        for(const condition in findWhere) {
+            if (findWhere.hasOwnProperty(condition)) {
                 const ruleExist = rules.find(rule => rule.name === condition);
-                if (ruleExist) {
-                    if (typeof reqBody.where[condition] !== ruleExist.type) {
-                        isValid = false;
-                        errorMessages.push({
-                            field: ruleExist.name,
-                            message: `${ruleExist.name} should be of type ${ruleExist.type}`
-                        });
-                    }
-                    else {
-                        where = {
-                            ...where,
-                            [condition]: reqBody.where[condition]
-                        }
+                if(ruleExist) {
+                    where = {
+                        ...where,
+                        [condition]: findWhere[condition]
                     }
                 }
-                else {
+                if (!ruleExist) {
                     isValid = false;
                     errorMessages.push({
                         field: 'where',
@@ -607,24 +628,22 @@ function validateParams(req: Request, res: Response, rules: RuleType[]) {
                 }
             }
         }
-
-        reqBody.where = where;
     }
-    if (reqBody.getOnly && (typeof reqBody.getOnly === 'object' || typeof reqBody.getOnly === 'string')) {
-        if (typeof reqBody.getOnly === 'string') {
-            const exist = rules.find(rule => rule.name === reqBody.getOnly);
+    if (getOnly && (typeof getOnly === 'object' || typeof getOnly === 'string')) {
+        if (typeof getOnly === 'string') {
+            const exist = rules.find(rule => rule.name === getOnly);
             if (!exist) {
                 isValid = false;
                 errorMessages.push({
                     field: 'getOnly',
-                    message: reqBody.getOnly+' does not exist in schema'
+                    message: getOnly+' does not exist in schema'
                 });
             }
         }
         else {
             // if the type is object|Array
-            if (reqBody.getOnly.length) {
-                reqBody.getOnly.forEach((str: string) => {
+            if (getOnly.length) {
+                getOnly.forEach((str: string) => {
                     const exist = rules.find(rule => rule.name === str);
                     if (!exist) {
                         isValid = false;
@@ -636,12 +655,12 @@ function validateParams(req: Request, res: Response, rules: RuleType[]) {
                 });
             }
             else {
-                reqBody.getOnly = null;
+                getOnly = null;
             }
         }
     }
     else {
-        if (reqBody.getOnly) {
+        if (getOnly) {
             isValid = false;
             errorMessages.push({
                 field: 'getOnly',
@@ -649,7 +668,7 @@ function validateParams(req: Request, res: Response, rules: RuleType[]) {
             });
         }
         // getOnly does not exist
-        reqBody.getOnly = null;
+        getOnly = null;
     }
 
     if (!isValid) {
@@ -658,7 +677,9 @@ function validateParams(req: Request, res: Response, rules: RuleType[]) {
         });
         return false;
     }
-    return true;
+    return {
+        where: findWhere, getOnly
+    };
 }
 
 // To be deleted
