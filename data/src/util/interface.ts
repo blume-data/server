@@ -1,4 +1,9 @@
-import {FIELD_CUSTOM_ERROR_MSG_MIN_MAX, FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN, FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN} from "@ranjodhbirkaur/constants";
+import {
+    FIELD_CUSTOM_ERROR_MSG_MIN_MAX,
+    FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN,
+    FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN,
+    REFERENCE_MODEL_NAME, REFERENCE_MODEL_TYPE
+} from "@ranjodhbirkaur/constants";
 
 export interface RuleType {
     type: string;
@@ -17,8 +22,8 @@ export interface RuleType {
     [FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN]: string;
     [FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN]: string;
     onlyAllowedValues: string;
-    referenceModelName: string;
-    referenceModelType: string;
+    [REFERENCE_MODEL_NAME]: string;
+    [REFERENCE_MODEL_TYPE]: string;
 }
 
 

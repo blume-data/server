@@ -5,10 +5,10 @@ import {
     BadRequestError,
     CLIENT_USER_NAME,
     clientType,
-    EnglishLanguage,
     errorStatus,
     ID,
-    okayStatus, sendSingleError
+    okayStatus,
+    sendSingleError
 } from "@ranjodhbirkaur/common";
 
 import {ENTRY_CREATED_AT, ENTRY_LANGUAGE_PROPERTY_NAME, PER_PAGE} from "../util/constants";
@@ -16,9 +16,9 @@ import {COLLECTION_NOT_FOUND, PARAM_SHOULD_BE_UNIQUE} from "./Messages";
 import {ModelLoggerBodyType, RuleType} from "../util/interface";
 import {Model} from "mongoose";
 import {DateTime} from 'luxon';
-import {writeRanjodhBirData} from "../util/databaseApi";
 import {
-    BOOLEAN_FIElD_TYPE, DATE_AND_TIME_FIElD_TYPE,
+    BOOLEAN_FIElD_TYPE,
+    DATE_AND_TIME_FIElD_TYPE,
     DATE_FIElD_TYPE,
     dateEuropeReg,
     DateEuropeRegName,
@@ -34,7 +34,14 @@ import {
     hhTimeReg,
     HHTimeRegName,
     HhTimeRegName,
-    INTEGER_FIElD_TYPE, IsJsonString, JSON_FIELD_TYPE, ONE_TO_MANY_RELATION, ONE_TO_ONE_RELATION,
+    INTEGER_FIElD_TYPE,
+    ONE_TO_MANY_RELATION,
+    ONE_TO_ONE_RELATION,
+    REFERENCE_FIELD_TYPE,
+    REFERENCE_MODEL_ID,
+    REFERENCE_MODEL_NAME,
+    REFERENCE_MODEL_TYPE,
+    REFERENCE_PROPERTY_NAME,
     SHORT_STRING_FIElD_TYPE,
     urlReg,
     UrlRegName,
@@ -74,13 +81,13 @@ async function createEntry(rules: RuleType[], req: Request, res: Response, colle
 
             /*Log it*/
             /*Ignore await*/
-            writeRanjodhBirData(
+            /*writeRanjodhBirData(
                 `${collection.name}`,
                 collection.clientUserName,
                 collection.applicationName,
                 EnglishLanguage,
                 logBody
-            );
+            );*/
             return item;
         }
         else {
@@ -97,9 +104,9 @@ export async function createStoreRecord(req: Request, res: Response) {
 
     const clientUserName = req.params[CLIENT_USER_NAME];
     const applicationName = req.params[APPLICATION_NAME];
-    const referenceModelName = req.params['referenceModelName'];
-    const referencePropertyName = req.params['referencePropertyName'];
-    const referenceModelId = req.params['referenceModelId'];
+    const referenceModelName = `${req.query[REFERENCE_MODEL_NAME] ? req.query[REFERENCE_MODEL_NAME] : ''}`;
+    const referencePropertyName = `${req.query[REFERENCE_PROPERTY_NAME] ? req.query[REFERENCE_PROPERTY_NAME] : ''}`;
+    const referenceModelId = `${req.query[REFERENCE_MODEL_ID] ? req.query[REFERENCE_MODEL_ID] : ''}`;
 
     // get collection
     const collection = await getCollection(req);
@@ -107,7 +114,7 @@ export async function createStoreRecord(req: Request, res: Response) {
         const rules = JSON.parse(collection.rules);
 
         // if entry is already created and just requires to be pushed in reference array
-        if(referenceModelName && referencePropertyName) {
+        if(req.query[REFERENCE_MODEL_NAME] && req.query[REFERENCE_PROPERTY_NAME]) {
             // check if the reference model exist
             const referenceCollection = await getCollection(req, referenceModelName);
             if(referenceCollection) {
@@ -120,34 +127,49 @@ export async function createStoreRecord(req: Request, res: Response) {
                 });
                 const exist = referenceModel.findOne({ _id: referenceModelId }, [referencePropertyName]);
 
-                const propertyName = referenceCollectionRules[referencePropertyName];
+                let propertyName = '';
+                let referenceType = '';
+                referenceCollectionRules
+                    && referenceCollectionRules.length
+                    && referenceCollectionRules.map((referenceCollection: RuleType) => {
+                        if(referenceCollection) {
+                            if(referenceCollection.name === referencePropertyName && referenceCollection.type === REFERENCE_FIELD_TYPE) {
+                                propertyName = referencePropertyName;
+                                referenceType = referenceCollection[REFERENCE_MODEL_TYPE];
+                            }
+                        }
+                        return false;
+                    });
                 // check if there is an entry for the modelId and propertyName
                 if(propertyName && exist) {
                     let entryId = (req.body && req.body.id) || '';
-                    const type = referenceCollectionRules[referencePropertyName].referenceModelType;
                     if(req.body && !req.body.id) {
                         const entry = await createEntry(rules, req, res, collection);
                         entryId = entry.id;
                     }
-                    if(type === ONE_TO_ONE_RELATION) {
-                        await referenceModel.findOneAndUpdate({
+                    if(referenceType === ONE_TO_ONE_RELATION) {
+                        const response = await referenceModel.findOneAndUpdate({
                             _id: referenceModelId
                         }, {
                             [referencePropertyName]: entryId
                         });
+
+                        return res.status(okayStatus).send(response);
                     }
-                    else if(type === ONE_TO_MANY_RELATION) {
-                        await referenceModel.findOneAndUpdate({
+                    else if(referenceType === ONE_TO_MANY_RELATION) {
+                        const response = await referenceModel.findOneAndUpdate({
                                 _id: referenceModelId
                             },
                             {
                                 $push: { [referencePropertyName]: entryId }
                             }
                         );
+
+                        return res.status(okayStatus).send(response);
                     }
                 }
                 else if(!propertyName) {
-                    return sendSingleError(res, `propertyName ${propertyName} is not valid`);
+                    return sendSingleError(res, `${REFERENCE_PROPERTY_NAME} ${propertyName} is not valid`);
                 }
                 else {
                     return sendSingleError(res, `There is no entry in ${referenceModelName} of id ${referenceModelId}`);
@@ -155,6 +177,7 @@ export async function createStoreRecord(req: Request, res: Response) {
 
             }
             else {
+                console.log('r', referenceModelName, referencePropertyName)
                 return sendSingleError(res, 'reference model does not exist');
             }
 
@@ -499,6 +522,16 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
                 }
                 case DATE_AND_TIME_FIElD_TYPE: {
                     checkForDate(rule);
+                    break;
+                }
+                case REFERENCE_FIELD_TYPE: {
+                    if(typeof reqBody[rule.name] === "string" || !reqBody[rule.name]) {
+                        isValid = false;
+                        errorMessages.push({
+                            field: rule.name,
+                            message: `${rule.name} should be a valid id`
+                        })
+                    }
                     break;
                 }
                 case 'html': {

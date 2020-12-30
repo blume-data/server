@@ -11,8 +11,14 @@ import {
     FIELD_CUSTOM_ERROR_MSG_MIN_MAX,
     FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN,
     INTEGER_FIElD_TYPE,
-    JSON_FIELD_TYPE, ONE_TO_MANY_RELATION, ONE_TO_ONE_RELATION, REFERENCE_FIELD_TYPE,
-    SHORT_STRING_FIElD_TYPE, shortenString,
+    JSON_FIELD_TYPE,
+    ONE_TO_MANY_RELATION,
+    ONE_TO_ONE_RELATION,
+    REFERENCE_FIELD_TYPE,
+    REFERENCE_MODEL_NAME,
+    REFERENCE_MODEL_TYPE,
+    SHORT_STRING_FIElD_TYPE,
+    shortenString,
     SUPPORTED_FIELDS_TYPE,
 } from "@ranjodhbirkaur/constants";
 import {isValidRegEx} from "../../../util/methods";
@@ -213,29 +219,29 @@ export async function validateCollections(req: Request, res: Response, next: Nex
 
             if(rule.type === REFERENCE_FIELD_TYPE) {
 
-                if(!rule.referenceModelName || !rule.referenceModelType) {
+                if(!rule[REFERENCE_MODEL_NAME] || !rule[REFERENCE_MODEL_TYPE]) {
                     isValidBody = false;
-                    if(!rule.referenceModelType) {
+                    if(!rule[REFERENCE_MODEL_TYPE]) {
                         inValidMessage.push({
-                            message: 'referenceModelType is required',
+                            message: `${REFERENCE_MODEL_TYPE} is required`,
                             field: 'rules'
                         });
                     }
-                    if(!rule.referenceModelName) {
+                    if(!rule[REFERENCE_MODEL_NAME]) {
                         inValidMessage.push({
-                            message: `referenceModelName is required`,
+                            message: `${REFERENCE_MODEL_NAME} is required`,
                             field: 'rules'
                         });
                     }
                 }
                 else {
-                    if(rule.referenceModelType === ONE_TO_ONE_RELATION || rule.referenceModelType === ONE_TO_MANY_RELATION) {
-                        parsedRule.referenceModelName = rule.referenceModelName;
-                        parsedRule.referenceModelType = rule.referenceModelType;
+                    if(rule[REFERENCE_MODEL_TYPE] === ONE_TO_ONE_RELATION || rule[REFERENCE_MODEL_TYPE] === ONE_TO_MANY_RELATION) {
+                        parsedRule[REFERENCE_MODEL_NAME] = rule[REFERENCE_MODEL_NAME];
+                        parsedRule[REFERENCE_MODEL_TYPE] = rule[REFERENCE_MODEL_TYPE];
                     }
                     else {
                         inValidMessage.push({
-                            message: 'referenceModelType is not supported',
+                            message: `${REFERENCE_MODEL_TYPE} is not valid`,
                             field: 'rules'
                         })
                     }
