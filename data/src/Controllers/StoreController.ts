@@ -52,6 +52,50 @@ import {
 } from "@ranjodhbirkaur/constants";
 import {createModel} from "../util/methods";
 
+async function fetchEntries(req: Request, res: Response, rules: RuleType[], findWhere: any, getOnlyThese: string[] | string | null, collectionName: string, limit: number, skip: number) {
+
+    const language = req.params.language;
+    const clientUserName = req.params[CLIENT_USER_NAME];
+    const applicationName = req.params[APPLICATION_NAME];
+
+    const params = validateParams(req, res, rules, findWhere, getOnlyThese);
+    if (params) {
+        const {where, getOnly} = params;
+        const model: any = createModel({
+            rules,
+            clientUserName,
+            applicationName,
+            name: collectionName
+        });
+        return await model
+            .find(where, getOnly)
+            .skip(skip)
+            .limit(limit);
+
+        /*
+        const response2 = await getRanjodhBirData(
+            collection.name,
+            collection.clientUserName,
+            collection[APPLICATION_NAME],
+            language,
+            {
+                skip: Number(skip),
+                limit: Number(limit),
+                where,
+                getOnly
+            }
+        );
+
+        console.log('re', response2);
+        //res.status(okayStatus).send(collections);
+        */
+    }
+    else {
+        // params are not valid and error is also sent
+    }
+
+}
+
 async function createEntry(rules: RuleType[], req: Request, res: Response, collection: {name: string, clientUserName: string, applicationName: string}) {
     const clientUserName = req.params[CLIENT_USER_NAME];
     const applicationName = req.params[APPLICATION_NAME];
@@ -115,47 +159,52 @@ async function getEntries(props: GetEntriesProps) {
 
     const language = req.params.language;
     const clientUserName = req.params[CLIENT_USER_NAME];
-    const applicationName = req.params[APPLICATION_NAME]
+    const applicationName = req.params[APPLICATION_NAME];
 
     // get collection
     const collection = await getCollection(req, modelName);
     const limit = limitEntries ? limitEntries : ((req.query && Number(req.query.limit))  || PER_PAGE);
     let skip: number = skipEntries ? skipEntries : ((req.query && Number(req.query.skip)) || 0);
 
+    async function fetchPopulation(population: any, collectionName: string, ids: string[]) {
+        const getOnly = (population && population.getOnly) ? population.getOnly : null;
+
+        const collection = await getCollection(req, collectionName);
+        if(collection) {
+            const rules = JSON.parse(collection.rules);
+            const params = validateParams(req, res, rules, {}, getOnly);
+
+            if(params) {
+                const model: any = createModel({
+                    rules,
+                    clientUserName,
+                    applicationName,
+                    name: collectionName
+                });
+                return await model.find({}, params.getOnly).where('_id').in(ids);
+            }
+
+        }
+
+    }
+
     if (collection) {
         const rules = JSON.parse(collection.rules);
-        const params = validateParams(req, res, rules, findWhere, getOnlyThese);
-        if (params) {
-            const {where, getOnly} = params;
-            const model: any = createModel({
-                rules,
-                clientUserName,
-                applicationName,
-                name: collection.name
-            });
-            return await model
-                .find(where, getOnly)
-                .skip(skip)
-                .limit(limit);
-
-            /*
-            const response2 = await getRanjodhBirData(
-                collection.name,
-                collection.clientUserName,
-                collection[APPLICATION_NAME],
-                language,
-                {
-                    skip: Number(skip),
-                    limit: Number(limit),
-                    where,
-                    getOnly
+        let items: any = [];
+        items = await fetchEntries(req, res, rules, findWhere, getOnlyThese, collection.name, limit, skip);
+        // only populate if there is only one item
+        if(req.body && req.body.populate && req.body.populate.length && items.length === 1) {
+            for (const population of req.body.populate) {
+                if(population.name) {
+                    // check if the name exist in the rules
+                    const ruleExist = rules.find((rule: RuleType) => rule.name === population.name);
+                    if(ruleExist && items[0] && items[0][population.name]) {
+                        items[0][population.name] = await fetchPopulation(population, ruleExist[REFERENCE_MODEL_NAME] , items[0][population.name]);
+                    }
                 }
-            );
-
-            console.log('re', response2);
-            //res.status(okayStatus).send(collections);
-            */
+            }
         }
+        return items;
     }
     else {
         throw new BadRequestError(COLLECTION_NOT_FOUND);
