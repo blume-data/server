@@ -181,28 +181,39 @@ async function getEntries(props: GetEntriesProps) {
                     applicationName,
                     name: collectionName
                 });
-                return await model.find({}, params.getOnly).where('_id').in(ids);
+                if(ids && ids.length) {
+                    return await model.find({}, params.getOnly).where('_id').in(ids);
+                }
+                else {
+                    return await model.find({_id: ids}, params.getOnly);
+                }
+
             }
 
         }
 
     }
 
-    async function recursivePopulation(items: any[], rules: RuleType[]) {
+    async function recursivePopulation(items: any[], rules: RuleType[], populate: any) {
         // check if populate exist
         // only populate if there is only one item
-        if(req.body && req.body.populate && req.body.populate.length && items.length === 1) {
-            for (const population of req.body.populate) {
+        console.log('items', items);
+
+        if(populate && populate.length && (items.length === 1 || typeof items === "string")) {
+
+            for (const population of populate) {
                 if(population.name) {
                     // check if the name exist in the rules
                     const ruleExist = rules.find((rule: RuleType) => rule.name === population.name);
                     if(ruleExist && items[0] && items[0][population.name]) {
-                        const populatedEntries = await fetchPopulation(population, ruleExist[REFERENCE_MODEL_NAME] , items[0][population.name]);
+                        const populatedEntries = await fetchPopulation(population, ruleExist[REFERENCE_MODEL_NAME], items[0][population.name]);
 
-                        const refCollection = await getCollection(req, ruleExist[REFERENCE_MODEL_NAME]);
-                        if(refCollection) {
-                            const refRules = JSON.parse(refCollection.rules);
-                            await recursivePopulation(populatedEntries, refRules);
+                        if(population.populate && population.populate.length) {
+                            const refCollection = await getCollection(req, ruleExist[REFERENCE_MODEL_NAME]);
+                            if(refCollection) {
+                                const refRules = JSON.parse(refCollection.rules);
+                                await recursivePopulation(populatedEntries, refRules, population.populate);
+                            }
                         }
 
                         items[0][population.name] = populatedEntries;
@@ -217,7 +228,9 @@ async function getEntries(props: GetEntriesProps) {
         let items: any = [];
         items = await fetchEntries(req, res, rules, findWhere, getOnlyThese, collection.name, limit, skip);
 
-        await recursivePopulation(items, rules);
+        if(req.body && req.body.populate && req.body.populate.length) {
+            await recursivePopulation(items, rules, req.body.populate);
+        }
 
         return items;
     }
