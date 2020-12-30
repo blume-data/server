@@ -12,6 +12,8 @@ export const GetCollectionNamesUrl = `${rootUrl}/:clientUserName/:applicationNam
 
 export const StoreUrl = `${rootUrl}/:language/:clientUserName/:applicationName/entry/:modelName`;
 
+export const StoreReferenceUrl = `${rootUrl}/:language/:clientUserName/:applicationName/entry/:modelName/:referenceModelName?`;
+
 export const AUTH_SRV_URL = 'http://auth-srv:3000/events';
 
 export const dataBaseRootUrl = `http://database-srv:3000/store`;

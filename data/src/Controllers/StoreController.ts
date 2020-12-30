@@ -8,7 +8,7 @@ import {
     EnglishLanguage,
     errorStatus,
     ID,
-    okayStatus
+    okayStatus, sendSingleError
 } from "@ranjodhbirkaur/common";
 
 import {ENTRY_CREATED_AT, ENTRY_LANGUAGE_PROPERTY_NAME, PER_PAGE} from "../util/constants";
@@ -34,7 +34,7 @@ import {
     hhTimeReg,
     HHTimeRegName,
     HhTimeRegName,
-    INTEGER_FIElD_TYPE, IsJsonString, JSON_FIELD_TYPE,
+    INTEGER_FIElD_TYPE, IsJsonString, JSON_FIELD_TYPE, ONE_TO_MANY_RELATION, ONE_TO_ONE_RELATION,
     SHORT_STRING_FIElD_TYPE,
     urlReg,
     UrlRegName,
@@ -45,59 +45,125 @@ import {
 } from "@ranjodhbirkaur/constants";
 import {createModel} from "../util/methods";
 
+async function createEntry(rules: RuleType[], req: Request, res: Response, collection: {name: string, clientUserName: string, applicationName: string}) {
+    const clientUserName = req.params[CLIENT_USER_NAME];
+    const applicationName = req.params[APPLICATION_NAME];
+    let body = checkBodyAndRules(rules, req, res);
+    if(body) {
+
+        const model: any = createModel({
+            rules,
+            name: collection.name,
+            applicationName,
+            clientUserName
+        });
+
+        const hasError = await validateUniqueParam(model, rules, body);
+
+        if (!hasError) {
+            const item = new model(body);
+            await item.save();
+
+            const logBody: ModelLoggerBodyType = {
+                modelName: collection.name,
+                action: "create",
+                actor: req.currentUser[ID],
+                time: `${new Date()}`,
+                [clientType]: req.currentUser[clientType],
+            }
+
+            /*Log it*/
+            /*Ignore await*/
+            writeRanjodhBirData(
+                `${collection.name}`,
+                collection.clientUserName,
+                collection.applicationName,
+                EnglishLanguage,
+                logBody
+            );
+            return item;
+        }
+        else {
+            res.status(errorStatus).send({
+                errors: [hasError]
+            });
+        }
+    }
+
+}
+
 // Create Record
 export async function createStoreRecord(req: Request, res: Response) {
 
     const clientUserName = req.params[CLIENT_USER_NAME];
-    const applicationName = req.params[APPLICATION_NAME]
+    const applicationName = req.params[APPLICATION_NAME];
+    const referenceModelName = req.params['referenceModelName'];
+    const referencePropertyName = req.params['referencePropertyName'];
+    const referenceModelId = req.params['referenceModelId'];
 
     // get collection
     const collection = await getCollection(req);
     if (collection) {
         const rules = JSON.parse(collection.rules);
-        let body = checkBodyAndRules(rules, req, res);
-        if(body) {
 
-            const model: any = createModel({
-                rules,
-                name: collection.name,
-                applicationName,
-                clientUserName
-            });
+        // if entry is already created and just requires to be pushed in reference array
+        if(referenceModelName && referencePropertyName) {
+            // check if the reference model exist
+            const referenceCollection = await getCollection(req, referenceModelName);
+            if(referenceCollection) {
+                const referenceCollectionRules = JSON.parse(referenceCollection.rules);
+                const referenceModel: any = createModel({
+                    rules: referenceCollectionRules,
+                    name: referenceCollection.name,
+                    applicationName,
+                    clientUserName
+                });
+                const exist = referenceModel.findOne({ _id: referenceModelId }, [referencePropertyName]);
 
-
-            const hasError = await validateUniqueParam(model, rules, body);
-
-            if (!hasError) {
-                const item = new model(body);
-                await item.save();
-
-                res.status(okayStatus).send(item);
-
-                const logBody: ModelLoggerBodyType = {
-                    modelName: collection.name,
-                    action: "create",
-                    actor: req.currentUser[ID],
-                    time: `${new Date()}`,
-                    [clientType]: req.currentUser[clientType],
+                const propertyName = referenceCollectionRules[referencePropertyName];
+                // check if there is an entry for the modelId and propertyName
+                if(propertyName && exist) {
+                    let entryId = (req.body && req.body.id) || '';
+                    const type = referenceCollectionRules[referencePropertyName].referenceModelType;
+                    if(req.body && !req.body.id) {
+                        const entry = await createEntry(rules, req, res, collection);
+                        entryId = entry.id;
+                    }
+                    if(type === ONE_TO_ONE_RELATION) {
+                        await referenceModel.findOneAndUpdate({
+                            _id: referenceModelId
+                        }, {
+                            [referencePropertyName]: entryId
+                        });
+                    }
+                    else if(type === ONE_TO_MANY_RELATION) {
+                        await referenceModel.findOneAndUpdate({
+                                _id: referenceModelId
+                            },
+                            {
+                                $push: { [referencePropertyName]: entryId }
+                            }
+                        );
+                    }
+                }
+                else if(!propertyName) {
+                    return sendSingleError(res, `propertyName ${propertyName} is not valid`);
+                }
+                else {
+                    return sendSingleError(res, `There is no entry in ${referenceModelName} of id ${referenceModelId}`);
                 }
 
-                /*Log it*/
-                /*Ignore await*/
-                writeRanjodhBirData(
-                    `${collection.name}`,
-                    collection.clientUserName,
-                    collection.applicationName,
-                    EnglishLanguage,
-                    logBody
-                );
             }
             else {
-                res.status(errorStatus).send({
-                    errors: [hasError]
-                });
+                return sendSingleError(res, 'reference model does not exist');
             }
 
+
+
+        }
+        else {
+            const entry = await createEntry(rules, req, res, collection);
+            res.status(okayStatus).send(entry);
         }
     }
     else {
@@ -154,17 +220,22 @@ export async function getStoreRecord(req: Request, res: Response) {
     }
 }
 
+// create reference
+export async function createStoreReferenceRecord(req: Request, res: Response) {
+
+}
+
 // Update Record
 
 // Delete Record
 
 
-async function getCollection(req: Request) {
+async function getCollection(req: Request, referenceModelName?: string) {
     const clientUserName  = req.params && req.params[CLIENT_USER_NAME];
     const modelName = req.params && req.params.modelName;
     const applicationName = req.params && req.params[APPLICATION_NAME];
 
-    const name = modelName;
+    const name = referenceModelName ? referenceModelName : modelName;
 
     return CollectionModel.findOne(
         {clientUserName, name, applicationName},

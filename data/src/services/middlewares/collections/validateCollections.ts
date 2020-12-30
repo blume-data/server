@@ -11,7 +11,7 @@ import {
     FIELD_CUSTOM_ERROR_MSG_MIN_MAX,
     FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN,
     INTEGER_FIElD_TYPE,
-    JSON_FIELD_TYPE, REFERENCE_FIELD_TYPE,
+    JSON_FIELD_TYPE, ONE_TO_MANY_RELATION, ONE_TO_ONE_RELATION, REFERENCE_FIELD_TYPE,
     SHORT_STRING_FIElD_TYPE, shortenString,
     SUPPORTED_FIELDS_TYPE,
 } from "@ranjodhbirkaur/constants";
@@ -215,18 +215,30 @@ export async function validateCollections(req: Request, res: Response, next: Nex
 
                 if(!rule.referenceModelName || !rule.referenceModelType) {
                     isValidBody = false;
-                    inValidMessage.push({
-                        message: `referenceModelName is required`,
-                        field: 'rules'
-                    });
-                    inValidMessage.push({
-                        message: 'referenceModelType is required',
-                        field: 'rules'
-                    });
+                    if(!rule.referenceModelType) {
+                        inValidMessage.push({
+                            message: 'referenceModelType is required',
+                            field: 'rules'
+                        });
+                    }
+                    if(!rule.referenceModelName) {
+                        inValidMessage.push({
+                            message: `referenceModelName is required`,
+                            field: 'rules'
+                        });
+                    }
                 }
                 else {
-                    parsedRule.referenceModelName = rule.referenceModelName;
-                    parsedRule.referenceModelType = rule.referenceModelType;
+                    if(rule.referenceModelType === ONE_TO_ONE_RELATION || rule.referenceModelType === ONE_TO_MANY_RELATION) {
+                        parsedRule.referenceModelName = rule.referenceModelName;
+                        parsedRule.referenceModelType = rule.referenceModelType;
+                    }
+                    else {
+                        inValidMessage.push({
+                            message: 'referenceModelType is not supported',
+                            field: 'rules'
+                        })
+                    }
                 }
             }
 

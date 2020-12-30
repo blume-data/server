@@ -74,6 +74,7 @@ export async function createCollectionSchema(req: Request, res: Response) {
             const update: any = {};
             if(reqBody.rules) {
                 update.rules = JSON.stringify(reqBody.rules);
+                console.log('rules', update.rules)
             }
             if(reqBody.description) {
                 update.description = reqBody.description;
