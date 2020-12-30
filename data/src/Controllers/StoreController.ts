@@ -188,10 +188,8 @@ async function getEntries(props: GetEntriesProps) {
 
     }
 
-    if (collection) {
-        const rules = JSON.parse(collection.rules);
-        let items: any = [];
-        items = await fetchEntries(req, res, rules, findWhere, getOnlyThese, collection.name, limit, skip);
+    async function recursivePopulation(items: any[], rules: RuleType[]) {
+        // check if populate exist
         // only populate if there is only one item
         if(req.body && req.body.populate && req.body.populate.length && items.length === 1) {
             for (const population of req.body.populate) {
@@ -199,11 +197,28 @@ async function getEntries(props: GetEntriesProps) {
                     // check if the name exist in the rules
                     const ruleExist = rules.find((rule: RuleType) => rule.name === population.name);
                     if(ruleExist && items[0] && items[0][population.name]) {
-                        items[0][population.name] = await fetchPopulation(population, ruleExist[REFERENCE_MODEL_NAME] , items[0][population.name]);
+                        const populatedEntries = await fetchPopulation(population, ruleExist[REFERENCE_MODEL_NAME] , items[0][population.name]);
+
+                        const refCollection = await getCollection(req, ruleExist[REFERENCE_MODEL_NAME]);
+                        if(refCollection) {
+                            const refRules = JSON.parse(refCollection.rules);
+                            await recursivePopulation(populatedEntries, refRules);
+                        }
+
+                        items[0][population.name] = populatedEntries;
                     }
                 }
             }
         }
+    }
+
+    if (collection) {
+        const rules = JSON.parse(collection.rules);
+        let items: any = [];
+        items = await fetchEntries(req, res, rules, findWhere, getOnlyThese, collection.name, limit, skip);
+
+        await recursivePopulation(items, rules);
+
         return items;
     }
     else {
@@ -308,19 +323,11 @@ export async function createStoreRecord(req: Request, res: Response) {
 // Get Record
 export async function getStoreRecord(req: Request, res: Response) {
 
-    const language = req.params.language;
-    const clientUserName = req.params[CLIENT_USER_NAME];
-    const applicationName = req.params[APPLICATION_NAME];
-
-    let items = [];
-
-    items = await getEntries({
+    const items = await getEntries({
         req, res, findWhere: req.body.where, getOnlyThese: req.body.getOnly
     });
 
     return res.status(okayStatus).send(items);
-
-
 }
 
 // create reference
@@ -605,7 +612,7 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
                     break;
                 }
                 case REFERENCE_FIELD_TYPE: {
-                    if(typeof reqBody[rule.name] === "string" || !reqBody[rule.name]) {
+                    if(typeof reqBody[rule.name] !== "string" || !reqBody[rule.name]) {
                         isValid = false;
                         errorMessages.push({
                             field: rule.name,
