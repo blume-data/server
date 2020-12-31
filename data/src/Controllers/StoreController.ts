@@ -135,7 +135,16 @@ async function createEntry(rules: RuleType[], req: Request, res: Response, colle
                 return item;
             }
             catch (e) {
-                return sendSingleError(res, `request data is not valid`);
+                const errors: ErrorMessagesType[] = [];
+                for (let error in e.errors) {
+                    if(e.errors.hasOwnProperty(error)) {
+                        errors.push({
+                            message: `${error} is not valid`,
+                            field: error
+                        });
+                    }
+                }
+                return res.status(errorStatus).send(errors);
             }
         }
         else {
