@@ -48,7 +48,7 @@ import {
     HHTimeReg,
     usPhoneReg,
     usZipReg,
-    APPLICATION_NAME, DATE_AND_TIME_FIElD_TYPE
+    APPLICATION_NAME, DATE_AND_TIME_FIElD_TYPE, ONE_TO_ONE_RELATION, ONE_TO_MANY_RELATION
 } from "@ranjodhbirkaur/constants";
 import TextFieldsIcon from '@material-ui/icons/TextFields';
 import './style.scss';
@@ -551,9 +551,6 @@ const CreateDataModel = (props: CreateDataModelType) => {
         }
 
         if(fieldType === REFERENCE_FIELD_TYPE) {
-
-            const ONE_TO_ONE_RELATION = 'one-to-one-relation';
-            const ONE_TO_MANY_RELATION = 'one-to-many-relation';
 
             hello.push({
                 groupName: FIELD_REFERENCE_MODEL_GROUP,

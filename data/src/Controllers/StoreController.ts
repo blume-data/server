@@ -112,27 +112,31 @@ async function createEntry(rules: RuleType[], req: Request, res: Response, colle
         const hasError = await validateUniqueParam(model, rules, body);
 
         if (!hasError) {
-            const item = new model(body);
-            await item.save();
+            try {
+                const item = new model(body);
+                await item.save();
+                const logBody: ModelLoggerBodyType = {
+                    modelName: collection.name,
+                    action: "create",
+                    actor: req.currentUser[ID],
+                    time: `${new Date()}`,
+                    [clientType]: req.currentUser[clientType],
+                }
 
-            const logBody: ModelLoggerBodyType = {
-                modelName: collection.name,
-                action: "create",
-                actor: req.currentUser[ID],
-                time: `${new Date()}`,
-                [clientType]: req.currentUser[clientType],
+                /*Log it*/
+                /*Ignore await*/
+                /*writeRanjodhBirData(
+                    `${collection.name}`,
+                    collection.clientUserName,
+                    collection.applicationName,
+                    EnglishLanguage,
+                    logBody
+                );*/
+                return item;
             }
-
-            /*Log it*/
-            /*Ignore await*/
-            /*writeRanjodhBirData(
-                `${collection.name}`,
-                collection.clientUserName,
-                collection.applicationName,
-                EnglishLanguage,
-                logBody
-            );*/
-            return item;
+            catch (e) {
+                return sendSingleError(res, `request data is not valid`);
+            }
         }
         else {
             res.status(errorStatus).send({
@@ -189,7 +193,13 @@ export async function createStoreRecord(req: Request, res: Response) {
                     let entryId = (req.body && req.body.id) || '';
                     if(req.body && !req.body.id) {
                         const entry = await createEntry(rules, req, res, collection);
-                        entryId = entry.id;
+                        if(entry && entry.id) {
+                            entryId = entry.id;
+                        }
+                        else {
+                            // validation failed
+                            return;
+                        }
                     }
                     if(referenceType === ONE_TO_ONE_RELATION) {
                         const response = await referenceModel.findOneAndUpdate({
@@ -218,15 +228,10 @@ export async function createStoreRecord(req: Request, res: Response) {
                 else {
                     return sendSingleError(res, `There is no entry in ${referenceModelName} of id ${referenceModelId}`);
                 }
-
             }
             else {
-                console.log('r', referenceModelName, referencePropertyName)
                 return sendSingleError(res, 'reference model does not exist');
             }
-
-
-
         }
         else {
             const entry = await createEntry(rules, req, res, collection);
