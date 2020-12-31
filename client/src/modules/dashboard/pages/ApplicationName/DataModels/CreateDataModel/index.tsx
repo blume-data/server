@@ -217,12 +217,16 @@ const CreateDataModel = (props: CreateDataModelType) => {
             const fullUrl = `${getBaseUrl()}${url}?get=displayName,name`;
             const response = await doGetRequest(fullUrl, null, true);
             if(response && response.length) {
-                setModelNames(response.map((item: {displayName: string; name: string}) => {
-                    return {
-                        label: item.displayName,
-                        value: item.name
+                const m: {label: string; value: string}[] = [];
+                response.forEach((item: {displayName: string; name: string}) => {
+                    if(item.name !== contentModelName) {
+                        m.push({
+                            label: item.displayName,
+                            value: item.name
+                        });
                     }
-                }));
+                });
+                setModelNames(m);
             }
         }
     }
