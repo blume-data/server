@@ -202,9 +202,9 @@ async function getEntries(props: GetEntriesProps) {
                 if(population.name) {
                     // check if the name exist in the rules
                     const ruleExist = rules.find((rule: RuleType) => rule.name === population.name);
-                    if(ruleExist && items[0] && items[0][population.name]) {
+                    if(ruleExist) {
                         for (let index=0; index< items.length; index++) {
-                            if(items[0] && items[index][population.name]) {
+                            if(items[index] && items[index][population.name]) {
                                 const populatedEntries = await fetchPopulation(population, ruleExist[REFERENCE_MODEL_NAME], items[index][population.name]);
 
                                 if(population.populate && population.populate.length) {
