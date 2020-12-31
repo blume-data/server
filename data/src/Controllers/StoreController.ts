@@ -284,7 +284,7 @@ export async function getStoreRecord(req: Request, res: Response) {
     async function recursivePopulation(items: any[], rules: RuleType[], populate: any) {
         // check if populate exist
         // only populate if there is only one item
-        if(populate && populate.length && items.length) {
+        if(populate && populate.length && items && items.length) {
             for (const population of populate) {
                 if(population.name) {
                     // check if the name exist in the rules
