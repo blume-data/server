@@ -197,27 +197,31 @@ async function getEntries(props: GetEntriesProps) {
     async function recursivePopulation(items: any[], rules: RuleType[], populate: any) {
         // check if populate exist
         // only populate if there is only one item
-        if(populate && populate.length && (items.length === 1 || typeof items === "string")) {
+        if(populate && populate.length && items.length) {
             for (const population of populate) {
                 if(population.name) {
                     // check if the name exist in the rules
                     const ruleExist = rules.find((rule: RuleType) => rule.name === population.name);
                     if(ruleExist && items[0] && items[0][population.name]) {
-                        const populatedEntries = await fetchPopulation(population, ruleExist[REFERENCE_MODEL_NAME], items[0][population.name]);
+                        for (let index=0; index< items.length; index++) {
+                            if(items[0] && items[index][population.name]) {
+                                const populatedEntries = await fetchPopulation(population, ruleExist[REFERENCE_MODEL_NAME], items[index][population.name]);
 
-                        if(population.populate && population.populate.length) {
-                            const refCollection = await getCollection(req, ruleExist[REFERENCE_MODEL_NAME]);
-                            if(refCollection) {
-                                const refRules = JSON.parse(refCollection.rules);
-                                await recursivePopulation(populatedEntries, refRules, population.populate);
+                                if(population.populate && population.populate.length) {
+                                    const refCollection = await getCollection(req, ruleExist[REFERENCE_MODEL_NAME]);
+                                    if(refCollection) {
+                                        const refRules = JSON.parse(refCollection.rules);
+                                        await recursivePopulation(populatedEntries, refRules, population.populate);
+                                    }
+                                }
+
+                                if(ruleExist[REFERENCE_MODEL_TYPE] === ONE_TO_MANY_RELATION) {
+                                    items[index][population.name] = populatedEntries;
+                                }
+                                else {
+                                    items[index][population.name] = populatedEntries[0];
+                                }
                             }
-                        }
-
-                        if(ruleExist[REFERENCE_MODEL_TYPE] === ONE_TO_MANY_RELATION) {
-                            items[0][population.name] = populatedEntries;
-                        }
-                        else {
-                            items[0][population.name] = populatedEntries[0];
                         }
                     }
                 }
