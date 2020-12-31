@@ -197,10 +197,7 @@ async function getEntries(props: GetEntriesProps) {
     async function recursivePopulation(items: any[], rules: RuleType[], populate: any) {
         // check if populate exist
         // only populate if there is only one item
-        console.log('items', items);
-
         if(populate && populate.length && (items.length === 1 || typeof items === "string")) {
-
             for (const population of populate) {
                 if(population.name) {
                     // check if the name exist in the rules
@@ -216,7 +213,12 @@ async function getEntries(props: GetEntriesProps) {
                             }
                         }
 
-                        items[0][population.name] = populatedEntries;
+                        if(ruleExist[REFERENCE_MODEL_TYPE] === ONE_TO_MANY_RELATION) {
+                            items[0][population.name] = populatedEntries;
+                        }
+                        else {
+                            items[0][population.name] = populatedEntries[0];
+                        }
                     }
                 }
             }
