@@ -442,31 +442,6 @@ export const Form = (props: FormType) => {
         }
         setIsTouched();
 
-        /*setTimeout(async () => {
-            formState.forEach(item => {
-                const formItem = fields.find(field => field.label === item.label);
-                if(formItem) {
-                    const errorHai = hasError(formItem.label);
-                    if(errorHai) {
-                        isValid = false
-                    }
-                }
-            });
-            if(isValid) {
-                const values: {name: string; value: string}[] = [];
-                formState.forEach(item => {
-                    const exist = fields.find(field => field.label === item.label);
-                    if(exist) {
-                        values.push({
-                            name: exist.name,
-                            value: item.value
-                        });
-                    }
-                });
-                const res = await onSubmit(values);
-            }
-        }, 100);*/
-
         if(isValid) {
             const values: {name: string; value: string}[] = [];
             formState.forEach(item => {
