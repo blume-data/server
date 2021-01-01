@@ -45,11 +45,6 @@ export interface AlertType {
     severity?: 'success' | 'error' | 'info'
 }
 
-interface HtmlValueType {
-    name: string;
-    value: string
-}
-
 export const Form = (props: FormType) => {
 
     const [isAlertOpen, setIsAlertOpen] = React.useState<boolean>(false);
@@ -426,15 +421,51 @@ export const Form = (props: FormType) => {
 
     async function onClickSubmit() {
         let isValid = true;
-        formState.forEach(item => {
-            const formItem = fields.find(field => field.label === item.label);
-            if(formItem) {
-                const errorHai = hasError(formItem.label);
-                if(errorHai) {
-                    isValid = false
+
+        function setIsTouched() {
+            let newFormState: FormState[] = [];
+            formState.forEach(item => {
+                const formItem = fields.find(field => field.label === item.label);
+                if (formItem && formItem.required && !item.value) {
+                    isValid = false;
+                    newFormState.push({
+                        ...item,
+                        isTouched: true,
+                        helperText: setErrorMessage(item.label)
+                    });
                 }
+                else {
+                    newFormState.push(item);
+                }
+            });
+            setFormState(newFormState);
+        }
+        setIsTouched();
+
+        /*setTimeout(async () => {
+            formState.forEach(item => {
+                const formItem = fields.find(field => field.label === item.label);
+                if(formItem) {
+                    const errorHai = hasError(formItem.label);
+                    if(errorHai) {
+                        isValid = false
+                    }
+                }
+            });
+            if(isValid) {
+                const values: {name: string; value: string}[] = [];
+                formState.forEach(item => {
+                    const exist = fields.find(field => field.label === item.label);
+                    if(exist) {
+                        values.push({
+                            name: exist.name,
+                            value: item.value
+                        });
+                    }
+                });
+                const res = await onSubmit(values);
             }
-        });
+        }, 100);*/
 
         if(isValid) {
             const values: {name: string; value: string}[] = [];
@@ -448,23 +479,6 @@ export const Form = (props: FormType) => {
                 }
             });
             const res = await onSubmit(values);
-        }
-        else {
-            let newFormState: FormState[] = [];
-            formState.forEach(item => {
-                const formItem = fields.find(field => field.label === item.label);
-                if (formItem && formItem.required && !item.value) {
-                    newFormState.push({
-                        ...item,
-                        isTouched: true,
-                        helperText: setErrorMessage(item.label)
-                    });
-                }
-                else {
-                    newFormState.push(item);
-                }
-            });
-            setFormState(newFormState);
         }
     }
 

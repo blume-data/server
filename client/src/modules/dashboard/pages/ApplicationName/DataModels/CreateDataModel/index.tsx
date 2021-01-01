@@ -607,10 +607,17 @@ const CreateDataModel = (props: CreateDataModelType) => {
             }
         });
 
-        setContentModelName(name ? name : trimCharactersAndNumbers(displayName));
+        const contentModelName = name ? name : trimCharactersAndNumbers(displayName);
+        setContentModelName(contentModelName);
         setContentModelDisplayName(displayName);
         setContentModelDescription(description);
-        setHideNames(true);
+        if(contentModelName) {
+            setHideNames(true);
+        }
+        else {
+            // show alert that model name is required
+            showAlert('Please add Model name');
+        }
     }
 
     function onSubmitFieldProperty(values: any) {
@@ -758,6 +765,22 @@ const CreateDataModel = (props: CreateDataModelType) => {
     function onClickAddFields() {
         setAddingField(true);
         setHideNames(true);
+    }
+
+    /*
+    * Show message alert
+    * */
+    function showAlert(message: string, severity?: 'error' | 'success' | 'info') {
+        if(!severity) {
+            severity = 'error';
+        }
+        setTimeout(() => {
+            setIsAlertOpen(true);
+            setAlertMessage({
+                message,
+                severity
+            });
+        }, 10);
     }
 
     /*Clear Alert*/
