@@ -716,49 +716,76 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 }
             });
 
-            setTimeout(() => {
-                const property: PropertiesType = {
-                    name: propertyId || trimCharactersAndNumbers(propertyName),
-                    displayName: propertyName,
-                    required: propertyIsRequired === 'true',
-                    type: fieldType,
-                    default: propertyDefaultValue,
-                    matchSpecificPattern: propertyMatchPattern,
-                    prohibitSpecificPattern: propertyProhibitPattern,
-                    description: propertyDescription,
-                    [FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN]: propertyProhibitPatternError,
-                    [FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN]: propertyMatchPatternError,
-                    [FIELD_MIN]: propertyMin,
-                    [FIELD_MAX]: propertyMax,
-                    [IS_FIELD_UNIQUE]: propertyIsUnique === 'true',
-                    [FIELD_CUSTOM_ERROR_MSG_MIN_MAX]: propertyMinMaxCustomErrorMessage,
-                    onlyAllowedValues: propertyOnlySpecifiedValues,
-                    matchCustomSpecificPattern: propertyMatchPatternString,
-                    referenceModelName: propertyReferenceModelName,
-                    referenceModelType: propertyReferenceModelType
-                };
+            let isValid = true;
+            let errors: {message: string}[] = [];
 
-                const tempProperties = JSON.parse(JSON.stringify(properties ? properties : []));
-                const exist = tempProperties.find((item: any) => item.name === property.name);
-
-                if(exist) {
-                    const newProperties: PropertiesType[] = tempProperties.map((propertyItem: PropertiesType) => {
-                        if(property.name === propertyItem.name) {
-                            return property;
-                        }
-                        else {
-                            return propertyItem;
-                        }
+            /*
+            * If field type is reference
+            * check if the reference model name and reference model type is present
+            * */
+            if(fieldType === REFERENCE_FIELD_TYPE) {
+                if(!propertyReferenceModelName) {
+                    errors.push({
+                        message: 'Please add reference model name'
                     });
-                    setProperties(newProperties);
+                    isValid = false;
                 }
-                else {
-                    tempProperties.push(property);
-                    setProperties(tempProperties);
+                if(!propertyReferenceModelType) {
+                    errors.push({
+                        message: 'Please add reference model type'
+                    });
+                    isValid = false;
                 }
+            }
 
-                closeAddFieldForm();
-            });
+            if(isValid) {
+                setTimeout(() => {
+                    const property: PropertiesType = {
+                        name: propertyId || trimCharactersAndNumbers(propertyName),
+                        displayName: propertyName,
+                        required: propertyIsRequired === 'true',
+                        type: fieldType,
+                        default: propertyDefaultValue,
+                        matchSpecificPattern: propertyMatchPattern,
+                        prohibitSpecificPattern: propertyProhibitPattern,
+                        description: propertyDescription,
+                        [FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN]: propertyProhibitPatternError,
+                        [FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN]: propertyMatchPatternError,
+                        [FIELD_MIN]: propertyMin,
+                        [FIELD_MAX]: propertyMax,
+                        [IS_FIELD_UNIQUE]: propertyIsUnique === 'true',
+                        [FIELD_CUSTOM_ERROR_MSG_MIN_MAX]: propertyMinMaxCustomErrorMessage,
+                        onlyAllowedValues: propertyOnlySpecifiedValues,
+                        matchCustomSpecificPattern: propertyMatchPatternString,
+                        referenceModelName: propertyReferenceModelName,
+                        referenceModelType: propertyReferenceModelType
+                    };
+
+                    const tempProperties = JSON.parse(JSON.stringify(properties ? properties : []));
+                    const exist = tempProperties.find((item: any) => item.name === property.name);
+
+                    if(exist) {
+                        const newProperties: PropertiesType[] = tempProperties.map((propertyItem: PropertiesType) => {
+                            if(property.name === propertyItem.name) {
+                                return property;
+                            }
+                            else {
+                                return propertyItem;
+                            }
+                        });
+                        setProperties(newProperties);
+                    }
+                    else {
+                        tempProperties.push(property);
+                        setProperties(tempProperties);
+                    }
+
+                    closeAddFieldForm();
+                });
+            }
+            else {
+                setResponse(errors);
+            }
         }
     }
 

@@ -162,7 +162,11 @@ export const Form = (props: FormType) => {
                 showAlert({message: response[0][MESSAGE], severity: "error"});
             }
             else {
-                showAlert({message: PLEASE_PROVIDE_VALID_VALUES, severity: "error"});
+                let errorMessage = '';
+                response.forEach((item, index) => {
+                    errorMessage += `${index+1}. ${item.message}. `;
+                })
+                showAlert({message: errorMessage, severity: "error"});
             }
     }
     }, [response, clearOnSubmit]);
