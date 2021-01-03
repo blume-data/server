@@ -5,6 +5,7 @@ import {GetCollectionNamesUrl} from "../../../../../data/src/util/urls";
 
 export const ACTION_FETCH_AUTH_ADDRESS_ROUTES = 'ACTION_FETCH_i-love-ran-jo-dh-ADDRESS_ROUTES';
 export const ACTION_FETCH_DATA_ADDRESS_ROUTES = 'ACTION_FETCH_DATA_ADDRESS_ROUTES';
+export const ACTION_FETCH_ASSETS_ADDRESS_ROUTES = 'ACTION_FETCH_ASSETS_ADDRESS_ROUTES';
 
 export const ACTION_ADDRESS_ROUTES_LOADING = 'ACTION_ADDRESS_ROUTES_LOADING';
 
@@ -20,6 +21,12 @@ export interface RouteActionType {
     type?: string;
     loading?: boolean;
     data?: DataRoutesType;
+    assets?: AssetsRoutesType;
+}
+
+export interface AssetsRoutesType {
+    getSignedUrl: string;
+    getAssets: string;
 }
 
 interface DataRoutesType {
@@ -42,8 +49,9 @@ interface AuthRoutesType {
 
 export interface RouteAddressesInitialStateType {
     routes: {
-        auth: AuthRoutesType | null,
-        loading: boolean
-        data: DataRoutesType | null
+        auth: AuthRoutesType | null;
+        loading: boolean;
+        data: DataRoutesType | null;
+        assets: AssetsRoutesType | null;
     }
 }

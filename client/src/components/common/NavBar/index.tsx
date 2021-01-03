@@ -85,7 +85,7 @@ export const NavBarComponent = (props: PropsFromRedux) => {
 
     return (
         <Grid id={'nav-bar-container'} >
-            <AppBar position="static">
+            <AppBar position="static" color={'transparent'} elevation={4}>
                 <Toolbar>
                     <IconButton
                         onClick={toggleDrawer(LEFT_ANCHOR, true)}
@@ -93,7 +93,7 @@ export const NavBarComponent = (props: PropsFromRedux) => {
                         <MenuIcon />
                     </IconButton>
                     <Typography variant="h6" className={'menu-title'}>
-                        News
+                        Ranjod
                     </Typography>
                     {
                         isAuth

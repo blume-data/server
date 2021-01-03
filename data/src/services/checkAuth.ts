@@ -3,10 +3,9 @@ import {
     APPLICATION_NAMES,
     clientType,
     clientUserType,
-    JWT_ID, USER_NAME, AUTHORIZATION_TOKEN,
-    sendSingleError, Is_Enabled, CLIENT_USER_NAME, ID,
+    JWT_ID, USER_NAME,
+    sendSingleError, Is_Enabled, CLIENT_USER_NAME, ID, verifyJwt,
 } from "@ranjodhbirkaur/common";
-import jwt from 'jsonwebtoken';
 import {ClientUserModel} from "../authMongoConnection";
 
 /*
@@ -22,23 +21,9 @@ export async function checkAuth(req: Request, res: Response, next: NextFunction 
     }
 
     try {
-        const headers: any = req.headers;
-        let payload: any;
 
-        if (headers[AUTHORIZATION_TOKEN]) {
-            // verify token
-            payload = jwt.verify(
-                headers[AUTHORIZATION_TOKEN],
-                process.env.JWT_KEY!
-            );
-        }
-        else if(req.session && req.session.jwt) {
-            payload = jwt.verify(
-                req.session.jwt,
-                process.env.JWT_KEY!
-            )
-        }
-        else {
+        const payload = verifyJwt(req);
+        if(!payload) {
             return notAuthorized();
         }
 

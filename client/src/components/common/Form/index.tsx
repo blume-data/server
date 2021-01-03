@@ -10,12 +10,13 @@ import {
     DATE_FORM_FIELD_TYPE,
     DROPDOWN,
     FORMATTED_TEXT,
-    FormType,
+    FormType, JSON_TEXT,
     RADIO,
-    TEXT, TIME_FORM_FIELD_TYPE
+    TEXT,
+    ONLY_DATE_FORM_FIELD_TYPE
 } from "./interface";
 import './style.scss';
-import {ErrorMessagesType, FIELD, MESSAGE} from "@ranjodhbirkaur/constants";
+import {ErrorMessagesType, IsJsonString, FIELD, JSON_FIELD_TYPE, MESSAGE} from "@ranjodhbirkaur/constants";
 import {Alert} from "../Toast";
 import {PLEASE_PROVIDE_VALID_VALUES} from "../../../modules/authentication/pages/Auth/constants";
 import {CommonRadioField} from "./CommonRadioField";
@@ -23,7 +24,10 @@ import {CommonCheckBoxField} from "./CommonCheckBoxField";
 import {CommonButton} from "../CommonButton";
 
 import loadable from "@loadable/component";
-import {AccordianCommon} from "../AccordianCommon";
+import {DateField} from "./DateField";
+import {VerticalTab, VerticalTabPanel} from "../VerticalTab";
+import {JsonEditor} from "./JsonEditor";
+
 const HtmlEditor = loadable(() => import('../HtmlEditor'));
 
 interface FormState {
@@ -41,15 +45,12 @@ export interface AlertType {
     severity?: 'success' | 'error' | 'info'
 }
 
-interface HtmlValueType {
-    name: string;
-    value: string
-}
-
 export const Form = (props: FormType) => {
 
     const [isAlertOpen, setIsAlertOpen] = React.useState<boolean>(false);
     const [alert, setAlertMessage] = React.useState<AlertType>({message: ''});
+    const [tabValue, setTabValue] = React.useState<number>(0);
+    const [filteredGroups, setFilteredGroups] = useState<string[]>([]);
 
     const [formState, setFormState] = useState<FormState[]>([]);
     const {className, groups, fields, onSubmit, submitButtonName, response='', clearOnSubmit=false, showClearButton=false} = props;
@@ -92,6 +93,11 @@ export const Form = (props: FormType) => {
                             return `${label} should be minimum ${min}`;
                         }
                     }
+                }
+            }
+            if(inputType === JSON_TEXT) {
+                if(!IsJsonString(value)) {
+                    return `${label} is not a valid JSON`;
                 }
             }
 
@@ -156,10 +162,24 @@ export const Form = (props: FormType) => {
                 showAlert({message: response[0][MESSAGE], severity: "error"});
             }
             else {
-                showAlert({message: PLEASE_PROVIDE_VALID_VALUES, severity: "error"});
+                let errorMessage = '';
+                response.forEach((item, index) => {
+                    errorMessage += `${index+1}. ${item.message}. `;
+                })
+                showAlert({message: errorMessage, severity: "error"});
             }
     }
-    }, [response, clearOnSubmit])
+    }, [response, clearOnSubmit]);
+
+    /*Filter groups which have at least one child element*/
+    useEffect(() => {
+        if(groups && groups.length) {
+            const h = groups.filter(group => {
+                return fields.find(field => field.groupName === group);
+            });
+            setFilteredGroups(h);
+        }
+    }, [groups, fields]);
 
     function getValue(label: string) {
         const value = formState.find(item => item.label === label);
@@ -224,11 +244,11 @@ export const Form = (props: FormType) => {
         const error = hasError(label);
 
 
-        if(inputType === TIME_FORM_FIELD_TYPE) {
+        if(inputType === ONLY_DATE_FORM_FIELD_TYPE) {
             return (
-                <TextBox
+                <DateField
                     descriptionText={descriptionText}
-                    type={'time'}
+                    type={ONLY_DATE_FORM_FIELD_TYPE}
                     key={index}
                     name={name}
                     disabled={disabled}
@@ -236,19 +256,21 @@ export const Form = (props: FormType) => {
                     required={required}
                     placeholder={placeholder}
                     helperText={helperText}
-                    onChange={onChange}
+                    onChange={(value: any) => {changeValue({target: {value}}, label, SET_VALUE_ACTION)}}
                     onBlur={onBlur}
                     label={label}
                     id={id}
                     value={value}
-                    className={className} />
+                    className={className}
+                />
             );
         }
         if(inputType === DATE_FORM_FIELD_TYPE) {
+
             return (
-                <TextBox
+                <DateField
                     descriptionText={descriptionText}
-                    type={'date'}
+                    type={DATE_FORM_FIELD_TYPE}
                     key={index}
                     name={name}
                     disabled={disabled}
@@ -256,12 +278,13 @@ export const Form = (props: FormType) => {
                     required={required}
                     placeholder={placeholder}
                     helperText={helperText}
-                    onChange={onChange}
+                    onChange={(value: any) => {changeValue({target: {value}}, label, SET_VALUE_ACTION)}}
                     onBlur={onBlur}
                     label={label}
                     id={id}
                     value={value}
-                    className={className} />
+                    className={className}
+                />
             );
         }
         if (inputType === TEXT) {
@@ -314,6 +337,27 @@ export const Form = (props: FormType) => {
                     name={name}
                     error={error}
                     multiline={true}
+                    required={required}
+                    placeholder={placeholder}
+                    helperText={helperText}
+                    onBlur={onBlur}
+                    onChange={onChange}
+                    label={label}
+                    value={value}
+                    id={id}
+                    className={className}
+                />
+            );
+        }
+        if(inputType === JSON_TEXT) {
+            return (
+                <JsonEditor
+                    descriptionText={descriptionText}
+                    disabled={disabled}
+                    type={type}
+                    key={index}
+                    name={name}
+                    error={error}
                     required={required}
                     placeholder={placeholder}
                     helperText={helperText}
@@ -381,15 +425,26 @@ export const Form = (props: FormType) => {
 
     async function onClickSubmit() {
         let isValid = true;
-        formState.forEach(item => {
-            const formItem = fields.find(field => field.label === item.label);
-            if(formItem) {
-                const errorHai = hasError(formItem.label);
-                if(errorHai) {
-                    isValid = false
+
+        function setIsTouched() {
+            let newFormState: FormState[] = [];
+            formState.forEach(item => {
+                const formItem = fields.find(field => field.label === item.label);
+                if (formItem && formItem.required && !item.value) {
+                    isValid = false;
+                    newFormState.push({
+                        ...item,
+                        isTouched: true,
+                        helperText: setErrorMessage(item.label)
+                    });
                 }
-            }
-        });
+                else {
+                    newFormState.push(item);
+                }
+            });
+            setFormState(newFormState);
+        }
+        setIsTouched();
 
         if(isValid) {
             const values: {name: string; value: string}[] = [];
@@ -403,23 +458,6 @@ export const Form = (props: FormType) => {
                 }
             });
             const res = await onSubmit(values);
-        }
-        else {
-            let newFormState: FormState[] = [];
-            formState.forEach(item => {
-                const formItem = fields.find(field => field.label === item.label);
-                if (formItem && formItem.required && !item.value) {
-                    newFormState.push({
-                        ...item,
-                        isTouched: true,
-                        helperText: setErrorMessage(item.label)
-                    });
-                }
-                else {
-                    newFormState.push(item);
-                }
-            });
-            setFormState(newFormState);
         }
     }
 
@@ -469,23 +507,33 @@ export const Form = (props: FormType) => {
 
             {/*Render Group Fields*/}
             {
-                groups && groups.length
-                ? groups.map((groupName, index) => {
-                    const exist = fields.filter(ranjod => ranjod.groupName === groupName);
-                    if(exist && exist.length) {
-                        return (
-                            <AccordianCommon shouldExpand={index === 0} name={groupName} className={'common-form-accordian'}>
-                                {exist.map((option: ConfigField, index) => {
-                                    if(option.groupName === groupName) {
-                                        return renderFields(option, index, groupName)
+                filteredGroups && filteredGroups.length
+                    ? <VerticalTab value={tabValue} setValue={setTabValue} tabs={filteredGroups}>
+                        {
+                            filteredGroups && filteredGroups.length
+                                ? filteredGroups.map((groupName, index) => {
+                                    const exist = fields.filter(ranjod => ranjod.groupName === groupName);
+                                    if(exist && exist.length) {
+                                        return (
+                                            <VerticalTabPanel value={tabValue} index={index}>
+                                                {exist.map((option: ConfigField) => {
+                                                    if(option.groupName === groupName) {
+                                                        return (
+                                                            <>
+                                                                {renderFields(option, index, groupName)}
+                                                            </>
+                                                        );
+                                                    }
+                                                    return null;
+                                                })}
+                                            </VerticalTabPanel>
+                                        );
                                     }
-                                    return null;
-                                })}
-                            </AccordianCommon>
-                        );
-                    }
-                    return  null;
-                  })
+                                    return  null;
+                                })
+                                : null
+                        }
+                      </VerticalTab>
                 : null
             }
 
@@ -507,7 +555,8 @@ export const Form = (props: FormType) => {
                 isAlertOpen={isAlertOpen}
                 onAlertClose={setIsAlertOpen}
                 severity={alert.severity}
-                message={alert.message} />
+                message={alert.message}
+            />
         </Grid>
     );
 };

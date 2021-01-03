@@ -9,7 +9,7 @@ import {RootState} from "../../../rootReducer";
 import {fetchAuthRouteAddresses} from "./actions";
 import {checkAuthentication} from "../../../modules/authentication/pages/Auth/methods";
 import {setAuthentication, setEnv, setLanguage} from "../../../modules/authentication/pages/Auth/actions";
-import {fetchDataRouteAddresses} from "../../../modules/dashboard/pages/home/actions";
+import {fetchAssetsRouteAddress, fetchDataRouteAddresses} from "../../../modules/dashboard/pages/home/actions";
 import {getItemFromLocalStorage} from "../../../utils/tools";
 import {LOCAL_STORAGE_ENV, LOCAL_STORAGE_LANGUAGE} from "../../../utils/constants";
 
@@ -25,6 +25,7 @@ const Layout = (props: AppProps) => {
     useEffect(() => {
         props.fetchAuthRouteAddresses();
         props.fetchDataRouteAddresses();
+        props.fetchAssetsRouteAddress();
         const isAuthenticated = checkAuthentication();
         setAuthentication(isAuthenticated);
         const env = getItemFromLocalStorage(LOCAL_STORAGE_ENV);
@@ -53,7 +54,7 @@ const mapState = (state: RootState) => ({
 });
 
 const connector = connect(mapState, {
-    setEnv, setLanguage,
+    setEnv, setLanguage, fetchAssetsRouteAddress,
     fetchAuthRouteAddresses, setAuthentication, fetchDataRouteAddresses
 });
 export default connector(Layout);

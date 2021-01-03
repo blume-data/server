@@ -5,6 +5,16 @@
 
   .nav-bar-menu-link-item {
     margin: 0 10px;
+    button {
+      max-width: 300px;
+      span {
+        @include trim(1);
+      }
+    }
+  }
+
+  @include mobiles {
+    display: none;
   }
 
 }

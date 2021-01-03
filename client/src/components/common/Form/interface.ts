@@ -3,11 +3,14 @@ import {ErrorMessagesType} from "@ranjodhbirkaur/constants";
 export const DROPDOWN = 'dropdown';
 export const BIG_TEXT = 'bigText';
 export const TEXT = 'text';
+// date and time
 export const DATE_FORM_FIELD_TYPE = 'date';
-export const TIME_FORM_FIELD_TYPE = 'time';
+// only date
+export const ONLY_DATE_FORM_FIELD_TYPE = 'only-date';
 export const RADIO = 'radio';
 export const CHECKBOX = 'check-box';
-export const FORMATTED_TEXT = 'formatted-text'
+export const FORMATTED_TEXT = 'formatted-text';
+export const JSON_TEXT = 'json';
 
 export interface FormType {
     className: string;

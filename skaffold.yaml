@@ -35,6 +35,14 @@ build:
         manual:
           - src: 'src/**/*.ts'
             dest: .
+    - image: taranjeetsingh/assets
+      context: assets
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.ts'
+            dest: .
 
 
 #    - image: taranjeetsingh/client

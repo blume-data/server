@@ -4,16 +4,22 @@ import {RootState} from "../../../../../rootReducer";
 import {connect, ConnectedProps} from "react-redux";
 import {getItemFromLocalStorage} from "../../../../../utils/tools";
 import {
-    APPLICATION_NAME,
-    CLIENT_USER_NAME, ErrorMessagesType,
-    INTEGER_FIElD_TYPE, LONG_STRING_FIELD_TYPE,
+    APPLICATION_NAME, BOOLEAN_FIElD_TYPE,
+    CLIENT_USER_NAME, DATE_AND_TIME_FIElD_TYPE, DATE_FIElD_TYPE, ErrorMessagesType,
+    INTEGER_FIElD_TYPE, JSON_FIELD_TYPE, LONG_STRING_FIELD_TYPE,
     SHORT_STRING_FIElD_TYPE
 } from "@ranjodhbirkaur/constants";
 import {doGetRequest, doPostRequest} from "../../../../../utils/baseApi";
 import {getBaseUrl} from "../../../../../utils/urls";
 import {RuleType} from "../../../../../../../data/src/util/interface";
 import Loader from "../../../../../components/common/Loader";
-import {ConfigField, FORMATTED_TEXT, TEXT} from "../../../../../components/common/Form/interface";
+import {
+    CHECKBOX,
+    ConfigField,
+    DATE_FORM_FIELD_TYPE,
+    FORMATTED_TEXT, JSON_TEXT, ONLY_DATE_FORM_FIELD_TYPE,
+    TEXT
+} from "../../../../../components/common/Form/interface";
 import {Form} from "../../../../../components/common/Form";
 import {useParams} from "react-router";
 
@@ -55,12 +61,7 @@ const CreateEntry = (props: PropsFromRedux) => {
         getData();
     }, [GetCollectionNamesUrl]);
 
-    console.log('rules', rules);
-
-
     let fields: ConfigField[] = [];
-
-    console.log('rules', rules);
 
     if(rules) {
         rules.forEach(rule => {
@@ -81,6 +82,26 @@ const CreateEntry = (props: PropsFromRedux) => {
                 case INTEGER_FIElD_TYPE: {
                     inputType = TEXT;
                     type = 'number';
+                    break;
+                }
+                case DATE_FIElD_TYPE: {
+                    inputType = ONLY_DATE_FORM_FIELD_TYPE;
+                    type = ONLY_DATE_FORM_FIELD_TYPE;
+                    break;
+                }
+                case DATE_AND_TIME_FIElD_TYPE: {
+                    inputType = DATE_FIElD_TYPE;
+                    type = DATE_FIElD_TYPE;
+                    break;
+                }
+                case BOOLEAN_FIElD_TYPE: {
+                    inputType = CHECKBOX;
+                    type = 'text';
+                    break;
+                }
+                case JSON_FIELD_TYPE: {
+                    inputType = JSON_TEXT;
+                    type = 'text';
                     break;
                 }
 
@@ -115,18 +136,30 @@ const CreateEntry = (props: PropsFromRedux) => {
             let data: any = {};
 
             values.forEach((valueItem: {name: string; value: string}) => {
-                data[valueItem.name] = valueItem.value;
+
+                if(rules && rules.length) {
+                    const exist = rules.find(rule => rule.name === valueItem.name);
+                    if(exist) {
+                        if(exist.type === BOOLEAN_FIElD_TYPE) {
+                            data[valueItem.name] = valueItem.value === 'true';
+                        }
+                        else {
+                            data[valueItem.name] = valueItem.value;
+                        }
+                    }
+                }
             });
+
+            console.log('data', data, values, rules);
 
 
             const res = await doPostRequest(`${getBaseUrl()}${url}`, data, true);
-            console.log('respnse', res);
+
         }
 
     }
 
     function onsubmit(values: any) {
-        console.log('values', values);
         createEntry(values);
 
     }

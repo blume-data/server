@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-import moment from "moment";
 
 interface CollectionAttrs {
     clientUserName : string;
@@ -81,7 +80,7 @@ const Collection = new mongoose.Schema(
             type: String
         },
         updatedBy : { type: String, default: '' },
-        updatedAt : { type: Date, default: moment() },
+        updatedAt : { type: Date, default: '' },
     },
     {
         toJSON: {

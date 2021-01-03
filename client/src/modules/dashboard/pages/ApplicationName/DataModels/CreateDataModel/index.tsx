@@ -6,13 +6,12 @@ import {
     ConfigField, DATE_FORM_FIELD_TYPE,
     DROPDOWN,
     FORMATTED_TEXT,
-    TEXT, TIME_FORM_FIELD_TYPE
+    TEXT, ONLY_DATE_FORM_FIELD_TYPE
 } from "../../../../../../components/common/Form/interface";
 import {
     BOOLEAN_FIElD_TYPE,
     CLIENT_USER_NAME,
     DATE_FIElD_TYPE,
-    DECIMAL_FIELD_TYPE,
     DESCRIPTION,
     DISPLAY_NAME,
     ErrorMessagesType,
@@ -49,7 +48,7 @@ import {
     HHTimeReg,
     usPhoneReg,
     usZipReg,
-    TIME_FIElD_TYPE
+    APPLICATION_NAME, DATE_AND_TIME_FIElD_TYPE, ONE_TO_ONE_RELATION, ONE_TO_MANY_RELATION
 } from "@ranjodhbirkaur/constants";
 import TextFieldsIcon from '@material-ui/icons/TextFields';
 import './style.scss';
@@ -68,16 +67,18 @@ import AccessTimeIcon from '@material-ui/icons/AccessTime';
 import ButtonGroup from "@material-ui/core/ButtonGroup";
 import {RootState} from "../../../../../../rootReducer";
 import {connect, ConnectedProps} from "react-redux";
-import {doPostRequest, doPutRequest} from "../../../../../../utils/baseApi";
+import {doGetRequest, doPostRequest, doPutRequest} from "../../../../../../utils/baseApi";
 import {getItemFromLocalStorage} from "../../../../../../utils/tools";
-import {getBaseUrl} from "../../../../../../utils/urls";
-import {AccordianCommon} from "../../../../../../components/common/AccordianCommon";
+import {dashboardDataModelsUrl, getBaseUrl} from "../../../../../../utils/urls";
+import Loader from "../../../../../../components/common/Loader";
 import BasicTableMIUI from "../../../../../../components/common/BasicTableMIUI";
 import DeleteIcon from "@material-ui/icons/Delete";
 import IconButton from "@material-ui/core/IconButton";
 import Paper from "@material-ui/core/Paper";
 import {Alert} from "../../../../../../components/common/Toast";
 import {AlertDialog} from "../../../../../../components/common/AlertDialog";
+import {CenterTab} from "../../../../../../components/common/CenterTab";
+import {useHistory} from "react-router";
 
 export interface PropertiesType {
     type: string;
@@ -96,23 +97,18 @@ export interface PropertiesType {
     [FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN]: string;
     [FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN]: string;
     onlyAllowedValues: string;
+    referenceModelName: string;
+    referenceModelType: string;
 }
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
-type CreateDataModelType = PropsFromRedux & {
-    onCreateDataModel: () => void;
-    modelName?: string;
-    modelId?: string;
-    modelDescription?: string;
-    modelDisplayName?: string;
-    modelProperties?: PropertiesType[];
-}
+type CreateDataModelType = PropsFromRedux;
 
 const CreateDataModel = (props: CreateDataModelType) => {
 
+    const [modelNames, setModelNames] = useState<{label: string; value: string}[]>([]);
     const [settingFieldName, setSettingFieldName] = useState<boolean>(false);
     const [addingField, setAddingField] = useState<boolean>(false);
-
 
     const [fieldName, setFieldName] = useState<string>('');
     const [fieldDescription, setFieldDescription] = useState<string>('');
@@ -143,6 +139,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
     const [properties, setProperties] = useState<PropertiesType[] | null>(null);
 
     const [response, setResponse] = useState<string | ErrorMessagesType[]>('');
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     // to show alerts
     const [isAlertOpen, setIsAlertOpen] = React.useState<boolean>(false);
@@ -161,6 +158,9 @@ const CreateDataModel = (props: CreateDataModelType) => {
 
     const FIELD_MATCH_SPECIFIC_PATTERN = 'matchSpecificPattern';
     const FIELD_PROHIBIT_SPECIFIC_PATTERN = 'prohibitSpecificPattern';
+    const FIELD_REFERENCE_MODEL_NAME = 'referenceModelName';
+    // one to many or one to one
+    const FIELD_REFERENCE_MODEL_TYPE = 'referenceModelType';
 
     /*Field Group Names*/
     const FIELD_LIMIT_CHARACTER_COUNT_GROUP = 'Limit character count';
@@ -170,20 +170,82 @@ const CreateDataModel = (props: CreateDataModelType) => {
     const FIELD_PROHIBIT_SPECIFIC_PATTERN_GROUP = 'Prohibit specific pattern';
     const FIELD_ALLOW_ONLY_SPECIFIC_VALUES_GROUP = 'Accept only specific values';
     const FIELD_DEFAULT_VALUE_GROUP = 'Default value';
+    const FIELD_REFERENCE_MODEL_GROUP = 'Reference model name';
 
     const {
-        env, CollectionUrl, applicationName, onCreateDataModel,
-        modelProperties, modelId,
-        modelName, modelDescription='', modelDisplayName
+        env, CollectionUrl, applicationName, GetCollectionNamesUrl, language,
     } = props;
 
+    const history = useHistory();
+
+    async function getData() {
+        if(GetCollectionNamesUrl && contentModelName) {
+            setIsLoading(true);
+            const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
+
+            const url = GetCollectionNamesUrl
+                .replace(`:${CLIENT_USER_NAME}`, clientUserName ? clientUserName : '')
+                .replace(':env', env)
+                .replace(':language', language)
+                .replace(`:${APPLICATION_NAME}`,applicationName);
+
+            const response = await doGetRequest(
+                `${getBaseUrl()}${url}?name=${contentModelName ? contentModelName : ''}`,
+                {},
+                true
+            );
+            if(response && !response.errors && response.length) {
+                setProperties(JSON.parse(response[0].rules));
+                setContentModelDisplayName(response[0].displayName);
+                setContentModelDescription(response[0].description);
+                setContentModelId(response[0].id);
+            }
+            setIsLoading(false);
+        }
+    }
+
+    async function getCollectionNames() {
+        const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
+
+        if(GetCollectionNamesUrl) {
+            const url = GetCollectionNamesUrl
+                .replace(`:${CLIENT_USER_NAME}`, clientUserName ? clientUserName : '')
+                .replace(':env', env)
+                .replace(':language', language)
+                .replace(`:${APPLICATION_NAME}`,applicationName);
+
+            const fullUrl = `${getBaseUrl()}${url}?get=displayName,name`;
+            const response = await doGetRequest(fullUrl, null, true);
+            if(response && response.length) {
+                const m: {label: string; value: string}[] = [];
+                response.forEach((item: {displayName: string; name: string}) => {
+                    if(item.name !== contentModelName) {
+                        m.push({
+                            label: item.displayName,
+                            value: item.name
+                        });
+                    }
+                });
+                setModelNames(m);
+            }
+        }
+    }
+
     useEffect(() => {
-        if(modelId && modelName && modelProperties && modelDisplayName) {
-            setContentModelDescription(modelDescription);
-            setContentModelDisplayName(modelDisplayName);
-            setContentModelName(modelName);
-            setProperties(modelProperties);
-            setContentModelId(modelId);
+        getData();
+        getCollectionNames();
+    }, [GetCollectionNamesUrl, contentModelName])
+
+    useEffect(() => {
+        if(contentModelName) {
+            setContentModelName(contentModelName);
+
+        }
+        const urlParams = new URLSearchParams(window.location.search);
+        const Name = urlParams.get('name');
+        if(Name) {
+            setContentModelName(Name);
+            setFieldEditMode(true);
         }
     }, []);
 
@@ -210,7 +272,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
             className: 'create-content-model-name-identifier',
             type: 'text',
             name: NAME,
-            disabled: !!modelId,
+            disabled: !!contentModelName,
             label: 'Name Identifier',
             descriptionText: 'Generated from name (uniquely identify model)',
             inputType: TEXT,
@@ -390,7 +452,12 @@ const CreateDataModel = (props: CreateDataModelType) => {
         if(fieldType !== REFERENCE_FIELD_TYPE && fieldType !== JSON_FIELD_TYPE) {
             let inputType = '';
             let placeholder = 'Default value';
+            let type = 'string';
             switch (fieldType) {
+                case INTEGER_FIElD_TYPE:{
+                    type = 'number';
+                    break;
+                }
                 case LONG_STRING_FIELD_TYPE: {
                     inputType = FORMATTED_TEXT;
                     break;
@@ -400,14 +467,16 @@ const CreateDataModel = (props: CreateDataModelType) => {
                     placeholder = 'true';
                     break;
                 }
-                case DATE_FIElD_TYPE: {
+                case DATE_AND_TIME_FIElD_TYPE: {
                     inputType = DATE_FORM_FIELD_TYPE;
-                    placeholder = '';
+                    placeholder = 'Default Date';
+                    type = DATE_AND_TIME_FIElD_TYPE;
                     break;
                 }
-                case TIME_FIElD_TYPE: {
-                    inputType = TIME_FORM_FIELD_TYPE;
-                    placeholder = '';
+                case DATE_FIElD_TYPE: {
+                    inputType = ONLY_DATE_FORM_FIELD_TYPE;
+                    placeholder = 'Default Date';
+                    type = ONLY_DATE_FORM_FIELD_TYPE
                     break;
                 }
                 default: {
@@ -422,7 +491,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 className: '',
                 name: 'default',
                 label: placeholder,
-                type: fieldType === INTEGER_FIElD_TYPE || fieldType === DECIMAL_FIELD_TYPE ? 'number' : 'text',
+                type,
                 inputType,
                 descriptionText: 'Default value if the field is left blank',
                 groupName: FIELD_DEFAULT_VALUE_GROUP
@@ -430,7 +499,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
         }
 
         // Min max and only allowed values
-        if(fieldType === SHORT_STRING_FIElD_TYPE || fieldType === INTEGER_FIElD_TYPE || fieldType === DECIMAL_FIELD_TYPE) {
+        if(fieldType === SHORT_STRING_FIElD_TYPE || fieldType === INTEGER_FIElD_TYPE) {
             // Max count
             hello.push({
                 required: false,
@@ -485,6 +554,39 @@ const CreateDataModel = (props: CreateDataModelType) => {
             });
         }
 
+        if(fieldType === REFERENCE_FIELD_TYPE) {
+
+            hello.push({
+                groupName: FIELD_REFERENCE_MODEL_GROUP,
+                required: false,
+                placeholder: 'Select reference model name',
+                value: ``,
+                className: 'field-min-count',
+                type: 'string',
+                name: FIELD_REFERENCE_MODEL_NAME,
+                label: 'Select reference model name',
+                options: modelNames,
+                inputType: DROPDOWN,
+                descriptionText: 'Select a model name to add reference to'
+            });
+            hello.push({
+                groupName: FIELD_REFERENCE_MODEL_GROUP,
+                required: false,
+                placeholder: 'Select type of reference',
+                value: `${fieldMatchPattern}`,
+                className: 'field-min-count',
+                type: 'string',
+                name: FIELD_REFERENCE_MODEL_TYPE,
+                label: 'Select type of reference',
+                options: [
+                    {label: 'one to one relation', value: ONE_TO_ONE_RELATION},
+                    {label: 'one to many relation', value: ONE_TO_MANY_RELATION}
+                ],
+                inputType: DROPDOWN,
+                descriptionText: 'Select type of reference'
+            });
+        }
+
         return hello;
     };
 
@@ -505,10 +607,17 @@ const CreateDataModel = (props: CreateDataModelType) => {
             }
         });
 
-        setContentModelName(name ? name : trimCharactersAndNumbers(displayName));
+        const contentModelName = name ? name : trimCharactersAndNumbers(displayName);
+        setContentModelName(contentModelName);
         setContentModelDisplayName(displayName);
         setContentModelDescription(description);
-        setHideNames(true);
+        if(contentModelName) {
+            setHideNames(true);
+        }
+        else {
+            // show alert that model name is required
+            showAlert('Please add Model name');
+        }
     }
 
     function onSubmitFieldProperty(values: any) {
@@ -530,6 +639,8 @@ const CreateDataModel = (props: CreateDataModelType) => {
             let propertyMatchPatternString = '';
             let propertyOnlySpecifiedValues = '';
             let propertyDefaultValue = '';
+            let propertyReferenceModelName = '';
+            let propertyReferenceModelType = '';
             values.forEach((value: any) => {
                 const v = value.value;
                 switch (value.name) {
@@ -594,56 +705,109 @@ const CreateDataModel = (props: CreateDataModelType) => {
                         propertyIsUnique = v;
                         break;
                     }
+                    case FIELD_REFERENCE_MODEL_NAME: {
+                        propertyReferenceModelName = v;
+                        break;
+                    }
+                    case FIELD_REFERENCE_MODEL_TYPE: {
+                        propertyReferenceModelType = v;
+                        break;
+                    }
                 }
             });
 
-            setTimeout(() => {
-                const property: PropertiesType = {
-                    name: propertyId || trimCharactersAndNumbers(propertyName),
-                    displayName: propertyName,
-                    required: propertyIsRequired === 'true',
-                    type: fieldType,
-                    default: propertyDefaultValue,
-                    matchSpecificPattern: propertyMatchPattern,
-                    prohibitSpecificPattern: propertyProhibitPattern,
-                    description: propertyDescription,
-                    [FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN]: propertyProhibitPatternError,
-                    [FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN]: propertyMatchPatternError,
-                    [FIELD_MIN]: propertyMin,
-                    [FIELD_MAX]: propertyMax,
-                    [IS_FIELD_UNIQUE]: propertyIsUnique === 'true',
-                    [FIELD_CUSTOM_ERROR_MSG_MIN_MAX]: propertyMinMaxCustomErrorMessage,
-                    onlyAllowedValues: propertyOnlySpecifiedValues,
-                    matchCustomSpecificPattern: propertyMatchPatternString
-                };
+            let isValid = true;
+            let errors: {message: string}[] = [];
 
-                const tempProperties = JSON.parse(JSON.stringify(properties ? properties : []));
-                const exist = tempProperties.find((item: any) => item.name === property.name);
-
-                if(exist) {
-                    const newProperties: PropertiesType[] = tempProperties.map((propertyItem: PropertiesType) => {
-                        if(property.name === propertyItem.name) {
-                            return property;
-                        }
-                        else {
-                            return propertyItem;
-                        }
+            /*
+            * If field type is reference
+            * check if the reference model name and reference model type is present
+            * */
+            if(fieldType === REFERENCE_FIELD_TYPE) {
+                if(!propertyReferenceModelName) {
+                    errors.push({
+                        message: 'Please add reference model name'
                     });
-                    setProperties(newProperties);
+                    isValid = false;
                 }
-                else {
-                    tempProperties.push(property);
-                    setProperties(tempProperties);
+                if(!propertyReferenceModelType) {
+                    errors.push({
+                        message: 'Please add reference model type'
+                    });
+                    isValid = false;
                 }
+            }
 
-                closeAddFieldForm();
-            });
+            if(isValid) {
+                setTimeout(() => {
+                    const property: PropertiesType = {
+                        name: propertyId || trimCharactersAndNumbers(propertyName),
+                        displayName: propertyName,
+                        required: propertyIsRequired === 'true',
+                        type: fieldType,
+                        default: propertyDefaultValue,
+                        matchSpecificPattern: propertyMatchPattern,
+                        prohibitSpecificPattern: propertyProhibitPattern,
+                        description: propertyDescription,
+                        [FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN]: propertyProhibitPatternError,
+                        [FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN]: propertyMatchPatternError,
+                        [FIELD_MIN]: propertyMin,
+                        [FIELD_MAX]: propertyMax,
+                        [IS_FIELD_UNIQUE]: propertyIsUnique === 'true',
+                        [FIELD_CUSTOM_ERROR_MSG_MIN_MAX]: propertyMinMaxCustomErrorMessage,
+                        onlyAllowedValues: propertyOnlySpecifiedValues,
+                        matchCustomSpecificPattern: propertyMatchPatternString,
+                        referenceModelName: propertyReferenceModelName,
+                        referenceModelType: propertyReferenceModelType
+                    };
+
+                    const tempProperties = JSON.parse(JSON.stringify(properties ? properties : []));
+                    const exist = tempProperties.find((item: any) => item.name === property.name);
+
+                    if(exist) {
+                        const newProperties: PropertiesType[] = tempProperties.map((propertyItem: PropertiesType) => {
+                            if(property.name === propertyItem.name) {
+                                return property;
+                            }
+                            else {
+                                return propertyItem;
+                            }
+                        });
+                        setProperties(newProperties);
+                    }
+                    else {
+                        tempProperties.push(property);
+                        setProperties(tempProperties);
+                    }
+
+                    closeAddFieldForm();
+                });
+            }
+            else {
+                setResponse(errors);
+            }
         }
     }
 
     function onClickAddFields() {
         setAddingField(true);
         setHideNames(true);
+    }
+
+    /*
+    * Show message alert
+    * */
+    function showAlert(message: string, severity?: 'error' | 'success' | 'info') {
+        if(!severity) {
+            severity = 'error';
+        }
+        setTimeout(() => {
+            setIsAlertOpen(true);
+            setAlertMessage({
+                message,
+                severity
+            });
+        }, 10);
     }
 
     /*Clear Alert*/
@@ -700,8 +864,8 @@ const CreateDataModel = (props: CreateDataModelType) => {
             }
 
             if(response && !response.errors) {
-                // close the modal
-                onCreateDataModel();
+                const url = dashboardDataModelsUrl.replace(`:${APPLICATION_NAME}`, applicationName);
+                history.push(url);
             }
             else if(response.errors && response.errors.length) {
                 setIsAlertOpen(true);
@@ -834,7 +998,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                     setFieldDefaultValue(property.default || '');
                 }
 
-                if(property.type === SHORT_STRING_FIElD_TYPE || property.type === INTEGER_FIElD_TYPE || property.type === DECIMAL_FIELD_TYPE) {
+                if(property.type === SHORT_STRING_FIElD_TYPE || property.type === INTEGER_FIElD_TYPE) {
                     setFieldMax(property.max || '');
                     setFieldMin(property.min || '');
                     setFieldMinMaxCustomErrorMessage(property[FIELD_CUSTOM_ERROR_MSG_MIN_MAX] || '');
@@ -922,102 +1086,108 @@ const CreateDataModel = (props: CreateDataModelType) => {
 
     }
 
-    /*console.log('fieldMatchCustomPattern', fieldMatchCustomPattern);
-    console.log('fieldMatchPattern', fieldMatchPattern);*/
-
     return (
         <Grid>
-            <Grid className="create-content-model">
+            {
+                isLoading ? <Loader /> :  null
+            }
+            <h1>{fieldEditMode ? 'Edit' : 'Create'} Model</h1>
+            <Grid container className="create-model-container">
+                <Grid item className="create-content-model">
 
-                <AccordianCommon shouldExpand={true} name={'Model name'}>
+                    <CenterTab
+                        headings={['Model Name', 'Fields']}
+                        items={[
+                            <Grid>
+                                {
+                                    hideNames
+                                        ? renderNameSection()
+                                        : <Form
+                                            response={response}
+                                            submitButtonName={'Save model name'}
+                                            className={'create-content-model-form'}
+                                            fields={nameFields}
+                                            onSubmit={onSubmitCreateContentModel}
+                                        />
+
+                                }
+                            </Grid>
+                            ,
+                            <Grid>
+                                {
+                                    contentModelDisplayName
+                                        ? renderPropertiesSection()
+                                        : 'Please add name for the model'
+                                }
+                            </Grid>
+
+                        ]}
+
+                    />
+
                     {
-                        hideNames
-                            ? renderNameSection()
-                            : <Form
-                                response={response}
-                                submitButtonName={'Save model name'}
-                                className={'create-content-model-form'}
-                                fields={nameFields}
-                                onSubmit={onSubmitCreateContentModel}
-                            />
+                        addingField
+                            ? <Grid container  className="fields-container">
+                                <Grid container justify={"flex-end"}>
+                                    <Button onClick={onClickCancelAddField}>Cancel</Button>
+                                </Grid>
+                                <Grid container justify={"center"} className="fields-grid">
+                                    {fieldItem('Formatted Text', 'customised text with links and media', <TextFieldsIcon />, LONG_STRING_FIELD_TYPE)}
+                                    {fieldItem('Text','names, paragraphs, title', <TextFieldsIcon />, SHORT_STRING_FIElD_TYPE)}
+                                    {fieldItem('Number', 'numbers like age, count, quantity', <Grid className={'numbers'}>
+                                        <Looks3Icon />
+                                        <Looks4Icon />
+                                        <Looks5Icon />
+                                    </Grid>, INTEGER_FIElD_TYPE )}
+                                    {fieldItem('Date', 'only date, years, months, days', <DateRangeIcon />, DATE_FIElD_TYPE)}
+                                    {fieldItem('Date and time', 'date with time, days, hours, events', <AccessTimeIcon />, DATE_AND_TIME_FIElD_TYPE)}
+                                    {fieldItem('Location', 'coordinates', <LocationOnIcon />, LOCATION_FIELD_TYPE)}
+                                    {fieldItem('Boolean', 'true or false', <ToggleOffIcon />, BOOLEAN_FIElD_TYPE)}
+                                    {fieldItem('Json', 'json data', <CodeIcon />, JSON_FIELD_TYPE)}
+                                    {fieldItem('Media', 'videos, photos, files', <PermMediaIcon />, MEDIA_FIELD_TYPE)}
+                                    {fieldItem('Reference', 'For example a comment can refer to authors', <LinkIcon />, REFERENCE_FIELD_TYPE)}
+                                </Grid>
 
+                            </Grid>
+                            : settingFieldName
+                            ? null
+                            : renderAddFieldsAndSaveModelButtonGroup()
                     }
-                </AccordianCommon>
 
-                {
-                    contentModelDisplayName
-                        ? <AccordianCommon name={'Model fields'}>
-                            {renderPropertiesSection()}
-                          </AccordianCommon>
-                        : null
-                }
+                    {
+                        settingFieldName
+                            ? <Paper>
+                                <Grid container direction={'column'} className={'set-fields-property-container'}>
+                                    <Grid item className={'cancel-button-container'}>
+                                        <Button onClick={closeAddFieldForm}>Cancel</Button>
+                                    </Grid>
+                                    <Grid item>
+                                        <Form
+                                            groups={
+                                                [
+                                                    FIELD_NAME_GROUP,
+                                                    FIELD_LIMIT_CHARACTER_COUNT_GROUP,
+                                                    FIELD_LIMIT_VALUE_GROUP,
+                                                    FIELD_ALLOW_ONLY_SPECIFIC_VALUES_GROUP,
+                                                    FIELD_DEFAULT_VALUE_GROUP,
+                                                    FIELD_MATCH_SPECIFIC_PATTERN_GROUP,
+                                                    FIELD_PROHIBIT_SPECIFIC_PATTERN_GROUP,
+                                                    FIELD_REFERENCE_MODEL_GROUP
+                                                ]
+                                            }
+                                            response={response}
+                                            submitButtonName={'Save field'}
+                                            onSubmit={onSubmitFieldProperty}
+                                            fields={propertyNameFields()}
+                                            className={'field-property-form'}
+                                        />
+                                    </Grid>
+                                </Grid>
+                            </Paper>
+                            : null
+                    }
 
-                {
-                    addingField
-                    ? <Grid container  className="fields-container">
-                        <Grid container justify={"flex-end"}>
-                            <Button onClick={onClickCancelAddField}>Cancel</Button>
-                        </Grid>
-                        <Grid container justify={"center"} className="fields-grid">
-                            {fieldItem('Formatted Text', 'customised text with links and media', <TextFieldsIcon />, LONG_STRING_FIELD_TYPE)}
-                            {fieldItem('Text','names, paragraphs, title', <TextFieldsIcon />, SHORT_STRING_FIElD_TYPE)}
-                            {fieldItem('Number', 'numbers like age, count, quantity', <Grid className={'numbers'}>
-                                <Looks3Icon />
-                                <Looks4Icon />
-                                <Looks5Icon />
-                            </Grid>, INTEGER_FIElD_TYPE )}
-                            {/*{fieldItem('Decimal', 'decimals like quantity, currency', <Grid className={'numbers'}>
-                                <Looks3Icon />
-                                <Looks4Icon />
-                                <Looks5Icon />
-                            </Grid>, DECIMAL_FIELD_TYPE )}*/}
-                            {fieldItem('Time', 'time', <AccessTimeIcon />, TIME_FORM_FIELD_TYPE)}
-                            {fieldItem('Date and time', 'time, date, days, events', <DateRangeIcon />, DATE_FIElD_TYPE)}
-                            {fieldItem('Location', 'coordinates', <LocationOnIcon />, LOCATION_FIELD_TYPE)}
-                            {fieldItem('Boolean', 'true or false', <ToggleOffIcon />, BOOLEAN_FIElD_TYPE)}
-                            {fieldItem('Json', 'json data', <CodeIcon />, JSON_FIELD_TYPE)}
-                            {fieldItem('Media', 'videos, photos, files', <PermMediaIcon />, MEDIA_FIELD_TYPE)}
-                            {fieldItem('Reference', 'For example a comment can refer to authors', <LinkIcon />, REFERENCE_FIELD_TYPE)}
-                        </Grid>
-
-                        </Grid>
-                    : settingFieldName
-                    ? null
-                    : renderAddFieldsAndSaveModelButtonGroup()
-                }
-
-                {
-                    settingFieldName
-                    ? <Paper>
-                        <Grid container direction={'column'} className={'set-fields-property-container'}>
-                            <Grid item className={'cancel-button-container'}>
-                                <Button onClick={closeAddFieldForm}>Cancel</Button>
-                            </Grid>
-                            <Grid item>
-                                <Form
-                                    groups={
-                                        [
-                                            FIELD_NAME_GROUP,
-                                            FIELD_LIMIT_CHARACTER_COUNT_GROUP,
-                                            FIELD_LIMIT_VALUE_GROUP,
-                                            FIELD_ALLOW_ONLY_SPECIFIC_VALUES_GROUP,
-                                            FIELD_DEFAULT_VALUE_GROUP,
-                                            FIELD_MATCH_SPECIFIC_PATTERN_GROUP,
-                                            FIELD_PROHIBIT_SPECIFIC_PATTERN_GROUP
-                                        ]
-                                    }
-                                    response={response}
-                                    submitButtonName={'Save field'}
-                                    onSubmit={onSubmitFieldProperty}
-                                    fields={propertyNameFields()}
-                                    className={'field-property-form'}
-                                />
-                            </Grid>
-                        </Grid>
-                      </Paper>
-                    : null
-                }
-
+                </Grid>
             </Grid>
             <AlertDialog
                 onClose={() => {
@@ -1050,7 +1220,9 @@ const mapState = (state: RootState) => {
     return {
         env: state.authentication.env,
         applicationName: state.authentication.applicationName,
-        CollectionUrl: state.routeAddress.routes.data?.CollectionUrl
+        language: state.authentication.language,
+        CollectionUrl: state.routeAddress.routes.data?.CollectionUrl,
+        GetCollectionNamesUrl: state.routeAddress.routes.data?.GetCollectionNamesUrl,
     }
 };
 

@@ -47,6 +47,7 @@ build
 
 # Dependency directories
 node_modules/
+d/
 jspm_packages/
 node_modules
 

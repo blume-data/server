@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import Grid from "@material-ui/core/Grid";
 import {doGetRequest, doPostRequest} from "../../../../utils/baseApi";
 import {dashboardHomeUrl, getBaseUrl} from "../../../../utils/urls";
@@ -19,7 +19,6 @@ import {setApplicationName, setAuthentication} from "./actions";
 import {Alert} from "../../../../components/common/Toast";
 import {AlertType} from "../../../../components/common/Form";
 import { TopLink } from "./TopLink";
-import Loader from "../../../../components/common/Loader";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type AuthProps = PropsFromRedux & {
@@ -46,6 +45,7 @@ const AuthComponent = (props: AuthProps) => {
     const [isAlertOpen, setIsAlertOpen] = React.useState<boolean>(false);
     const [alert, setAlertMessage] = React.useState<AlertType>({message: ''});
     const [response, setResponse] = React.useState<string | ErrorMessagesType[]>('');
+    const [defaultValues, setDefaultValues] = useState<object>({});
 
     const history = useHistory();
 
@@ -172,6 +172,19 @@ const AuthComponent = (props: AuthProps) => {
             authUser({});
             props.setApplicationName('');
         }
+        if(step === VERIFY_EMAIL) {
+            const urlParams = new URLSearchParams(window.location.search);
+            const defaultEmail = urlParams.get('email');
+            const defaultToken = urlParams.get('token');
+
+            if(defaultEmail) {
+                setDefaultValues({
+                    email: defaultEmail,
+                    token: defaultToken ? defaultToken : ''
+                });
+            }
+
+        }
     },[props.routeAddress]);
 
 
@@ -199,7 +212,7 @@ const AuthComponent = (props: AuthProps) => {
                         : null}
                     {step === VERIFY_EMAIL
                         ? <CardForm
-                            fields={getFieldConfiguration(VERIFY_EMAIL)} response={response}
+                            fields={getFieldConfiguration(VERIFY_EMAIL, defaultValues)} response={response}
                             onSubmit={onSubmit} title={REGISTRATION_TITLE} />
                         : null}
                 </Grid>

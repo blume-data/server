@@ -7,19 +7,24 @@ import {
 } from "../../../Controllers/Messages";
 import {errorStatus} from "@ranjodhbirkaur/common";
 import {
-    DECIMAL_FIELD_TYPE,
     FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN,
     FIELD_CUSTOM_ERROR_MSG_MIN_MAX,
     FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN,
     INTEGER_FIElD_TYPE,
-    JSON_FIELD_TYPE, REFERENCE_FIELD_TYPE,
-    SHORT_STRING_FIElD_TYPE, shortenString,
+    JSON_FIELD_TYPE,
+    ONE_TO_MANY_RELATION,
+    ONE_TO_ONE_RELATION,
+    REFERENCE_FIELD_TYPE,
+    REFERENCE_MODEL_NAME,
+    REFERENCE_MODEL_TYPE,
+    SHORT_STRING_FIElD_TYPE,
+    shortenString,
     SUPPORTED_FIELDS_TYPE,
 } from "@ranjodhbirkaur/constants";
 import {isValidRegEx} from "../../../util/methods";
 
 function hasSIDType(type: string) {
-    const SID = [INTEGER_FIElD_TYPE, DECIMAL_FIELD_TYPE, SHORT_STRING_FIElD_TYPE];
+    const SID = [INTEGER_FIElD_TYPE, SHORT_STRING_FIElD_TYPE];
     return SID.includes(type);
 }
 
@@ -56,7 +61,9 @@ export async function validateCollections(req: Request, res: Response, next: Nex
                 matchSpecificPattern: '',
                 prohibitSpecificPattern: '',
                 matchCustomSpecificPattern: '',
-                onlyAllowedValues: ''
+                onlyAllowedValues: '',
+                referenceModelName: '',
+                referenceModelType: ''
             };
 
             // check if name is there
@@ -208,6 +215,37 @@ export async function validateCollections(req: Request, res: Response, next: Nex
                     return shortenString(allowedValue);
                 })
                 parsedRule.onlyAllowedValues = allowedValues.join(',');
+            }
+
+            if(rule.type === REFERENCE_FIELD_TYPE) {
+
+                if(!rule[REFERENCE_MODEL_NAME] || !rule[REFERENCE_MODEL_TYPE]) {
+                    isValidBody = false;
+                    if(!rule[REFERENCE_MODEL_TYPE]) {
+                        inValidMessage.push({
+                            message: `${REFERENCE_MODEL_TYPE} is required`,
+                            field: 'rules'
+                        });
+                    }
+                    if(!rule[REFERENCE_MODEL_NAME]) {
+                        inValidMessage.push({
+                            message: `${REFERENCE_MODEL_NAME} is required`,
+                            field: 'rules'
+                        });
+                    }
+                }
+                else {
+                    if(rule[REFERENCE_MODEL_TYPE] === ONE_TO_ONE_RELATION || rule[REFERENCE_MODEL_TYPE] === ONE_TO_MANY_RELATION) {
+                        parsedRule[REFERENCE_MODEL_NAME] = rule[REFERENCE_MODEL_NAME];
+                        parsedRule[REFERENCE_MODEL_TYPE] = rule[REFERENCE_MODEL_TYPE];
+                    }
+                    else {
+                        inValidMessage.push({
+                            message: `${REFERENCE_MODEL_TYPE} is not valid`,
+                            field: 'rules'
+                        })
+                    }
+                }
             }
 
             // If valid rule

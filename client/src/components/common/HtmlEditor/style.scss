@@ -1,5 +1,7 @@
 .text-editor {
+  padding-top: 10px;
   .second-toolbar {
+    border: none;
     a{
       pointer-events: none !important;
       span {
@@ -9,6 +11,12 @@
         display: none;
       }
     }
+  }
+  .fr-wrapper {
+    border: 0 !important;
+  }
+  .fr-toolbar {
+    border: none !important;
   }
   #videoUpload-1 {
     display: none;

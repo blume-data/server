@@ -6,7 +6,6 @@ import {
     createCollectionSchema,
     deleteCollectionSchema,
     getCollectionNames,
-    getCollectionSchema
 } from "../Controllers/CollectionController";
 import {validateCollections} from "../services/middlewares/collections/validateCollections";
 import {checkAuth} from "../services/checkAuth";
@@ -49,8 +48,6 @@ router.put(CollectionUrl, [
 /*get all the models of the application space*/
 router.get(GetCollectionNamesUrl, validateEnvType, checkAuth, validateApplicationNameMiddleWare, getCollectionNames);
 
-/*/!*get info of the data model*!/
-router.get(GetDataModelUrl, validateEnvType, checkAuth, validateApplicationNameMiddleWare, getModel)*/
 
 // Delete Item Schema
 router.delete(CollectionUrl, [
@@ -60,8 +57,5 @@ router.delete(CollectionUrl, [
             .withMessage(stringLimitOptionErrorMessage('name'))
     ],
     validateRequest, validateEnvType, checkAuth, deleteCollectionSchema);
-
-// Get Item Schema
-router.get(CollectionUrl, checkAuth, getCollectionSchema);
 
 export { router as CollectionRoutes };

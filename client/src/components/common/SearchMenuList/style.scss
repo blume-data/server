@@ -1,0 +1,31 @@
+@import "../../../assets/style/index";
+.search-menu-list {
+  position: relative;
+  .MuiTextField-root {
+    width: 300px;
+    @include mobileAndTablet {
+      width: 100%;
+    }
+  }
+  .MuiListItem-button {
+    padding: 10px;
+  }
+  .MuiListItem-button.selected {
+    border: 3px solid $light-gray;
+    background-color: $light-gray;
+  }
+  .list {
+    position: absolute;
+    width: auto;
+    .fixed-size-list {
+      background-color: $white;
+      z-index: 9;
+      border: 2px solid $light-gray;
+      border-radius: 5px;
+      width: 300px;
+      @include mobileAndTablet {
+        width: calc(100vw - 16px) !important;
+      }
+    }
+  }
+}

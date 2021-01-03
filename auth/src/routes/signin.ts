@@ -5,7 +5,6 @@ import {
   BadRequestError,
   generateJwt,
   sendJwtResponse,
-  ClientUser,
   AdminUser,
   FreeUser,
   clientUserType,
@@ -20,7 +19,7 @@ import {
   CLIENT_USER_NAME,
   clientType,
   APPLICATION_NAME,
-  APPLICATION_NAMES, PayloadResponseType, JwtPayloadType, PASSWORD, sendSingleError
+  APPLICATION_NAMES, PayloadResponseType, JwtPayloadType, PASSWORD, sendSingleError, EnglishLanguage, SESSION_ID
 } from '@ranjodhbirkaur/common';
 import { Password } from '../services/password';
 
@@ -29,6 +28,9 @@ import {ExistingUserType, passwordLimitOptionErrorMessage, passwordLimitOptions}
 
 import {signInUrl} from "../util/urls";
 import {validateUserType} from "../middleware/userTypeCheck";
+import {MainUserModel} from "../models/MainUserModel";
+import {SessionModel} from "../models/SessionModel";
+import {PRODUCTION_ENV} from "@ranjodhbirkaur/constants";
 
 const router = express.Router();
 
@@ -52,7 +54,25 @@ async function sendResponse(req: Request, res: Response, responseData: PayloadRe
     [JWT_ID]: existingUser.jwtId
   };
 
-  const userJwt = generateJwt(payload, req);
+  const userJwt = generateJwt(payload, res);
+
+  const newSession = SessionModel.build({
+    clientType: userType,
+    userName: responseData[USER_NAME],
+    selectedEnv: PRODUCTION_ENV,
+    selectedLanguage: EnglishLanguage,
+    clientUserName: responseData[CLIENT_USER_NAME],
+    selectedApplicationName: '',
+    authToken: userJwt,
+    createdAt: new Date(),
+  });
+
+  await newSession.save();
+
+  responseData = {
+    ...responseData,
+    [SESSION_ID]: newSession.id || ''
+  }
 
   return sendJwtResponse(res, responseData, userJwt);
 }
@@ -82,9 +102,10 @@ router.post(
 
     switch (userType) {
       case clientUserType: {
-        existingUser = await ClientUser.findOne({email}, [APPLICATION_NAMES, USER_NAME, PASSWORD, JWT_ID]);
+        existingUser = await MainUserModel.findOne({email}, [APPLICATION_NAMES, USER_NAME, PASSWORD, JWT_ID]);
         if(existingUser) {
           responseData = {
+            [SESSION_ID]: '',
             [clientType]: userType,
             [APPLICATION_NAMES]: JSON.parse(existingUser[APPLICATION_NAMES]),
             [CLIENT_USER_NAME]: existingUser[USER_NAME],
@@ -109,6 +130,7 @@ router.post(
           }
           if (existingUser) {
             responseData = {
+              [SESSION_ID]: '',
               [clientType]: userType,
               [APPLICATION_NAMES]: JSON.parse(existingUser[APPLICATION_NAME]),
               [CLIENT_USER_NAME]: existingUser[CLIENT_USER_NAME],

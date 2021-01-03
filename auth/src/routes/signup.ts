@@ -16,7 +16,6 @@ import {
     supportUserType,
     EMAIL,
     USER_NAME,
-    ClientUser,
     AdminUser,
     FreeUser,
     ErrorMessages,
@@ -28,7 +27,7 @@ import {
     sendErrors,
     clientType,
     JWT_ID,
-    JwtPayloadType, PayloadResponseType,
+    JwtPayloadType, PayloadResponseType, SESSION_ID,
 } from '@ranjodhbirkaur/common';
 import {
     passwordLimitOptionErrorMessage,
@@ -40,6 +39,7 @@ import {validateUserTypeSignUp} from "../middleware/userTypeCheck-Signup";
 import {APPLICATION_NAME_NOT_VALID, CLIENT_USER_NAME_NOT_VALID, EmailInUseMessage, InValidEmailMessage, UserNameNotAvailableMessage} from "../util/errorMessages";
 import {signUpUrl} from "../util/urls";
 import {trimCharactersAndNumbers} from "@ranjodhbirkaur/constants";
+import {MainUserModel} from "../models/MainUserModel";
 
 const
     router = express.Router();
@@ -104,7 +104,7 @@ async function validateClientUserName(req: Request): Promise<{isValid: boolean; 
     const userType = req.params.userType;
     let errorMessages: ErrorMessages[] = [];
     
-    const userExist = await ClientUser.findOne({
+    const userExist = await MainUserModel.findOne({
         userName: reqBody[CLIENT_USER_NAME]
     }, [USER_NAME, APPLICATION_NAMES]);
     
@@ -150,7 +150,7 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
     // Check if the email is not taken
     switch (type) {
         case clientUserType: {
-            existingUser = await ClientUser.findOne({email});
+            existingUser = await MainUserModel.findOne({email});
             break;
         }
         case adminUserType: {
@@ -173,7 +173,7 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
     existingUser = null;
     switch (type) {
         case clientUserType: {
-            existingUser = await ClientUser.findOne({userName});
+            existingUser = await MainUserModel.findOne({userName});
             break;
         }
         case adminUserType: {
@@ -206,6 +206,7 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
                 [clientType]: type
             };
             const responseData: PayloadResponseType = {
+                [SESSION_ID]: '',
                 [CLIENT_USER_NAME]: userName,
                 [clientType]: type,
                 [USER_NAME]: userName,
@@ -214,7 +215,7 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
                     languages: ['']
                 }],
             }
-            const userJwt = generateJwt(payload, req);
+            const userJwt = generateJwt(payload, res);
             return sendJwtResponse(res, responseData, userJwt);
         }
         case clientUserType: {
@@ -245,12 +246,13 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
                 [JWT_ID]: user.jwtId
             };
             const responseData: PayloadResponseType = {
+                [SESSION_ID]: '',
                 [CLIENT_USER_NAME]: clientUserName,
                 [clientType]: type,
                 [USER_NAME]: userName,
                 [APPLICATION_NAMES]: [applicationName]
             }
-            const userJwt = generateJwt(jwt, req);
+            const userJwt = generateJwt(jwt, res);
             return sendJwtResponse(res, responseData, userJwt);
         }
         case supportUserType: {
@@ -262,12 +264,13 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
                 [USER_NAME]: userName
             };
             const responseData: PayloadResponseType = {
+                [SESSION_ID]: '',
                 [CLIENT_USER_NAME]: clientUserName,
                 [clientType]: type,
                 [USER_NAME]: userName,
                 [APPLICATION_NAMES]: [applicationName]
             }
-            const userJwt = generateJwt(jwt, req);
+            const userJwt = generateJwt(jwt, res);
             return sendJwtResponse(res, responseData, userJwt);
         }
     }

@@ -14,3 +14,4 @@ export const Is_Enabled = 'isEnabled';
 
 // array of application names of the client user
 export const APPLICATION_NAMES = 'applicationNames';
+export const SESSION_ID = 'sessionId';
