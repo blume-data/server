@@ -3,7 +3,7 @@ const Express = require('express');
 const shrinkRay = require('shrink-ray-current');
 const ChunkExtractor = require('@loadable/server').ChunkExtractor;
 const { default: makeServerMiddleware } = require('../build/server');
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 3000;
 
 const assets = path.resolve('build/loadable-stats.json');
 const webExtractor = new ChunkExtractor({statsFile: assets});
