@@ -7,11 +7,11 @@ import {
     APPLICATION_NAME, BOOLEAN_FIElD_TYPE,
     CLIENT_USER_NAME, DATE_AND_TIME_FIElD_TYPE, DATE_FIElD_TYPE, ErrorMessagesType,
     INTEGER_FIElD_TYPE, JSON_FIELD_TYPE, LONG_STRING_FIELD_TYPE,
-    SHORT_STRING_FIElD_TYPE
+    SHORT_STRING_FIElD_TYPE,
+    RuleType
 } from "@ranjodhbirkaur/constants";
 import {doGetRequest, doPostRequest} from "../../../../../utils/baseApi";
 import {getBaseUrl} from "../../../../../utils/urls";
-import {RuleType} from "../../../../../../../data/src/util/interface";
 import Loader from "../../../../../components/common/Loader";
 import {
     CHECKBOX,
