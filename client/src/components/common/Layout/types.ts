@@ -1,7 +1,6 @@
 import {ThunkAction} from "redux-thunk";
 import {Action} from "redux";
 import {RouteAddressStateType} from "../../../rootReducer";
-import {GetCollectionNamesUrl} from "../../../../../data/src/util/urls";
 
 export const ACTION_FETCH_AUTH_ADDRESS_ROUTES = 'ACTION_FETCH_i-love-ran-jo-dh-ADDRESS_ROUTES';
 export const ACTION_FETCH_DATA_ADDRESS_ROUTES = 'ACTION_FETCH_DATA_ADDRESS_ROUTES';
