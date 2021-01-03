@@ -26,10 +26,10 @@ metadata:
 spec:
   tls:
   - hosts:
-    - api.blumedata.store
+    - ranjod.com
     secretName: api-blumedata-tls
   rules:
-    - host: api.blumedata.store
+    - host: ranjod.com
       http:
         paths:
           - path: /auth/?(.*)
@@ -39,6 +39,10 @@ spec:
           - path: /data/?(.*)
             backend:
               serviceName: data-srv
+              servicePort: 3000
+          - path: /assets/?(.*)
+            backend:
+              serviceName: assets-srv
               servicePort: 3000
           - path: /?(.*)
             backend:
