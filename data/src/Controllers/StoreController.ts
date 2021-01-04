@@ -8,7 +8,9 @@ import {
     errorStatus,
     ID,
     okayStatus,
-    sendSingleError
+    sendSingleError,
+    getRanjodhBirData,
+    writeRanjodhBirData
 } from "@ranjodhbirkaur/common";
 
 import {ENTRY_CREATED_AT, ENTRY_LANGUAGE_PROPERTY_NAME, PER_PAGE} from "../util/constants";
@@ -51,7 +53,6 @@ import {
     UsZipRegName
 } from "@ranjodhbirkaur/constants";
 import {createModel} from "../util/methods";
-import {getRanjodhBirData, writeRanjodhBirData} from "../util/databaseApi";
 
 async function fetchEntries(req: Request, res: Response, rules: RuleType[], findWhere: any, getOnlyThese: string[] | string | null, collectionName: string, limit: number, skip: number) {
 
@@ -69,7 +70,7 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
             name: collectionName
         });
 
-        await getRanjodhBirData(
+        const resp = await getRanjodhBirData(
             collectionName,
             clientUserName,
             applicationName,
@@ -81,6 +82,8 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
                 getOnly
             }
         );
+
+        console.log('resp', resp);
 
         return await model
             .find(where, getOnly)
@@ -115,7 +118,7 @@ async function createEntry(rules: RuleType[], req: Request, res: Response, colle
                 await item.save();
                 const logBody: ModelLoggerBodyType = {
                     modelName: collection.name,
-                    action: "create",
+                    action: "created-entry",
                     actor: req.currentUser[ID],
                     time: `${new Date()}`,
                     [clientType]: req.currentUser[clientType],

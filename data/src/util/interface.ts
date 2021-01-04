@@ -30,7 +30,7 @@ export interface RuleType {
 export interface ModelLoggerBodyType {
     modelName: string;
     time: string;
-    action: 'create' | 'update',
+    action: string,
     actor: string;
     clientType: string;
 }

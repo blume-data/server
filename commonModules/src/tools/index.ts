@@ -15,3 +15,4 @@ export function isTestEnv() {
 
 export * from './jwt';
 export * from './validation';
+export * from './logs';
