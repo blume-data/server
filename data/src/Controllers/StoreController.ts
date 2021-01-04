@@ -4,7 +4,7 @@ import {
     APPLICATION_NAME,
     BadRequestError,
     CLIENT_USER_NAME,
-    clientType,
+    clientType, EnglishLanguage,
     errorStatus,
     ID,
     okayStatus,
@@ -51,6 +51,7 @@ import {
     UsZipRegName
 } from "@ranjodhbirkaur/constants";
 import {createModel} from "../util/methods";
+import {getRanjodhBirData, writeRanjodhBirData} from "../util/databaseApi";
 
 async function fetchEntries(req: Request, res: Response, rules: RuleType[], findWhere: any, getOnlyThese: string[] | string | null, collectionName: string, limit: number, skip: number) {
 
@@ -67,16 +68,11 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
             applicationName,
             name: collectionName
         });
-        return await model
-            .find(where, getOnly)
-            .skip(skip)
-            .limit(limit);
 
-        /*
-        const response2 = await getRanjodhBirData(
-            collection.name,
-            collection.clientUserName,
-            collection[APPLICATION_NAME],
+        await getRanjodhBirData(
+            collectionName,
+            clientUserName,
+            applicationName,
             language,
             {
                 skip: Number(skip),
@@ -86,9 +82,11 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
             }
         );
 
-        console.log('re', response2);
-        //res.status(okayStatus).send(collections);
-        */
+        return await model
+            .find(where, getOnly)
+            .skip(skip)
+            .limit(limit);
+
     }
     else {
         // params are not valid and error is also sent
@@ -124,14 +122,13 @@ async function createEntry(rules: RuleType[], req: Request, res: Response, colle
                 }
 
                 /*Log it*/
-                /*Ignore await*/
-                /*writeRanjodhBirData(
+                await writeRanjodhBirData(
                     `${collection.name}`,
                     collection.clientUserName,
                     collection.applicationName,
                     EnglishLanguage,
                     logBody
-                );*/
+                );
                 return item;
             }
             catch (e) {

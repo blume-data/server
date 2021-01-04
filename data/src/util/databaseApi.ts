@@ -34,7 +34,7 @@ export const getRanjodhBirData = async (
     clientUserName: string,
     applicationName: string,
     language: string,
-    conditions?: { where?: any; getOnly?: string[]; skip: number; limit: number }
+    conditions?: { where?: any; getOnly?: any; skip: number; limit: number }
     ) => {
     const data = {
         modelName,

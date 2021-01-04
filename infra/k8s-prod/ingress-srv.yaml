@@ -23,6 +23,10 @@ spec:
             backend:
               serviceName: assets-srv
               servicePort: 3000
+          - path: /database/?(.*)
+            backend:
+              serviceName: database-srv
+              servicePort: 3000
           - path: /?(.*)
             backend:
               serviceName: client-srv
