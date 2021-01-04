@@ -70,7 +70,7 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
             name: collectionName
         });
 
-        const resp = await getRanjodhBirData(
+        await getRanjodhBirData(
             collectionName,
             clientUserName,
             applicationName,
@@ -82,8 +82,6 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
                 getOnly
             }
         );
-
-        console.log('resp', resp);
 
         return await model
             .find(where, getOnly)
