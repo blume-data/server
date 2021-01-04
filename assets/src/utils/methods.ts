@@ -8,6 +8,5 @@ export const s3 = new AWS.S3({
     accessKeyId,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
     region: AwsRegionCode,
-    //endpoint: `s3-${AwsRegionCode}.amazonaws.com`,
     signatureVersion: 'v4',
 });

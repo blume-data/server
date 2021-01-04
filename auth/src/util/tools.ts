@@ -5,6 +5,7 @@ import {
   clientType
 } from "@ranjodhbirkaur/common";
 import mongoose from "mongoose";
+import {getMongoDatabaseUrl, mongoConnectOptions} from "@ranjodhbirkaur/common";
 
 export function getClientPayload(jwtId: string, role: string, permissions: string[], applicationName: string, userName: string, clientUserName: string): JwtPayloadType {
   return {
@@ -14,12 +15,5 @@ export function getClientPayload(jwtId: string, role: string, permissions: strin
   };
 }
 
-if (!process.env.MONGO_URI) {
-  throw new Error('MONGO_URI && MONGO_URI must be defined');
-}
-
-export const MongoConnection = mongoose.createConnection(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  useCreateIndex: true
-});
+const MONGO_URL = getMongoDatabaseUrl();
+export const MongoConnection = mongoose.createConnection(MONGO_URL, mongoConnectOptions);

@@ -13,7 +13,7 @@ serverApp.use(CollectionRoutes);
 serverApp.use(StoreRoutes);
 serverApp.use(EventRoutes);
 
-serverApp.all('*', async (req, res) => {
+serverApp.all('*', async () => {
   throw new NotFoundError();
 });
 

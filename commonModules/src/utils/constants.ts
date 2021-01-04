@@ -17,3 +17,19 @@ export const clientType = 'clientType';
 export const EVENTS_ROUTE = 'events';
 export const EVENT_AUTH_NEW_JWT = 'EVENT_AUTH_NEW_JWT';
 export const JWT_COOKIE_NAME = 'RANJODHBIR_KAUR_AUTHENTICATION_JWT';
+
+// get mongo database url
+export function getMongoDatabaseUrl() {
+    let mongoUrl = 'mongodb+srv://all:all@cluster0.a6c0l.mongodb.net/ranjodh?retryWrites=true&w=majority';
+    if(process.env.ENVIORNMENT === 'production') {
+        mongoUrl = 'mongodb://database-mongo-srv:27017/waheguru';
+    }
+    return mongoUrl;
+}
+// mongo database connect options
+export const mongoConnectOptions = {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true,
+    useFindAndModify: false
+};
