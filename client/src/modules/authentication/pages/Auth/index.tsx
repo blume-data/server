@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import Grid from "@material-ui/core/Grid";
 import {doGetRequest, doPostRequest} from "../../../../utils/baseApi";
-import {dashboardHomeUrl, getBaseUrl} from "../../../../utils/urls";
+import {authUrl, dashboardHomeUrl, getBaseUrl} from "../../../../utils/urls";
 import {RootState} from "../../../../rootReducer";
 import {connect, ConnectedProps} from "react-redux";
 import {AUTH_TOKEN, clientUserType, ErrorMessagesType, USER_NAME} from "@ranjodhbirkaur/constants";
@@ -115,7 +115,7 @@ const AuthComponent = (props: AuthProps) => {
             setAuthentication(false);
             clearAuthentication();
             timeOut(() => {
-                history.push(`/auth/${SIGN_IN}`);
+                history.push(`${authUrl}/${SIGN_IN}`);
             });
             setResponse('');
             return '';
@@ -125,7 +125,7 @@ const AuthComponent = (props: AuthProps) => {
                 case SIGN_UP: {
                     showAlert({message: FORM_SUCCESSFULLY_SUBMITTED});
                     timeOut(() => {
-                        redirectToUrl(`/auth/${VERIFY_EMAIL}?email=${values.email}`);
+                        redirectToUrl(`${authUrl}/${VERIFY_EMAIL}?email=${values.email}`);
                     });
                     break;
                 }

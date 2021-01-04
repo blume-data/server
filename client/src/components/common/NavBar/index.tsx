@@ -18,6 +18,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import { LeftDrawerList } from './LeftDrawerList';
 import {NavBarMenu} from "./NavBarMenu";
+import {authUrl} from "../../../utils/urls";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
@@ -123,9 +124,9 @@ export const NavBarComponent = (props: PropsFromRedux) => {
                                     <Grid>
                                         <MenuItem onClick={handleClose}>Profile</MenuItem>
                                         <MenuItem onClick={handleClose}>My account</MenuItem>
-                                        <Link to={`/auth/${SIGN_OUT}`}><MenuItem>Log out</MenuItem></Link>
+                                        <Link to={`${authUrl}/${SIGN_OUT}`}><MenuItem>Log out</MenuItem></Link>
                                     </Grid>
-                                    : <Link to={`/auth/${SIGN_IN}`}>
+                                    : <Link to={`${authUrl}/${SIGN_IN}`}>
                                         <MenuItem onClick={handleClose}>
                                             Log in
                                         </MenuItem>
