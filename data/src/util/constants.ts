@@ -11,7 +11,7 @@ export const MAX_COLLECTION_LIMIT = 1000;
 
 export const PER_PAGE = 10;
 
-export const RANJODHBIR_KAUR_DATABASE_URL = 'http://database-srv:3000/store';
+export const RANJODHBIR_KAUR_DATABASE_URL = 'http://database-srv:3000/logs';
 
 export const ENTRY_LANGUAGE_PROPERTY_NAME = 'ranjodhbir-kaur-language-property-name';
 export const ENTRY_CREATED_AT = 'createdAt';

@@ -27,8 +27,8 @@ build:
         manual:
           - src: 'src/**/*.ts'
             dest: .
-    - image: taranjeetsingh/database
-      context: database
+    - image: taranjeetsingh/logs
+      context: logs
       docker:
         dockerfile: Dockerfile
       sync:

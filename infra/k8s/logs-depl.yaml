@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: database-depl
+  name: logs-depl
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: database
+      app: logs
   template:
     metadata:
       labels:
-        app: database
+        app: logs
     spec:
       containers:
-        - name: database
-          image: taranjeetsingh/database
+        - name: logs
+          image: taranjeetsingh/logs
           env:
             - name: JWT_KEY
               valueFrom:
@@ -25,12 +25,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: database-srv
+  name: logs-srv
 spec:
   selector:
-    app: database
+    app: logs
   ports:
-    - name: database
+    - name: logs
       protocol: TCP
       port: 3000
       targetPort: 3000
