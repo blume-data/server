@@ -70,23 +70,11 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
             name: collectionName
         });
 
-        await getRanjodhBirData(
-            collectionName,
-            clientUserName,
-            applicationName,
-            language,
-            {
-                skip: Number(skip),
-                limit: Number(limit),
-                where,
-                getOnly
-            }
-        );
-
         return await model
             .find(where, getOnly)
             .skip(skip)
-            .limit(limit);
+            .limit(limit)
+            .populate('comments');
 
     }
     else {
@@ -255,93 +243,22 @@ export async function getStoreRecord(req: Request, res: Response) {
 
     const findWhere = req.body.where;
     const getOnlyThese = req.body.getOnly;
-    const language = req.params.language;
-    const clientUserName = req.params[CLIENT_USER_NAME];
-    const applicationName = req.params[APPLICATION_NAME];
 
     // get collection
     const collection = await getCollection(req);
     const limit = ((req.query && Number(req.query.limit))  || PER_PAGE);
     let skip: number = (req.query && Number(req.query.skip)) || 0;
-    let items: any = [];
-
-    async function fetchPopulation(population: any, collectionName: string, ids: string[]) {
-        const getOnly = (population && population.getOnly) ? population.getOnly : null;
-
-        const collection = await getCollection(req, collectionName);
-        if(collection) {
-            const rules = JSON.parse(collection.rules);
-            const params = validateParams(req, res, rules, {}, getOnly);
-
-            if(params) {
-                const model: any = createModel({
-                    rules,
-                    clientUserName,
-                    applicationName,
-                    name: collectionName
-                });
-                if(ids && ids.length) {
-                    return await model.find({}, params.getOnly).where('_id').in(ids);
-                }
-                else {
-                    return await model.find({_id: ids}, params.getOnly);
-                }
-
-            }
-
-        }
-
-    }
-
-    async function recursivePopulation(items: any[], rules: RuleType[], populate: any) {
-        // check if populate exist
-        // only populate if there is only one item
-        if(populate && populate.length && items && items.length) {
-            for (const population of populate) {
-                if(population.name) {
-                    // check if the name exist in the rules
-                    const ruleExist = rules.find((rule: RuleType) => rule.name === population.name);
-                    if(ruleExist) {
-                        for (let index=0; index< items.length; index++) {
-                            if(items[index] && items[index][population.name]) {
-                                const populatedEntries = await fetchPopulation(population, ruleExist[REFERENCE_MODEL_NAME], items[index][population.name]);
-
-                                if(population.populate && population.populate.length) {
-                                    const refCollection = await getCollection(req, ruleExist[REFERENCE_MODEL_NAME]);
-                                    if(refCollection) {
-                                        const refRules = JSON.parse(refCollection.rules);
-                                        await recursivePopulation(populatedEntries, refRules, population.populate);
-                                    }
-                                }
-
-                                if(ruleExist[REFERENCE_MODEL_TYPE] === ONE_TO_MANY_RELATION) {
-                                    items[index][population.name] = populatedEntries;
-                                }
-                                else {
-                                    items[index][population.name] = populatedEntries[0];
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
 
     if (collection) {
         const rules = JSON.parse(collection.rules);
 
-        items = await fetchEntries(req, res, rules, findWhere, getOnlyThese, collection.name, limit, skip);
+        const items = await fetchEntries(req, res, rules, findWhere, getOnlyThese, collection.name, limit, skip);
 
-        if(req.body && req.body.populate && req.body.populate.length) {
-            await recursivePopulation(items, rules, req.body.populate);
-        }
+        res.status(okayStatus).send(items);
     }
     else {
         throw new BadRequestError(COLLECTION_NOT_FOUND);
     }
-
-    return res.status(okayStatus).send(items);
 }
 
 // create reference

@@ -1,6 +1,5 @@
 import { randomBytes } from 'crypto';
 import mongoose from 'mongoose';
-import {storeMongoConnection} from './connections';
 import {RuleType} from "./interface";
 import {
     BOOLEAN_FIElD_TYPE,
@@ -139,17 +138,11 @@ export function createModel(params: CreateModelType) {
     });
 
     if (process.env.NODE_ENV !== 'test') {
-        const dbConnection = storeMongoConnection;
-        if(dbConnection) {
-            try {
-                return dbConnection.model(CollectionName, schema);
-            }
-            catch (e) {
-                return dbConnection.model(CollectionName);
-            }
+        try {
+            return mongoose.model(CollectionName, schema);
         }
-        else {
-            return null;
+        catch (e) {
+            return mongoose.model(CollectionName);
         }
     }
     else {
