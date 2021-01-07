@@ -52,7 +52,8 @@ import {
     usZipReg,
     UsZipRegName
 } from "@ranjodhbirkaur/constants";
-import {createModel} from "../util/methods";
+import {createModel, createStoreModelName, getModel} from "../util/methods";
+import * as mongoose from "mongoose";
 
 async function fetchEntries(req: Request, res: Response, rules: RuleType[], findWhere: any, getOnlyThese: string[] | string | null, collectionName: string, limit: number, skip: number) {
 
@@ -63,6 +64,10 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
     const params = validateParams(req, res, rules, findWhere, getOnlyThese);
     if (params) {
         const {where, getOnly} = params;
+        const populate = req.body && req.body.populate;
+        let populationData = '';
+        let isValid = true;
+        let errorMessages: ErrorMessagesType[] = [];
         const model: any = createModel({
             rules,
             clientUserName,
@@ -70,11 +75,52 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
             name: collectionName
         });
 
-        return await model
-            .find(where, getOnly)
-            .skip(skip)
-            .limit(limit)
-            .populate('comments');
+        /*const populate = [{
+            name: 'likes'
+        }]*/
+
+
+        if(req.body && req.body.populate && req.body.populate.length) {
+            for (const population of req.body.populate) {
+                const exist = rules.find(rule => rule.name === population.name);
+                if(exist && exist[REFERENCE_MODEL_NAME]) {
+                    const modelName = exist[REFERENCE_MODEL_NAME];
+                    try {
+                        if(!mongoose.model(modelName) || !mongoose.model(modelName).schema) {
+                            await getModel(req, modelName, applicationName, clientUserName);
+                        }
+                    }
+                    catch (e) {
+                        await getModel(req, modelName, applicationName, clientUserName);
+                    }
+                    populationData = population.name;
+                }
+                else {
+                    isValid = false;
+                    errorMessages.push({
+                        field: populate,
+                        message: `${population.name} is not a valid reference`
+                    })
+                }
+            }
+        }
+        /*console.log('ok');
+        const model2 = await getModel(req, 'likes', applicationName, clientUserName);
+        console.log('md', model2);
+        const modelName = createStoreModelName('likes',applicationName,clientUserName);
+        const sch = mongoose.model(modelName).schema;
+        console.log('schema of likes: ', modelName);
+        //return [modelName];*/
+
+        if(isValid) {
+            return await model
+                .find(where, getOnly)
+                .skip(skip)
+                .limit(limit).populate(populationData);
+        }
+        else {
+            res.status(errorStatus).send(errorMessages);
+        }
 
     }
     else {
@@ -102,22 +148,6 @@ async function createEntry(rules: RuleType[], req: Request, res: Response, colle
             try {
                 const item = new model(body);
                 await item.save();
-                const logBody: ModelLoggerBodyType = {
-                    modelName: collection.name,
-                    action: "created-entry",
-                    actor: req.currentUser[ID],
-                    time: `${new Date()}`,
-                    [clientType]: req.currentUser[clientType],
-                }
-
-                /*Log it*/
-                await writeRanjodhBirData(
-                    `${collection.name}`,
-                    collection.clientUserName,
-                    collection.applicationName,
-                    EnglishLanguage,
-                    logBody
-                );
                 return item;
             }
             catch (e) {
@@ -271,7 +301,7 @@ export async function createStoreReferenceRecord(req: Request, res: Response) {
 // Delete Record
 
 
-async function getCollection(req: Request, specificModelName?: string) {
+export async function getCollection(req: Request, specificModelName?: string) {
     const clientUserName  = req.params && req.params[CLIENT_USER_NAME];
     const modelName = req.params && req.params.modelName;
     const applicationName = req.params && req.params[APPLICATION_NAME];

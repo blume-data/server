@@ -27,8 +27,6 @@ export async function createCollectionSchema(req: Request, res: Response) {
     const applicationName  = req.params && req.params.applicationName;
     const env = req.params && req.params.env;
     const reqMethod = req.method;
-    let logBody: ModelLoggerBodyType;
-    let modelName;
 
     const reqBody = req.body;
 
@@ -68,17 +66,6 @@ export async function createCollectionSchema(req: Request, res: Response) {
             description: reqBody.description
         });
 
-        // create log file to store all the logs
-        await storeSchemaRanjodhBirData(`${reqBody.name}`, clientUserName, applicationName);
-        logBody = {
-            modelName: reqBody.name,
-            action: "created-model-schema",
-            actor: req.currentUser[ID],
-            time: `${new Date()}`,
-            [clientType]: req.currentUser[clientType],
-        };
-        modelName = reqBody.name;
-
         await newCollection.save();
 
         res.status(okayStatus).send(newCollection);
@@ -106,15 +93,6 @@ export async function createCollectionSchema(req: Request, res: Response) {
                 _id: reqBody.id
             }, update);
 
-            logBody = {
-                modelName: exist.name ? exist.name : '',
-                action: "updated-model-schema",
-                actor: req.currentUser[ID],
-                time: `${new Date()}`,
-                [clientType]: req.currentUser[clientType],
-            }
-            modelName = exist.name ? exist.name : '';
-
             res.status(okayStatus).send('done');
 
         }
@@ -123,14 +101,6 @@ export async function createCollectionSchema(req: Request, res: Response) {
         }
     }
 
-    /*Log it*/
-    await writeRanjodhBirData(
-        modelName,
-        clientUserName,
-        applicationName,
-        EnglishLanguage,
-        logBody
-    );
 }
 
 /*Return the list of collections in an application name*/

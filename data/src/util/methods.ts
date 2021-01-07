@@ -1,4 +1,5 @@
 import { randomBytes } from 'crypto';
+import {Request} from 'express';
 import mongoose from 'mongoose';
 import {RuleType} from "./interface";
 import {
@@ -10,6 +11,7 @@ import {
 } from "@ranjodhbirkaur/constants";
 import {ENTRY_LANGUAGE_PROPERTY_NAME} from "./constants";
 import {APPLICATION_NAME, CLIENT_USER_NAME} from "@ranjodhbirkaur/common"
+import {getCollection} from "../Controllers/StoreController";
 
 export const RANDOM_STRING = function (minSize=10) {
     return randomBytes(minSize).toString('hex')
@@ -38,6 +40,21 @@ interface CreateModelType {
 
 export function createStoreModelName(name: string, applicationName: string, clientUserName: string) {
     return `${name}_${applicationName}_${clientUserName}`;
+}
+
+export async function getModel(req: Request, modelName: string, applicationName: string, clientUserName: string) {
+    const collection = await getCollection(req, modelName);
+    if(collection) {
+        const rules = JSON.parse(collection.rules);
+        const model: any = createModel({
+            rules,
+            clientUserName,
+            applicationName,
+            name: modelName
+        });
+        return model;
+    }
+    return null;
 }
 
 export function createModel(params: CreateModelType) {
