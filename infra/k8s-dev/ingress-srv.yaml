@@ -23,10 +23,6 @@ spec:
             backend:
               serviceName: assets-srv
               servicePort: 3000
-          - path: /logs/?(.*)
-            backend:
-              serviceName: logs-srv
-              servicePort: 3000
           - path: /?(.*)
             backend:
               serviceName: client-srv

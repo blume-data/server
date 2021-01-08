@@ -55,19 +55,101 @@ import {
 import {createModel, createStoreModelName, getModel} from "../util/methods";
 import * as mongoose from "mongoose";
 
+interface PopulateData {
+    name: string;
+    populate?: PopulateData[];
+}
+
+interface PopulateMongooseData {
+    path: string;
+    populate?: PopulateMongooseData;
+}
+
 async function fetchEntries(req: Request, res: Response, rules: RuleType[], findWhere: any, getOnlyThese: string[] | string | null, collectionName: string, limit: number, skip: number) {
 
     const language = req.params.language;
     const clientUserName = req.params[CLIENT_USER_NAME];
     const applicationName = req.params[APPLICATION_NAME];
+    let isValid = true;
+    let errorMessages: ErrorMessagesType[] = [];
 
     const params = validateParams(req, res, rules, findWhere, getOnlyThese);
+
+    async function recursivePopulation(res: Response, populate: PopulateData[], mongoosePopulate: PopulateMongooseData, modelName: string, query?: any) {
+        if(populate && populate.length) {
+            for (const population of populate) {
+                if(population && population.name) {
+                    let mRules: RuleType[] = [];
+                    if(modelName === collectionName) {
+                        mRules = rules;
+                    }
+                    else {
+                        const col = await getCollection(req, modelName);
+                        if(col) {
+                            mRules = JSON.parse(col.rules);
+                        }
+                        else {
+                            isValid = false;
+                            errorMessages.push({
+                                field: 'populate',
+                                message: `${modelName} is not a valid model`
+                            });
+                            res.status(okayStatus).send(errorMessages);
+                            return;
+                        }
+                    }
+                    const exist = mRules.find(rule => rule.name === population.name);
+                    if(exist && exist[REFERENCE_MODEL_NAME]) {
+                        const modelName = exist[REFERENCE_MODEL_NAME];
+                        try {
+                            if(!mongoose.model(modelName) || !mongoose.model(modelName).schema) {
+                                await getModel(req, modelName, applicationName, clientUserName);
+                            }
+                        }
+                        catch (e) {
+                            await getModel(req, modelName, applicationName, clientUserName);
+                        }
+
+                        mongoosePopulate.path = population.name;
+                        if(population.populate && mongoosePopulate.path) {
+                            mongoosePopulate.populate = { path: '' };
+                            const pd = await recursivePopulation(res, population.populate,mongoosePopulate.populate,modelName );
+                            if(pd) {
+                                mongoosePopulate.populate = pd;
+                            }
+                        }
+                        if(query) {
+                            query.populate(mongoosePopulate);
+                        }
+
+                    }
+                    else {
+                        isValid = false;
+                        errorMessages.push({
+                            field: 'populate',
+                            message: `${population.name} is not a valid reference`
+                        });
+                        res.status(okayStatus).send(errorMessages);
+                        return;
+                    }
+                }
+                else {
+                    isValid = false;
+                    errorMessages.push({
+                        field: 'populate',
+                        message: 'populate is not valid'
+                    });
+                    res.status(okayStatus).send(errorMessages);
+                    return;
+                }
+            }
+            return mongoosePopulate;
+        }
+
+    }
+
     if (params) {
         const {where, getOnly} = params;
-        const populate = req.body && req.body.populate;
-        let populationData = '';
-        let isValid = true;
-        let errorMessages: ErrorMessagesType[] = [];
         const model: any = createModel({
             rules,
             clientUserName,
@@ -75,48 +157,19 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
             name: collectionName
         });
 
-        /*const populate = [{
-            name: 'likes'
-        }]*/
-
-
-        if(req.body && req.body.populate && req.body.populate.length) {
-            for (const population of req.body.populate) {
-                const exist = rules.find(rule => rule.name === population.name);
-                if(exist && exist[REFERENCE_MODEL_NAME]) {
-                    const modelName = exist[REFERENCE_MODEL_NAME];
-                    try {
-                        if(!mongoose.model(modelName) || !mongoose.model(modelName).schema) {
-                            await getModel(req, modelName, applicationName, clientUserName);
-                        }
-                    }
-                    catch (e) {
-                        await getModel(req, modelName, applicationName, clientUserName);
-                    }
-                    populationData = population.name;
-                }
-                else {
-                    isValid = false;
-                    errorMessages.push({
-                        field: populate,
-                        message: `${population.name} is not a valid reference`
-                    })
-                }
-            }
-        }
-        /*console.log('ok');
-        const model2 = await getModel(req, 'likes', applicationName, clientUserName);
-        console.log('md', model2);
-        const modelName = createStoreModelName('likes',applicationName,clientUserName);
-        const sch = mongoose.model(modelName).schema;
-        console.log('schema of likes: ', modelName);
-        //return [modelName];*/
-
         if(isValid) {
-            return await model
+            const query =  model
                 .find(where, getOnly)
                 .skip(skip)
-                .limit(limit).populate(populationData);
+                .limit(limit);
+            if(req.body && req.body.populate && req.body.populate.length) {
+                await recursivePopulation(res, req.body.populate, {path: ''}, collectionName, query);
+            }
+
+            query.exec((err: any, items: any) => {
+                res.status(okayStatus).send(items);
+            });
+
         }
         else {
             res.status(errorStatus).send(errorMessages);
@@ -282,9 +335,7 @@ export async function getStoreRecord(req: Request, res: Response) {
     if (collection) {
         const rules = JSON.parse(collection.rules);
 
-        const items = await fetchEntries(req, res, rules, findWhere, getOnlyThese, collection.name, limit, skip);
-
-        res.status(okayStatus).send(items);
+        await fetchEntries(req, res, rules, findWhere, getOnlyThese, collection.name, limit, skip);
     }
     else {
         throw new BadRequestError(COLLECTION_NOT_FOUND);
