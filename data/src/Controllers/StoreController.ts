@@ -57,11 +57,13 @@ import * as mongoose from "mongoose";
 
 interface PopulateData {
     name: string;
+    getOnly?: string[];
     populate?: PopulateData[];
 }
 
 interface PopulateMongooseData {
     path: string;
+    select?: string[];
     populate?: PopulateMongooseData;
 }
 
@@ -113,6 +115,11 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
                         }
 
                         mongoosePopulate.path = population.name;
+                        if(population.getOnly) {
+                            if(population.getOnly && population.getOnly.length) {
+                                mongoosePopulate.select = population.getOnly;
+                            }
+                        }
                         if(population.populate && mongoosePopulate.path) {
                             mongoosePopulate.populate = { path: '' };
                             const pd = await recursivePopulation(res, population.populate,mongoosePopulate.populate,modelName );
