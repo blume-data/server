@@ -94,7 +94,9 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
                                 field: 'populate',
                                 message: `${modelName} is not a valid model`
                             });
-                            res.status(okayStatus).send(errorMessages);
+                            res.status(okayStatus).send({
+                                errors: errorMessages
+                            });
                             return;
                         }
                     }
@@ -129,7 +131,9 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
                             field: 'populate',
                             message: `${population.name} is not a valid reference`
                         });
-                        res.status(okayStatus).send(errorMessages);
+                        res.status(okayStatus).send({
+                            errors: errorMessages
+                        });
                         return;
                     }
                 }
@@ -139,7 +143,9 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
                         field: 'populate',
                         message: 'populate is not valid'
                     });
-                    res.status(okayStatus).send(errorMessages);
+                    res.status(okayStatus).send({
+                        errors: errorMessages
+                    });
                     return;
                 }
             }
@@ -167,7 +173,9 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
             }
 
             query.exec((err: any, items: any) => {
-                res.status(okayStatus).send(items);
+                if(isValid) {
+                    res.status(okayStatus).send(items);
+                }
             });
 
         }
