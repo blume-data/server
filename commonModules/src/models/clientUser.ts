@@ -56,8 +56,4 @@ clientUserSchema.statics.build = (attrs: ClientUserAttrs) => {
 
 const ClientUser = mongoose.model<ClientUserDoc, ClientUserModel>('ClientUser', clientUserSchema);
 
-export function getClientUserModel(connection: Connection) {
-    return connection.model<ClientUserDoc, ClientUserModel>('ClientUser', clientUserSchema);
-}
-
-export { ClientUser };
+export { ClientUser, ClientUserDoc, ClientUserModel, clientUserSchema };

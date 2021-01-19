@@ -8,7 +8,9 @@ import {
     errorStatus,
     ID,
     okayStatus,
-    sendSingleError
+    sendSingleError,
+    getRanjodhBirData,
+    writeRanjodhBirData
 } from "@ranjodhbirkaur/common";
 
 import {ENTRY_CREATED_AT, ENTRY_LANGUAGE_PROPERTY_NAME, PER_PAGE} from "../util/constants";
@@ -50,16 +52,115 @@ import {
     usZipReg,
     UsZipRegName
 } from "@ranjodhbirkaur/constants";
-import {createModel} from "../util/methods";
-import {getRanjodhBirData, writeRanjodhBirData} from "../util/databaseApi";
+import {createModel, createStoreModelName, getModel} from "../util/methods";
+import * as mongoose from "mongoose";
+
+interface PopulateData {
+    name: string;
+    getOnly?: string[];
+    populate?: PopulateData[];
+}
+
+interface PopulateMongooseData {
+    path: string;
+    select?: string[];
+    populate?: PopulateMongooseData;
+}
 
 async function fetchEntries(req: Request, res: Response, rules: RuleType[], findWhere: any, getOnlyThese: string[] | string | null, collectionName: string, limit: number, skip: number) {
 
     const language = req.params.language;
     const clientUserName = req.params[CLIENT_USER_NAME];
     const applicationName = req.params[APPLICATION_NAME];
+    let isValid = true;
+    let errorMessages: ErrorMessagesType[] = [];
 
     const params = validateParams(req, res, rules, findWhere, getOnlyThese);
+
+    async function recursivePopulation(res: Response, populate: PopulateData[], mongoosePopulate: PopulateMongooseData, modelName: string, query?: any) {
+        if(populate && populate.length) {
+            for (const population of populate) {
+                if(population && population.name) {
+                    let mRules: RuleType[] = [];
+                    if(modelName === collectionName) {
+                        mRules = rules;
+                    }
+                    else {
+                        const col = await getCollection(req, modelName);
+                        if(col) {
+                            mRules = JSON.parse(col.rules);
+                        }
+                        else {
+                            isValid = false;
+                            errorMessages.push({
+                                field: 'populate',
+                                message: `${modelName} is not a valid model`
+                            });
+                            res.status(okayStatus).send({
+                                errors: errorMessages
+                            });
+                            return;
+                        }
+                    }
+                    const exist = mRules.find(rule => rule.name === population.name);
+                    if(exist && exist[REFERENCE_MODEL_NAME]) {
+                        const modelName = exist[REFERENCE_MODEL_NAME];
+                        try {
+                            if(!mongoose.model(modelName) || !mongoose.model(modelName).schema) {
+                                await getModel(req, modelName, applicationName, clientUserName);
+                            }
+                        }
+                        catch (e) {
+                            await getModel(req, modelName, applicationName, clientUserName);
+                        }
+
+                        mongoosePopulate.path = population.name;
+                        if(population.getOnly) {
+                            if(population.getOnly && population.getOnly.length) {
+                                mongoosePopulate.select = population.getOnly;
+                            }
+                        }
+                        if(population.populate && mongoosePopulate.path) {
+                            mongoosePopulate.populate = { path: '' };
+                            const pd = await recursivePopulation(res, population.populate,mongoosePopulate.populate,modelName );
+                            if(pd) {
+                                mongoosePopulate.populate = pd;
+                            }
+                        }
+                        if(query) {
+                            query.populate(mongoosePopulate);
+                        }
+
+                    }
+                    else {
+                        isValid = false;
+                        errorMessages.push({
+                            field: 'populate',
+                            message: `${population.name} is not a valid reference`
+                        });
+                        res.status(okayStatus).send({
+                            errors: errorMessages
+                        });
+                        return;
+                    }
+                }
+                else {
+                    isValid = false;
+                    errorMessages.push({
+                        field: 'populate',
+                        message: 'populate is not valid'
+                    });
+                    res.status(okayStatus).send({
+                        errors: errorMessages
+                    });
+                    return;
+                }
+            }
+            return mongoosePopulate;
+        }
+
+    }
+
     if (params) {
         const {where, getOnly} = params;
         const model: any = createModel({
@@ -69,23 +170,25 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
             name: collectionName
         });
 
-        await getRanjodhBirData(
-            collectionName,
-            clientUserName,
-            applicationName,
-            language,
-            {
-                skip: Number(skip),
-                limit: Number(limit),
-                where,
-                getOnly
+        if(isValid) {
+            const query =  model
+                .find(where, getOnly)
+                .skip(skip)
+                .limit(limit);
+            if(req.body && req.body.populate && req.body.populate.length) {
+                await recursivePopulation(res, req.body.populate, {path: ''}, collectionName, query);
             }
-        );
 
-        return await model
-            .find(where, getOnly)
-            .skip(skip)
-            .limit(limit);
+            query.exec((err: any, items: any) => {
+                if(isValid) {
+                    res.status(okayStatus).send(items);
+                }
+            });
+
+        }
+        else {
+            res.status(errorStatus).send(errorMessages);
+        }
 
     }
     else {
@@ -113,22 +216,6 @@ async function createEntry(rules: RuleType[], req: Request, res: Response, colle
             try {
                 const item = new model(body);
                 await item.save();
-                const logBody: ModelLoggerBodyType = {
-                    modelName: collection.name,
-                    action: "create",
-                    actor: req.currentUser[ID],
-                    time: `${new Date()}`,
-                    [clientType]: req.currentUser[clientType],
-                }
-
-                /*Log it*/
-                await writeRanjodhBirData(
-                    `${collection.name}`,
-                    collection.clientUserName,
-                    collection.applicationName,
-                    EnglishLanguage,
-                    logBody
-                );
                 return item;
             }
             catch (e) {
@@ -254,93 +341,20 @@ export async function getStoreRecord(req: Request, res: Response) {
 
     const findWhere = req.body.where;
     const getOnlyThese = req.body.getOnly;
-    const language = req.params.language;
-    const clientUserName = req.params[CLIENT_USER_NAME];
-    const applicationName = req.params[APPLICATION_NAME];
 
     // get collection
     const collection = await getCollection(req);
     const limit = ((req.query && Number(req.query.limit))  || PER_PAGE);
     let skip: number = (req.query && Number(req.query.skip)) || 0;
-    let items: any = [];
-
-    async function fetchPopulation(population: any, collectionName: string, ids: string[]) {
-        const getOnly = (population && population.getOnly) ? population.getOnly : null;
-
-        const collection = await getCollection(req, collectionName);
-        if(collection) {
-            const rules = JSON.parse(collection.rules);
-            const params = validateParams(req, res, rules, {}, getOnly);
-
-            if(params) {
-                const model: any = createModel({
-                    rules,
-                    clientUserName,
-                    applicationName,
-                    name: collectionName
-                });
-                if(ids && ids.length) {
-                    return await model.find({}, params.getOnly).where('_id').in(ids);
-                }
-                else {
-                    return await model.find({_id: ids}, params.getOnly);
-                }
-
-            }
-
-        }
-
-    }
-
-    async function recursivePopulation(items: any[], rules: RuleType[], populate: any) {
-        // check if populate exist
-        // only populate if there is only one item
-        if(populate && populate.length && items && items.length) {
-            for (const population of populate) {
-                if(population.name) {
-                    // check if the name exist in the rules
-                    const ruleExist = rules.find((rule: RuleType) => rule.name === population.name);
-                    if(ruleExist) {
-                        for (let index=0; index< items.length; index++) {
-                            if(items[index] && items[index][population.name]) {
-                                const populatedEntries = await fetchPopulation(population, ruleExist[REFERENCE_MODEL_NAME], items[index][population.name]);
-
-                                if(population.populate && population.populate.length) {
-                                    const refCollection = await getCollection(req, ruleExist[REFERENCE_MODEL_NAME]);
-                                    if(refCollection) {
-                                        const refRules = JSON.parse(refCollection.rules);
-                                        await recursivePopulation(populatedEntries, refRules, population.populate);
-                                    }
-                                }
-
-                                if(ruleExist[REFERENCE_MODEL_TYPE] === ONE_TO_MANY_RELATION) {
-                                    items[index][population.name] = populatedEntries;
-                                }
-                                else {
-                                    items[index][population.name] = populatedEntries[0];
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
 
     if (collection) {
         const rules = JSON.parse(collection.rules);
 
-        items = await fetchEntries(req, res, rules, findWhere, getOnlyThese, collection.name, limit, skip);
-
-        if(req.body && req.body.populate && req.body.populate.length) {
-            await recursivePopulation(items, rules, req.body.populate);
-        }
+        await fetchEntries(req, res, rules, findWhere, getOnlyThese, collection.name, limit, skip);
     }
     else {
         throw new BadRequestError(COLLECTION_NOT_FOUND);
     }
-
-    return res.status(okayStatus).send(items);
 }
 
 // create reference
@@ -353,7 +367,7 @@ export async function createStoreReferenceRecord(req: Request, res: Response) {
 // Delete Record
 
 
-async function getCollection(req: Request, specificModelName?: string) {
+export async function getCollection(req: Request, specificModelName?: string) {
     const clientUserName  = req.params && req.params[CLIENT_USER_NAME];
     const modelName = req.params && req.params.modelName;
     const applicationName = req.params && req.params[APPLICATION_NAME];

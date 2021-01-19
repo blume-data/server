@@ -1,8 +1,10 @@
 import axios from 'axios';
-import {addDataBaseUrl, dataBaseRootUrl, getDataBaseUrl, schemaDataBaseUrl} from "./urls";
-import {RANJODHBIR_KAUR_DATABASE_URL} from "./constants";
+export const RANJODHBIR_KAUR_DATABASE_URL = 'http://database-srv:3000/logs';
+export const schemaDataBaseUrl = 'schema';
+export const getDataBaseUrl = 'get';
+export const addDataBaseUrl = 'add';
 
-export const storeSchema = async (
+export const storeSchemaRanjodhBirData = async (
     modelName: string,
     clientUserName: string,
     applicationName: string
@@ -35,7 +37,7 @@ export const getRanjodhBirData = async (
     applicationName: string,
     language: string,
     conditions?: { where?: any; getOnly?: any; skip: number; limit: number }
-    ) => {
+) => {
     const data = {
         modelName,
         clientUserName,

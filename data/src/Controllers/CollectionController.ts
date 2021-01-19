@@ -1,5 +1,13 @@
 import {Request, Response} from 'express';
-import {BadRequestError, ID, okayStatus, sendSingleError, USER_NAME} from "@ranjodhbirkaur/common";
+import {
+    BadRequestError,
+    ID,
+    okayStatus,
+    sendSingleError,
+    USER_NAME,
+    storeSchemaRanjodhBirData,
+    clientType, writeRanjodhBirData, EnglishLanguage
+} from "@ranjodhbirkaur/common";
 import {
     MAX_COLLECTION_LIMIT,
 } from "../util/constants";
@@ -9,9 +17,9 @@ import {
     COLLECTION_ALREADY_EXIST
 } from "./Messages";
 
-import {storeSchema} from "../util/databaseApi";
 import {trimCharactersAndNumbers} from "@ranjodhbirkaur/constants";
 import {createModel} from "../util/methods";
+import {ModelLoggerBodyType} from "../util/interface";
 
 export async function createCollectionSchema(req: Request, res: Response) {
 
@@ -58,8 +66,6 @@ export async function createCollectionSchema(req: Request, res: Response) {
             description: reqBody.description
         });
 
-        // log in data base
-        await storeSchema(`${reqBody.name}`, clientUserName, applicationName);
         await newCollection.save();
 
         res.status(okayStatus).send(newCollection);
@@ -75,7 +81,6 @@ export async function createCollectionSchema(req: Request, res: Response) {
             const update: any = {};
             if(reqBody.rules) {
                 update.rules = JSON.stringify(reqBody.rules);
-                console.log('rules', update.rules)
             }
             if(reqBody.description) {
                 update.description = reqBody.description;
@@ -88,13 +93,14 @@ export async function createCollectionSchema(req: Request, res: Response) {
                 _id: reqBody.id
             }, update);
 
-            return res.status(okayStatus).send('done');
+            res.status(okayStatus).send('done');
 
         }
         else {
             return sendSingleError(res, 'Model not found');
         }
     }
+
 }
 
 /*Return the list of collections in an application name*/
