@@ -1,7 +1,7 @@
-apiVersion: cert-manager.io/v1alpha2
+apiVersion: cert-manager.io/v1alpha1
 kind: Certificate
 metadata:
-  name: ranjod-com-tls-1
+  name: ranjod-com-tls
 spec:
   secretName: ranjod-com-secret
   issuerRef:
@@ -11,3 +11,10 @@ spec:
   dnsNames:
     - ranjod.com
     - www.ranjod.com
+  acme:
+    conig:
+      - http01:
+          ingressClass: nginx
+        domains:
+          - ranjod.com
+          - www.ranjod.com
