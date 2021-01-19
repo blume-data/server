@@ -3,7 +3,7 @@ kind: Certificate
 metadata:
   name: ranjod-com-tls
 spec:
-  secretName: ranjod-com
+  secretName: ranjod-com-secret
   issuerRef:
     name: letsencrypt-prod
     kind: ClusterIssuer
@@ -11,10 +11,3 @@ spec:
   dnsNames:
     - ranjod.com
     - www.ranjod.com
-  acme:
-    config:
-      - http01:
-          ingressClass: nginx
-        domains:
-          - ranjod.com
-          - www.ranjod.com
