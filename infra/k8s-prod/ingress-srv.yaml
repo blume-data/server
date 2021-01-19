@@ -13,7 +13,7 @@ spec:
     - hosts:
         - ranjod.com
         - www.ranjod.com
-      secretName: ranjod-com-tls-1
+      secretName: ranjod-com-tls
   rules:
     - host: ranjod.com
       http:
