@@ -1,13 +1,21 @@
 apiVersion: cert-manager.io/v1alpha2
 kind: Certificate
 metadata:
-  name: ranjod-com-secret-tls
+  name: ranjod-com-tls
 spec:
-  secretName: ranjod-com-secret
+  secretName: ranjod-com
   dnsNames:
     - ranjod.com
     - www.ranjod.com
   issuerRef:
     name: letsencrypt-prod
-    kind: Issuer
+    kind: ClusterIssuer
     group: cert-manager.io
+  commonName: ranjod.com
+  acme:
+    config:
+      - http01:
+          ingressClass: nginx
+        domains:
+          - ranjod.com
+          - www.ranjod.com
