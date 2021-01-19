@@ -4,14 +4,13 @@ metadata:
   name: ranjod-com-tls
 spec:
   secretName: ranjod-com
-  dnsNames:
-    - ranjod.com
-    - www.ranjod.com
   issuerRef:
     name: letsencrypt-prod
     kind: ClusterIssuer
-    group: cert-manager.io
   commonName: ranjod.com
+  dnsNames:
+    - ranjod.com
+    - www.ranjod.com
   acme:
     config:
       - http01:
