@@ -184,12 +184,8 @@ const CreateEntry = (props: CreateEntryType) => {
                 }
             });
 
-            console.log('data', data, values, rules);
-
-
             const res = await doPostRequest(`${getBaseUrl()}${url}`, data, true);
             if(createEntryCallBack && res && res.id) {
-                console.log('created entry', res);
                 createEntryCallBack(res.id);
             }
 
@@ -209,9 +205,10 @@ const CreateEntry = (props: CreateEntryType) => {
             <Grid className="create-entry-form-container">
                 <Form
                     response={response}
-                    submitButtonName={'Save model name'}
+                    submitButtonName={`Save model ${ModelName}`}
                     className={'create-content-model-form'}
                     fields={fields}
+                    clearOnSubmit={true}
                     onSubmit={onsubmit}
                     />
             </Grid>

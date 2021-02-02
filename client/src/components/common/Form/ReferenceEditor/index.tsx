@@ -34,7 +34,10 @@ export const ReferenceEditor = (props: ReferenceEditorType) => {
                 setRefIds(split);
             }
         }
-    }, []);
+        else {
+            setRefIds([]);
+        }
+    }, [value]);
 
     function updateValue(refIds: string[]) {
         const event = {
