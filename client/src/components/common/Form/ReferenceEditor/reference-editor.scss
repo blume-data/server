@@ -17,5 +17,13 @@
     justify-content: center;
     padding: 5px;
   }
+  .create-entry-wrapper {
+    position: relative;
+    margin: 5px;
+    padding: 10px;
+    .create-entry-container {
+      padding: 10px;
+    }
+  }
 
 }

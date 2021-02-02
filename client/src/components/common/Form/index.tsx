@@ -485,6 +485,9 @@ export const Form = (props: FormType) => {
                 }
             });
             const res = await onSubmit(values);
+            if(clearOnSubmit) {
+                clearForm();
+            }
         }
     }
 
