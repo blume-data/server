@@ -172,3 +172,20 @@ export function createModel(params: CreateModelType) {
         return dbConnection.model(CollectionName, schema);
     }
 }
+
+// remove the unwanted properties from get-only
+export function trimGetOnly(params: string | null | string[]) {
+    let getOnly: string[] = [];
+    if(params && Array.isArray(params) &&  params.length) {
+        params.forEach((it: string) => {
+            getOnly.push(it);
+        });
+    }
+    else if(typeof params === 'string') {
+        getOnly.push(params);
+    }
+    else {
+        getOnly.push(`-${ENTRY_LANGUAGE_PROPERTY_NAME}`);
+    }
+    return getOnly;
+}

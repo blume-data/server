@@ -52,7 +52,7 @@ import {
     usZipReg,
     UsZipRegName
 } from "@ranjodhbirkaur/constants";
-import {createModel, createStoreModelName, getModel} from "../util/methods";
+import {createModel, createStoreModelName, getModel, trimGetOnly} from "../util/methods";
 import * as mongoose from "mongoose";
 
 interface PopulateData {
@@ -117,8 +117,14 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
                         mongoosePopulate.path = population.name;
                         if(population.getOnly) {
                             if(population.getOnly && population.getOnly.length) {
-                                mongoosePopulate.select = population.getOnly;
+                                mongoosePopulate.select = trimGetOnly(population.getOnly);
                             }
+                            else {
+                                mongoosePopulate.select = trimGetOnly(null);
+                            }
+                        }
+                        else {
+                            mongoosePopulate.select = trimGetOnly(null);
                         }
                         if(population.populate && mongoosePopulate.path) {
                             mongoosePopulate.populate = { path: '' };
@@ -162,7 +168,10 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
     }
 
     if (params) {
-        const {where, getOnly} = params;
+        const {where} = params;
+        // skip language property name
+        const getOnly = trimGetOnly(params.getOnly);
+
         const model: any = createModel({
             rules,
             clientUserName,
