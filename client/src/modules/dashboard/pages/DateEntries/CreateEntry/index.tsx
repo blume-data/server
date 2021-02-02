@@ -46,7 +46,7 @@ const CreateEntry = (props: CreateEntryType) => {
     const {env, applicationName, GetCollectionNamesUrl, language, StoreUrl, modelNameProp, createEntryCallBack} = props;
     const [rules, setRules] = useState<RuleType[] | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [response, setResponse] = useState<string | ErrorMessagesType[]>('');
+    const [apiResponse, setApiResponse] = useState<string | ErrorMessagesType[]>('');
     let ModelName = '';
     const {modelName} = useParams();
     if(modelNameProp) {
@@ -188,6 +188,9 @@ const CreateEntry = (props: CreateEntryType) => {
             if(createEntryCallBack && res && res.id) {
                 createEntryCallBack(res.id);
             }
+            else if(res && res.errors && res.errors.length) {
+                setApiResponse(res.errors);
+            }
 
         }
 
@@ -204,7 +207,7 @@ const CreateEntry = (props: CreateEntryType) => {
 
             <Grid className="create-entry-form-container">
                 <Form
-                    response={response}
+                    response={apiResponse}
                     submitButtonName={`Save model ${ModelName}`}
                     className={'create-content-model-form'}
                     fields={fields}
