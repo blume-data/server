@@ -4,18 +4,15 @@ import {
     APPLICATION_NAME,
     BadRequestError,
     CLIENT_USER_NAME,
-    clientType, EnglishLanguage,
     errorStatus,
-    ID,
     okayStatus,
-    sendSingleError,
-    getRanjodhBirData,
-    writeRanjodhBirData
+    sendSingleError
 } from "@ranjodhbirkaur/common";
 
 import {ENTRY_CREATED_AT, ENTRY_LANGUAGE_PROPERTY_NAME, PER_PAGE} from "../util/constants";
 import {COLLECTION_NOT_FOUND, PARAM_SHOULD_BE_UNIQUE} from "./Messages";
-import {ModelLoggerBodyType, RuleType} from "../util/interface";
+import {RuleType} from "../util/interface";
+import * as mongoose from "mongoose";
 import {Model} from "mongoose";
 import {DateTime} from 'luxon';
 import {
@@ -52,8 +49,7 @@ import {
     usZipReg,
     UsZipRegName
 } from "@ranjodhbirkaur/constants";
-import {createModel, createStoreModelName, getModel, sendOkayResponse, trimGetOnly} from "../util/methods";
-import * as mongoose from "mongoose";
+import {createModel, getModel, sendOkayResponse, trimGetOnly} from "../util/methods";
 
 interface PopulateData {
     name: string;
@@ -241,7 +237,7 @@ async function createEntry(rules: RuleType[], req: Request, res: Response, colle
             }
         }
         else {
-            res.status(errorStatus).send({
+            return res.status(errorStatus).send({
                 errors: [hasError]
             });
         }
@@ -263,7 +259,6 @@ export async function createStoreRecord(req: Request, res: Response) {
     if (collection) {
         const rules = JSON.parse(collection.rules);
 
-        // if entry is already created and just requires to be pushed in reference array
         if(req.query[REFERENCE_MODEL_NAME] && req.query[REFERENCE_PROPERTY_NAME]) {
             // check if the reference model exist
             const referenceCollection = await getCollection(req, referenceModelName);
@@ -341,9 +336,11 @@ export async function createStoreRecord(req: Request, res: Response) {
         }
         else {
             const entry = await createEntry(rules, req, res, collection);
-            sendOkayResponse(res, {
-                id: entry.id
-            });
+            if(entry && entry.id) {
+                sendOkayResponse(res, {
+                    id: entry.id
+                });
+            }
         }
     }
     else {
@@ -654,13 +651,25 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
                     break;
                 }
                 case REFERENCE_FIELD_TYPE: {
-                    if(typeof reqBody[rule.name] !== "string" || !reqBody[rule.name]) {
-                        isValid = false;
-                        errorMessages.push({
-                            field: rule.name,
-                            message: `${rule.name} should be a valid id`
-                        })
+                    if(rule[REFERENCE_MODEL_TYPE] === ONE_TO_ONE_RELATION) {
+                        if(typeof reqBody[rule.name] !== "string" || !reqBody[rule.name]) {
+                            isValid = false;
+                            errorMessages.push({
+                                field: rule.name,
+                                message: `${rule.name} should be a valid id`
+                            });
+                        }
                     }
+                    if(rule[REFERENCE_MODEL_TYPE] === ONE_TO_MANY_RELATION && reqBody[rule.name]) {
+                        if(!(Array.isArray(reqBody[rule.name]) && reqBody[rule.name].length)) {
+                            isValid = false;
+                            errorMessages.push({
+                                field: rule.name,
+                                message: `${rule.name} should be an array of id`
+                            });
+                        }
+                    }
+
                     break;
                 }
                 case 'html': {

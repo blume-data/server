@@ -13,7 +13,8 @@ import {
     INTEGER_FIElD_TYPE,
     JSON_FIELD_TYPE,
     LONG_STRING_FIELD_TYPE, ONE_TO_MANY_RELATION,
-    REFERENCE_FIELD_TYPE, REFERENCE_MODEL_NAME,
+    REFERENCE_FIELD_TYPE,
+    REFERENCE_MODEL_NAME,
     REFERENCE_MODEL_TYPE,
     RuleType,
     SHORT_STRING_FIElD_TYPE
@@ -23,10 +24,11 @@ import {getBaseUrl} from "../../../../../utils/urls";
 import Loader from "../../../../../components/common/Loader";
 import {
     CHECKBOX,
-    ConfigField, DROPDOWN,
+    ConfigField,
     FORMATTED_TEXT,
     JSON_TEXT,
-    ONLY_DATE_FORM_FIELD_TYPE, REFERENCE_EDITOR,
+    ONLY_DATE_FORM_FIELD_TYPE,
+    REFERENCE_EDITOR,
     TEXT
 } from "../../../../../components/common/Form/interface";
 import {Form} from "../../../../../components/common/Form";
@@ -171,6 +173,9 @@ const CreateEntry = (props: CreateEntryType) => {
                     if(exist) {
                         if(exist.type === BOOLEAN_FIElD_TYPE) {
                             data[valueItem.name] = valueItem.value === 'true';
+                        }
+                        if(exist.type === REFERENCE_FIELD_TYPE && exist[REFERENCE_MODEL_TYPE] === ONE_TO_MANY_RELATION) {
+                            data[valueItem.name] = valueItem.value.split(',');
                         }
                         else {
                             data[valueItem.name] = valueItem.value;
