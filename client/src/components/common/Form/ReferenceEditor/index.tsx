@@ -114,7 +114,7 @@ export const ReferenceEditor = (props: ReferenceEditorType) => {
                 : null
             }
             <div style={{display: showCreateButton ? 'none' : 'block'}} className={'create-entry-wrapper'}>
-                <Paper elevation={3}>
+                <Paper elevation={3} className={'paper-wrapper'}>
                     <div className="create-entry-container">
                         <CreateEntry modelNameProp={REFERENCE_MODEL_NAME} createEntryCallBack={createRefEntryCallBack} />
                     </div>
