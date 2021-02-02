@@ -13,10 +13,17 @@ import {
     FormType, JSON_TEXT,
     RADIO,
     TEXT,
-    ONLY_DATE_FORM_FIELD_TYPE
+    ONLY_DATE_FORM_FIELD_TYPE, REFERENCE_EDITOR
 } from "./interface";
 import './style.scss';
-import {ErrorMessagesType, IsJsonString, FIELD, JSON_FIELD_TYPE, MESSAGE} from "@ranjodhbirkaur/constants";
+import {
+    ErrorMessagesType,
+    IsJsonString,
+    FIELD,
+    JSON_FIELD_TYPE,
+    MESSAGE,
+    REFERENCE_MODEL_TYPE, REFERENCE_MODEL_NAME
+} from "@ranjodhbirkaur/constants";
 import {Alert} from "../Toast";
 import {PLEASE_PROVIDE_VALID_VALUES} from "../../../modules/authentication/pages/Auth/constants";
 import {CommonRadioField} from "./CommonRadioField";
@@ -27,6 +34,7 @@ import loadable from "@loadable/component";
 import {DateField} from "./DateField";
 import {VerticalTab, VerticalTabPanel} from "../VerticalTab";
 import {JsonEditor} from "./JsonEditor";
+import ReferenceEditor from "./ReferenceEditor";
 
 const HtmlEditor = loadable(() => import('../HtmlEditor'));
 
@@ -62,7 +70,6 @@ export const Form = (props: FormType) => {
     function changeValue(event: any, field: string, action: string) {
         const value = event.target.value;
         let state: FormState[];
-
 
         function setHelperText(fieldItem: ConfigField, formStateItem: FormState, value: string) {
 
@@ -222,7 +229,6 @@ export const Form = (props: FormType) => {
     function renderFields(field: ConfigField, index: number, groupId?: string) {
         const {inputType, options, groupName='', id, className, name, placeholder, required, type='text', label, disabled=false, descriptionText=''} = field;
 
-        //console.log('group', groupName, groupId)
         /*If group Id: Field is not grouped*/
         if(groupId && groupName !== groupId) {
             return null;
@@ -242,6 +248,7 @@ export const Form = (props: FormType) => {
         const helperText = getHelperText(label);
         const value = getValue(label);
         const error = hasError(label);
+        const classNames = `${className} form-field-container-wrapper ${error ? 'red-border' : ''}`;
 
 
         if(inputType === ONLY_DATE_FORM_FIELD_TYPE) {
@@ -261,7 +268,7 @@ export const Form = (props: FormType) => {
                     label={label}
                     id={id}
                     value={value}
-                    className={className}
+                    className={classNames}
                 />
             );
         }
@@ -283,7 +290,7 @@ export const Form = (props: FormType) => {
                     label={label}
                     id={id}
                     value={value}
-                    className={className}
+                    className={classNames}
                 />
             );
         }
@@ -304,7 +311,8 @@ export const Form = (props: FormType) => {
                     label={label}
                     id={id}
                     value={value}
-                    className={className} />
+                    className={classNames}
+                />
             );
         }
         if(inputType === DROPDOWN) {
@@ -324,7 +332,8 @@ export const Form = (props: FormType) => {
                     error={error}
                     helperText={helperText}
                     key={index}
-                    className={className} />
+                    className={classNames}
+                />
             );
         }
         if(inputType === BIG_TEXT) {
@@ -345,7 +354,7 @@ export const Form = (props: FormType) => {
                     label={label}
                     value={value}
                     id={id}
-                    className={className}
+                    className={classNames}
                 />
             );
         }
@@ -366,7 +375,7 @@ export const Form = (props: FormType) => {
                     label={label}
                     value={value}
                     id={id}
-                    className={className}
+                    className={classNames}
                 />
             );
         }
@@ -383,7 +392,7 @@ export const Form = (props: FormType) => {
                     value={value}
                     label={label}
                     id={id}
-                    className={className}
+                    className={classNames}
                     options={options}
                     helperText={helperText}
                 />
@@ -402,7 +411,7 @@ export const Form = (props: FormType) => {
                     value={value}
                     label={label}
                     id={id}
-                    className={className}
+                    className={classNames}
                     helperText={helperText}
                 />
             );
@@ -412,7 +421,7 @@ export const Form = (props: FormType) => {
             return (
                 <HtmlEditor
                     placeholder={placeholder}
-                    className={'html-editor'}
+                    className={`${classNames} html-editor`}
                     required={required}
                     name={name}
                     label={label}
@@ -420,6 +429,24 @@ export const Form = (props: FormType) => {
                     value={value}
                 />
             );
+        }
+        if(inputType === REFERENCE_EDITOR) {
+            if(field.miscData) {
+                return (
+                    <ReferenceEditor
+                        descriptionText={descriptionText}
+                        value={value}
+                        onBlur={onBlur}
+                        onChange={onChange}
+                        className={classNames}
+                        key={index}
+                        label={label}
+                        REFERENCE_MODEL_NAME={field.miscData[REFERENCE_MODEL_NAME]}
+                        REFERENCE_MODEL_TYPE={field.miscData[REFERENCE_MODEL_TYPE]}
+                    />
+                );
+            }
+            return null;
         }
     }
 

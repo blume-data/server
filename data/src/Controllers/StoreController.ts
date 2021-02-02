@@ -52,7 +52,7 @@ import {
     usZipReg,
     UsZipRegName
 } from "@ranjodhbirkaur/constants";
-import {createModel, createStoreModelName, getModel, trimGetOnly} from "../util/methods";
+import {createModel, createStoreModelName, getModel, sendOkayResponse, trimGetOnly} from "../util/methods";
 import * as mongoose from "mongoose";
 
 interface PopulateData {
@@ -310,7 +310,9 @@ export async function createStoreRecord(req: Request, res: Response) {
                             [referencePropertyName]: entryId
                         });
 
-                        return res.status(okayStatus).send(response);
+                        return sendOkayResponse(res, {
+                            id: response.id
+                        });
                     }
                     else if(referenceType === ONE_TO_MANY_RELATION) {
                         const response = await referenceModel.findOneAndUpdate({
@@ -321,7 +323,9 @@ export async function createStoreRecord(req: Request, res: Response) {
                             }
                         );
 
-                        return res.status(okayStatus).send(response);
+                        return sendOkayResponse(res, {
+                            id: response.id
+                        });
                     }
                 }
                 else if(!propertyName) {
@@ -337,7 +341,9 @@ export async function createStoreRecord(req: Request, res: Response) {
         }
         else {
             const entry = await createEntry(rules, req, res, collection);
-            res.status(okayStatus).send(entry);
+            sendOkayResponse(res, {
+                id: entry.id
+            });
         }
     }
     else {

@@ -11,6 +11,7 @@ export const RADIO = 'radio';
 export const CHECKBOX = 'check-box';
 export const FORMATTED_TEXT = 'formatted-text';
 export const JSON_TEXT = 'json';
+export const REFERENCE_EDITOR = 'REFERENCE_EDITOR';
 
 export interface FormType {
     className: string;
@@ -44,6 +45,7 @@ export interface FieldType {
     type?: string;
     disabled?: boolean;
     descriptionText?: string;
+    miscData?: any;
 }
 
 export interface ConfigField extends FieldType{

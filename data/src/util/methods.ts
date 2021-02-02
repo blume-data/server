@@ -1,5 +1,5 @@
 import { randomBytes } from 'crypto';
-import {Request} from 'express';
+import {Request, Response} from 'express';
 import mongoose from 'mongoose';
 import {RuleType} from "./interface";
 import {
@@ -10,7 +10,7 @@ import {
     JSON_FIELD_TYPE, ONE_TO_MANY_RELATION, ONE_TO_ONE_RELATION, REFERENCE_FIELD_TYPE
 } from "@ranjodhbirkaur/constants";
 import {ENTRY_LANGUAGE_PROPERTY_NAME} from "./constants";
-import {APPLICATION_NAME, CLIENT_USER_NAME} from "@ranjodhbirkaur/common"
+import {APPLICATION_NAME, CLIENT_USER_NAME, okayStatus} from "@ranjodhbirkaur/common"
 import {getCollection} from "../Controllers/StoreController";
 
 export const RANDOM_STRING = function (minSize=10) {
@@ -188,4 +188,9 @@ export function trimGetOnly(params: string | null | string[]) {
         getOnly.push(`-${ENTRY_LANGUAGE_PROPERTY_NAME}`);
     }
     return getOnly;
+}
+
+// send on id on create record
+export function sendOkayResponse(res: Response, data: object) {
+    return res.status(okayStatus).send(data);
 }

@@ -12,4 +12,12 @@
       flex-direction: column;
     }
   }
+  .form-field-container-wrapper {
+    border-left: 2px solid $blue;
+    padding-left: 10px;
+    margin-bottom: 20px;
+  }
+  .form-field-container-wrapper.red-border {
+    border-color: $red;
+  }
 }
