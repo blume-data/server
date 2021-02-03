@@ -114,16 +114,14 @@ export const ReferenceEditor = (props: ReferenceEditorType) => {
                   </Grid>
                 : null
             }
-            <ModalDialog isOpen={!showCreateButton} handleClose={() => setShowCreateButton(true)} title={'create'}>
+            <ModalDialog
+                className={'reference-editor-modal-container'}
+                isOpen={!showCreateButton}
+                handleClose={() => setShowCreateButton(true)}
+                title={`Create ${REFERENCE_MODEL_NAME}`}
+            >
                 <CreateEntry modelNameProp={REFERENCE_MODEL_NAME} createEntryCallBack={createRefEntryCallBack} />
             </ModalDialog>
-            {/*<div style={{display: showCreateButton ? 'none' : 'block'}} className={'create-entry-wrapper'}>
-                <Paper elevation={3} className={'paper-wrapper'}>
-                    <div className="create-entry-container">
-                        <CreateEntry modelNameProp={REFERENCE_MODEL_NAME} createEntryCallBack={createRefEntryCallBack} />
-                    </div>
-                </Paper>
-            </div>*/}
         </Grid>
     );
 }
