@@ -4,9 +4,7 @@ import {
     ID,
     okayStatus,
     sendSingleError,
-    USER_NAME,
-    storeSchemaRanjodhBirData,
-    clientType, writeRanjodhBirData, EnglishLanguage
+    USER_NAME
 } from "@ranjodhbirkaur/common";
 import {
     MAX_COLLECTION_LIMIT,
@@ -19,7 +17,6 @@ import {
 
 import {trimCharactersAndNumbers} from "@ranjodhbirkaur/constants";
 import {createModel} from "../util/methods";
-import {ModelLoggerBodyType} from "../util/interface";
 
 export async function createCollectionSchema(req: Request, res: Response) {
 

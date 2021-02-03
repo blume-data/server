@@ -9,7 +9,7 @@ import {
     sendSingleError
 } from "@ranjodhbirkaur/common";
 
-import {ENTRY_CREATED_AT, ENTRY_LANGUAGE_PROPERTY_NAME, PER_PAGE} from "../util/constants";
+import {ENTRY_LANGUAGE_PROPERTY_NAME, PER_PAGE} from "../util/constants";
 import {COLLECTION_NOT_FOUND, PARAM_SHOULD_BE_UNIQUE} from "./Messages";
 import {RuleType} from "../util/interface";
 import * as mongoose from "mongoose";
@@ -47,7 +47,8 @@ import {
     usPhoneReg,
     UsPhoneRegName,
     usZipReg,
-    UsZipRegName
+    UsZipRegName,
+    ENTRY_CREATED_AT, ENTRY_UPDATED_AT
 } from "@ranjodhbirkaur/constants";
 import {createModel, getModel, sendOkayResponse, trimGetOnly} from "../util/methods";
 
@@ -399,6 +400,7 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
     const createdAt = DateTime.local().setZone('UTC').toJSDate();
     let body = {
         [ENTRY_CREATED_AT]: createdAt,
+        [ENTRY_UPDATED_AT]: createdAt,
         [ENTRY_LANGUAGE_PROPERTY_NAME]: language
     };
     let isValid = true;
