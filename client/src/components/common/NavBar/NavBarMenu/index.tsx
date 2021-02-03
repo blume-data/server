@@ -8,6 +8,7 @@ import {RootState} from "../../../../rootReducer";
 import {setApplicationName} from "../../../../modules/authentication/pages/Auth/actions";
 import {dashboardDataEntriesUrl, dashboardDataModelsUrl} from "../../../../utils/urls";
 import Button from "@material-ui/core/Button";
+import {CommonButton} from "../../CommonButton";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 const NavBarMenuComponent = (props: PropsFromRedux) => {
@@ -30,14 +31,16 @@ const NavBarMenuComponent = (props: PropsFromRedux) => {
                 applicationName
                 ? <Fragment>
                     <Link className={'nav-bar-menu-link-item'} to={dataModelsUrl}>
-                        <Button>
-                            Models
-                        </Button>
+                        <CommonButton
+                            name={'Models'}
+                            variant={'text'}
+                        />
                     </Link>
                     <Link className={'nav-bar-menu-link-item'} to={dataEntriesUrl}>
-                        <Button>
-                            Entries
-                        </Button>
+                        <CommonButton
+                            name={'Entries'}
+                            variant={'text'}
+                        />
                     </Link>
                   </Fragment>
                 : null

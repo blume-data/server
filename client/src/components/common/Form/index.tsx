@@ -20,12 +20,10 @@ import {
     ErrorMessagesType,
     IsJsonString,
     FIELD,
-    JSON_FIELD_TYPE,
     MESSAGE,
     REFERENCE_MODEL_TYPE, REFERENCE_MODEL_NAME
 } from "@ranjodhbirkaur/constants";
 import {Alert} from "../Toast";
-import {PLEASE_PROVIDE_VALID_VALUES} from "../../../modules/authentication/pages/Auth/constants";
 import {CommonRadioField} from "./CommonRadioField";
 import {CommonCheckBoxField} from "./CommonCheckBoxField";
 import {CommonButton} from "../CommonButton";
@@ -570,7 +568,7 @@ export const Form = (props: FormType) => {
             <Grid container className={'button-section'}>
                 {
                     showClearButton
-                    ? <Grid item><CommonButton name={'Clear'} onClick={clearForm} color={'secondary'} /></Grid>
+                    ? <Grid item><CommonButton name={'Clear values'} onClick={clearForm} color={'secondary'} /></Grid>
                     : null
                 }
                 <Grid item>

@@ -35,7 +35,7 @@ function PrivateRoute(Component: any) {
 }
 
 export const Routes = [
-    {path: '/', component: App, exact: true},
+    {path: '/', component: App, exact: true, loadData: (store: any) => {}},
     {path: `${authUrl}/:step`, component: Auth, exact: true},
     {path: dashboardHomeUrl, render: PrivateRoute(Home), exact: true},
 

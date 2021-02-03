@@ -211,6 +211,7 @@ const CreateEntry = (props: CreateEntryType) => {
                     submitButtonName={`Save model ${ModelName}`}
                     className={'create-content-model-form'}
                     fields={fields}
+                    showClearButton={true}
                     clearOnSubmit={true}
                     onSubmit={onsubmit}
                     />
