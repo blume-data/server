@@ -1,7 +1,4 @@
-import mongoose from 'mongoose';
-import {getClientUserModel, getMongoDatabaseUrl, mongoConnectOptions} from "@ranjodhbirkaur/common";
+import {ClientUserDoc, ClientUserModel as cm, clientUserSchema} from "@ranjodhbirkaur/common";
+import mongoose from "mongoose";
 
-const MONGO_URL = getMongoDatabaseUrl();
-export const authMongoConnection = mongoose.createConnection(MONGO_URL, mongoConnectOptions);
-
-export const ClientUserModel = getClientUserModel(authMongoConnection);
+export const ClientUserModel = mongoose.model<ClientUserDoc, cm>('ClientUser', clientUserSchema);
