@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {Grid} from "@material-ui/core";
 import {RootState} from "../../../../../rootReducer";
 import {connect, ConnectedProps} from "react-redux";
-import {getItemFromLocalStorage} from "../../../../../utils/tools";
+import {getItemFromLocalStorage, getModelDataAndRules} from "../../../../../utils/tools";
 import {
     APPLICATION_NAME,
     BOOLEAN_FIElD_TYPE,
@@ -19,7 +19,7 @@ import {
     RuleType,
     SHORT_STRING_FIElD_TYPE
 } from "@ranjodhbirkaur/constants";
-import {doGetRequest, doPostRequest} from "../../../../../utils/baseApi";
+import {doPostRequest} from "../../../../../utils/baseApi";
 import {getBaseUrl} from "../../../../../utils/urls";
 import Loader from "../../../../../components/common/Loader";
 import {
@@ -56,30 +56,13 @@ const CreateEntry = (props: CreateEntryType) => {
         ModelName = modelName;
     }
 
-    async function getData() {
-        if(GetCollectionNamesUrl) {
-            setIsLoading(true);
-            const url = GetCollectionNamesUrl
-                .replace(`:${CLIENT_USER_NAME}`, clientUserName ? clientUserName : '')
-                .replace(':env', env)
-                .replace(':language', language)
-                .replace(`:${APPLICATION_NAME}`,applicationName);
-
-            const response = await doGetRequest(
-                `${getBaseUrl()}${url}?name=${ModelName ? ModelName : ''}`,
-                {},
-                true
-            );
-            if(response && !response.errors && response.length) {
-                setRules(JSON.parse(response[0].rules));
-            }
-            //  console.log('res', response);
-            setIsLoading(false);
-        }
-    }
-
     useEffect(() => {
-        getData();
+        if(GetCollectionNamesUrl && clientUserName) {
+            getModelDataAndRules({
+                env, language, setRules, modelName: ModelName, applicationName, setIsLoading,
+                clientUserName, GetCollectionNamesUrl
+            });
+        }
     }, [GetCollectionNamesUrl]);
 
     let fields: ConfigField[] = [];
@@ -220,6 +203,7 @@ const CreateEntry = (props: CreateEntryType) => {
         </Grid>
     );
 }
+
 
 const mapState = (state: RootState) => {
     return {

@@ -1,15 +1,10 @@
 import React from 'react';
-import loadable from "@loadable/component";
 import FormControl from "@material-ui/core/FormControl";
-import TextField from "@material-ui/core/TextField";
 import {DescriptionText} from "../Form/DescriptionText";
 import Grid from "@material-ui/core/Grid";
 import {FieldType} from "../Form/interface";
 import {FormLabel} from "@material-ui/core";
-
-const PagalEditor = loadable(() => import('./PagalEditor'), {
-    resolveComponent: component => component.PagalEditor,
-});
+import {PagalEditor} from './PagalEditor';
 
 interface HtmlEditorType extends FieldType{
     value: string;

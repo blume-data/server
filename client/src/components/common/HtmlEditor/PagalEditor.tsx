@@ -2,11 +2,17 @@ import React from "react";
 import { Editor } from '@tinymce/tinymce-react';
 import './style.scss';
 import Paper from "@material-ui/core/Paper";
+interface PagalEditorType {
+    value: string;
+    setValue: (str: string) => void;
+    placeholder?: string;
+}
 
+export const PagalEditor = (props: PagalEditorType) => {
 
-export const PagalEditor = ({value, setValue, placeholder = 'Edit Your Content Here!'}) => {
+    const {value, setValue} = props;
 
-    const handleChange = (str) => {
+    const handleChange = (str: string) => {
         setValue(str);
     };
 

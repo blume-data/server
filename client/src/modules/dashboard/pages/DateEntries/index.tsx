@@ -1,54 +1,24 @@
-import React, {useEffect, useState} from "react";
+import React from "react";
 import {Grid} from "@material-ui/core";
 import {RootState} from "../../../../rootReducer";
 import {connect, ConnectedProps} from "react-redux";
 import {useParams} from "react-router";
-import {getItemFromLocalStorage} from "../../../../utils/tools";
-import {APPLICATION_NAME, CLIENT_USER_NAME} from "@ranjodhbirkaur/constants";
-import {doGetRequest} from "../../../../utils/baseApi";
-import {dashboardCreateDataEntryUrl, getBaseUrl} from "../../../../utils/urls";
-import ModalDialog from "../../../../components/common/ModalDialog";
+import {dashboardCreateDataEntryUrl} from "../../../../utils/urls";
 import Button from "@material-ui/core/Button";
-import CreateEntry from "./CreateEntry";
 import {Link} from "react-router-dom";
+import loadable from "@loadable/component";
+
+const EntriesTable = loadable(() => import('./EntriesTable'), {
+    resolveComponent: component => component.EntriesTable,
+});
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
 function dataEntriesComponent(props: PropsFromRedux) {
-    const {env, applicationName, GetCollectionNamesUrl, language, StoreUrl} = props;
-
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-
-    function closeModal() {
-        setIsModalOpen(false);
-    }
+    const {applicationName} = props;
 
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const {modelName} = useParams();
-
-    const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
-
-    // Fetch records in the model
-    async function getItems() {
-        if(StoreUrl) {
-            const url = StoreUrl
-                .replace(`:${CLIENT_USER_NAME}`, clientUserName ? clientUserName : '')
-                .replace(':env', env)
-                .replace(':language', language)
-                .replace(':modelName', modelName)
-                .replace(`:${APPLICATION_NAME}`,applicationName);
-
-            const response = await doGetRequest(`${getBaseUrl()}${url}`, null, true);
-            console.log('items', response);
-        }
-
-    }
-
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    useEffect(() => {
-        getItems();
-    }, [modelName, GetCollectionNamesUrl]);
 
     const createDataEntryUrl = dashboardCreateDataEntryUrl
         .replace(':applicationName', applicationName)
@@ -63,12 +33,15 @@ function dataEntriesComponent(props: PropsFromRedux) {
                     </Grid>
                     <Grid item>
                         <Link to={createDataEntryUrl}>
-                            <Button variant={"contained"} color={"primary"} onClick={() => setIsModalOpen(true)}>
+                            <Button variant={"contained"} color={"primary"}>
                                 Add {`${modelName ? modelName : 'entry'}`}
                             </Button>
                         </Link>
                     </Grid>
                 </Grid>
+                <EntriesTable
+                    modelName={modelName}
+                />
 
             </Grid>
         </Grid>
@@ -77,11 +50,7 @@ function dataEntriesComponent(props: PropsFromRedux) {
 
 const mapState = (state: RootState) => {
     return {
-        env: state.authentication.env,
-        language: state.authentication.language,
         applicationName: state.authentication.applicationName,
-        GetCollectionNamesUrl: state.routeAddress.routes.data?.GetCollectionNamesUrl,
-        StoreUrl: state.routeAddress.routes.data?.StoreUrl
     }
 };
 

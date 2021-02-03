@@ -1,6 +1,5 @@
 import React, {ChangeEvent, useEffect, useState} from "react";
 import Grid from '@material-ui/core/Grid';
-
 import {TextBox} from "./TextBox";
 import {DropDown} from "./DropDown";
 import {
@@ -27,14 +26,11 @@ import {Alert} from "../Toast";
 import {CommonRadioField} from "./CommonRadioField";
 import {CommonCheckBoxField} from "./CommonCheckBoxField";
 import {CommonButton} from "../CommonButton";
-
-import loadable from "@loadable/component";
 import {DateField} from "./DateField";
 import {VerticalTab, VerticalTabPanel} from "../VerticalTab";
 import {JsonEditor} from "./JsonEditor";
 import ReferenceEditor from "./ReferenceEditor";
-
-const HtmlEditor = loadable(() => import('../HtmlEditor'));
+import HtmlEditor from "../HtmlEditor";
 
 interface FormState {
     label: string;
