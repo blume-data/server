@@ -7,7 +7,6 @@ import {connect, ConnectedProps} from "react-redux";
 import {RootState} from "../../../../rootReducer";
 import {setApplicationName} from "../../../../modules/authentication/pages/Auth/actions";
 import {dashboardDataEntriesUrl, dashboardDataModelsUrl} from "../../../../utils/urls";
-import Button from "@material-ui/core/Button";
 import {CommonButton} from "../../CommonButton";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
