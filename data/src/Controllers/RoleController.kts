@@ -1,7 +1,7 @@
 import {Response, Request} from 'express';
-import {okayStatus} from "../util/constants";
+
 import {RolesModel} from "../models/roles";
-import {BadRequestError} from "@ranjodhbirkaur/common";
+import {BadRequestError, okayStatus} from "@ranjodhbirkaur/common";
 import {ROLE_NAME_EXIST} from "./Messages";
 
 export async function CreateRole(req: Request, res: Response) {

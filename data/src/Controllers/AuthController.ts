@@ -1,5 +1,5 @@
 import {Response, Request} from 'express';
-import {okayStatus} from "../util/constants";
+import {okayStatus} from "@ranjodhbirkaur/common";
 
 export async function SignUp(req: Request, res: Response) {
 
