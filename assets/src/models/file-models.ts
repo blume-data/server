@@ -44,15 +44,6 @@ const File = new mongoose.Schema(
             ref: 'ClientUser',
             required: true
         }
-    },
-    {
-        toJSON: {
-            transform(doc, ret) {
-                ret.id = ret._id;
-                delete ret._id;
-                delete ret.__v;
-            }
-        }
     }
 );
 

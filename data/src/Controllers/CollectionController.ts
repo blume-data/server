@@ -17,6 +17,7 @@ import {
 
 import {trimCharactersAndNumbers} from "@ranjodhbirkaur/constants";
 import {createModel} from "../util/methods";
+import {DateTime} from "luxon";
 
 export async function createCollectionSchema(req: Request, res: Response) {
 
@@ -50,6 +51,7 @@ export async function createCollectionSchema(req: Request, res: Response) {
         if (alreadyExist) {
             throw new BadRequestError(COLLECTION_ALREADY_EXIST);
         }
+        const createdAt = DateTime.local().setZone('UTC').toJSDate();
 
         const newCollection = CollectionModel.build({
             clientUserName,
@@ -59,8 +61,11 @@ export async function createCollectionSchema(req: Request, res: Response) {
             name: reqBody.name,
             displayName: reqBody.displayName,
             env,
-            updatedBy: `${req.currentUser[ID]}-${req.currentUser[USER_NAME]}`,
-            description: reqBody.description
+            updatedBy: `${req.currentUser[ID]}`,
+            description: reqBody.description,
+            createdAt,
+            createdBy: `${req.currentUser[ID]}`,
+            updatedAt: createdAt
         });
 
         await newCollection.save();
@@ -124,7 +129,12 @@ export async function getCollectionNames(req: Request, res: Response) {
         get = getOnly.split(',')
     }
 
-    const collections = await CollectionModel.find(where, get);
+    const collections = await CollectionModel.find(where, get)
+        .populate('updatedBy', 'firstName lastName')
+        .populate('createdBy', 'firstName lastName')
+    ;
+
+    console.log('hello')
 
     res.status(okayStatus).send(collections);
 }

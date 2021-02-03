@@ -42,16 +42,6 @@ export function getRootUserSchema(properties: SchemaDefinition) {
                 type: String,
                 default: new Date()
             }
-        },
-        {
-            toJSON: {
-                transform(doc, ret) {
-                    ret.id = ret._id;
-                    delete ret._id;
-                    delete ret.password;
-                    delete ret.__v;
-                }
-            }
         }
     );
 }

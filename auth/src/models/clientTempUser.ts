@@ -69,16 +69,6 @@ const clientTempUserSchema = new mongoose.Schema(
             default: supportUserType,
         },
         created_at : { type: Date, default: Date.now }
-    },
-    {
-        toJSON: {
-            transform(doc, ret) {
-                ret.id = ret._id;
-                delete ret._id;
-                delete ret.password;
-                delete ret.__v;
-            }
-        }
     }
 );
 

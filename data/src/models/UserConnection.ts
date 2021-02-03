@@ -27,15 +27,6 @@ const UserConnection = new mongoose.Schema(
             required: true
         },
         created_at : { type: Date, default: Date.now }
-    },
-    {
-        toJSON: {
-            transform(doc, ret) {
-                ret.id = ret._id;
-                delete ret._id;
-                delete ret.__v;
-            }
-        }
     }
 );
 

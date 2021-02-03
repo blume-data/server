@@ -6,7 +6,8 @@ import {
     CLIENT_USER_NAME,
     errorStatus,
     okayStatus,
-    sendSingleError
+    sendSingleError,
+    CLIENT_USER_MODEL_NAME
 } from "@ranjodhbirkaur/common";
 
 import {ENTRY_LANGUAGE_PROPERTY_NAME, PER_PAGE} from "../util/constants";
@@ -48,7 +49,7 @@ import {
     UsPhoneRegName,
     usZipReg,
     UsZipRegName,
-    ENTRY_CREATED_AT, ENTRY_UPDATED_AT
+    ENTRY_CREATED_AT, ENTRY_UPDATED_AT, ENTRY_CREATED_BY, ENTRY_UPDATED_BY, ENTRY_DELETED_BY
 } from "@ranjodhbirkaur/constants";
 import {createModel, getModel, sendOkayResponse, trimGetOnly} from "../util/methods";
 
@@ -99,9 +100,15 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
                             return;
                         }
                     }
-                    const exist = mRules.find(rule => rule.name === population.name);
-                    if(exist && exist[REFERENCE_MODEL_NAME]) {
-                        const modelName = exist[REFERENCE_MODEL_NAME];
+                    let exist = mRules.find(rule => rule.name === population.name);
+                    let isUserField = false;
+                    if(population.name === ENTRY_DELETED_BY
+                        || population.name === ENTRY_CREATED_BY
+                        || population.name === ENTRY_UPDATED_BY) {
+                        isUserField = true;
+                    }
+                    if((exist && exist[REFERENCE_MODEL_NAME]) || isUserField) {
+                        const modelName = (exist && exist[REFERENCE_MODEL_NAME]) ? exist[REFERENCE_MODEL_NAME] : CLIENT_USER_MODEL_NAME;
                         try {
                             if(!mongoose.model(modelName) || !mongoose.model(modelName).schema) {
                                 await getModel(req, modelName, applicationName, clientUserName);
@@ -396,11 +403,14 @@ export async function getCollection(req: Request, specificModelName?: string) {
 function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
 
     const reqBody = req.body;
+    const currentUserId = (req.currentUser && req.currentUser.id) ? req.currentUser.id : '';
     const language = req.params.language;
     const createdAt = DateTime.local().setZone('UTC').toJSDate();
     let body = {
         [ENTRY_CREATED_AT]: createdAt,
         [ENTRY_UPDATED_AT]: createdAt,
+        [ENTRY_CREATED_BY]: currentUserId,
+        [ENTRY_UPDATED_BY]: currentUserId,
         [ENTRY_LANGUAGE_PROPERTY_NAME]: language
     };
     let isValid = true;

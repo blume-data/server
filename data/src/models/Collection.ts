@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose, {Schema} from 'mongoose';
 
 interface CollectionAttrs {
     clientUserName : string;
@@ -13,8 +13,17 @@ interface CollectionAttrs {
     isEnabled?: boolean;
     metaData?: string;
 
+    // created
+    createdBy: string;
+    createdAt?: Date;
+
+    // deleted
+    deletedBy?: string;
+    deletedAt?: Date;
+
+    // updated
     updatedBy: string;
-    updatedAt?: string;
+    updatedAt?: Date;
 }
 
 interface CollectionModel extends mongoose.Model<CollectionDoc> {
@@ -34,8 +43,14 @@ interface CollectionDoc extends mongoose.Document {
     isEnabled: boolean;
     metaData?: string;
 
+    createdBy: string;
+    createdAt?: Date;
+
+    deletedBy?: string;
+    deletedAt?: Date;
+
     updatedBy: string;
-    updatedAt: string;
+    updatedAt: Date;
 }
 
 const Collection = new mongoose.Schema(
@@ -79,17 +94,15 @@ const Collection = new mongoose.Schema(
         metaData : {
             type: String
         },
-        updatedBy : { type: String, default: '' },
-        updatedAt : { type: Date, default: '' },
-    },
-    {
-        toJSON: {
-            transform(doc, ret) {
-                ret.id = ret._id;
-                delete ret._id;
-                delete ret.__v;
-            }
-        }
+
+        deletedBy : { type: Schema.Types.ObjectId, ref: 'ClientUser' },
+        deletedAt : { type: Date },
+
+        createdBy : { type: Schema.Types.ObjectId, ref: 'ClientUser' },
+        createdAt : { type: Date },
+
+        updatedBy : { type: Schema.Types.ObjectId, ref: 'ClientUser' },
+        updatedAt : { type: Date },
     }
 );
 

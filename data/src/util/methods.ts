@@ -1,6 +1,6 @@
 import { randomBytes } from 'crypto';
 import {Request, Response} from 'express';
-import mongoose from 'mongoose';
+import mongoose, {Schema} from 'mongoose';
 import {RuleType} from "./interface";
 import {
     BOOLEAN_FIElD_TYPE,
@@ -14,7 +14,14 @@ import {
 import {
     ENTRY_LANGUAGE_PROPERTY_NAME,
 } from "./constants";
-import {APPLICATION_NAME, CLIENT_USER_NAME, okayStatus} from "@ranjodhbirkaur/common"
+import {
+    APPLICATION_NAME,
+    APPLICATION_NAMES,
+    CLIENT_USER_NAME,
+    JWT_ID,
+    okayStatus,
+    PASSWORD
+} from "@ranjodhbirkaur/common"
 import {getCollection} from "../Controllers/StoreController";
 
 export const RANDOM_STRING = function (minSize=10) {
@@ -140,9 +147,13 @@ export function createModel(params: CreateModelType) {
     schemaData = {
         ...schemaData,
         [ENTRY_LANGUAGE_PROPERTY_NAME]: String,
-        createdAt : { type: Date },
-        updatedAt : { type: Date },
+        deletedBy : { type: Schema.Types.ObjectId, ref: 'ClientUser' },
         deletedAt : { type: Date },
+        createdBy : { type: Schema.Types.ObjectId, ref: 'ClientUser' },
+        createdAt : { type: Date },
+        updatedBy : { type: Schema.Types.ObjectId, ref: 'ClientUser' },
+        updatedAt : { type: Date },
+
         status: {
             type: String,
             enum: [DELETED_ENTRY_STATUS, PUBLISHED_ENTRY_STATUS, ARCHIVED_ENTRY_STATUS, DRAFT_ENTRY_STATUS],
@@ -151,13 +162,6 @@ export function createModel(params: CreateModelType) {
     };
 
     const schema = new Schema(schemaData, {
-        toJSON: {
-            transform(doc, ret) {
-                ret.id = ret._id;
-                delete ret._id;
-                delete ret.__v;
-            }
-        },
         strict: false
     });
 
@@ -191,9 +195,10 @@ export function trimGetOnly(params: string | null | string[]) {
     else if(typeof params === 'string') {
         getOnly.push(params);
     }
-    else {
-        getOnly.push(`-${ENTRY_LANGUAGE_PROPERTY_NAME}`);
-    }
+    getOnly.push(`-${ENTRY_LANGUAGE_PROPERTY_NAME}`);
+    getOnly.push(`-${APPLICATION_NAMES}`);
+    getOnly.push(`-${PASSWORD}`);
+    getOnly.push(`-${JWT_ID}`);
     return getOnly;
 }
 
