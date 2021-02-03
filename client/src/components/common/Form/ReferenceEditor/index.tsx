@@ -4,10 +4,11 @@ import {connect, ConnectedProps} from "react-redux";
 import './reference-editor.scss';
 import {RootState} from "../../../../rootReducer";
 import CreateEntry from "../../../../modules/dashboard/pages/DateEntries/CreateEntry";
-import {Chip, Paper} from "@material-ui/core";
+import {Chip} from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import {CommonButton} from "../../CommonButton";
 import {ONE_TO_ONE_RELATION} from "@ranjodhbirkaur/constants";
+import ModalDialog from "../../ModalDialog";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type ReferenceEditorType = PropsFromRedux & {
@@ -113,13 +114,16 @@ export const ReferenceEditor = (props: ReferenceEditorType) => {
                   </Grid>
                 : null
             }
-            <div style={{display: showCreateButton ? 'none' : 'block'}} className={'create-entry-wrapper'}>
+            <ModalDialog isOpen={!showCreateButton} handleClose={() => setShowCreateButton(true)} title={'create'}>
+                <CreateEntry modelNameProp={REFERENCE_MODEL_NAME} createEntryCallBack={createRefEntryCallBack} />
+            </ModalDialog>
+            {/*<div style={{display: showCreateButton ? 'none' : 'block'}} className={'create-entry-wrapper'}>
                 <Paper elevation={3} className={'paper-wrapper'}>
                     <div className="create-entry-container">
                         <CreateEntry modelNameProp={REFERENCE_MODEL_NAME} createEntryCallBack={createRefEntryCallBack} />
                     </div>
                 </Paper>
-            </div>
+            </div>*/}
         </Grid>
     );
 }
