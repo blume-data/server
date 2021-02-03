@@ -5,4 +5,4 @@ COPY package.json .
 RUN npm install --only=prod
 COPY . .
 
-CMD ["yarn", "dev"]
+CMD ["npm","run", "start"]

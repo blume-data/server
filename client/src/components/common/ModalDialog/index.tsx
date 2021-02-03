@@ -52,15 +52,16 @@ interface ModalDialogType {
     children: JSX.Element;
     handleClose: () => void;
     isOpen: boolean;
+    className?: string;
 }
 
 export default function ModalDialog(props: ModalDialogType) {
 
-    const {isOpen, children, handleClose, title} = props;
+    const {isOpen, children, handleClose, title, className} = props;
 
     return (
-        <Dialog className={'dialog-modal-container'} onClose={handleClose} aria-labelledby="dialog-title" open={isOpen}>
-            <DialogTitle id="customized-dialog-title" onClose={handleClose}>
+        <Dialog className={`dialog-modal-container ${className}`} onClose={handleClose} aria-labelledby={`dialog-title-${title}`} open={isOpen}>
+            <DialogTitle id={`dialog-title-${title}`} onClose={handleClose}>
                 {title}
             </DialogTitle>
             <DialogContent dividers>

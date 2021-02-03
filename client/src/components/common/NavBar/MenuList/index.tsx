@@ -1,7 +1,7 @@
 import React from "react";
 import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
-import {Grid} from "@material-ui/core";
+import {Grid, Tooltip} from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import './menu-list.scss';
 import {APPLICATION_NAME} from "@ranjodhbirkaur/constants";
@@ -35,15 +35,17 @@ export const MenuList = (props: ApplicationNamesListProps) => {
 
     return (
         <Grid container justify={"flex-start"} className={'menu-list-container'}>
-            <Button
-                aria-controls={id}
-                aria-haspopup="true"
-                title={'Application Name'}
-                onClick={openMenu}>
-                {
-                    menuName ? menuName : defaultName
-                }
-            </Button>
+            <Tooltip title={'Application Name'} aria-label={'Application Name'}>
+                <Button
+                    variant={'text'}
+                    aria-controls={id}
+                    aria-haspopup="true"
+                    onClick={openMenu}>
+                    {
+                        menuName ? menuName : defaultName
+                    }
+                </Button>
+            </Tooltip>
             <Menu
                 id={id}
                 anchorEl={MenuAnchor}

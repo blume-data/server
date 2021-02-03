@@ -4,18 +4,15 @@ import {
     APPLICATION_NAME,
     BadRequestError,
     CLIENT_USER_NAME,
-    clientType, EnglishLanguage,
     errorStatus,
-    ID,
     okayStatus,
-    sendSingleError,
-    getRanjodhBirData,
-    writeRanjodhBirData
+    sendSingleError
 } from "@ranjodhbirkaur/common";
 
-import {ENTRY_CREATED_AT, ENTRY_LANGUAGE_PROPERTY_NAME, PER_PAGE} from "../util/constants";
+import {ENTRY_LANGUAGE_PROPERTY_NAME, PER_PAGE} from "../util/constants";
 import {COLLECTION_NOT_FOUND, PARAM_SHOULD_BE_UNIQUE} from "./Messages";
-import {ModelLoggerBodyType, RuleType} from "../util/interface";
+import {RuleType} from "../util/interface";
+import * as mongoose from "mongoose";
 import {Model} from "mongoose";
 import {DateTime} from 'luxon';
 import {
@@ -50,10 +47,10 @@ import {
     usPhoneReg,
     UsPhoneRegName,
     usZipReg,
-    UsZipRegName
+    UsZipRegName,
+    ENTRY_CREATED_AT, ENTRY_UPDATED_AT
 } from "@ranjodhbirkaur/constants";
-import {createModel, createStoreModelName, getModel} from "../util/methods";
-import * as mongoose from "mongoose";
+import {createModel, getModel, sendOkayResponse, trimGetOnly} from "../util/methods";
 
 interface PopulateData {
     name: string;
@@ -117,8 +114,14 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
                         mongoosePopulate.path = population.name;
                         if(population.getOnly) {
                             if(population.getOnly && population.getOnly.length) {
-                                mongoosePopulate.select = population.getOnly;
+                                mongoosePopulate.select = trimGetOnly(population.getOnly);
                             }
+                            else {
+                                mongoosePopulate.select = trimGetOnly(null);
+                            }
+                        }
+                        else {
+                            mongoosePopulate.select = trimGetOnly(null);
                         }
                         if(population.populate && mongoosePopulate.path) {
                             mongoosePopulate.populate = { path: '' };
@@ -162,7 +165,10 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
     }
 
     if (params) {
-        const {where, getOnly} = params;
+        const {where} = params;
+        // skip language property name
+        const getOnly = trimGetOnly(params.getOnly);
+
         const model: any = createModel({
             rules,
             clientUserName,
@@ -232,7 +238,7 @@ async function createEntry(rules: RuleType[], req: Request, res: Response, colle
             }
         }
         else {
-            res.status(errorStatus).send({
+            return res.status(errorStatus).send({
                 errors: [hasError]
             });
         }
@@ -254,7 +260,6 @@ export async function createStoreRecord(req: Request, res: Response) {
     if (collection) {
         const rules = JSON.parse(collection.rules);
 
-        // if entry is already created and just requires to be pushed in reference array
         if(req.query[REFERENCE_MODEL_NAME] && req.query[REFERENCE_PROPERTY_NAME]) {
             // check if the reference model exist
             const referenceCollection = await getCollection(req, referenceModelName);
@@ -301,7 +306,9 @@ export async function createStoreRecord(req: Request, res: Response) {
                             [referencePropertyName]: entryId
                         });
 
-                        return res.status(okayStatus).send(response);
+                        return sendOkayResponse(res, {
+                            id: response.id
+                        });
                     }
                     else if(referenceType === ONE_TO_MANY_RELATION) {
                         const response = await referenceModel.findOneAndUpdate({
@@ -312,7 +319,9 @@ export async function createStoreRecord(req: Request, res: Response) {
                             }
                         );
 
-                        return res.status(okayStatus).send(response);
+                        return sendOkayResponse(res, {
+                            id: response.id
+                        });
                     }
                 }
                 else if(!propertyName) {
@@ -328,7 +337,11 @@ export async function createStoreRecord(req: Request, res: Response) {
         }
         else {
             const entry = await createEntry(rules, req, res, collection);
-            res.status(okayStatus).send(entry);
+            if(entry && entry.id) {
+                sendOkayResponse(res, {
+                    id: entry.id
+                });
+            }
         }
     }
     else {
@@ -387,6 +400,7 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
     const createdAt = DateTime.local().setZone('UTC').toJSDate();
     let body = {
         [ENTRY_CREATED_AT]: createdAt,
+        [ENTRY_UPDATED_AT]: createdAt,
         [ENTRY_LANGUAGE_PROPERTY_NAME]: language
     };
     let isValid = true;
@@ -639,13 +653,25 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
                     break;
                 }
                 case REFERENCE_FIELD_TYPE: {
-                    if(typeof reqBody[rule.name] !== "string" || !reqBody[rule.name]) {
-                        isValid = false;
-                        errorMessages.push({
-                            field: rule.name,
-                            message: `${rule.name} should be a valid id`
-                        })
+                    if(rule[REFERENCE_MODEL_TYPE] === ONE_TO_ONE_RELATION) {
+                        if(typeof reqBody[rule.name] !== "string" || !reqBody[rule.name]) {
+                            isValid = false;
+                            errorMessages.push({
+                                field: rule.name,
+                                message: `${rule.name} should be a valid id`
+                            });
+                        }
                     }
+                    if(rule[REFERENCE_MODEL_TYPE] === ONE_TO_MANY_RELATION && reqBody[rule.name]) {
+                        if(!(Array.isArray(reqBody[rule.name]) && reqBody[rule.name].length)) {
+                            isValid = false;
+                            errorMessages.push({
+                                field: rule.name,
+                                message: `${rule.name} should be an array of id`
+                            });
+                        }
+                    }
+
                     break;
                 }
                 case 'html': {

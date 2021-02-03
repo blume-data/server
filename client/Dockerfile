@@ -7,8 +7,8 @@ RUN apk --no-cache --update --virtual build-dependencies add \
     tzdata \
     build-base python
 RUN npm install -g node-gyp
-RUN yarn install --only=prod
-RUN yarn build
+RUN npm install --only=prod
+RUN npm run build
 COPY . .
 
-CMD ["yarn", "deploy"]
+CMD ["npm", "run", "deploy"]

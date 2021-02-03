@@ -1,16 +1,20 @@
 import { randomBytes } from 'crypto';
-import {Request} from 'express';
+import {Request, Response} from 'express';
 import mongoose from 'mongoose';
 import {RuleType} from "./interface";
 import {
     BOOLEAN_FIElD_TYPE,
     DATE_AND_TIME_FIElD_TYPE,
     DATE_FIElD_TYPE,
-    INTEGER_FIElD_TYPE,
-    JSON_FIELD_TYPE, ONE_TO_MANY_RELATION, ONE_TO_ONE_RELATION, REFERENCE_FIELD_TYPE
+    INTEGER_FIElD_TYPE, PUBLISHED_ENTRY_STATUS,
+    JSON_FIELD_TYPE, ONE_TO_MANY_RELATION, ONE_TO_ONE_RELATION, REFERENCE_FIELD_TYPE,
+    ARCHIVED_ENTRY_STATUS,
+    DELETED_ENTRY_STATUS, DRAFT_ENTRY_STATUS,
 } from "@ranjodhbirkaur/constants";
-import {ENTRY_LANGUAGE_PROPERTY_NAME} from "./constants";
-import {APPLICATION_NAME, CLIENT_USER_NAME} from "@ranjodhbirkaur/common"
+import {
+    ENTRY_LANGUAGE_PROPERTY_NAME,
+} from "./constants";
+import {APPLICATION_NAME, CLIENT_USER_NAME, okayStatus} from "@ranjodhbirkaur/common"
 import {getCollection} from "../Controllers/StoreController";
 
 export const RANDOM_STRING = function (minSize=10) {
@@ -139,8 +143,11 @@ export function createModel(params: CreateModelType) {
         createdAt : { type: Date },
         updatedAt : { type: Date },
         deletedAt : { type: Date },
-        isDeleted: {type: Boolean, default: false},
-        isPublished: {type: Boolean, default: true},
+        status: {
+            type: String,
+            enum: [DELETED_ENTRY_STATUS, PUBLISHED_ENTRY_STATUS, ARCHIVED_ENTRY_STATUS, DRAFT_ENTRY_STATUS],
+            default: DRAFT_ENTRY_STATUS
+        }
     };
 
     const schema = new Schema(schemaData, {
@@ -171,4 +178,26 @@ export function createModel(params: CreateModelType) {
 
         return dbConnection.model(CollectionName, schema);
     }
+}
+
+// remove the unwanted properties from get-only
+export function trimGetOnly(params: string | null | string[]) {
+    let getOnly: string[] = [];
+    if(params && Array.isArray(params) &&  params.length) {
+        params.forEach((it: string) => {
+            getOnly.push(it);
+        });
+    }
+    else if(typeof params === 'string') {
+        getOnly.push(params);
+    }
+    else {
+        getOnly.push(`-${ENTRY_LANGUAGE_PROPERTY_NAME}`);
+    }
+    return getOnly;
+}
+
+// send on id on create record
+export function sendOkayResponse(res: Response, data: object) {
+    return res.status(okayStatus).send(data);
 }

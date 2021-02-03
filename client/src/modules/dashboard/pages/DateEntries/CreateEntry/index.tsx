@@ -2,63 +2,67 @@ import React, {useEffect, useState} from "react";
 import {Grid} from "@material-ui/core";
 import {RootState} from "../../../../../rootReducer";
 import {connect, ConnectedProps} from "react-redux";
-import {getItemFromLocalStorage} from "../../../../../utils/tools";
+import {getItemFromLocalStorage, getModelDataAndRules} from "../../../../../utils/tools";
 import {
-    APPLICATION_NAME, BOOLEAN_FIElD_TYPE,
-    CLIENT_USER_NAME, DATE_AND_TIME_FIElD_TYPE, DATE_FIElD_TYPE, ErrorMessagesType,
-    INTEGER_FIElD_TYPE, JSON_FIELD_TYPE, LONG_STRING_FIELD_TYPE,
-    SHORT_STRING_FIElD_TYPE,
-    RuleType
+    APPLICATION_NAME,
+    BOOLEAN_FIElD_TYPE,
+    CLIENT_USER_NAME,
+    DATE_AND_TIME_FIElD_TYPE,
+    DATE_FIElD_TYPE,
+    ErrorMessagesType,
+    INTEGER_FIElD_TYPE,
+    JSON_FIELD_TYPE,
+    LONG_STRING_FIELD_TYPE, ONE_TO_MANY_RELATION,
+    REFERENCE_FIELD_TYPE,
+    REFERENCE_MODEL_NAME,
+    REFERENCE_MODEL_TYPE,
+    RuleType,
+    SHORT_STRING_FIElD_TYPE
 } from "@ranjodhbirkaur/constants";
-import {doGetRequest, doPostRequest} from "../../../../../utils/baseApi";
+import {doPostRequest} from "../../../../../utils/baseApi";
 import {getBaseUrl} from "../../../../../utils/urls";
 import Loader from "../../../../../components/common/Loader";
 import {
     CHECKBOX,
     ConfigField,
-    DATE_FORM_FIELD_TYPE,
-    FORMATTED_TEXT, JSON_TEXT, ONLY_DATE_FORM_FIELD_TYPE,
+    FORMATTED_TEXT,
+    JSON_TEXT,
+    ONLY_DATE_FORM_FIELD_TYPE,
+    REFERENCE_EDITOR,
     TEXT
 } from "../../../../../components/common/Form/interface";
 import {Form} from "../../../../../components/common/Form";
 import {useParams} from "react-router";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
+type CreateEntryType = PropsFromRedux & {
+    modelNameProp?: string;
+    createEntryCallBack?: (id: string) => void;
+}
 
-const CreateEntry = (props: PropsFromRedux) => {
+const CreateEntry = (props: CreateEntryType) => {
 
     const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
-    const {env, applicationName, GetCollectionNamesUrl, language, StoreUrl} = props;
+    const {env, applicationName, GetCollectionNamesUrl, language, StoreUrl, modelNameProp, createEntryCallBack} = props;
     const [rules, setRules] = useState<RuleType[] | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [response, setResponse] = useState<string | ErrorMessagesType[]>('');
-
+    const [apiResponse, setApiResponse] = useState<string | ErrorMessagesType[]>('');
+    let ModelName = '';
     const {modelName} = useParams();
-
-    async function getData() {
-        if(GetCollectionNamesUrl) {
-            setIsLoading(true);
-            const url = GetCollectionNamesUrl
-                .replace(`:${CLIENT_USER_NAME}`, clientUserName ? clientUserName : '')
-                .replace(':env', env)
-                .replace(':language', language)
-                .replace(`:${APPLICATION_NAME}`,applicationName);
-
-            const response = await doGetRequest(
-                `${getBaseUrl()}${url}?name=${modelName ? modelName : ''}`,
-                {},
-                true
-            );
-            if(response && !response.errors && response.length) {
-                setRules(JSON.parse(response[0].rules));
-            }
-            //  console.log('res', response);
-            setIsLoading(false);
-        }
+    if(modelNameProp) {
+        ModelName = modelNameProp;
+    }
+    else {
+        ModelName = modelName;
     }
 
     useEffect(() => {
-        getData();
+        if(GetCollectionNamesUrl && clientUserName) {
+            getModelDataAndRules({
+                env, language, setRules, modelName: ModelName, applicationName, setIsLoading,
+                clientUserName, GetCollectionNamesUrl
+            });
+        }
     }, [GetCollectionNamesUrl]);
 
     let fields: ConfigField[] = [];
@@ -68,6 +72,8 @@ const CreateEntry = (props: PropsFromRedux) => {
 
             let inputType = 'text';
             let type = 'text';
+            let option: string[] = [];
+            let miscData: any = {};
             switch (rule.type) {
                 case SHORT_STRING_FIElD_TYPE: {
                     inputType = TEXT;
@@ -96,12 +102,19 @@ const CreateEntry = (props: PropsFromRedux) => {
                 }
                 case BOOLEAN_FIElD_TYPE: {
                     inputType = CHECKBOX;
-                    type = 'text';
+                    type = TEXT;
                     break;
                 }
                 case JSON_FIELD_TYPE: {
                     inputType = JSON_TEXT;
-                    type = 'text';
+                    type = TEXT;
+                    break;
+                }
+                case REFERENCE_FIELD_TYPE: {
+                    inputType = REFERENCE_EDITOR;
+                    type = TEXT;
+                    miscData[REFERENCE_MODEL_TYPE] = rule[REFERENCE_MODEL_TYPE];
+                    miscData[REFERENCE_MODEL_NAME] = rule[REFERENCE_MODEL_NAME];
                     break;
                 }
 
@@ -118,8 +131,9 @@ const CreateEntry = (props: PropsFromRedux) => {
                 className: '',
                 value: '',
                 name: rule.name,
-                descriptionText: rule.description
-            })
+                descriptionText: rule.description,
+                miscData
+            });
         })
     }
 
@@ -130,7 +144,7 @@ const CreateEntry = (props: PropsFromRedux) => {
                 .replace(`:${CLIENT_USER_NAME}`, clientUserName ? clientUserName : '')
                 .replace(':env', env)
                 .replace(':language', language)
-                .replace(':modelName', modelName)
+                .replace(':modelName', ModelName)
                 .replace(`:${APPLICATION_NAME}`,applicationName);
 
             let data: any = {};
@@ -143,6 +157,9 @@ const CreateEntry = (props: PropsFromRedux) => {
                         if(exist.type === BOOLEAN_FIElD_TYPE) {
                             data[valueItem.name] = valueItem.value === 'true';
                         }
+                        if(exist.type === REFERENCE_FIELD_TYPE && exist[REFERENCE_MODEL_TYPE] === ONE_TO_MANY_RELATION) {
+                            data[valueItem.name] = valueItem.value.split(',');
+                        }
                         else {
                             data[valueItem.name] = valueItem.value;
                         }
@@ -150,10 +167,13 @@ const CreateEntry = (props: PropsFromRedux) => {
                 }
             });
 
-            console.log('data', data, values, rules);
-
-
             const res = await doPostRequest(`${getBaseUrl()}${url}`, data, true);
+            if(createEntryCallBack && res && res.id) {
+                createEntryCallBack(res.id);
+            }
+            else if(res && res.errors && res.errors.length) {
+                setApiResponse(res.errors);
+            }
 
         }
 
@@ -170,10 +190,12 @@ const CreateEntry = (props: PropsFromRedux) => {
 
             <Grid className="create-entry-form-container">
                 <Form
-                    response={response}
-                    submitButtonName={'Save model name'}
+                    response={apiResponse}
+                    submitButtonName={`Save model ${ModelName}`}
                     className={'create-content-model-form'}
                     fields={fields}
+                    showClearButton={true}
+                    clearOnSubmit={true}
                     onSubmit={onsubmit}
                     />
             </Grid>
@@ -181,6 +203,7 @@ const CreateEntry = (props: PropsFromRedux) => {
         </Grid>
     );
 }
+
 
 const mapState = (state: RootState) => {
     return {
