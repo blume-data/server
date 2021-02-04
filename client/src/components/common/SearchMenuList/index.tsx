@@ -11,7 +11,7 @@ const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         root: {
             width: '100%',
-            height: 400,
+            maxHeight: 400,
             maxWidth: 300,
             backgroundColor: theme.palette.background.paper,
         },
@@ -33,7 +33,7 @@ export const SearchMenuList = (props: SearchMenuListProps) => {
     const [search, setSearch] = useState<string>('');
     const [selectedValue, setSelectedValue] = useState<string>('');
     const [timeZones, setTimeZones] = useState<OptionType[]>([]);
-    const [hide, setHide] = useState<boolean>(true);
+    const [hide, setHide] = useState<boolean>(false);
     const classes = useStyles();
 
     const {options, value, onMenuChange} = props;
