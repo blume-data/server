@@ -33,7 +33,7 @@ export const SearchMenuList = (props: SearchMenuListProps) => {
     const [search, setSearch] = useState<string>('');
     const [selectedValue, setSelectedValue] = useState<string>('');
     const [timeZones, setTimeZones] = useState<OptionType[]>([]);
-    const [hide, setHide] = useState<boolean>(false);
+    const [hide, setHide] = useState<boolean>(true);
     const classes = useStyles();
 
     const {options, value, onMenuChange} = props;
