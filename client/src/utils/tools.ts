@@ -1,5 +1,12 @@
-import {APPLICATION_NAME, APPLICATION_NAMES, CLIENT_USER_NAME, EnglishLanguage} from "@ranjodhbirkaur/constants";
-import {doGetRequest} from "./baseApi";
+import {
+    APPLICATION_NAME,
+    APPLICATION_NAMES,
+    CLIENT_USER_NAME,
+    ENTRY_UPDATED_BY,
+    FIRST_NAME,
+    LAST_NAME
+} from "@ranjodhbirkaur/constants";
+import {doGetRequest, doPostRequest} from "./baseApi";
 import {getBaseUrl} from "./urls";
 
 export const randomString = () => {
@@ -58,4 +65,34 @@ export async function getModelDataAndRules(data: GetModelData) {
         setRules(JSON.parse(response[0].rules));
     }
     setIsLoading(false);
+}
+
+interface FetchModelEntriesType {
+    clientUserName: string;
+    env: string;
+    language: string;
+    applicationName: string;
+    modelName: string;
+    GetEntriesUrl: string;
+}
+// Fetch model entries
+export async function fetchModelEntries(data: FetchModelEntriesType) {
+
+    const {clientUserName, env, language, applicationName, modelName, GetEntriesUrl} = data;
+
+    const url = GetEntriesUrl
+        .replace(`:${CLIENT_USER_NAME}`, clientUserName ? clientUserName : '')
+        .replace(':env', env)
+        .replace(':language', language)
+        .replace(':modelName', modelName)
+        .replace(`:${APPLICATION_NAME}`,applicationName);
+
+    return await doPostRequest(`${getBaseUrl()}${url}`, {
+        populate: [
+            {
+                name: ENTRY_UPDATED_BY,
+                getOnly: [FIRST_NAME, LAST_NAME]
+            }
+        ]
+    }, true);
 }

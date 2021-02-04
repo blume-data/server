@@ -1,21 +1,10 @@
 import {Request, Response} from 'express';
-import {
-    BadRequestError,
-    ID,
-    okayStatus,
-    sendSingleError,
-    USER_NAME
-} from "@ranjodhbirkaur/common";
-import {
-    MAX_COLLECTION_LIMIT,
-} from "../util/constants";
+import {BadRequestError, ID, okayStatus, sendSingleError} from "@ranjodhbirkaur/common";
+import {MAX_COLLECTION_LIMIT,} from "../util/constants";
 import {CollectionModel} from "../models/Collection";
-import {
-    CANNOT_CREATE_COLLECTIONS_MORE_THAN_LIMIT,
-    COLLECTION_ALREADY_EXIST
-} from "./Messages";
+import {CANNOT_CREATE_COLLECTIONS_MORE_THAN_LIMIT, COLLECTION_ALREADY_EXIST} from "./Messages";
 
-import {trimCharactersAndNumbers} from "@ranjodhbirkaur/constants";
+import {ENTRY_UPDATED_AT, trimCharactersAndNumbers} from "@ranjodhbirkaur/constants";
 import {createModel} from "../util/methods";
 import {DateTime} from "luxon";
 
@@ -90,6 +79,7 @@ export async function createCollectionSchema(req: Request, res: Response) {
             if(reqBody.displayName) {
                 update.displayName = reqBody.displayName;
             }
+            update[ENTRY_UPDATED_AT] = DateTime.local().setZone('UTC').toJSDate();
 
             await CollectionModel.findOneAndUpdate({
                 _id: reqBody.id
@@ -130,8 +120,7 @@ export async function getCollectionNames(req: Request, res: Response) {
     }
 
     const collections = await CollectionModel.find(where, get)
-        .populate('updatedBy', 'firstName lastName')
-        .populate('createdBy', 'firstName lastName');
+        .populate('updatedBy', 'firstName lastName');
 
     res.status(okayStatus).send(collections);
 }

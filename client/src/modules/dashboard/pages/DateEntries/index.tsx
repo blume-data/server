@@ -7,6 +7,7 @@ import {dashboardCreateDataEntryUrl} from "../../../../utils/urls";
 import Button from "@material-ui/core/Button";
 import {Link} from "react-router-dom";
 import loadable from "@loadable/component";
+import './data-entries.scss';
 
 const EntriesTable = loadable(() => import('./EntriesTable'), {
     resolveComponent: component => component.EntriesTable,
@@ -25,12 +26,10 @@ function dataEntriesComponent(props: PropsFromRedux) {
         .replace(':modelName', modelName);
 
     return (
-        <Grid>
+        <Grid className={'data-entries-wrapper-container'}>
             <Grid className="data-entries">
                 <Grid container justify={"space-between"}>
-                    <Grid item>
-                        filter
-                    </Grid>
+
                     <Grid item>
                         <Link to={createDataEntryUrl}>
                             <Button variant={"contained"} color={"primary"}>
