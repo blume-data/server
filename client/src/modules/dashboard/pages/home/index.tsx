@@ -13,8 +13,6 @@ const Home = (props: PropsFromRedux) => {
 
     const {dataRoutes} = props;
 
-    console.log('da', dataRoutes)
-
     return (
         <Grid>
             <Paper elevation={3}>

@@ -158,7 +158,7 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
                     isValid = false;
                     errorMessages.push({
                         field: 'populate',
-                        message: 'populate is not valid'
+                        message: 'name is not valid'
                     });
                     res.status(okayStatus).send({
                         errors: errorMessages

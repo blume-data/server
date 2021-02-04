@@ -5,8 +5,6 @@ import {
   BadRequestError,
   generateJwt,
   sendJwtResponse,
-  AdminUser,
-  FreeUser,
   clientUserType,
   adminUserType,
   freeUserType,
@@ -116,18 +114,11 @@ router.post(
         break;
       }
       case adminUserType: {
-        existingUser = await AdminUser.findOne({email});
         break;
       }
       
       default: {
         if(userType === superVisorUserType || userType === supportUserType || userType === freeUserType) {
-          if (userName) {
-            existingUser = await FreeUser.findOne({userName, clientType: userType}, [APPLICATION_NAME, CLIENT_USER_NAME, USER_NAME, PASSWORD]);
-          }
-          else {
-            existingUser = await FreeUser.findOne({email, clientType: userType}, [APPLICATION_NAME, CLIENT_USER_NAME, USER_NAME, PASSWORD]);
-          }
           if (existingUser) {
             responseData = {
               [SESSION_ID]: '',
