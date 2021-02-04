@@ -34,7 +34,6 @@ const EntriesTableComponent = (props: EntriesTableType) => {
     const [rules, setRules] = useState<RuleType[] | null>(null);
     const [rows, setRows] = useState([]);
     const [columns, setColumns] = useState<ColDef[]>([]);
-    //const [modelName, setSelectedModelName] = useState<string>('');
 
     const {env, applicationName, GetCollectionNamesUrl, language, GetEntriesUrl, modelName, setModelName} = props;
 
@@ -158,6 +157,7 @@ const EntriesTableComponent = (props: EntriesTableType) => {
                 <EntriesFilter
                     modelName={modelName}
                     setModelName={setModelName}
+                    rules={rules}
                 />
             </Grid>
             <DataGrid

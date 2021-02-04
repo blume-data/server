@@ -98,7 +98,6 @@
     "react-router-dom": "^5.2.0",
     "react-swipeable-views": "^0.13.9",
     "react-test-renderer": "^16.13.1",
-    "react-window": "^1.8.6",
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
     "require-from-string": "^2.0.2",

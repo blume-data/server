@@ -3,9 +3,10 @@ import Grid from "@material-ui/core/Grid";
 import {RootState} from "../../../../../rootReducer";
 import {connect, ConnectedProps} from "react-redux";
 import {fetchModelEntries, getModelDataAndRules} from "../../../../../utils/tools";
-import {DESCRIPTION, DISPLAY_NAME, NAME} from "@ranjodhbirkaur/constants";
+import {DESCRIPTION, DISPLAY_NAME, NAME, RuleType} from "@ranjodhbirkaur/constants";
 import {DropDown} from "../../../../../components/common/Form/DropDown";
 import './entries-filter.scss';
+import {SearchMenuList} from "../../../../../components/common/SearchMenuList";
 
 interface ModelsType {
     [DESCRIPTION]: string;
@@ -18,11 +19,12 @@ type PropsFromRedux = ConnectedProps<typeof connector>;
 type EntriesFilterComponentType = PropsFromRedux & {
     modelName: string;
     setModelName?: (name: string) => void;
+    rules: RuleType[] | null;
 }
 
 export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
 
-    const {applicationName, env, language, GetEntriesUrl, GetCollectionNamesUrl, modelName, setModelName } = props;
+    const {applicationName, env, language, GetCollectionNamesUrl, modelName, setModelName, rules } = props;
     const [models, setModels] = useState<ModelsType[]>([]);
 
     async function fetchModelRulesAndData() {
@@ -37,27 +39,13 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
         }
     }
 
-    async function getEntries() {
-        const response = await fetchModelEntries({
-            applicationName, modelName, language, env,
-            GetEntriesUrl: GetEntriesUrl ? GetEntriesUrl : ''
-        });
-        console.log('respnse', response);
-    }
-
-    useEffect(() => {
-        if(modelName) {
-            getEntries();
-        }
-    }, [modelName, GetEntriesUrl]);
-
     // Fetch Model Data and Rules
     useEffect(() => {
         fetchModelRulesAndData();
     }, [GetCollectionNamesUrl]);
 
 
-    const options = models.map(model => {
+    const modelOptions = models.map(model => {
         return {
             label: model[DISPLAY_NAME],
             value: model[NAME]
@@ -65,8 +53,7 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
     });
 
     // on change dropdown
-    function onChangeDropDown(e: any) {
-        const value = e.target.value;
+    function onChangeModelDropDown(value: string) {
         if(setModelName) {
             setModelName(value);
         }
@@ -75,19 +62,24 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
 
     return (
         <Grid className={'entries-filter-wrapper-container'}>
-            <div className="wrapper">
-                <DropDown
-                    label={'Filter model'}
-                    className={'model-name-dropdown'}
-                    value={modelName}
-                    placeholder={'Filter model'}
-                    required={false}
-                    index={0}
-                    options={options}
-                    name={'Models'}
-                    onChange={onChangeDropDown}
-                    onBlur={(e: any) => {}}
-                />
+            <div className="filters-wrapper">
+                <div className="model-dropdown-wrapper">
+                    <SearchMenuList
+                        //label={'Filter model'}
+                        //className={'model-name-dropdown'}
+                        value={modelName}
+                        //placeholder={'Filter model'}
+                        //required={false}
+                        //index={0}
+                        options={modelOptions}
+                        //name={'Models'}
+                        onMenuChange={onChangeModelDropDown}
+                        //onBlur={(e: any) => {}}
+                    />
+                </div>
+                <div className="properties-dropdown-wrapper">
+
+                </div>
             </div>
         </Grid>
     );
@@ -98,7 +90,6 @@ const mapState = (state: RootState) => {
         applicationName: state.authentication.applicationName,
         env: state.authentication.env,
         language: state.authentication.language,
-        GetEntriesUrl: state.routeAddress.routes.data?.GetEntriesUrl,
         GetCollectionNamesUrl: state.routeAddress.routes.data?.GetCollectionNamesUrl,
     }
 };

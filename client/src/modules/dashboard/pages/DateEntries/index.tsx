@@ -33,7 +33,9 @@ function dataEntriesComponent(props: PropsFromRedux) {
     useEffect(() => {
         // Redirect to correct route
         if(selectedModelName) {
-            const url = dashboardDataEntriesUrl.replace(':modelName', selectedModelName);
+            const url = dashboardDataEntriesUrl
+                .replace(':applicationName', applicationName)
+                .replace(':modelName', selectedModelName);
             history.push(url);
         }
     }, [selectedModelName]);
