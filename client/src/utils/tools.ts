@@ -42,10 +42,11 @@ interface GetModelData {
     language: string;
     applicationName: string;
     modelName?: string;
+    getOnly?: string;
 }
 // Fetch model rules, description
 export async function getModelDataAndRules(data: GetModelData) {
-    const {GetCollectionNamesUrl, applicationName, env, language, modelName} = data;
+    const {GetCollectionNamesUrl, applicationName, env, language, modelName='', getOnly} = data;
     const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
     const url = GetCollectionNamesUrl
         .replace(`:${CLIENT_USER_NAME}`, clientUserName ? clientUserName : '')
@@ -53,8 +54,9 @@ export async function getModelDataAndRules(data: GetModelData) {
         .replace(':language', language)
         .replace(`:${APPLICATION_NAME}`,applicationName);
 
+    const curl = `${getBaseUrl()}${url}?name=${modelName}${getOnly ? `&get=${getOnly}` : ''}`;
     return  await doGetRequest(
-        `${getBaseUrl()}${url}${modelName ? `?name=${modelName}` : ''}`,
+        curl,
         {},
         true
     );

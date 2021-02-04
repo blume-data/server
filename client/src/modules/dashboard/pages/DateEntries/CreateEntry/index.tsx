@@ -56,13 +56,20 @@ const CreateEntry = (props: CreateEntryType) => {
         ModelName = modelName;
     }
 
-    useEffect(() => {
-        if(GetCollectionNamesUrl && clientUserName) {
-            getModelDataAndRules({
-                env, language, setRules, modelName: ModelName, applicationName, setIsLoading,
-                clientUserName, GetCollectionNamesUrl
+    async function fetchModelDataAndRules() {
+        if(GetCollectionNamesUrl) {
+            const response = await getModelDataAndRules({
+                GetCollectionNamesUrl, applicationName, modelName, language, env
             });
+            if(response && !response.errors && response.length) {
+                setRules(JSON.parse(response[0].rules));
+            }
+            setIsLoading(false);
         }
+    }
+
+    useEffect(() => {
+        fetchModelDataAndRules();
     }, [GetCollectionNamesUrl]);
 
     let fields: ConfigField[] = [];

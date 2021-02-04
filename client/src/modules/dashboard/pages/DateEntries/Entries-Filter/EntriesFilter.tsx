@@ -2,22 +2,38 @@ import React, {useEffect, useState} from "react";
 import Grid from "@material-ui/core/Grid";
 import {RootState} from "../../../../../rootReducer";
 import {connect, ConnectedProps} from "react-redux";
-import {fetchModelEntries, getItemFromLocalStorage, getModelDataAndRules} from "../../../../../utils/tools";
-import {CLIENT_USER_NAME} from "@ranjodhbirkaur/constants";
+import {fetchModelEntries, getModelDataAndRules} from "../../../../../utils/tools";
+import {DESCRIPTION, DISPLAY_NAME, NAME} from "@ranjodhbirkaur/constants";
+import {DropDown} from "../../../../../components/common/Form/DropDown";
+import './entries-filter.scss';
+
+interface ModelsType {
+    [DESCRIPTION]: string;
+    [NAME]: string;
+    [DISPLAY_NAME]: string;
+    _id: string;
+}
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
+type EntriesFilterComponentType = PropsFromRedux & {
+    modelName: string;
+    setModelName?: (name: string) => void;
+}
 
-export const EntriesFilterComponent = (props: PropsFromRedux) => {
+export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
 
-    const {applicationName, env, language, GetEntriesUrl, GetCollectionNamesUrl } = props;
-    const [modelName, setModelName] = useState<string>('');
+    const {applicationName, env, language, GetEntriesUrl, GetCollectionNamesUrl, modelName, setModelName } = props;
+    const [models, setModels] = useState<ModelsType[]>([]);
 
     async function fetchModelRulesAndData() {
         if(GetCollectionNamesUrl) {
             const response = await getModelDataAndRules({
-                applicationName, language, modelName, env, GetCollectionNamesUrl
+                applicationName, language, modelName: '', env, GetCollectionNamesUrl,
+                getOnly: `${DESCRIPTION},${NAME},${DISPLAY_NAME}`
             });
-            console.log('list of model', response);
+            if(response && response.length) {
+                setModels(response);
+            }
         }
     }
 
@@ -41,9 +57,38 @@ export const EntriesFilterComponent = (props: PropsFromRedux) => {
     }, [GetCollectionNamesUrl]);
 
 
+    const options = models.map(model => {
+        return {
+            label: model[DISPLAY_NAME],
+            value: model[NAME]
+        }
+    });
+
+    // on change dropdown
+    function onChangeDropDown(e: any) {
+        const value = e.target.value;
+        if(setModelName) {
+            setModelName(value);
+        }
+        console.log('va', value)
+    }
+
     return (
         <Grid className={'entries-filter-wrapper-container'}>
-            filter
+            <div className="wrapper">
+                <DropDown
+                    label={'Filter model'}
+                    className={'model-name-dropdown'}
+                    value={modelName}
+                    placeholder={'Filter model'}
+                    required={false}
+                    index={0}
+                    options={options}
+                    name={'Models'}
+                    onChange={onChangeDropDown}
+                    onBlur={(e: any) => {}}
+                />
+            </div>
         </Grid>
     );
 }

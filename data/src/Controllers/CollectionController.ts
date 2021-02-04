@@ -4,7 +4,7 @@ import {MAX_COLLECTION_LIMIT,} from "../util/constants";
 import {CollectionModel} from "../models/Collection";
 import {CANNOT_CREATE_COLLECTIONS_MORE_THAN_LIMIT, COLLECTION_ALREADY_EXIST} from "./Messages";
 
-import {ENTRY_UPDATED_AT, trimCharactersAndNumbers} from "@ranjodhbirkaur/constants";
+import {ENTRY_UPDATED_AT, ENTRY_UPDATED_BY, trimCharactersAndNumbers} from "@ranjodhbirkaur/constants";
 import {createModel} from "../util/methods";
 import {DateTime} from "luxon";
 
@@ -119,8 +119,15 @@ export async function getCollectionNames(req: Request, res: Response) {
         get = getOnly.split(',')
     }
 
-    const collections = await CollectionModel.find(where, get)
-        .populate('updatedBy', 'firstName lastName');
+    const query = CollectionModel.find(where, get);
+    if(getOnly && getOnly.includes(ENTRY_UPDATED_BY)){
+        query.populate(ENTRY_UPDATED_BY, 'firstName lastName');
+    }
+    else if(!getOnly) {
+        query.populate(ENTRY_UPDATED_BY, 'firstName lastName');
+    }
+
+    const collections = await query;
 
     res.status(okayStatus).send(collections);
 }

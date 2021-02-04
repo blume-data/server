@@ -3,9 +3,8 @@ import {ColDef} from '@material-ui/data-grid';
 import loadable from "@loadable/component";
 import {RootState} from "../../../../../rootReducer";
 import {connect, ConnectedProps} from "react-redux";
-import {fetchModelEntries, getItemFromLocalStorage, getModelDataAndRules} from "../../../../../utils/tools";
+import {fetchModelEntries, getModelDataAndRules} from "../../../../../utils/tools";
 import {
-    CLIENT_USER_NAME,
     ENTRY_UPDATED_AT,
     REFERENCE_MODEL_NAME,
     RuleType
@@ -26,6 +25,7 @@ const DataGrid = loadable(() => import('@material-ui/data-grid'), {
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type EntriesTableType = PropsFromRedux & {
     modelName: string;
+    setModelName?: (str: string) => void;
 }
 
 const EntriesTableComponent = (props: EntriesTableType) => {
@@ -34,8 +34,9 @@ const EntriesTableComponent = (props: EntriesTableType) => {
     const [rules, setRules] = useState<RuleType[] | null>(null);
     const [rows, setRows] = useState([]);
     const [columns, setColumns] = useState<ColDef[]>([]);
+    //const [modelName, setSelectedModelName] = useState<string>('');
 
-    const {env, applicationName, GetCollectionNamesUrl, language, GetEntriesUrl, modelName} = props;
+    const {env, applicationName, GetCollectionNamesUrl, language, GetEntriesUrl, modelName, setModelName} = props;
 
     const widthOfColumn = 200;
 
@@ -77,10 +78,10 @@ const EntriesTableComponent = (props: EntriesTableType) => {
 
     // Fetch records in the model
     async function getItems() {
-        if(GetEntriesUrl) {
+        if(GetEntriesUrl && modelName) {
             setIsLoading(true);
             const response = await fetchModelEntries({
-                applicationName, modelName, language, env,
+                applicationName, modelName: modelName, language, env,
                 GetEntriesUrl
             });
 
@@ -127,7 +128,7 @@ const EntriesTableComponent = (props: EntriesTableType) => {
     async function fetchModelDataAndRules() {
         if(GetCollectionNamesUrl) {
             const response = await getModelDataAndRules({
-                GetCollectionNamesUrl, applicationName, modelName, language, env
+                GetCollectionNamesUrl, applicationName, modelName: modelName, language, env
             });
             if(response && !response.errors && response.length) {
                 setRules(JSON.parse(response[0].rules));
@@ -141,17 +142,23 @@ const EntriesTableComponent = (props: EntriesTableType) => {
     }, [rules])
 
     useEffect(() => {
+        fetchModelDataAndRules();
+    }, [modelName, GetCollectionNamesUrl]);
+
+    useEffect(() => {
         if(modelName) {
             getItems();
-            fetchModelDataAndRules();
         }
-    }, [modelName, GetCollectionNamesUrl]);
+    }, [modelName])
 
     return (
         <Grid
             className={'entries-table-container-wrapper'}>
             <Grid className="entries-filter-container">
-                <EntriesFilter />
+                <EntriesFilter
+                    modelName={modelName}
+                    setModelName={setModelName}
+                />
             </Grid>
             <DataGrid
                 autoHeight={true}
