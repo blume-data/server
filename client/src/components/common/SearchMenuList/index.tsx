@@ -27,6 +27,8 @@ interface SearchMenuListProps {
     options: OptionType[];
     value: string;
     onMenuChange: (value: string) => void;
+    placeholder?: string;
+    classNames?: string;
 }
 
 export const SearchMenuList = (props: SearchMenuListProps) => {
@@ -36,7 +38,7 @@ export const SearchMenuList = (props: SearchMenuListProps) => {
     const [hide, setHide] = useState<boolean>(true);
     const classes = useStyles();
 
-    const {options, value, onMenuChange} = props;
+    const {options, value, onMenuChange, placeholder='Search', classNames=''} = props;
 
     useEffect(() => {
         setSelectedValue(value);
@@ -92,12 +94,12 @@ export const SearchMenuList = (props: SearchMenuListProps) => {
     console.log('tilmeZones', timeZones)
 
     return (
-        <Grid className={'search-menu-list'}>
+        <Grid className={`${classNames} search-menu-list`}>
             <TextField
                 onFocus={() => setHide(false)}
                 onBlur={onBlurTextSearch}
                 value={hide ? selectedValue : search}
-                placeholder={'Search'}
+                placeholder={placeholder}
                 onChange={onChange} />
             <div className={`${classes.root} list`} style={{display: `${hide ? 'none' : 'block'}`}}>
                 <List className={'fixed-size-list'}>

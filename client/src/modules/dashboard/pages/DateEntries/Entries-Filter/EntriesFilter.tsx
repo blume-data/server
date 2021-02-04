@@ -68,13 +68,9 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
                         //label={'Filter model'}
                         //className={'model-name-dropdown'}
                         value={modelName}
-                        //placeholder={'Filter model'}
-                        //required={false}
-                        //index={0}
+                        placeholder={'Filter model'}
                         options={modelOptions}
-                        //name={'Models'}
                         onMenuChange={onChangeModelDropDown}
-                        //onBlur={(e: any) => {}}
                     />
                 </div>
                 <div className="properties-dropdown-wrapper">
