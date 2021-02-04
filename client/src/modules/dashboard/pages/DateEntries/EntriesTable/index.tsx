@@ -5,14 +5,11 @@ import {RootState} from "../../../../../rootReducer";
 import {connect, ConnectedProps} from "react-redux";
 import {fetchModelEntries, getItemFromLocalStorage, getModelDataAndRules} from "../../../../../utils/tools";
 import {
-    APPLICATION_NAME,
     CLIENT_USER_NAME,
-    ENTRY_UPDATED_AT, ENTRY_UPDATED_BY, FIRST_NAME, LAST_NAME,
+    ENTRY_UPDATED_AT,
     REFERENCE_MODEL_NAME,
     RuleType
 } from "@ranjodhbirkaur/constants";
-import {doPostRequest} from "../../../../../utils/baseApi";
-import {getBaseUrl} from "../../../../../utils/urls";
 import Grid from "@material-ui/core/Grid";
 import './entries-table.scss';
 import { DateTime } from 'luxon';
@@ -20,7 +17,7 @@ import Typography from "@material-ui/core/Typography";
 import {Tooltip} from "@material-ui/core";
 import {DateCell} from "../../../../../components/common/DateCell";
 import {UserCell} from "../../../../../components/common/UserCell";
-import {EntriesFilter} from "../Entries-Filter/Filter";
+import {EntriesFilter} from "../Entries-Filter/EntriesFilter";
 
 const DataGrid = loadable(() => import('@material-ui/data-grid'), {
     resolveComponent: component => component.DataGrid,
@@ -39,8 +36,6 @@ const EntriesTableComponent = (props: EntriesTableType) => {
     const [columns, setColumns] = useState<ColDef[]>([]);
 
     const {env, applicationName, GetCollectionNamesUrl, language, GetEntriesUrl, modelName} = props;
-
-    const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
 
     const widthOfColumn = 200;
 
@@ -86,7 +81,6 @@ const EntriesTableComponent = (props: EntriesTableType) => {
         if(GetEntriesUrl) {
             setIsLoading(true);
             const response = await fetchModelEntries({
-                clientUserName: clientUserName ? clientUserName : '',
                 applicationName, modelName, language, env,
                 GetEntriesUrl
             });
@@ -137,9 +131,9 @@ const EntriesTableComponent = (props: EntriesTableType) => {
     useEffect(() => {
         if(modelName) {
             getItems();
-            if(GetCollectionNamesUrl && clientUserName) {
+            if(GetCollectionNamesUrl) {
                 getModelDataAndRules({
-                    clientUserName, GetCollectionNamesUrl, setIsLoading, applicationName, modelName, setRules, language, env
+                    GetCollectionNamesUrl, setIsLoading, applicationName, modelName, setRules, language, env
                 });
             }
         }

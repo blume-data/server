@@ -38,7 +38,6 @@ export function getApplicationNamesLocalStorage() {
 
 interface GetModelData {
     GetCollectionNamesUrl: string;
-    clientUserName: string;
     setIsLoading: (action: boolean) => void;
     env: string;
     language: string;
@@ -48,8 +47,9 @@ interface GetModelData {
 }
 // Fetch model rules, description
 export async function getModelDataAndRules(data: GetModelData) {
-    const {GetCollectionNamesUrl, clientUserName, setIsLoading, applicationName, env, language, modelName, setRules} = data;
+    const {GetCollectionNamesUrl, setIsLoading, applicationName, env, language, modelName, setRules} = data;
     setIsLoading(true);
+    const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
     const url = GetCollectionNamesUrl
         .replace(`:${CLIENT_USER_NAME}`, clientUserName ? clientUserName : '')
         .replace(':env', env)
@@ -68,7 +68,6 @@ export async function getModelDataAndRules(data: GetModelData) {
 }
 
 interface FetchModelEntriesType {
-    clientUserName: string;
     env: string;
     language: string;
     applicationName: string;
@@ -78,8 +77,8 @@ interface FetchModelEntriesType {
 // Fetch model entries
 export async function fetchModelEntries(data: FetchModelEntriesType) {
 
-    const {clientUserName, env, language, applicationName, modelName, GetEntriesUrl} = data;
-
+    const {env, language, applicationName, modelName, GetEntriesUrl} = data;
+    const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
     const url = GetEntriesUrl
         .replace(`:${CLIENT_USER_NAME}`, clientUserName ? clientUserName : '')
         .replace(':env', env)

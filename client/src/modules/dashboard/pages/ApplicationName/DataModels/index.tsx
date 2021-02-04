@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {Grid} from "@material-ui/core";
 import {dashboardCreateDataModelsUrl, dashboardDataEntriesUrl, getBaseUrl} from "../../../../../utils/urls";
-import {APPLICATION_NAME, CLIENT_USER_NAME, REFERENCE_MODEL_NAME} from "@ranjodhbirkaur/constants";
+import {APPLICATION_NAME, CLIENT_USER_NAME} from "@ranjodhbirkaur/constants";
 import './store-list.scss';
 import {getItemFromLocalStorage} from "../../../../../utils/tools";
 import {doDeleteRequest, doGetRequest} from "../../../../../utils/baseApi";
@@ -54,7 +54,7 @@ const DataModels = (props: PropsFromRedux) => {
 
             const fullUrl = `${getBaseUrl()}${url}`;
             const response = await doGetRequest(fullUrl, null, true);
-            console.log('response', response);
+            console.log('response dd', response);
             if(response && Array.isArray(response)) {
                 setStores(response.map(item => {
                     const updatedAt = DateTime.fromISO(item.updatedAt);
