@@ -38,17 +38,14 @@ export function getApplicationNamesLocalStorage() {
 
 interface GetModelData {
     GetCollectionNamesUrl: string;
-    setIsLoading: (action: boolean) => void;
     env: string;
     language: string;
     applicationName: string;
-    modelName: string;
-    setRules: any;
+    modelName?: string;
 }
 // Fetch model rules, description
 export async function getModelDataAndRules(data: GetModelData) {
-    const {GetCollectionNamesUrl, setIsLoading, applicationName, env, language, modelName, setRules} = data;
-    setIsLoading(true);
+    const {GetCollectionNamesUrl, applicationName, env, language, modelName} = data;
     const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
     const url = GetCollectionNamesUrl
         .replace(`:${CLIENT_USER_NAME}`, clientUserName ? clientUserName : '')
@@ -56,15 +53,11 @@ export async function getModelDataAndRules(data: GetModelData) {
         .replace(':language', language)
         .replace(`:${APPLICATION_NAME}`,applicationName);
 
-    const response = await doGetRequest(
-        `${getBaseUrl()}${url}?name=${modelName ? modelName : ''}`,
+    return  await doGetRequest(
+        `${getBaseUrl()}${url}${modelName ? `?name=${modelName}` : ''}`,
         {},
         true
     );
-    if(response && !response.errors && response.length) {
-        setRules(JSON.parse(response[0].rules));
-    }
-    setIsLoading(false);
 }
 
 interface FetchModelEntriesType {

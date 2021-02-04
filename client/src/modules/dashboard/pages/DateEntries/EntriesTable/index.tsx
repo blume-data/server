@@ -47,7 +47,6 @@ const EntriesTableComponent = (props: EntriesTableType) => {
                 { field: 'updatedBy', headerName: 'Updated by', sortable:false, align: "left",width: widthOfColumn,
                     renderCell: ((params) => {
                         const value = params.getValue('updatedBy');
-                        console.log('value', value, params)
                         if(value) {
                             return <UserCell value={value} />
                         }
@@ -124,6 +123,19 @@ const EntriesTableComponent = (props: EntriesTableType) => {
         }
     }
 
+    // fetch the rules and data of the model
+    async function fetchModelDataAndRules() {
+        if(GetCollectionNamesUrl) {
+            const response = await getModelDataAndRules({
+                GetCollectionNamesUrl, applicationName, modelName, language, env
+            });
+            if(response && !response.errors && response.length) {
+                setRules(JSON.parse(response[0].rules));
+            }
+            setIsLoading(false);
+        }
+    }
+
     useEffect(() => {
         updateColumns();
     }, [rules])
@@ -131,11 +143,7 @@ const EntriesTableComponent = (props: EntriesTableType) => {
     useEffect(() => {
         if(modelName) {
             getItems();
-            if(GetCollectionNamesUrl) {
-                getModelDataAndRules({
-                    GetCollectionNamesUrl, setIsLoading, applicationName, modelName, setRules, language, env
-                });
-            }
+            fetchModelDataAndRules();
         }
     }, [modelName, GetCollectionNamesUrl]);
 
