@@ -11,6 +11,7 @@ export const CollectionUrl = `${rootUrl}/:clientUserName/:applicationName/models
 export const GetCollectionNamesUrl = `${rootUrl}/:clientUserName/:applicationName/get-models`;
 
 export const StoreUrl = `${rootUrl}/:language/:clientUserName/:applicationName/entry/:modelName`;
+export const GetEntriesUrl = `${StoreUrl}/get-entries`;
 
 export const StoreReferenceUrl = `${rootUrl}/:language/:clientUserName/:applicationName/entry/:modelName`;
 

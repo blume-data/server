@@ -131,10 +131,7 @@ export async function getCollectionNames(req: Request, res: Response) {
 
     const collections = await CollectionModel.find(where, get)
         .populate('updatedBy', 'firstName lastName')
-        .populate('createdBy', 'firstName lastName')
-    ;
-
-    console.log('hello')
+        .populate('createdBy', 'firstName lastName');
 
     res.status(okayStatus).send(collections);
 }

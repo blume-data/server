@@ -1,6 +1,6 @@
 import { randomBytes } from 'crypto';
 import {Request, Response} from 'express';
-import mongoose, {Schema} from 'mongoose';
+import mongoose from 'mongoose';
 import {RuleType} from "./interface";
 import {
     BOOLEAN_FIElD_TYPE,
@@ -16,13 +16,14 @@ import {
 } from "./constants";
 import {
     APPLICATION_NAME,
-    APPLICATION_NAMES,
+    APPLICATION_NAMES, CLIENT_USER_MODEL_NAME,
     CLIENT_USER_NAME,
     JWT_ID,
     okayStatus,
     PASSWORD
 } from "@ranjodhbirkaur/common"
 import {getCollection} from "../Controllers/StoreController";
+import _ from 'lodash';
 
 export const RANDOM_STRING = function (minSize=10) {
     return randomBytes(minSize).toString('hex')
@@ -184,22 +185,14 @@ export function createModel(params: CreateModelType) {
     }
 }
 
-// remove the unwanted properties from get-only
-export function trimGetOnly(params: string | null | string[]) {
-    let getOnly: string[] = [];
-    if(params && Array.isArray(params) &&  params.length) {
-        params.forEach((it: string) => {
-            getOnly.push(it);
-        });
+export function trimGetOnly(params?: string[] | string | null): string {
+    if(typeof params === 'string') {
+        return params;
     }
-    else if(typeof params === 'string') {
-        getOnly.push(params);
+    else if(params && Array.isArray(params)) {
+        return params.join(' ');
     }
-    getOnly.push(`-${ENTRY_LANGUAGE_PROPERTY_NAME}`);
-    getOnly.push(`-${APPLICATION_NAMES}`);
-    getOnly.push(`-${PASSWORD}`);
-    getOnly.push(`-${JWT_ID}`);
-    return getOnly;
+    return `-${ENTRY_LANGUAGE_PROPERTY_NAME}`;
 }
 
 // send on id on create record

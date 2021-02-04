@@ -7,11 +7,11 @@ import {getItemFromLocalStorage, getModelDataAndRules} from "../../../../../util
 import {
     APPLICATION_NAME,
     CLIENT_USER_NAME,
-    ENTRY_CREATED_AT, ENTRY_CREATED_BY, ENTRY_UPDATED_AT, FIRST_NAME, LAST_NAME,
+    ENTRY_UPDATED_AT, ENTRY_UPDATED_BY, FIRST_NAME, LAST_NAME,
     REFERENCE_MODEL_NAME,
     RuleType
 } from "@ranjodhbirkaur/constants";
-import {doGetRequest} from "../../../../../utils/baseApi";
+import {doPostRequest} from "../../../../../utils/baseApi";
 import {getBaseUrl} from "../../../../../utils/urls";
 import Grid from "@material-ui/core/Grid";
 import './entries-table.scss';
@@ -37,7 +37,7 @@ const EntriesTableComponent = (props: EntriesTableType) => {
     const [rows, setRows] = useState([]);
     const [columns, setColumns] = useState<ColDef[]>([]);
 
-    const {env, applicationName, GetCollectionNamesUrl, language, StoreUrl, modelName} = props;
+    const {env, applicationName, GetCollectionNamesUrl, language, GetEntriesUrl, modelName} = props;
 
     const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
 
@@ -47,14 +47,6 @@ const EntriesTableComponent = (props: EntriesTableType) => {
         // init the table columns
         const tabColumns: ColDef[] = [
             { field: 'id', headerName: 'ID'},
-
-            { field: ENTRY_CREATED_AT, headerName: 'Created at', sortable:false, align: "left",width: widthOfColumn,
-                renderCell: ((params) => {
-                    const value = `${params.getValue(ENTRY_CREATED_AT) || ''}`
-                    const timeStamp = DateTime.fromISO(value);
-                    return <DateCell value={timeStamp} />
-                })
-            },
             { field: 'updatedBy', headerName: 'Updated by', sortable:false, align: "left",width: widthOfColumn,
                 renderCell: ((params) => {
                     const value = params.getValue('updatedBy');
@@ -88,26 +80,30 @@ const EntriesTableComponent = (props: EntriesTableType) => {
 
     // Fetch records in the model
     async function getItems() {
-        if(StoreUrl) {
+        if(GetEntriesUrl) {
             setIsLoading(true);
-            const url = StoreUrl
+            const url = GetEntriesUrl
                 .replace(`:${CLIENT_USER_NAME}`, clientUserName ? clientUserName : '')
                 .replace(':env', env)
                 .replace(':language', language)
                 .replace(':modelName', modelName)
                 .replace(`:${APPLICATION_NAME}`,applicationName);
 
-            const response = await doGetRequest(`${getBaseUrl()}${url}`, {
-                populate: [{
-                    name: ENTRY_CREATED_BY,
-                    getOnly: [FIRST_NAME, LAST_NAME]
-                }]
+            const response = await doPostRequest(`${getBaseUrl()}${url}`, {
+                populate: [
+                    {
+                        name: ENTRY_UPDATED_BY,
+                        getOnly: [FIRST_NAME, LAST_NAME]
+                    }
+                ]
             }, true);
 
             setRows(response.map((i: any) => {
                 return {
                     ...i,
-                    id: i._id
+                    id: i._id,
+                    lastName: i.lastName,
+                    firstName: i.firstName
                 }
             }));
             setIsLoading(false);
@@ -180,7 +176,7 @@ const mapState = (state: RootState) => {
         language: state.authentication.language,
         applicationName: state.authentication.applicationName,
         GetCollectionNamesUrl: state.routeAddress.routes.data?.GetCollectionNamesUrl,
-        StoreUrl: state.routeAddress.routes.data?.StoreUrl
+        GetEntriesUrl: state.routeAddress.routes.data?.GetEntriesUrl
     }
 };
 

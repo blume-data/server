@@ -61,7 +61,7 @@ interface PopulateData {
 
 interface PopulateMongooseData {
     path: string;
-    select?: string[];
+    select?: string;
     populate?: PopulateMongooseData;
 }
 
@@ -124,11 +124,11 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
                                 mongoosePopulate.select = trimGetOnly(population.getOnly);
                             }
                             else {
-                                mongoosePopulate.select = trimGetOnly(null);
+                                mongoosePopulate.select = trimGetOnly(population.getOnly);
                             }
                         }
                         else {
-                            mongoosePopulate.select = trimGetOnly(null);
+                            mongoosePopulate.select = trimGetOnly(population.getOnly);
                         }
                         if(population.populate && mongoosePopulate.path) {
                             mongoosePopulate.populate = { path: '' };
@@ -356,7 +356,7 @@ export async function createStoreRecord(req: Request, res: Response) {
     }
 }
 
-// Get Record
+// ANY Record
 export async function getStoreRecord(req: Request, res: Response) {
 
     const findWhere = req.body.where;

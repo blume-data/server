@@ -1,5 +1,5 @@
 import express from "express";
-import {StoreReferenceUrl, StoreUrl} from "../util/urls";
+import {GetEntriesUrl, StoreReferenceUrl, StoreUrl} from "../util/urls";
 import {createStoreRecord, getStoreRecord} from "../Controllers/StoreController";
 import {validateEnvType} from "../util/enviornmentTypes";
 import {checkAuth} from "../services/checkAuth";
@@ -8,8 +8,8 @@ import {validateApplicationNameMiddleWare} from "../services/validateApplication
 const router = express.Router();
 
 // Get Data
-router.get(
-    StoreUrl,
+router.post(
+    GetEntriesUrl,
     validateEnvType, checkAuth,
     validateApplicationNameMiddleWare,
     getStoreRecord
