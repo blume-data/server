@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {ColDef} from '@material-ui/data-grid';
-import loadable from "@loadable/component";
+import {ColDef, DataGrid} from '@material-ui/data-grid';
 import {RootState} from "../../../../../rootReducer";
 import {connect, ConnectedProps} from "react-redux";
 import {fetchModelEntries, getModelDataAndRules} from "../../../../../utils/tools";
@@ -17,10 +16,6 @@ import {Tooltip} from "@material-ui/core";
 import {DateCell} from "../../../../../components/common/DateCell";
 import {UserCell} from "../../../../../components/common/UserCell";
 import {EntriesFilter} from "../Entries-Filter/EntriesFilter";
-
-const DataGrid = loadable(() => import('@material-ui/data-grid'), {
-    resolveComponent: component => component.DataGrid,
-});
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type EntriesTableType = PropsFromRedux & {

@@ -6,12 +6,8 @@ import {useHistory, useParams} from "react-router";
 import {dashboardCreateDataEntryUrl, dashboardDataEntriesUrl} from "../../../../utils/urls";
 import Button from "@material-ui/core/Button";
 import {Link} from "react-router-dom";
-import loadable from "@loadable/component";
 import './data-entries.scss';
-
-const EntriesTable = loadable(() => import('./EntriesTable'), {
-    resolveComponent: component => component.EntriesTable,
-});
+import {EntriesTable} from './EntriesTable';
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
