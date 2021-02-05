@@ -4,11 +4,8 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import Typography from "@material-ui/core/Typography";
 import AccordionDetails from "@material-ui/core/AccordionDetails";
 import {randomString} from "../../../utils/tools";
-import loadable from "@loadable/component";
 import './index.scss';
-
-import Accordion from "@material-ui/core/Accordion";
-//const Accordion = loadable(() => import('@material-ui/core/Accordion'));
+import Accordion from "@material-ui/core/Accordion"
 
 interface AccordianCommonProps {
     children: any;
