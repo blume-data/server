@@ -28,7 +28,7 @@ function PrivateRoute(Component: any) {
     return () => {
         const isAuth = checkAuthentication();
         if (!isAuth) {
-            return <Redirect to={`/${AUTH_ROOT}/${SIGN_IN}`} />
+            document.location.href=`../${AUTH_ROOT}/${SIGN_IN}`;
         }
         return <Component />
     }
