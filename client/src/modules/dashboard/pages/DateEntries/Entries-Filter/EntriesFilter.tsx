@@ -2,9 +2,8 @@ import React, {useEffect, useState} from "react";
 import Grid from "@material-ui/core/Grid";
 import {RootState} from "../../../../../rootReducer";
 import {connect, ConnectedProps} from "react-redux";
-import {fetchModelEntries, getModelDataAndRules} from "../../../../../utils/tools";
+import {getModelDataAndRules} from "../../../../../utils/tools";
 import {DESCRIPTION, DISPLAY_NAME, NAME, RuleType} from "@ranjodhbirkaur/constants";
-import {DropDown} from "../../../../../components/common/Form/DropDown";
 import './entries-filter.scss';
 import {SearchMenuList} from "../../../../../components/common/SearchMenuList";
 
@@ -65,8 +64,6 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
             <div className="filters-wrapper">
                 <div className="model-dropdown-wrapper">
                     <SearchMenuList
-                        //label={'Filter model'}
-                        //className={'model-name-dropdown'}
                         value={modelName}
                         placeholder={'Filter model'}
                         options={modelOptions}
