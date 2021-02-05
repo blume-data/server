@@ -14,7 +14,7 @@ build:
     - image: taranjeetsingh/auth
       context: auth
       docker:
-        dockerfile: Dockerfile
+        dockerfile: Dockerfile.local
       sync:
         manual:
           - src: 'src/**/*.ts'
@@ -22,7 +22,7 @@ build:
     - image: taranjeetsingh/data
       context: data
       docker:
-        dockerfile: Dockerfile
+        dockerfile: Dockerfile.local
       sync:
         manual:
           - src: 'src/**/*.ts'
@@ -30,7 +30,7 @@ build:
     - image: taranjeetsingh/assets
       context: assets
       docker:
-        dockerfile: Dockerfile
+        dockerfile: Dockerfile.local
       sync:
         manual:
           - src: 'src/**/*.ts'
