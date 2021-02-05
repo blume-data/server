@@ -30,6 +30,7 @@ const EntriesTableComponent = (props: EntriesTableType) => {
     const [rules, setRules] = useState<RuleType[] | null>(null);
     const [rows, setRows] = useState([]);
     const [columns, setColumns] = useState<ColDef[]>([]);
+    const [where, setWhere] = useState<any>({});
 
     const {env, applicationName, GetCollectionNamesUrl, language, GetEntriesUrl, modelName, setModelName} = props;
 
@@ -77,7 +78,7 @@ const EntriesTableComponent = (props: EntriesTableType) => {
             setIsLoading(true);
             const response = await fetchModelEntries({
                 applicationName, modelName: modelName, language, env,
-                GetEntriesUrl
+                GetEntriesUrl, where
             });
 
             setRows(response.map((i: any) => {
@@ -132,25 +133,44 @@ const EntriesTableComponent = (props: EntriesTableType) => {
         }
     }
 
+    // update columns when rules are fetched
     useEffect(() => {
         updateColumns();
     }, [rules])
 
+    // Fetch the model data and rules when collection names url is available
     useEffect(() => {
         fetchModelDataAndRules();
     }, [modelName, GetCollectionNamesUrl]);
 
+    // If the model name is selected or changed fetch the entries of that model
     useEffect(() => {
         if(modelName) {
             getItems();
         }
-    }, [modelName])
+    }, [modelName]);
+
+    // where the where filters change fetch the entries
+    useEffect(() => {
+        let needsToBeSearched = false;
+        // check if there is at least one property which has some value
+        for(let p in where) {
+            if(where.hasOwnProperty(p) && where[p]) {
+                needsToBeSearched = true;
+            }
+        }
+        if(needsToBeSearched && modelName) {
+            getItems();
+        }
+    }, [where]);
+
 
     return (
         <Grid
             className={'entries-table-container-wrapper'}>
             <Grid className="entries-filter-container">
                 <EntriesFilter
+                    setWhere={setWhere}
                     modelName={modelName}
                     setModelName={setModelName}
                     rules={rules}

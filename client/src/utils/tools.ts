@@ -68,11 +68,12 @@ interface FetchModelEntriesType {
     applicationName: string;
     modelName: string;
     GetEntriesUrl: string;
+    where?: object;
 }
 // Fetch model entries
 export async function fetchModelEntries(data: FetchModelEntriesType) {
 
-    const {env, language, applicationName, modelName, GetEntriesUrl} = data;
+    const {env, language, applicationName, modelName, GetEntriesUrl, where} = data;
     const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
     const url = GetEntriesUrl
         .replace(`:${CLIENT_USER_NAME}`, clientUserName ? clientUserName : '')
@@ -82,6 +83,7 @@ export async function fetchModelEntries(data: FetchModelEntriesType) {
         .replace(`:${APPLICATION_NAME}`,applicationName);
 
     return await doPostRequest(`${getBaseUrl()}${url}`, {
+        where,
         populate: [
             {
                 name: ENTRY_UPDATED_BY,

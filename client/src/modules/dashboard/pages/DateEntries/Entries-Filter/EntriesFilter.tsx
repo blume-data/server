@@ -13,7 +13,7 @@ import {
 import './entries-filter.scss';
 import {SearchMenuList} from "../../../../../components/common/SearchMenuList";
 import {CommonButton} from "../../../../../components/common/CommonButton";
-import {TextField} from "@material-ui/core";
+import {TextField, Tooltip} from "@material-ui/core";
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 
@@ -29,6 +29,7 @@ type EntriesFilterComponentType = PropsFromRedux & {
     modelName: string;
     setModelName?: (name: string) => void;
     rules: RuleType[] | null;
+    setWhere: (o: object) => void;
 }
 
 interface FilterType {
@@ -39,12 +40,10 @@ interface FilterType {
 
 export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
 
-    const {applicationName, env, language, GetCollectionNamesUrl, modelName, setModelName } = props;
+    const {applicationName, env, language, GetCollectionNamesUrl, modelName, setModelName, setWhere } = props;
     const [models, setModels] = useState<ModelsType[]>([]);
     const [filters, setFilters] = useState<FilterType[]>([]);
     const [rules, setRules] = useState<RuleType[]>([]);
-
-    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
     async function fetchModelRulesAndData(fetchModels = false, getOnly = `${DESCRIPTION},${NAME},${DISPLAY_NAME}`) {
         if(GetCollectionNamesUrl) {
@@ -68,8 +67,17 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
         if(props.rules) {
             setRules(props.rules);
         }
-    }, [props.rules])
-
+    }, [props.rules]);
+    // set where when filters change
+    useEffect(() => {
+        const w: any = {};
+        filters.forEach(f => {
+            if(f && f.propertyName) {
+                w[f.propertyName] = f.filterValue
+            }
+        });
+        setWhere(w);
+    }, [filters]);
 
     const modelOptions = models.map(model => {
         return {
@@ -93,11 +101,11 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
         }
     }
     // on change properties dropdown
-    function onChangePropertiesDropdown(value: string) {
+    function onChangePropertiesDropdown(value: string, index: number) {
         const exist = rules && rules.find(rule => rule.name === value);
         if(exist) {
-            const newFilters = filters.map(f => {
-                if(!f.propertyName) {
+            const newFilters = filters.map((f,i) => {
+                if(i === index) {
                     return {
                         propertyName: value,
                         filterValue: '',
@@ -105,28 +113,18 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
                     }
                 }
                 return f;
-            })
-            setFilters(newFilters);
+            });
             const newRules: RuleType[] = [];
-            rules.forEach(ru => {
-                if(ru.name !== value) {
-                    newRules.push(ru);
+            props.rules && props.rules.forEach(f => {
+                const exist = newFilters.find(r => r.propertyName === f.name);
+                if(!exist) {
+                    newRules.push(f);
                 }
             });
             setRules(newRules);
+            setFilters(newFilters);
         }
     }
-
-    // onChange the selected property
-    /*// render the specific input field
-    useEffect(() => {
-        if(selectedProperty && rules) {
-            const exist = rules.find(rule => rule.name === selectedProperty);
-            if(exist) {
-                setSelectedPropertyType(exist.type);
-            }
-        }
-    }, [selectedProperty, rules]);*/
 
     function renderFilters() {
         return rulesOptions && filters.map((filter, index) => {
@@ -138,16 +136,18 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
                             classNames={'property-dropdown'}
                             placeholder={'Model properties'}
                             options={rulesOptions}
-                            onMenuChange={onChangePropertiesDropdown}
+                            onMenuChange={(v) => onChangePropertiesDropdown(v, index)}
                         />
                     </Grid>
                     <Grid item className={'input-field-wrapper'}>
                         {renderPropertyInputField(filter)}
                     </Grid>
                     <Grid item className={'close-button'}>
-                        <IconButton>
-                            <CloseIcon />
-                        </IconButton>
+                        <Tooltip title={'Delete filter'}>
+                            <IconButton>
+                                <CloseIcon />
+                            </IconButton>
+                        </Tooltip>
 
                     </Grid>
                 </Grid>
@@ -172,7 +172,6 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
                 return f;
             })
             setFilters(newFilters);
-            //setSelectedPropertyValue(value);
         }
         const name = 'Filter Value';
 
