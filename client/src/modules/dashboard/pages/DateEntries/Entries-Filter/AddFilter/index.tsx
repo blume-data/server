@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import Grid from "@material-ui/core/Grid";
 import {SearchMenuList} from "../../../../../../components/common/SearchMenuList";
 import {OptionsType} from "../../../../../../components/common/Form/interface";
@@ -6,10 +6,17 @@ import {OptionsType} from "../../../../../../components/common/Form/interface";
 interface AddFilterTypes {
     rulesOptions: OptionsType[];
     modelName: string;
-    onChangePropertiesDropdown: (str: string) => void;
 }
 export const AddFilter = (props: AddFilterTypes) => {
-    const {rulesOptions, modelName, onChangePropertiesDropdown} = props;
+    const {rulesOptions, modelName} = props;
+
+    const [selectedProperty, setSelectedProperty] = useState<string>('');
+
+    // on change properties dropdown
+    function onChangePropertiesDropdown(value: string) {
+        setSelectedProperty(value);
+    }
+
     return (
         <Grid className={'add-filter-container'}>
             Add a filter
