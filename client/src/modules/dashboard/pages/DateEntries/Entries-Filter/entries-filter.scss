@@ -1,4 +1,14 @@
 @import "src/assets/style/index";
 .entries-filter-wrapper-container {
+  .filter-wrapper {
+    max-width: 600px;
+    .input-field-wrapper, .close-button {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding-top: 15px;
+    }
+
+  }
 
 }

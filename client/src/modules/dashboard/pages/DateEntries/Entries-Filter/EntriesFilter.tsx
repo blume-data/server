@@ -8,13 +8,14 @@ import {
     DISPLAY_NAME,
     INTEGER_FIElD_TYPE,
     NAME,
-    RuleType,
-    SHORT_STRING_FIElD_TYPE
+    RuleType
 } from "@ranjodhbirkaur/constants";
 import './entries-filter.scss';
 import {SearchMenuList} from "../../../../../components/common/SearchMenuList";
 import {CommonButton} from "../../../../../components/common/CommonButton";
 import {TextField} from "@material-ui/core";
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
 
 interface ModelsType {
     [DESCRIPTION]: string;
@@ -130,15 +131,25 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
     function renderFilters() {
         return rulesOptions && filters.map((filter, index) => {
             return (
-                <Grid key={index} container className="filter-wrapper">
-                    <SearchMenuList
-                        value={filter.propertyName}
-                        classNames={'property-dropdown'}
-                        placeholder={'Model properties'}
-                        options={rulesOptions}
-                        onMenuChange={onChangePropertiesDropdown}
-                    />
-                    {renderPropertyInputField(filter)}
+                <Grid key={index} container justify={"space-between"} className="filter-wrapper">
+                    <Grid item className={'property-list'}>
+                        <SearchMenuList
+                            value={filter.propertyName}
+                            classNames={'property-dropdown'}
+                            placeholder={'Model properties'}
+                            options={rulesOptions}
+                            onMenuChange={onChangePropertiesDropdown}
+                        />
+                    </Grid>
+                    <Grid item className={'input-field-wrapper'}>
+                        {renderPropertyInputField(filter)}
+                    </Grid>
+                    <Grid item className={'close-button'}>
+                        <IconButton>
+                            <CloseIcon />
+                        </IconButton>
+
+                    </Grid>
                 </Grid>
             );
         })
