@@ -40,4 +40,4 @@ hydrate(<React.StrictMode>
     </Provider>
 </React.StrictMode>, root);
 
-//serviceWorker.register();
+serviceWorker.register();

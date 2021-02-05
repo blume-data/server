@@ -5,15 +5,15 @@ export function getBaseUrl() {
 }
 
 export function getAssetsRoutes() {
-    return `${getBaseUrl()}/assets/routes`;
+    return `${getBaseUrl()}/assets-api/routes`;
 }
 
 export function getAuthRoutes() {
-    return `${getBaseUrl()}/auth/routes/`;
+    return `${getBaseUrl()}/auth-api/routes/`;
 }
 
 export function getDataRoutes() {
-    return `${getBaseUrl()}/data/routes/`;
+    return `${getBaseUrl()}/data-api/routes/`;
 }
 
 export const dashboardHomeUrl = '/dashboard/home';
@@ -27,6 +27,6 @@ export const dashboardCreateDataModelsUrl = '/dashboard/:applicationName/create-
 export const dashboardDataEntriesUrl = '/dashboard/:applicationName/entries/:modelName?';
 export const dashboardCreateDataEntryUrl = '/dashboard/:applicationName/create-entry/:modelName';
 
-export const authUrl = '/authentication';
+export const authUrl = '/secure';
 
 export const assetsUrl = '/assets';
