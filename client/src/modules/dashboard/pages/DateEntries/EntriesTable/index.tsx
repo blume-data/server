@@ -16,6 +16,7 @@ import {Tooltip} from "@material-ui/core";
 import {DateCell} from "../../../../../components/common/DateCell";
 import {UserCell} from "../../../../../components/common/UserCell";
 import {EntriesFilter} from "../Entries-Filter/EntriesFilter";
+import Loader from "../../../../../components/common/Loader";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type EntriesTableType = PropsFromRedux & {
@@ -158,7 +159,6 @@ const EntriesTableComponent = (props: EntriesTableType) => {
             <DataGrid
                 autoHeight={true}
                 rows={rows}
-                autoPageSize={true}
                 disableColumnMenu={true}
                 columns={columns}
                 checkboxSelection
