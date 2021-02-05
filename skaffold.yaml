@@ -8,8 +8,6 @@ deploy:
 build:
   local:
     push: false
-#  googleCloudBuild:
-#    projectId: ranjod-dev
   artifacts:
     - image: taranjeetsingh/auth
       context: auth
