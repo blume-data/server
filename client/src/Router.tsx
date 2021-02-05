@@ -15,6 +15,8 @@ import {
     dashboardCreateDataModelsUrl,
     assetsUrl
 } from "./utils/urls";
+import {Assets} from "./modules/assets";
+import loadable from "@loadable/component";
 
 const CreateDataModel = loadable(() => import('./modules/dashboard/pages/ApplicationName/DataModels/CreateDataModel'));
 const CreateEntry = loadable(() => import('./modules/dashboard/pages/DateEntries/CreateEntry'));
@@ -25,9 +27,6 @@ const Home = loadable(() => import('./modules/dashboard/pages/home'));
 const DataEntries = loadable(() => import('./modules/dashboard/pages/DateEntries'), {
     resolveComponent: component => component.DataEntries,
 });
-
-import {Assets} from "./modules/assets";
-import loadable from "@loadable/component";
 
 function PrivateRoute(Component: any) {
     return () => {
