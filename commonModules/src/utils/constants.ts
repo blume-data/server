@@ -17,6 +17,7 @@ export const clientType = 'clientType';
 export const EVENTS_ROUTE = 'events';
 export const EVENT_AUTH_NEW_JWT = 'EVENT_AUTH_NEW_JWT';
 export const JWT_COOKIE_NAME = 'RANJODHBIR_KAUR_AUTHENTICATION_JWT';
+export const CLIENT_USER_MODEL_NAME = 'ClientUser';
 
 // get mongo database url
 export function getMongoDatabaseUrl() {

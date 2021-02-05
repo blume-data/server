@@ -1,5 +1,12 @@
-import {APPLICATION_NAME, APPLICATION_NAMES, CLIENT_USER_NAME, EnglishLanguage} from "@ranjodhbirkaur/constants";
-import {doGetRequest} from "./baseApi";
+import {
+    APPLICATION_NAME,
+    APPLICATION_NAMES,
+    CLIENT_USER_NAME,
+    ENTRY_UPDATED_BY,
+    FIRST_NAME,
+    LAST_NAME
+} from "@ranjodhbirkaur/constants";
+import {doGetRequest, doPostRequest} from "./baseApi";
 import {getBaseUrl} from "./urls";
 
 export const randomString = () => {
@@ -31,31 +38,55 @@ export function getApplicationNamesLocalStorage() {
 
 interface GetModelData {
     GetCollectionNamesUrl: string;
-    clientUserName: string;
-    setIsLoading: (action: boolean) => void;
     env: string;
     language: string;
     applicationName: string;
-    modelName: string;
-    setRules: any;
+    modelName?: string;
+    getOnly?: string;
 }
 // Fetch model rules, description
 export async function getModelDataAndRules(data: GetModelData) {
-    const {GetCollectionNamesUrl, clientUserName, setIsLoading, applicationName, env, language, modelName, setRules} = data;
-    setIsLoading(true);
+    const {GetCollectionNamesUrl, applicationName, env, language, modelName='', getOnly} = data;
+    const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
     const url = GetCollectionNamesUrl
         .replace(`:${CLIENT_USER_NAME}`, clientUserName ? clientUserName : '')
         .replace(':env', env)
         .replace(':language', language)
         .replace(`:${APPLICATION_NAME}`,applicationName);
 
-    const response = await doGetRequest(
-        `${getBaseUrl()}${url}?name=${modelName ? modelName : ''}`,
+    const curl = `${getBaseUrl()}${url}?name=${modelName}${getOnly ? `&get=${getOnly}` : ''}`;
+    return  await doGetRequest(
+        curl,
         {},
         true
     );
-    if(response && !response.errors && response.length) {
-        setRules(JSON.parse(response[0].rules));
-    }
-    setIsLoading(false);
+}
+
+interface FetchModelEntriesType {
+    env: string;
+    language: string;
+    applicationName: string;
+    modelName: string;
+    GetEntriesUrl: string;
+}
+// Fetch model entries
+export async function fetchModelEntries(data: FetchModelEntriesType) {
+
+    const {env, language, applicationName, modelName, GetEntriesUrl} = data;
+    const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
+    const url = GetEntriesUrl
+        .replace(`:${CLIENT_USER_NAME}`, clientUserName ? clientUserName : '')
+        .replace(':env', env)
+        .replace(':language', language)
+        .replace(':modelName', modelName)
+        .replace(`:${APPLICATION_NAME}`,applicationName);
+
+    return await doPostRequest(`${getBaseUrl()}${url}`, {
+        populate: [
+            {
+                name: ENTRY_UPDATED_BY,
+                getOnly: [FIRST_NAME, LAST_NAME]
+            }
+        ]
+    }, true);
 }

@@ -16,10 +16,7 @@ import {
     supportUserType,
     EMAIL,
     USER_NAME,
-    AdminUser,
-    FreeUser,
     ErrorMessages,
-    isTestEnv,
     APPLICATION_NAMES,
     CLIENT_USER_NAME,
     pushErrors,
@@ -154,13 +151,13 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
             break;
         }
         case adminUserType: {
-            existingUser = await AdminUser.findOne({email});
+            //existingUser = await AdminUser.findOne({email});
             break;
         }
         default: {
             if (type === freeUserType || type === superVisorUserType || type === supportUserType) {
                 if (email) {
-                    existingUser = await FreeUser.findOne({email});
+                    //existingUser = await FreeUser.findOne({email});
                 }
             }
         }
@@ -177,12 +174,12 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
             break;
         }
         case adminUserType: {
-            existingUser = await AdminUser.findOne({userName});
+            //existingUser = await AdminUser.findOne({userName});
             break;
         }
         default: {
             if (type === freeUserType || type === superVisorUserType || type === supportUserType) {
-                existingUser = await FreeUser.findOne({userName});
+                //existingUser = await FreeUser.findOne({userName});
             }
         }
     }
@@ -193,31 +190,8 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
     const verificationToken = RANDOM_STRING(4);
 
     let user;
-    const jwtId = RANDOM_STRING(10);
 
     switch (type) {
-        case adminUserType: {
-            const created_at = `${new Date()}`;
-            user = AdminUser.build({ email, password, userName, adminType, jwtId, created_at });
-            await user.save();
-            const payload: JwtPayloadType = {
-                [JWT_ID]: jwtId,
-                [USER_NAME]: user.userName,
-                [clientType]: type
-            };
-            const responseData: PayloadResponseType = {
-                [SESSION_ID]: '',
-                [CLIENT_USER_NAME]: userName,
-                [clientType]: type,
-                [USER_NAME]: userName,
-                [APPLICATION_NAMES]: [{
-                    name: '',
-                    languages: ['']
-                }],
-            }
-            const userJwt = generateJwt(payload, res);
-            return sendJwtResponse(res, responseData, userJwt);
-        }
         case clientUserType: {
 
             user = ClientTempUser.build({
@@ -227,51 +201,6 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
 
             console.log('verification token', user.verificationToken);
             break;
-        }
-        case freeUserType: {
-            user = ClientTempUser.build({ email, password, firstName, lastName, userName, verificationToken, clientType: freeUserType });
-            await user.save();
-
-            console.log('verification token', user.verificationToken);
-
-            break;
-        }
-        case superVisorUserType: {
-            user = FreeUser.build({ env: '', email, password, userName, clientType: superVisorUserType, jwtId, clientUserName });
-            await user.save();
-
-            const jwt: JwtPayloadType = {
-                [clientType]: type,
-                [USER_NAME]: user.userName,
-                [JWT_ID]: user.jwtId
-            };
-            const responseData: PayloadResponseType = {
-                [SESSION_ID]: '',
-                [CLIENT_USER_NAME]: clientUserName,
-                [clientType]: type,
-                [USER_NAME]: userName,
-                [APPLICATION_NAMES]: [applicationName]
-            }
-            const userJwt = generateJwt(jwt, res);
-            return sendJwtResponse(res, responseData, userJwt);
-        }
-        case supportUserType: {
-            user = FreeUser.build({ email, password, userName, clientType: supportUserType, jwtId, clientUserName, applicationName, env: '' });
-            await user.save();
-            const jwt: JwtPayloadType = {
-                [JWT_ID]: jwtId,
-                [clientType]: supportUserType,
-                [USER_NAME]: userName
-            };
-            const responseData: PayloadResponseType = {
-                [SESSION_ID]: '',
-                [CLIENT_USER_NAME]: clientUserName,
-                [clientType]: type,
-                [USER_NAME]: userName,
-                [APPLICATION_NAMES]: [applicationName]
-            }
-            const userJwt = generateJwt(jwt, res);
-            return sendJwtResponse(res, responseData, userJwt);
         }
     }
 

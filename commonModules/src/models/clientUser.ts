@@ -1,6 +1,6 @@
-import mongoose, { Connection } from 'mongoose';
+import mongoose  from 'mongoose';
 import { Password } from '../services/password';
-import {getRootUserSchema, RootUserAttrs, RootUserDoc} from "./adminUser";
+import {getRootUserSchema, RootUserAttrs, RootUserDoc} from "./UserBluePrint";
 
 interface ClientUserAttrs extends RootUserAttrs{
     email: string;
@@ -50,10 +50,4 @@ clientUserSchema.pre('save', async function(done) {
     done();
 });
 
-clientUserSchema.statics.build = (attrs: ClientUserAttrs) => {
-    return new ClientUser(attrs);
-};
-
-const ClientUser = mongoose.model<ClientUserDoc, ClientUserModel>('ClientUser', clientUserSchema);
-
-export { ClientUser, ClientUserDoc, ClientUserModel, clientUserSchema };
+export {ClientUserDoc, ClientUserModel, clientUserSchema, ClientUserAttrs };

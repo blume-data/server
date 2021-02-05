@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "npm run build && npm run start:server",
+    "start": "ENVIORNMENT=production npm run build && npm run start:server",
     "start:server": "node build/index.js",
     "dev": "ts-node-dev --poll src/index.ts",
     "test": "jest --watchAll --no-cache",
@@ -28,7 +28,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@ranjodhbirkaur/common": "^1.2.16",
+    "@ranjodhbirkaur/common": "^1.2.20",
     "@ranjodhbirkaur/constants": "^1.0.93",
     "@types/body-parser": "^1.19.0",
     "@types/cookie-session": "2.0.39",

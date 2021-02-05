@@ -6,11 +6,7 @@ import {
     JWT_ID,
     adminUserType,
     RANDOM_STRING,
-    ClientUser,
-    AdminUser,
-    FreeUser,
     CLIENT_USER_NAME,
-    APPLICATION_NAME,
     generateJwt,
     sendJwtResponse,
     clientType,
@@ -26,6 +22,7 @@ import {ClientTempUser} from "../models/clientTempUser";
 import {Request, Response} from "express";
 import {TOKEN_NOT_VALID, USER_NAME_NOT_AVAILABLE} from "../util/errorMessages";
 import {EXAMPLE_APPLICATION_NAME} from "../util/constants";
+import {MainUserModel} from "../models/MainUserModel";
 
 interface ReqIsUserNameAvailable extends Request{
     body: {
@@ -50,11 +47,7 @@ export const isUserNameAvailable = async function (req: ReqIsUserNameAvailable, 
 
             switch (userType) {
                 case clientUserType: {
-                    userExist = await ClientUser.findOne({userName: modelProps.userName});
-                    break;
-                }
-                case adminUserType: {
-                    userExist = await AdminUser.findOne({userName: modelProps.userName});
+                    userExist = await MainUserModel.findOne({userName: modelProps.userName});
                     break;
                 }
             }
@@ -71,7 +64,7 @@ export const isUserNameAvailable = async function (req: ReqIsUserNameAvailable, 
 export const verifyEmailToken = async function (req: ReqValidateEmail, res: Response) {
     const modelProps = req.query;
 
-    const clientUserExist = await ClientUser.findOne({email: modelProps.email});
+    const clientUserExist = await MainUserModel.findOne({email: modelProps.email});
     if (clientUserExist) {
         throw new BadRequestError('Invalid Request');
     }
@@ -85,49 +78,15 @@ export const verifyEmailToken = async function (req: ReqValidateEmail, res: Resp
             const created_at = `${new Date()}`;
             const userType = userExist.clientType;
 
-            if(userType === freeUserType) {
-                const newUser = FreeUser.build({
-                    email: userExist[EMAIL],
-                    jwtId,
-                    created_at,
-                    [CLIENT_USER_NAME]: userExist[CLIENT_USER_NAME] || '',
-                    applicationName: '',
-                    password: userExist[PASSWORD],
-                    userName: userExist[USER_NAME],
-                    clientType: freeUserType,
-                    env: ''
-                });
-    
-                await newUser.save();
-
-                const response: PayloadResponseType = {
-                    [SESSION_ID]: '',
-                    [APPLICATION_NAMES]: [{
-                        name: '',
-                        languages: ['']
-                    }],
-                    [CLIENT_USER_NAME]: newUser[CLIENT_USER_NAME],
-                    [USER_NAME]: newUser[USER_NAME],
-                    [clientType]: freeUserType
-                };
-
-                const payload: JwtPayloadType = {
-                    [JWT_ID]: newUser[JWT_ID],
-                    [clientType]: freeUserType,
-                    [USER_NAME]: newUser[USER_NAME]
-                };
-
-                return await sendValidateEmailResponse(req, payload, response, res);
-            }
-            else if(userType === clientUserType) {
+            if(userType === clientUserType) {
                 const applicationNames = [{
                     name: EXAMPLE_APPLICATION_NAME,
                     languages: [EnglishLanguage]
                 }];
-                const newUser = ClientUser.build({
+                const newUser = MainUserModel.build({
                     email: userExist[EMAIL],
                     jwtId,
-                    created_at,
+                    createdAt: created_at,
                     [APPLICATION_NAMES]: JSON.stringify(applicationNames),
                     password: userExist[PASSWORD],
                     firstName: userExist[FIRST_NAME],

@@ -198,7 +198,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 setProperties(JSON.parse(response[0].rules));
                 setContentModelDisplayName(response[0].displayName);
                 setContentModelDescription(response[0].description);
-                setContentModelId(response[0].id);
+                setContentModelId(response[0]._id);
             }
             setIsLoading(false);
         }
@@ -834,7 +834,6 @@ const CreateDataModel = (props: CreateDataModelType) => {
             return;
         }
 
-
         if(CollectionUrl && clientUserName && properties && properties.length) {
             const url = CollectionUrl
                 .replace(':clientUserName', clientUserName)
@@ -1085,6 +1084,8 @@ const CreateDataModel = (props: CreateDataModelType) => {
         return null;
 
     }
+
+    console.log('fieldEditMode', fieldEditMode)
 
     return (
         <Grid>

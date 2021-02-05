@@ -6,7 +6,7 @@ import {
     CollectionUrl,
     StoreUrl,
     ApplicationNameUrl,
-    GetCollectionNamesUrl
+    GetCollectionNamesUrl, GetEntriesUrl
 } from "../util/urls";
 
 const router = Router();
@@ -17,7 +17,8 @@ router.get(`${dataRouteUrls}`, (req: Request, res: Response) => {
         ApplicationNameUrl,
         CollectionUrl,
         StoreUrl,
-        GetCollectionNamesUrl
+        GetCollectionNamesUrl,
+        GetEntriesUrl
     });
 });
 

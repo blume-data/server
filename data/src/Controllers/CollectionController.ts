@@ -1,22 +1,12 @@
 import {Request, Response} from 'express';
-import {
-    BadRequestError,
-    ID,
-    okayStatus,
-    sendSingleError,
-    USER_NAME
-} from "@ranjodhbirkaur/common";
-import {
-    MAX_COLLECTION_LIMIT,
-} from "../util/constants";
+import {BadRequestError, ID, okayStatus, sendSingleError} from "@ranjodhbirkaur/common";
+import {MAX_COLLECTION_LIMIT,} from "../util/constants";
 import {CollectionModel} from "../models/Collection";
-import {
-    CANNOT_CREATE_COLLECTIONS_MORE_THAN_LIMIT,
-    COLLECTION_ALREADY_EXIST
-} from "./Messages";
+import {CANNOT_CREATE_COLLECTIONS_MORE_THAN_LIMIT, COLLECTION_ALREADY_EXIST} from "./Messages";
 
-import {trimCharactersAndNumbers} from "@ranjodhbirkaur/constants";
+import {ENTRY_UPDATED_AT, ENTRY_UPDATED_BY, trimCharactersAndNumbers} from "@ranjodhbirkaur/constants";
 import {createModel} from "../util/methods";
+import {DateTime} from "luxon";
 
 export async function createCollectionSchema(req: Request, res: Response) {
 
@@ -50,6 +40,7 @@ export async function createCollectionSchema(req: Request, res: Response) {
         if (alreadyExist) {
             throw new BadRequestError(COLLECTION_ALREADY_EXIST);
         }
+        const createdAt = DateTime.local().setZone('UTC').toJSDate();
 
         const newCollection = CollectionModel.build({
             clientUserName,
@@ -59,8 +50,11 @@ export async function createCollectionSchema(req: Request, res: Response) {
             name: reqBody.name,
             displayName: reqBody.displayName,
             env,
-            updatedBy: `${req.currentUser[ID]}-${req.currentUser[USER_NAME]}`,
-            description: reqBody.description
+            updatedBy: `${req.currentUser[ID]}`,
+            description: reqBody.description,
+            createdAt,
+            createdBy: `${req.currentUser[ID]}`,
+            updatedAt: createdAt
         });
 
         await newCollection.save();
@@ -85,6 +79,7 @@ export async function createCollectionSchema(req: Request, res: Response) {
             if(reqBody.displayName) {
                 update.displayName = reqBody.displayName;
             }
+            update[ENTRY_UPDATED_AT] = DateTime.local().setZone('UTC').toJSDate();
 
             await CollectionModel.findOneAndUpdate({
                 _id: reqBody.id
@@ -124,7 +119,15 @@ export async function getCollectionNames(req: Request, res: Response) {
         get = getOnly.split(',')
     }
 
-    const collections = await CollectionModel.find(where, get);
+    const query = CollectionModel.find(where, get);
+    if(getOnly && getOnly.includes(ENTRY_UPDATED_BY)){
+        query.populate(ENTRY_UPDATED_BY, 'firstName lastName');
+    }
+    else if(!getOnly) {
+        query.populate(ENTRY_UPDATED_BY, 'firstName lastName');
+    }
+
+    const collections = await query;
 
     res.status(okayStatus).send(collections);
 }

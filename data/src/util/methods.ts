@@ -14,8 +14,16 @@ import {
 import {
     ENTRY_LANGUAGE_PROPERTY_NAME,
 } from "./constants";
-import {APPLICATION_NAME, CLIENT_USER_NAME, okayStatus} from "@ranjodhbirkaur/common"
+import {
+    APPLICATION_NAME,
+    APPLICATION_NAMES, CLIENT_USER_MODEL_NAME,
+    CLIENT_USER_NAME,
+    JWT_ID,
+    okayStatus,
+    PASSWORD
+} from "@ranjodhbirkaur/common"
 import {getCollection} from "../Controllers/StoreController";
+import _ from 'lodash';
 
 export const RANDOM_STRING = function (minSize=10) {
     return randomBytes(minSize).toString('hex')
@@ -140,9 +148,13 @@ export function createModel(params: CreateModelType) {
     schemaData = {
         ...schemaData,
         [ENTRY_LANGUAGE_PROPERTY_NAME]: String,
-        createdAt : { type: Date },
-        updatedAt : { type: Date },
+        deletedBy : { type: Schema.Types.ObjectId, ref: 'ClientUser' },
         deletedAt : { type: Date },
+        createdBy : { type: Schema.Types.ObjectId, ref: 'ClientUser' },
+        createdAt : { type: Date },
+        updatedBy : { type: Schema.Types.ObjectId, ref: 'ClientUser' },
+        updatedAt : { type: Date },
+
         status: {
             type: String,
             enum: [DELETED_ENTRY_STATUS, PUBLISHED_ENTRY_STATUS, ARCHIVED_ENTRY_STATUS, DRAFT_ENTRY_STATUS],
@@ -151,13 +163,6 @@ export function createModel(params: CreateModelType) {
     };
 
     const schema = new Schema(schemaData, {
-        toJSON: {
-            transform(doc, ret) {
-                ret.id = ret._id;
-                delete ret._id;
-                delete ret.__v;
-            }
-        },
         strict: false
     });
 
@@ -180,21 +185,14 @@ export function createModel(params: CreateModelType) {
     }
 }
 
-// remove the unwanted properties from get-only
-export function trimGetOnly(params: string | null | string[]) {
-    let getOnly: string[] = [];
-    if(params && Array.isArray(params) &&  params.length) {
-        params.forEach((it: string) => {
-            getOnly.push(it);
-        });
+export function trimGetOnly(params?: string[] | string | null): string {
+    if(typeof params === 'string') {
+        return params;
     }
-    else if(typeof params === 'string') {
-        getOnly.push(params);
+    else if(params && Array.isArray(params)) {
+        return params.join(' ');
     }
-    else {
-        getOnly.push(`-${ENTRY_LANGUAGE_PROPERTY_NAME}`);
-    }
-    return getOnly;
+    return `-${ENTRY_LANGUAGE_PROPERTY_NAME}`;
 }
 
 // send on id on create record

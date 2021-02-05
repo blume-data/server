@@ -18,6 +18,9 @@ import {AlertDialog} from "../../../../../components/common/AlertDialog";
 import Loader from "../../../../../components/common/Loader";
 import {Link} from "react-router-dom";
 import {useHistory} from "react-router";
+import {DateCell} from "../../../../../components/common/DateCell";
+import {DateTime} from "luxon";
+import {UserCell} from "../../../../../components/common/UserCell";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
@@ -51,10 +54,11 @@ const DataModels = (props: PropsFromRedux) => {
 
             const fullUrl = `${getBaseUrl()}${url}`;
             const response = await doGetRequest(fullUrl, null, true);
+            console.log('response dd', response);
             if(response && Array.isArray(response)) {
                 setStores(response.map(item => {
-                    const updatedAt = 'now time';
-                    const updatedBy = item.updatedBy.split('-')[1];
+                    const updatedAt = DateTime.fromISO(item.updatedAt);
+                    const updatedBy = <UserCell value={item.updatedBy} />;
                     return {
                         ...item,
                         linkUrl: `${dashboardDataEntriesUrl
@@ -65,7 +69,7 @@ const DataModels = (props: PropsFromRedux) => {
                         delete: <IconButton><DeleteIcon /></IconButton>,
                         'delete-click': () => openConfirmAlert(item.name),
                         'edit-click': () => onClickEdit(item.name),
-                        updatedAt,
+                        updatedAt: <DateCell value={updatedAt} />,
                         updatedBy
                     }
                 }));
