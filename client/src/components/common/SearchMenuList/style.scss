@@ -1,6 +1,8 @@
 @import "../../../assets/style/index";
 .search-menu-list {
   position: relative;
+  padding-top: 10px;
+  padding-bottom: 10px;
   .MuiTextField-root {
     width: 300px;
     @include mobileAndTablet {

@@ -39,16 +39,19 @@ function dataEntriesComponent(props: PropsFromRedux) {
     return (
         <Grid className={'data-entries-wrapper-container'}>
             <Grid className="data-entries">
-                <Grid container justify={"space-between"}>
-
-                    <Grid item>
-                        <Link to={createDataEntryUrl}>
-                            <Button variant={"contained"} color={"primary"}>
-                                Add {`${modelName ? modelName : 'entry'}`}
-                            </Button>
-                        </Link>
-                    </Grid>
-                </Grid>
+                {
+                    modelName
+                    ? <Grid container justify={"space-between"}>
+                            <Grid item>
+                                <Link to={createDataEntryUrl}>
+                                    <Button variant={"contained"} color={"primary"}>
+                                        Add {`${modelName ? modelName : 'entry'}`}
+                                    </Button>
+                                </Link>
+                            </Grid>
+                        </Grid>
+                    : null
+                }
                 <EntriesTable
                     modelName={modelName}
                     setModelName={setSelectedModelName}

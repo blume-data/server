@@ -6,6 +6,9 @@ import {getModelDataAndRules} from "../../../../../utils/tools";
 import {DESCRIPTION, DISPLAY_NAME, NAME, RuleType} from "@ranjodhbirkaur/constants";
 import './entries-filter.scss';
 import {SearchMenuList} from "../../../../../components/common/SearchMenuList";
+import {CommonButton} from "../../../../../components/common/CommonButton";
+import ModalDialog from "../../../../../components/common/ModalDialog";
+import {AddFilter} from "./AddFilter";
 
 interface ModelsType {
     [DESCRIPTION]: string;
@@ -25,12 +28,17 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
 
     const {applicationName, env, language, GetCollectionNamesUrl, modelName, setModelName, rules } = props;
     const [models, setModels] = useState<ModelsType[]>([]);
+    const [selectedProperty, setSelectedProperty] = useState<string>('');
+    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
-    async function fetchModelRulesAndData() {
+    console.log('Rules', rules);
+
+    async function fetchModelRulesAndData(fetchModels = false, getOnly = `${DESCRIPTION},${NAME},${DISPLAY_NAME}`) {
         if(GetCollectionNamesUrl) {
             const response = await getModelDataAndRules({
-                applicationName, language, modelName: '', env, GetCollectionNamesUrl,
-                getOnly: `${DESCRIPTION},${NAME},${DISPLAY_NAME}`
+                applicationName, language,
+                modelName: fetchModels ? modelName : '', env, GetCollectionNamesUrl,
+                getOnly
             });
             if(response && response.length) {
                 setModels(response);
@@ -51,29 +59,61 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
         }
     });
 
+    const rulesOptions = rules && rules.map(rule => {
+        return {
+            label: rule[DISPLAY_NAME],
+            value: rule[NAME]
+        };
+    })
+
     // on change dropdown
     function onChangeModelDropDown(value: string) {
         if(setModelName) {
             setModelName(value);
         }
-        console.log('va', value)
+    }
+    // on change properties dropdown
+    function onChangePropertiesDropdown(value: string) {
+        setSelectedProperty(value);
+    }
+
+    // Close filter modal
+    function closeFilterModal() {
+        setIsModalOpen(false);
+    }
+
+    function onClickAddFilter() {
+        setIsModalOpen(true);
     }
 
     return (
         <Grid className={'entries-filter-wrapper-container'}>
-            <div className="filters-wrapper">
-                <div className="model-dropdown-wrapper">
+            <Grid container justify={"space-between"} className="filters-wrapper">
+                <Grid item className="model-dropdown-wrapper">
                     <SearchMenuList
                         value={modelName}
                         placeholder={'Filter model'}
                         options={modelOptions}
                         onMenuChange={onChangeModelDropDown}
                     />
-                </div>
-                <div className="properties-dropdown-wrapper">
+                </Grid>
+                <Grid item className="filter-type-wrapper">
+                    {
+                        modelName ? <CommonButton onClick={onClickAddFilter} name={'Add filter'} /> : null
+                    }
+                </Grid>
 
-                </div>
-            </div>
+            </Grid>
+            <ModalDialog
+                title={'Add filter'}
+                isOpen={isModalOpen}
+                handleClose={closeFilterModal}
+                children={<AddFilter
+                    rulesOptions={rulesOptions ? rulesOptions : []}
+                    onChangePropertiesDropdown={onChangePropertiesDropdown}
+                    modelName={modelName}
+                />}
+            />
         </Grid>
     );
 }

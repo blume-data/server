@@ -6,6 +6,7 @@ import TextField from "@material-ui/core/TextField";
 import {Grid} from "@material-ui/core";
 import './style.scss';
 import List from "@material-ui/core/List";
+import InputLabel from "@material-ui/core/InputLabel";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -91,10 +92,10 @@ export const SearchMenuList = (props: SearchMenuListProps) => {
     function onBlurTextSearch() {
         setTimeout(() => setHide(true));
     }
-    console.log('tilmeZones', timeZones)
 
     return (
         <Grid className={`${classNames} search-menu-list`}>
+            <InputLabel>{placeholder}</InputLabel>
             <TextField
                 onFocus={() => setHide(false)}
                 onBlur={onBlurTextSearch}
