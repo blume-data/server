@@ -1,0 +1,25 @@
+@import "src/assets/style/index.scss";
+.application-name-container {
+  .button-section {
+    width: 50%;
+    margin: 0 auto;
+    .button-group {
+      button {
+        margin: 10px;
+      }
+    }
+  }
+  .application-spaces-list {
+    padding: 10px;
+
+    .application-space-list-item {
+      padding: 10px;
+      text-transform: uppercase;
+    }
+    .application-space-list-item:hover {
+      background-color: $light-gray;
+      cursor: pointer;
+    }
+  }
+
+}

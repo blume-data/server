@@ -1,0 +1,25 @@
+@import "src/assets/style/color";
+
+.vertical-tab-container {
+  .vertical-tab-panel {
+    width: 100%;
+    height: 400px;
+    overflow: auto;
+    .vertical-tab-box-container {
+      padding-top: 0;
+    }
+  }
+  button.MuiTab-textColorInherit {
+    span.MuiTab-wrapper {
+      color: $black;
+    }
+  }
+  button.MuiTab-textColorInherit.selected {
+    span.MuiTab-wrapper {
+      color: $pink !important;
+    }
+  }
+  button.MuiTab-textColorInherit:hover {
+    background-color: $light-gray;
+  }
+}

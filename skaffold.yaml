@@ -35,8 +35,8 @@ build:
             dest: .
 
 
-#    - image: taranjeetsingh/client
-#      context: client
+#    - image: taranjeetsingh/dashboard
+#      context: dashboard
 #      docker:
 #        dockerfile: Dockerfile
 #      sync:

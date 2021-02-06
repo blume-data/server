@@ -21,11 +21,7 @@ export const CLIENT_USER_MODEL_NAME = 'ClientUser';
 
 // get mongo database url
 export function getMongoDatabaseUrl() {
-    let mongoUrl = 'mongodb+srv://all:all@cluster0.a6c0l.mongodb.net/ranjodh?retryWrites=true&w=majority';
-    if(process.env.ENVIORNMENT === 'production') {
-        mongoUrl = 'mongodb://database-mongo-srv:27017/waheguru';
-    }
-    return mongoUrl;
+    return 'mongodb+srv://all:all@cluster0.a6c0l.mongodb.net/ranjodh?retryWrites=true&w=majority';
 }
 // mongo database connect options
 export const mongoConnectOptions = {
