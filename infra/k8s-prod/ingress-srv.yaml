@@ -38,7 +38,7 @@ spec:
     - host: app.ranjod.com
       http:
         paths:
-          - path: /app-spaces/?(.*)
+          - path: /dashboard/?(.*)
             backend:
               serviceName: dashboard-srv
               servicePort: 3000

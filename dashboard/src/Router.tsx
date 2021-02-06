@@ -17,7 +17,7 @@ import {
     dashboardDataEntriesUrl,
     dashboardCreateDataEntryUrl,
     dashboardCreateDataModelsUrl,
-    assetsUrl
+    assetsUrl, APP_ROOT_URL
 } from "./utils/urls";
 import {Assets} from "./modules/assets";
 import Layout from "./components/common/Layout";
@@ -46,7 +46,7 @@ export const RouterComponent = () => {
         <Router>
             <Layout>
                 <Switch>
-                    <Route exact path={'/'} component={App} />
+                    <Route exact path={APP_ROOT_URL} component={App} />
                     <Route exact path={`${authUrl}/:step`} component={Auth} />
                     {/*Private Routes*/}
                     <Route exact path={dashboardHomeUrl} component={PrivateRoute(Home)}/>
