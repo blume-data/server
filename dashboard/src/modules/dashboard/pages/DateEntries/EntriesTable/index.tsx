@@ -30,43 +30,9 @@ const EntriesTableComponent = (props: EntriesTableType) => {
 
     const {env, applicationName, GetCollectionNamesUrl, language, GetEntriesUrl, modelName, setModelName} = props;
 
-    const widthOfColumn = 200;
-
     useEffect(() => {
-        if(modelName) {
-            // init the table columns
-            /*const tabColumns: ColDef[] = [
-                { field: 'id', headerName: 'ID'},
-                { field: 'updatedBy', headerName: 'Updated by', sortable:false, align: "left",width: widthOfColumn,
-                    renderCell: ((params) => {
-                        const value = params.getValue('updatedBy');
-                        if(value) {
-                            return <UserCell value={value} />
-                        }
-                        else {
-                            return <p>{value}</p>;
-                        }
-                    })
-                },
-                { field: ENTRY_UPDATED_AT, headerName: 'Updated at', sortable:false, align: "left",width: widthOfColumn,
-                    renderCell: ((params) => {
-                        const value = `${params.getValue(ENTRY_UPDATED_AT) || ''}`
-                        const timeStamp = DateTime.fromISO(value);
-                        return <DateCell value={timeStamp} />
-                    })
-                },
-                { field: 'status', headerName: 'Status', sortable:false, width: widthOfColumn,
-                    renderCell: ((params) => {
-                        const value = `${params.getValue('status') || ''}`;
-                        return <Tooltip title={value}>
-                            <Typography>{value}</Typography>
-                        </Tooltip>
-                    })
-                },
-            ];
-            setColumns(tabColumns);*/
-        }
-    }, [setColumns, modelName]);
+        getItems()
+    }, [GetEntriesUrl]);
 
     // Fetch records in the model
     async function getItems() {
@@ -84,9 +50,6 @@ const EntriesTableComponent = (props: EntriesTableType) => {
                     ...i,
                     updatedAt: <DateCell value={updatedAt} />,
                     updatedBy
-                    /*id: i._id,
-                    lastName: i.lastName,
-                    firstName: i.firstName*/
                 }
             }));
             setIsLoading(false);
