@@ -27,3 +27,10 @@ spec:
             backend:
               serviceName: client-srv
               servicePort: 8080
+    - host: dash.ranjod.com
+      http:
+        paths:
+          - path: /?(.*)
+            backend:
+              serviceName: dashboard-srv
+              servicePort: 3000
