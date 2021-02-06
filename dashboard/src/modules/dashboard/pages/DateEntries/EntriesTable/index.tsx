@@ -1,22 +1,18 @@
 import React, {useEffect, useState} from 'react';
-import {ColDef, DataGrid} from '@material-ui/data-grid';
 import {RootState} from "../../../../../rootReducer";
 import {connect, ConnectedProps} from "react-redux";
 import {fetchModelEntries, getModelDataAndRules} from "../../../../../utils/tools";
 import {
-    ENTRY_UPDATED_AT,
-    REFERENCE_MODEL_NAME,
-    RuleType
+    ENTRY_UPDATED_AT, ENTRY_UPDATED_BY,
+    RuleType, STATUS
 } from "@ranjodhbirkaur/constants";
 import Grid from "@material-ui/core/Grid";
 import './entries-table.scss';
-import { DateTime } from 'luxon';
-import Typography from "@material-ui/core/Typography";
-import {Tooltip} from "@material-ui/core";
-import {DateCell} from "../../../../../components/common/DateCell";
-import {UserCell} from "../../../../../components/common/UserCell";
 import {EntriesFilter} from "../Entries-Filter/EntriesFilter";
-import Loader from "../../../../../components/common/Loader";
+import BasicTableMIUI from "../../../../../components/common/BasicTableMIUI";
+import {DateTime} from "luxon";
+import {UserCell} from "../../../../../components/common/UserCell";
+import {DateCell} from "../../../../../components/common/DateCell";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type EntriesTableType = PropsFromRedux & {
@@ -29,7 +25,7 @@ const EntriesTableComponent = (props: EntriesTableType) => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [rules, setRules] = useState<RuleType[] | null>(null);
     const [rows, setRows] = useState([]);
-    const [columns, setColumns] = useState<ColDef[]>([]);
+    const [columns, setColumns] = useState<any[]>([]);
     const [where, setWhere] = useState<any>({});
 
     const {env, applicationName, GetCollectionNamesUrl, language, GetEntriesUrl, modelName, setModelName} = props;
@@ -39,7 +35,7 @@ const EntriesTableComponent = (props: EntriesTableType) => {
     useEffect(() => {
         if(modelName) {
             // init the table columns
-            const tabColumns: ColDef[] = [
+            /*const tabColumns: ColDef[] = [
                 { field: 'id', headerName: 'ID'},
                 { field: 'updatedBy', headerName: 'Updated by', sortable:false, align: "left",width: widthOfColumn,
                     renderCell: ((params) => {
@@ -68,7 +64,7 @@ const EntriesTableComponent = (props: EntriesTableType) => {
                     })
                 },
             ];
-            setColumns(tabColumns);
+            setColumns(tabColumns);*/
         }
     }, [setColumns, modelName]);
 
@@ -82,11 +78,15 @@ const EntriesTableComponent = (props: EntriesTableType) => {
             });
 
             setRows(response.map((i: any) => {
+                const updatedAt = DateTime.fromISO(i.updatedAt);
+                const updatedBy = <UserCell value={i.updatedBy} />;
                 return {
                     ...i,
-                    id: i._id,
+                    updatedAt: <DateCell value={updatedAt} />,
+                    updatedBy
+                    /*id: i._id,
                     lastName: i.lastName,
-                    firstName: i.firstName
+                    firstName: i.firstName*/
                 }
             }));
             setIsLoading(false);
@@ -103,20 +103,18 @@ const EntriesTableComponent = (props: EntriesTableType) => {
     // update the columns with new fetched rules
     function updateColumns() {
         if(rules && rules.length) {
-            const newColumns: ColDef[] = [];
+
+            const newColumns: any[] = [];
             rules.forEach(rule => {
                 newColumns.push({
-                    headerName: rule.displayName,
-                    field: rule.name,
-                    width: widthOfColumn,
-                    renderCell: (rule[REFERENCE_MODEL_NAME]
-                        ? () => renderModelLink(rule[REFERENCE_MODEL_NAME])
-                        : undefined
-                    ),
-                    sortable: !rule[REFERENCE_MODEL_NAME]
+                    name: `${rule.displayName}`,
+                    value: rule.name
                 });
             });
-            setColumns([...columns, ...newColumns]);
+            newColumns.push({name: 'Status', value: STATUS});
+            newColumns.push({name: 'Updated At', value: ENTRY_UPDATED_AT});
+            newColumns.push({name: 'Updated by', value: ENTRY_UPDATED_BY});
+            setColumns(newColumns);
         }
     }
 
@@ -128,6 +126,7 @@ const EntriesTableComponent = (props: EntriesTableType) => {
             });
             if(response && !response.errors && response.length) {
                 setRules(JSON.parse(response[0].rules));
+
             }
             setIsLoading(false);
         }
@@ -164,6 +163,9 @@ const EntriesTableComponent = (props: EntriesTableType) => {
         }
     }, [where]);
 
+    console.log('columns', columns);
+    console.log('rows', rows)
+
 
     return (
         <Grid
@@ -176,18 +178,19 @@ const EntriesTableComponent = (props: EntriesTableType) => {
                     rules={rules}
                 />
             </Grid>
-            <DataGrid
-                autoHeight={true}
-                rows={rows}
-                disableColumnMenu={true}
-                columns={columns}
-                checkboxSelection
-                hideFooterPagination={true}
-                loading={isLoading}
-                onSelectionChange={(d) => {
-                    console.log('d', d)
-                }}
-            />
+
+            <Grid className="entries-table">
+                {
+                    columns && columns.length ? <BasicTableMIUI
+                        rows={rows}
+                        columns={columns}
+                        tableName={'Entries'}
+                    /> : <p>No models</p>
+                }
+            </Grid>
+
+
+
         </Grid>
     );
 }

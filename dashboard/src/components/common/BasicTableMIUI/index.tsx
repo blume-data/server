@@ -16,7 +16,7 @@ const useStyles = makeStyles({
 });
 
 interface BasicTableMIUIProps {
-    tableRows: {
+    columns: {
         name: string;
         value: string;
         linkUrl?: boolean;
@@ -29,14 +29,14 @@ interface BasicTableMIUIProps {
 export default function BasicTableMIUI(props: BasicTableMIUIProps) {
     const classes = useStyles();
 
-    const {tableName, tableRows, rows} = props;
+    const {tableName, columns, rows} = props;
 
     function renderRow(row: any, index: number) {
 
         const key = `${index}`;
         return (
             <TableRow key={key}>
-                {tableRows.map((tableRow, index) => {
+                {columns.map((tableRow, index) => {
                     return (
                         <TableCell
                             key={index}
@@ -62,7 +62,7 @@ export default function BasicTableMIUI(props: BasicTableMIUIProps) {
                 <TableHead>
                     <TableRow>
                         {
-                            tableRows.map((tableRow, index) => {
+                            columns.map((tableRow, index) => {
                                 return (
                                     <TableCell align={index === 0 ? 'left' : "right"} key={index}>{tableRow.name}</TableCell>
                                 );
