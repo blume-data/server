@@ -1,4 +1,3 @@
-//import * as serviceWorker from './serviceWorker';
 import {BrowserRouter} from "react-router-dom";
 import {applyMiddleware, createStore} from "redux";
 import thunk from "redux-thunk";
@@ -7,6 +6,7 @@ import {rootReducer, RouteAddressStateType} from './rootReducer';
 import {Provider} from "react-redux";
 import ReactDOM from "react-dom";
 import React from "react";
+import reportWebVitals from './reportWebVitals';
 
 declare global {
     interface Window {
@@ -38,4 +38,4 @@ ReactDOM.render(
     </React.StrictMode>,
     document.getElementById('root')
 );
-//serviceWorker.register();
+reportWebVitals();

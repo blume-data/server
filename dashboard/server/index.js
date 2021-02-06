@@ -1,19 +1,15 @@
 const path = require('path');
 const Express = require('express');
+const bodyParser = require('body-parser')
 const shrinkRay = require('shrink-ray-current');
-const ChunkExtractor = require('@loadable/server').ChunkExtractor;
-const { default: makeServerMiddleware } = require('../build/server');
 const PORT = process.env.PORT || 3000;
-
-const assets = path.resolve('build/loadable-stats.json');
-const webExtractor = new ChunkExtractor({statsFile: assets});
 
 const app = Express();
 app.use(shrinkRay());
 
 if (process.env.NODE_ENV !== 'development') {
     console.log('Env is production using only https!!');
-    app.use(sslRedirect());
+    //app.use(sslRedirect());
 }
 
 /*Avoid sending server.js to client*/
@@ -24,12 +20,18 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use(Express.static(path.resolve(process.cwd(), './build'), { index: false }));
+app.use(Express.static(path.join(__dirname, '../build')));
+app.get('*', function (req, res) {
+    res.sendFile(path.join(__dirname, '../build', 'index.html'));
+});
+app.listen(process.env.PORT || 8080);
 
-app.all('*', makeServerMiddleware(webExtractor));
+/*app.all('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../build/index.html'))
+});
 app.listen(PORT, () => {
     console.log(`App is listening on http://localhost:${PORT}`);
-});
+});*/
 
 
 function sslRedirect(environments, status) {
