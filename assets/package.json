@@ -13,7 +13,7 @@
     "ingress": "kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/cloud/deploy.yaml",
     "clear-pods": "kubectl delete deployment auth-depl && kubectl delete deployment auth-mongo-depl",
     "jwt": "kubectl create secret generic jwt-secret --from-literal=JWT_KEY=sdjfksdjfdskfjdsk",
-    "DO:pods": "kubectl --kubeconfig=\".kube/ranjod-cluster-kubeconfig.yaml\" get pods",
+    "DO:pods": "kubectl --kubeconfig=\".kube/ranjod-kubeconfig.yaml\" get pods",
     "update-@ranjodhbirkaur/common": "npm update @ranjodhbirkaur/common",
     "update-@ranjodhbirkaur/constants": "npm update @ranjodhbirkaur/constants"
   },
