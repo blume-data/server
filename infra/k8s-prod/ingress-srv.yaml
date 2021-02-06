@@ -11,6 +11,7 @@ metadata:
 spec:
   tls:
     - hosts:
+        - app.ranjod.com
         - ranjod.com
         - www.ranjod.com
       secretName: ranjod-com
@@ -33,4 +34,11 @@ spec:
           - path: /?(.*)
             backend:
               serviceName: client-srv
+              servicePort: 3000
+    - host: app.ranjod.com
+      http:
+        paths:
+          - path: /app-spaces/?(.*)
+            backend:
+              serviceName: dashboard-srv
               servicePort: 3000

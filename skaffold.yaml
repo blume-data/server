@@ -35,11 +35,11 @@ build:
             dest: .
 
 
-#    - image: taranjeetsingh/client
-#      context: client
-#      docker:
-#        dockerfile: Dockerfile
-#      sync:
-#        manual:
-#          - src: 'src/**/*.{ts,tsx,js}'
-#            dest: .
+    - image: taranjeetsingh/dashboard
+      context: dashboard
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.{ts,tsx,js}'
+            dest: .

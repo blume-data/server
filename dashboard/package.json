@@ -24,7 +24,6 @@
     "@types/react-swipeable-views": "^0.13.0",
     "@types/redux-thunk": "^2.1.0",
     "axios": "^0.21.1",
-    "body-parser": "^1.19.0",
     "date-fns": "^2.0.0-beta.5",
     "express": "^4.17.1",
     "luxon": "^1.25.0",
