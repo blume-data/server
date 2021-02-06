@@ -944,7 +944,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 {
                     items && items.length ? <BasicTableMIUI
                         rows={items}
-                        tableRows={tableRows}
+                        columns={tableRows}
                         tableName={'Model Name'}
                     /> : null
                 }
@@ -1029,7 +1029,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 {
                     properties && properties.length ? <BasicTableMIUI
                         rows={rows}
-                        tableRows={tableRows}
+                        columns={tableRows}
                         tableName={'Fields'}
                     /> : <p>No fields added</p>
                 }

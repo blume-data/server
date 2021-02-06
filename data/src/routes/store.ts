@@ -8,7 +8,7 @@ import {validateApplicationNameMiddleWare} from "../services/validateApplication
 const router = express.Router();
 
 // Get Data
-router.post(
+router.all(
     GetEntriesUrl,
     validateEnvType, checkAuth,
     validateApplicationNameMiddleWare,

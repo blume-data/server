@@ -214,7 +214,7 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
         }
     }
 
-    console.log('filters', filters);
+    //console.log('filters', filters);
 
     return (
         <Grid className={'entries-filter-wrapper-container'}>

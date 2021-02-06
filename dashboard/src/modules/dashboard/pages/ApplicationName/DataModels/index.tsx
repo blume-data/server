@@ -3,7 +3,7 @@ import {Grid} from "@material-ui/core";
 import {dashboardCreateDataModelsUrl, dashboardDataEntriesUrl, getBaseUrl} from "../../../../../utils/urls";
 import {APPLICATION_NAME, CLIENT_USER_NAME} from "@ranjodhbirkaur/constants";
 import './store-list.scss';
-import {getItemFromLocalStorage} from "../../../../../utils/tools";
+import {getItemFromLocalStorage, getModelDataAndRules} from "../../../../../utils/tools";
 import {doDeleteRequest, doGetRequest} from "../../../../../utils/baseApi";
 import BasicTableMIUI from "../../../../../components/common/BasicTableMIUI";
 
@@ -44,17 +44,11 @@ const DataModels = (props: PropsFromRedux) => {
 
             setIsLoading(true);
 
-            const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
+            const response = await getModelDataAndRules({
+                applicationName, env, language, GetCollectionNamesUrl
+            });
 
-            const url = GetCollectionNamesUrl
-                .replace(`:${CLIENT_USER_NAME}`, clientUserName ? clientUserName : '')
-                .replace(':env', env)
-                .replace(':language', language)
-                .replace(`:${APPLICATION_NAME}`,applicationName);
-
-            const fullUrl = `${getBaseUrl()}${url}`;
-            const response = await doGetRequest(fullUrl, null, true);
-            console.log('response dd', response);
+            //console.log('response dd', response);
             if(response && Array.isArray(response)) {
                 setStores(response.map(item => {
                     const updatedAt = DateTime.fromISO(item.updatedAt);
@@ -111,6 +105,9 @@ const DataModels = (props: PropsFromRedux) => {
 
     }
 
+    console.log('TableRows -> rows', tableRows);
+    console.log('rows', stores);
+
     const createModelUrl = dashboardCreateDataModelsUrl.replace(`:${APPLICATION_NAME}`, applicationName);
 
     function onClickEdit(name: string) {
@@ -146,7 +143,7 @@ const DataModels = (props: PropsFromRedux) => {
                 {
                     stores && stores.length ? <BasicTableMIUI
                         rows={stores}
-                        tableRows={tableRows}
+                        columns={tableRows}
                         tableName={'stores'}
                     /> : <p>No models</p>
                 }
