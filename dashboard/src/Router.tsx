@@ -21,7 +21,6 @@ import {
 } from "./utils/urls";
 import {Assets} from "./modules/assets";
 import Layout from "./components/common/Layout";
-import React from "react";
 import Home from "./modules/dashboard/pages/home";
 
 import CreateDataModel from "./modules/dashboard/pages/ApplicationName/DataModels/CreateDataModel";
@@ -30,6 +29,7 @@ import DataModels from "./modules/dashboard/pages/ApplicationName/DataModels";
 import ApplicationName from "./modules/dashboard/pages/ApplicationName";
 import ApplicationNames from "./modules/dashboard/pages/applicationNames";
 import {DataEntries} from './modules/dashboard/pages/DateEntries';
+import React from "react";
 
 function PrivateRoute(Component: any) {
     return () => {
