@@ -77,10 +77,8 @@ import IconButton from "@material-ui/core/IconButton";
 import Paper from "@material-ui/core/Paper";
 import {Alert} from "../../../../../../components/common/Toast";
 import {AlertDialog} from "../../../../../../components/common/AlertDialog";
-import {CenterTab} from "../../../../../../components/common/CenterTab";
 import {useHistory} from "react-router";
 import ModalDialog from "../../../../../../components/common/ModalDialog";
-import Typography from "@material-ui/core/Typography";
 import {RenderHeading} from "../../../../../../components/common/RenderHeading";
 import {CommonButton} from "../../../../../../components/common/CommonButton";
 
@@ -929,9 +927,10 @@ const CreateDataModel = (props: CreateDataModelType) => {
         }
 
         return (
-            <Grid container justify={"space-between"} className="name-section-container">
+            <Grid container justify={"flex-start"} className="name-section-container">
                 <Grid item className={'text-container'}>
                     <RenderHeading
+                        type={'primary'}
                         title={'Model name'}
                         className={'model-display-name'}
                         value={contentModelDisplayName ? contentModelDisplayName : 'untitled model'}
@@ -939,6 +938,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                     {
                         contentModelDescription ?
                             <RenderHeading
+                                type={"secondary"}
                                 className={'model-description'}
                                 title={'model-description'}
                                 value={contentModelDescription}
@@ -1037,7 +1037,9 @@ const CreateDataModel = (props: CreateDataModelType) => {
                         rows={rows}
                         columns={tableRows}
                         tableName={'Fields'}
-                    /> : <p>No fields added</p>
+                    /> : addingField
+                        ? null
+                        : <RenderHeading className={'no-fields-added'} type={"primary"} title={'No fields added'} value={'No fields added'} />
                 }
             </Grid>
         );
@@ -1094,11 +1096,16 @@ const CreateDataModel = (props: CreateDataModelType) => {
     }
 
     return (
-        <Grid>
+        <Grid className={'create-data-model-container'}>
             {
                 isLoading ? <Loader /> :  null
             }
-            <h1>{fieldEditMode ? 'Edit' : 'Create'} Model</h1>
+            <RenderHeading
+                className={'main-heading'}
+                type={"main"}
+                value={`${fieldEditMode ? 'Edit' : 'Create'} Model`}
+                title={`${fieldEditMode ? 'Edit' : 'Create'} Model`}
+            />
             <Grid className={'model-name-container'}>
                 {renderNameSection()}
             </Grid>
@@ -1109,7 +1116,12 @@ const CreateDataModel = (props: CreateDataModelType) => {
                             {
                                 contentModelDisplayName
                                     ? renderPropertiesSection()
-                                    : 'Please add name for the model'
+                                    : <RenderHeading
+                                        className={'add-name-heading'}
+                                        value={'Please add name of the model'}
+                                        type={'secondary'}
+                                        title={'Please add name of the model'}
+                                    />
                             }
                         </Grid>
 
@@ -1120,6 +1132,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                                     <Grid container justify={"space-between"}>
                                         <Grid item>
                                             <RenderHeading
+                                                type={"primary"}
                                                 title={'Add new field'}
                                                 value={'Add new field'}
                                             />
