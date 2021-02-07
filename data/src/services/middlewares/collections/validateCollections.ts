@@ -1,5 +1,4 @@
 import {NextFunction, Request, Response} from "express";
-import {RuleType} from "../../../util/interface";
 import {
     INVALID_RULES_MESSAGE,
     REQUIRED_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN,
@@ -20,6 +19,7 @@ import {
     SHORT_STRING_FIElD_TYPE,
     shortenString,
     SUPPORTED_FIELDS_TYPE,
+    RuleType, FIELD_CUSTOM_ERROR_MSG_MATCH_CUSTOM_PATTERN
 } from "@ranjodhbirkaur/constants";
 import {isValidRegEx} from "../../../util/methods";
 
@@ -50,10 +50,11 @@ export async function validateCollections(req: Request, res: Response, next: Nex
                 type: `${rule.type}`,
                 description: `${rule.description}`,
                 displayName: `${rule.displayName}`,
-                max: 0,
-                min: 0,
                 unique: Boolean(rule.unique),
                 required: Boolean(rule.required),
+
+                /*max: 0,
+                min: 0,
                 default: ``,
                 [FIELD_CUSTOM_ERROR_MSG_MIN_MAX]: '',
                 [FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN]: '',
@@ -63,7 +64,7 @@ export async function validateCollections(req: Request, res: Response, next: Nex
                 matchCustomSpecificPattern: '',
                 onlyAllowedValues: '',
                 referenceModelName: '',
-                referenceModelType: ''
+                referenceModelType: ''*/
             };
 
             // check if name is there
@@ -207,6 +208,11 @@ export async function validateCollections(req: Request, res: Response, next: Nex
             //check FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN property
             if(rule[FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN] && isSSType(rule.type)) {
                 parsedRule[FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN] = `${rule[FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN]}`;
+            }
+
+            // check FIELD_CUSTOM_ERROR_MSG_MATCH_CUSTOM_PATTERN property
+            if(rule[FIELD_CUSTOM_ERROR_MSG_MATCH_CUSTOM_PATTERN] && isSSType(rule.type)) {
+                parsedRule[FIELD_CUSTOM_ERROR_MSG_MATCH_CUSTOM_PATTERN] = `${rule[FIELD_CUSTOM_ERROR_MSG_MATCH_CUSTOM_PATTERN]}`;
             }
 
             // check allowed values

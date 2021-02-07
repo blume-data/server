@@ -17,7 +17,7 @@
   }
   button.MuiTab-textColorInherit.selected {
     span.MuiTab-wrapper {
-      color: $pink !important;
+      color: $blue !important;
     }
   }
   button.MuiTab-textColorInherit:hover {
@@ -27,5 +27,8 @@
     button.MuiTab-textColorInherit:nth-child(even) {
       background-color: $light-gray !important;
     }
+  }
+  .MuiTabs-indicator {
+    background-color: $blue;
   }
 }

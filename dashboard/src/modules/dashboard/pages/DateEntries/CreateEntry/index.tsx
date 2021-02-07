@@ -47,6 +47,8 @@ const CreateEntry = (props: CreateEntryType) => {
     const [rules, setRules] = useState<RuleType[] | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [apiResponse, setApiResponse] = useState<string | ErrorMessagesType[]>('');
+    // update the entry with the following id
+    const [entryId, setEntryId] = useState<string>('');
     let ModelName = '';
     const {modelName} = useParams<{modelName: string}>();
     if(modelNameProp) {
@@ -202,7 +204,7 @@ const CreateEntry = (props: CreateEntryType) => {
                     className={'create-content-model-form'}
                     fields={fields}
                     showClearButton={true}
-                    clearOnSubmit={true}
+                    //clearOnSubmit={true}
                     onSubmit={onsubmit}
                     />
             </Grid>

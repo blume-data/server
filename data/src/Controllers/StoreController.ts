@@ -12,11 +12,11 @@ import {
 
 import {ENTRY_LANGUAGE_PROPERTY_NAME, PER_PAGE} from "../util/constants";
 import {COLLECTION_NOT_FOUND, PARAM_SHOULD_BE_UNIQUE} from "./Messages";
-import {RuleType} from "../util/interface";
 import * as mongoose from "mongoose";
 import {Model} from "mongoose";
 import {DateTime} from 'luxon';
 import {
+    RuleType,
     BOOLEAN_FIElD_TYPE,
     DATE_AND_TIME_FIElD_TYPE,
     DATE_FIElD_TYPE,
@@ -686,16 +686,6 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
                         }
                     }
 
-                    break;
-                }
-                case 'html': {
-                    if (typeof reqBody[rule.name] !== 'string') {
-                        isValid = false;
-                        errorMessages.push({
-                            field: rule.name,
-                            message: `${rule.name} should be of type string`
-                        });
-                    }
                     break;
                 }
             }
