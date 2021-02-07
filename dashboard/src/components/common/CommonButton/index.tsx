@@ -1,6 +1,8 @@
 import React from "react";
 import Button from '@material-ui/core/Button';
-import {Tooltip} from "@material-ui/core";
+import {HeadingTypeInterface, RenderHeading} from "../RenderHeading";
+
+;
 
 export const CommonButton = (props: {
     name: string;
@@ -8,10 +10,12 @@ export const CommonButton = (props: {
     color?: 'primary' | 'secondary',
     variant?: "contained" | "text" | "outlined" | undefined;
     title?: string;
+    type?: HeadingTypeInterface;
     className?: string;
+
 }) => {
 
-    const {name, onClick=null, color='primary', variant='contained', title, className=''} = props;
+    const {name, onClick=null, color='primary', variant='contained', title, type='secondary', className=''} = props;
 
     function onButtonClick() {
         if(onClick) {
@@ -19,15 +23,15 @@ export const CommonButton = (props: {
         }
     }
 
+    const buttonTitle = title ? title : name;
+
     return (
-        <Tooltip title={title ? title : name} aria-label={title ? title : name}>
-            <Button
-                className={className}
-                onClick={onButtonClick}
-                variant={variant}
-                color={color}>
-                {name}
-            </Button>
-        </Tooltip>
+        <Button
+            className={className}
+            onClick={onButtonClick}
+            variant={variant}
+            color={color}>
+            <RenderHeading type={type} value={name} title={buttonTitle} />
+        </Button>
     );
 }

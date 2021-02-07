@@ -77,10 +77,8 @@ import IconButton from "@material-ui/core/IconButton";
 import Paper from "@material-ui/core/Paper";
 import {Alert} from "../../../../../../components/common/Toast";
 import {AlertDialog} from "../../../../../../components/common/AlertDialog";
-import {CenterTab} from "../../../../../../components/common/CenterTab";
 import {useHistory} from "react-router";
 import ModalDialog from "../../../../../../components/common/ModalDialog";
-import Typography from "@material-ui/core/Typography";
 import {RenderHeading} from "../../../../../../components/common/RenderHeading";
 import {CommonButton} from "../../../../../../components/common/CommonButton";
 
@@ -907,12 +905,14 @@ const CreateDataModel = (props: CreateDataModelType) => {
 
 
         return (
-            <Grid className={'field-item'} title={description}>
-                <Button onClick={onClick}>
-                    {Icon}
-                    <h2>{name}</h2>
-                    <p>{description}</p>
-                </Button>
+            <Grid className={'field-item'} >
+                <Tooltip title={description}>
+                    <Button onClick={onClick}>
+                        {Icon}
+                        <h2>{name}</h2>
+                        <p>{description}</p>
+                    </Button>
+                </Tooltip>
             </Grid>
         );
     }
@@ -929,9 +929,10 @@ const CreateDataModel = (props: CreateDataModelType) => {
         }
 
         return (
-            <Grid container justify={"space-between"} className="name-section-container">
+            <Grid container justify={"flex-start"} className="name-section-container">
                 <Grid item className={'text-container'}>
                     <RenderHeading
+                        type={'primary'}
                         title={'Model name'}
                         className={'model-display-name'}
                         value={contentModelDisplayName ? contentModelDisplayName : 'untitled model'}
@@ -939,6 +940,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                     {
                         contentModelDescription ?
                             <RenderHeading
+                                type={"secondary"}
                                 className={'model-description'}
                                 title={'model-description'}
                                 value={contentModelDescription}
@@ -1037,7 +1039,9 @@ const CreateDataModel = (props: CreateDataModelType) => {
                         rows={rows}
                         columns={tableRows}
                         tableName={'Fields'}
-                    /> : <p>No fields added</p>
+                    /> : addingField
+                        ? null
+                        : <RenderHeading className={'no-fields-added'} type={"primary"} title={'No fields added'} value={'No fields added'} />
                 }
             </Grid>
         );
@@ -1068,20 +1072,22 @@ const CreateDataModel = (props: CreateDataModelType) => {
         if(contentModelDisplayName) {
             return (
                 <ButtonGroup className={'modal-action-buttons'}>
-                    <Button
+                    <CommonButton
+                        name={'Add Fields'}
                         onClick={onClickAddFields}
                         color={"secondary"}
-                        variant={"contained"}>
-                        Add Fields
-                    </Button>
+                        variant={"contained"}
+                        title={'Add Fields'}
+                    />
                     {
-                        properties && properties
-                            ? <Button
+                        properties && properties.length
+                            ? <CommonButton
+                                name={'Save Model'}
+                                title={'Save Model'}
                                 onClick={onClickSaveDataModel}
                                 color={"primary"}
-                                variant={"contained"}>
-                                Save Model
-                            </Button>
+                                variant={"contained"}
+                               />
                             : null
                     }
                 </ButtonGroup>
@@ -1092,103 +1098,114 @@ const CreateDataModel = (props: CreateDataModelType) => {
     }
 
     return (
-        <Grid>
+        <Grid className={'create-data-model-container'}>
             {
                 isLoading ? <Loader /> :  null
             }
-            <h1>{fieldEditMode ? 'Edit' : 'Create'} Model</h1>
-            <Grid className={'model-name-container'}>
+            <RenderHeading
+                className={'main-heading'}
+                type={"main"}
+                value={`${fieldEditMode ? 'Edit' : 'Create'} Model`}
+                title={`${fieldEditMode ? 'Edit' : 'Create'} Model`}
+            />
+            <Paper className={'model-name-container'}>
                 {renderNameSection()}
-            </Grid>
+            </Paper>
             <Grid container className="create-model-container">
                 <Grid item className="create-content-model">
+                    <Paper className={'paper'}>
+                        <Grid>
+                            {
+                                contentModelDisplayName
+                                    ? renderPropertiesSection()
+                                    : <RenderHeading
+                                        className={'add-name-heading'}
+                                        value={'Please add name of the model'}
+                                        type={'secondary'}
+                                        title={'Please add name of the model'}
+                                    />
+                            }
+                        </Grid>
 
-                    <Grid>
                         {
-                            contentModelDisplayName
-                                ? renderPropertiesSection()
-                                : 'Please add name for the model'
-                        }
-                    </Grid>
+                            addingField
+                                ? <Grid container  className="fields-container">
 
-                    {
-                        addingField
-                            ? <Grid container  className="fields-container">
-
-                                <Grid container justify={"space-between"}>
-                                    <Grid item>
-                                        <RenderHeading
-                                            title={'Add new field'}
-                                            value={'Add new field'}
-                                        />
+                                    <Grid container justify={"space-between"}>
+                                        <Grid item>
+                                            <RenderHeading
+                                                type={"primary"}
+                                                title={'Add new field'}
+                                                value={'Add new field'}
+                                            />
+                                        </Grid>
+                                        <Grid item>
+                                            <Grid container justify={"center"} direction={"column"}>
+                                                <CommonButton
+                                                    className={'cancel-button'}
+                                                    variant={'text'}
+                                                    name={'Cancel'}
+                                                    onClick={onClickCancelAddField}
+                                                />
+                                            </Grid>
+                                        </Grid>
                                     </Grid>
-                                    <Grid item>
-                                        <Grid container justify={"center"} direction={"column"}>
-                                            <CommonButton
-                                                className={'cancel-button'}
-                                                variant={'text'}
-                                                name={'Cancel'}
-                                                onClick={onClickCancelAddField}
+                                    <Grid container justify={"center"} className="fields-grid">
+                                        {fieldItem('Formatted Text', 'customised text with links and media', <TextFieldsIcon />, LONG_STRING_FIELD_TYPE)}
+                                        {fieldItem('Text','names, paragraphs, title', <TextFieldsIcon />, SHORT_STRING_FIElD_TYPE)}
+                                        {fieldItem('Number', 'numbers like age, count, quantity', <Grid className={'numbers'}>
+                                            <Looks3Icon />
+                                            <Looks4Icon />
+                                            <Looks5Icon />
+                                        </Grid>, INTEGER_FIElD_TYPE )}
+                                        {fieldItem('Date', 'only date, years, months, days', <DateRangeIcon />, DATE_FIElD_TYPE)}
+                                        {fieldItem('Date and time', 'date with time, days, hours, events', <AccessTimeIcon />, DATE_AND_TIME_FIElD_TYPE)}
+                                        {fieldItem('Location', 'coordinates', <LocationOnIcon />, LOCATION_FIELD_TYPE)}
+                                        {fieldItem('Boolean', 'true or false', <ToggleOffIcon />, BOOLEAN_FIElD_TYPE)}
+                                        {fieldItem('Json', 'json data', <CodeIcon />, JSON_FIELD_TYPE)}
+                                        {fieldItem('Media', 'videos, photos, files', <PermMediaIcon />, MEDIA_FIELD_TYPE)}
+                                        {fieldItem('Reference', 'For example a comment can refer to authors', <LinkIcon />, REFERENCE_FIELD_TYPE)}
+                                    </Grid>
+
+                                </Grid>
+                                : settingFieldName
+                                ? null
+                                : renderAddFieldsAndSaveModelButtonGroup()
+                        }
+
+                        {
+                            settingFieldName
+                                ? <Paper>
+                                    <Grid container direction={'column'} className={'set-fields-property-container'}>
+                                        <Grid item className={'cancel-button-container'}>
+                                            <Button onClick={closeAddFieldForm}>Cancel</Button>
+                                        </Grid>
+                                        <Grid item>
+                                            <Form
+                                                groups={
+                                                    [
+                                                        FIELD_NAME_GROUP,
+                                                        FIELD_LIMIT_CHARACTER_COUNT_GROUP,
+                                                        FIELD_LIMIT_VALUE_GROUP,
+                                                        FIELD_ALLOW_ONLY_SPECIFIC_VALUES_GROUP,
+                                                        FIELD_DEFAULT_VALUE_GROUP,
+                                                        FIELD_MATCH_SPECIFIC_PATTERN_GROUP,
+                                                        FIELD_PROHIBIT_SPECIFIC_PATTERN_GROUP,
+                                                        FIELD_REFERENCE_MODEL_GROUP
+                                                    ]
+                                                }
+                                                response={response}
+                                                submitButtonName={'Save field'}
+                                                onSubmit={onSubmitFieldProperty}
+                                                fields={propertyNameFields()}
+                                                className={'field-property-form'}
                                             />
                                         </Grid>
                                     </Grid>
-                                </Grid>
-                                <Grid container justify={"center"} className="fields-grid">
-                                    {fieldItem('Formatted Text', 'customised text with links and media', <TextFieldsIcon />, LONG_STRING_FIELD_TYPE)}
-                                    {fieldItem('Text','names, paragraphs, title', <TextFieldsIcon />, SHORT_STRING_FIElD_TYPE)}
-                                    {fieldItem('Number', 'numbers like age, count, quantity', <Grid className={'numbers'}>
-                                        <Looks3Icon />
-                                        <Looks4Icon />
-                                        <Looks5Icon />
-                                    </Grid>, INTEGER_FIElD_TYPE )}
-                                    {fieldItem('Date', 'only date, years, months, days', <DateRangeIcon />, DATE_FIElD_TYPE)}
-                                    {fieldItem('Date and time', 'date with time, days, hours, events', <AccessTimeIcon />, DATE_AND_TIME_FIElD_TYPE)}
-                                    {fieldItem('Location', 'coordinates', <LocationOnIcon />, LOCATION_FIELD_TYPE)}
-                                    {fieldItem('Boolean', 'true or false', <ToggleOffIcon />, BOOLEAN_FIElD_TYPE)}
-                                    {fieldItem('Json', 'json data', <CodeIcon />, JSON_FIELD_TYPE)}
-                                    {fieldItem('Media', 'videos, photos, files', <PermMediaIcon />, MEDIA_FIELD_TYPE)}
-                                    {fieldItem('Reference', 'For example a comment can refer to authors', <LinkIcon />, REFERENCE_FIELD_TYPE)}
-                                </Grid>
-
-                            </Grid>
-                            : settingFieldName
-                            ? null
-                            : renderAddFieldsAndSaveModelButtonGroup()
-                    }
-
-                    {
-                        settingFieldName
-                            ? <Paper>
-                                <Grid container direction={'column'} className={'set-fields-property-container'}>
-                                    <Grid item className={'cancel-button-container'}>
-                                        <Button onClick={closeAddFieldForm}>Cancel</Button>
-                                    </Grid>
-                                    <Grid item>
-                                        <Form
-                                            groups={
-                                                [
-                                                    FIELD_NAME_GROUP,
-                                                    FIELD_LIMIT_CHARACTER_COUNT_GROUP,
-                                                    FIELD_LIMIT_VALUE_GROUP,
-                                                    FIELD_ALLOW_ONLY_SPECIFIC_VALUES_GROUP,
-                                                    FIELD_DEFAULT_VALUE_GROUP,
-                                                    FIELD_MATCH_SPECIFIC_PATTERN_GROUP,
-                                                    FIELD_PROHIBIT_SPECIFIC_PATTERN_GROUP,
-                                                    FIELD_REFERENCE_MODEL_GROUP
-                                                ]
-                                            }
-                                            response={response}
-                                            submitButtonName={'Save field'}
-                                            onSubmit={onSubmitFieldProperty}
-                                            fields={propertyNameFields()}
-                                            className={'field-property-form'}
-                                        />
-                                    </Grid>
-                                </Grid>
-                            </Paper>
-                            : null
-                    }
-
+                                </Paper>
+                                : null
+                        }
+                    </Paper>
                 </Grid>
             </Grid>
             <AlertDialog

@@ -1,0 +1,55 @@
+@import 'src/assets/style/index';
+.heading-container {
+  .heading {
+    width: fit-content;
+    margin: 0;
+  }
+  .main,.primary {
+    font-weight: $font-weight-bold;
+  }
+  .secondary, .para {
+    font-weight: $font-weight-normal;
+  }
+  @include desktops {
+    .main {
+      font-size: $font-size-main-desk;
+    }
+    .primary {
+      font-size: $font-size-primary-desk;
+    }
+    .secondary {
+      font-size: $font-size-secondary-desk;
+    }
+    .para {
+      font-size: $font-size-paragraph-desk;
+    }
+  }
+  @include tablets {
+    .main {
+      font-size: $font-size-main-tab;
+    }
+    .primary {
+      font-size: $font-size-primary-tab;
+    }
+    .secondary {
+      font-size: $font-size-secondary-tab;
+    }
+    .para {
+      font-size: $font-size-paragraph-tab;
+    }
+  }
+  @include mobiles {
+    .main {
+      font-size: $font-size-main-mob;
+    }
+    .primary {
+      font-size: $font-size-primary-mob;
+    }
+    .secondary {
+      font-size: $font-size-secondary-mob;
+    }
+    .para {
+      font-size: $font-size-paragraph-mob;
+    }
+  }
+}
