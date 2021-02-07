@@ -10,16 +10,14 @@
     padding-top: 10px;
     justify-content: space-between;
     .create-content-model {
-      width: 80%;
-      @include mobileAndTablet {
-        width: 100%;
-      }
+      width: 100%;
       .paper {
         .fields-container {
           padding-top: 10px;
           padding-left: 10px;
           .cancel-button {
             margin-top: 13px;
+            margin-right: 10px;
           }
           .fields-grid {
             .numbers {

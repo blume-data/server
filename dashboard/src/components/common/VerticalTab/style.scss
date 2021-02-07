@@ -6,10 +6,11 @@
     height: 400px;
     overflow: auto;
     .vertical-tab-box-container {
-      padding-top: 0;
+      padding: 0 10px 10px;
     }
   }
   button.MuiTab-textColorInherit {
+    min-width: 50px;
     span.MuiTab-wrapper {
       color: $black;
     }
@@ -21,5 +22,10 @@
   }
   button.MuiTab-textColorInherit:hover {
     background-color: $light-gray;
+  }
+  .MuiTabs-flexContainerVertical {
+    button.MuiTab-textColorInherit:nth-child(even) {
+      background-color: $light-gray !important;
+    }
   }
 }
