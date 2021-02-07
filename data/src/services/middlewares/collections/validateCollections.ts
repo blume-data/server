@@ -135,7 +135,7 @@ export async function validateCollections(req: Request, res: Response, next: Nex
 
             // check min property
             if(rule.min && hasSIDType(rule.type)) {
-                if(parsedRule.max < Number(rule.min)) {
+                if(parsedRule.max !== undefined && (parsedRule.max < Number(rule.min))) {
                     isValidBody = false;
                     inValidMessage.push({
                         message: `${rule.name}'s minimum limit cannot be greater then maximum limit`

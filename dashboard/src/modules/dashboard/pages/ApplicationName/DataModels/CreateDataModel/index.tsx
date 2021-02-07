@@ -48,7 +48,7 @@ import {
     HHTimeReg,
     usPhoneReg,
     usZipReg,
-    APPLICATION_NAME, DATE_AND_TIME_FIElD_TYPE, ONE_TO_ONE_RELATION, ONE_TO_MANY_RELATION
+    APPLICATION_NAME, DATE_AND_TIME_FIElD_TYPE, ONE_TO_ONE_RELATION, ONE_TO_MANY_RELATION, RuleType
 } from "@ranjodhbirkaur/constants";
 import TextFieldsIcon from '@material-ui/icons/TextFields';
 import './style.scss';
@@ -81,27 +81,6 @@ import {useHistory} from "react-router";
 import ModalDialog from "../../../../../../components/common/ModalDialog";
 import {RenderHeading} from "../../../../../../components/common/RenderHeading";
 import {CommonButton} from "../../../../../../components/common/CommonButton";
-
-export interface PropertiesType {
-    type: string;
-    name: string;
-    displayName: string;
-    description: string;
-    required: boolean;
-    unique: boolean;
-    default: any;
-    min: number;
-    max: number;
-    matchSpecificPattern: string;
-    matchCustomSpecificPattern: string;
-    prohibitSpecificPattern: string;
-    [FIELD_CUSTOM_ERROR_MSG_MIN_MAX]: string;
-    [FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN]: string;
-    [FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN]: string;
-    onlyAllowedValues: string;
-    referenceModelName: string;
-    referenceModelType: string;
-}
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type CreateDataModelType = PropsFromRedux;
@@ -138,7 +117,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
     const [contentModelDisplayName, setContentModelDisplayName] = useState<string>('');
     const [contentModelId, setContentModelId] = useState<string | null>(null);
 
-    const [properties, setProperties] = useState<PropertiesType[] | null>(null);
+    const [properties, setProperties] = useState<RuleType[] | null>(null);
 
     const [response, setResponse] = useState<string | ErrorMessagesType[]>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -742,7 +721,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
 
             if(isValid) {
                 setTimeout(() => {
-                    const property: PropertiesType = {
+                    const property: RuleType = {
                         name: propertyId || trimCharactersAndNumbers(propertyName),
                         displayName: propertyName,
                         required: propertyIsRequired === 'true',
@@ -767,7 +746,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                     const exist = tempProperties.find((item: any) => item.name === property.name);
 
                     if(exist) {
-                        const newProperties: PropertiesType[] = tempProperties.map((propertyItem: PropertiesType) => {
+                        const newProperties: RuleType[] = tempProperties.map((propertyItem: RuleType) => {
                             if(property.name === propertyItem.name) {
                                 return property;
                             }
@@ -980,12 +959,12 @@ const CreateDataModel = (props: CreateDataModelType) => {
             {name: 'Delete', value: 'delete', onClick: true}
         ];
 
-        function openConfirmAlert(property: PropertiesType) {
+        function openConfirmAlert(property: RuleType) {
             setDeleteEntryName(property.name);
             setConfirmDialogOpen(true);
         }
 
-        function onClickEdit(property: PropertiesType) {
+        function onClickEdit(property: RuleType) {
 
             setFieldType(property.type);
             setTimeout(() => {
@@ -1009,7 +988,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                     setFieldMax(property.max || '');
                     setFieldMin(property.min || '');
                     setFieldMinMaxCustomErrorMessage(property[FIELD_CUSTOM_ERROR_MSG_MIN_MAX] || '');
-                    setFieldOnlySpecifiedValues(property.onlyAllowedValues)
+                    setFieldOnlySpecifiedValues(property.onlyAllowedValues || '')
                 }
                 if(property.type === SHORT_STRING_FIElD_TYPE) {
                     setFieldMatchPattern(property.matchSpecificPattern || '');

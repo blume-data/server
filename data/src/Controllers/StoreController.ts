@@ -108,7 +108,9 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
                         isUserField = true;
                     }
                     if((exist && exist[REFERENCE_MODEL_NAME]) || isUserField) {
-                        const modelName = (exist && exist[REFERENCE_MODEL_NAME]) ? exist[REFERENCE_MODEL_NAME] : CLIENT_USER_MODEL_NAME;
+                        const modelName = (exist && exist[REFERENCE_MODEL_NAME] && exist[REFERENCE_MODEL_NAME] !== '')
+                            ? exist[REFERENCE_MODEL_NAME] || CLIENT_USER_MODEL_NAME
+                            : CLIENT_USER_MODEL_NAME;
                         try {
                             if(!mongoose.model(modelName) || !mongoose.model(modelName).schema) {
                                 await getModel(req, modelName, applicationName, clientUserName);
@@ -288,7 +290,7 @@ export async function createStoreRecord(req: Request, res: Response) {
                         if(referenceCollection) {
                             if(referenceCollection.name === referencePropertyName && referenceCollection.type === REFERENCE_FIELD_TYPE) {
                                 propertyName = referencePropertyName;
-                                referenceType = referenceCollection[REFERENCE_MODEL_TYPE];
+                                referenceType = referenceCollection[REFERENCE_MODEL_TYPE] || '';
                             }
                         }
                         return false;
@@ -472,12 +474,12 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
 
             if(shouldMatch) {
                 message = (rule[FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN]
-                    ? (rule[FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN])
+                    ? (`${rule[FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN]}`)
                     : errorMessage ? `${rule.name} ${errorMessage}` : `${rule.name} should match regex ${matchPattern}`)
             }
             else {
                 message = (rule[FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN]
-                    ? (rule[FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN])
+                    ? (`${rule[FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN]}`)
                     : errorMessage ? `${rule.name} ${errorMessage}` : `${rule.name} should not match regex ${matchPattern}`)
             }
             isValid = false;
@@ -489,19 +491,21 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
     }
 
     function checkOnlyAllowedValues(rule: RuleType, stringMode = true) {
-        const allowedValues = rule.onlyAllowedValues.split(',');
-        const exist = allowedValues.find(allowedValue => {
-            if(!stringMode) {
-                return (Number(reqBody[rule.name]) === Number(allowedValue.trim()))
+        const allowedValues = rule.onlyAllowedValues && rule.onlyAllowedValues.split(',');
+        if(allowedValues) {
+            const exist = allowedValues.find(allowedValue => {
+                if(!stringMode) {
+                    return (Number(reqBody[rule.name]) === Number(allowedValue.trim()))
+                }
+                return (`${reqBody[rule.name]}`.trim() === allowedValue.trim())
+            });
+            if(!exist) {
+                isValid = false;
+                errorMessages.push({
+                    field: rule.name,
+                    message: `${reqBody[rule.name]} is not a allowed value`
+                })
             }
-            return (`${reqBody[rule.name]}` === allowedValue.trim())
-        });
-        if(!exist) {
-            isValid = false;
-            errorMessages.push({
-                field: rule.name,
-                message: `${rule.name} is not a allowed value`
-            })
         }
     }
 
@@ -569,7 +573,7 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
                         errorMessages.push({
                             field: rule.name,
                             message: (rule[FIELD_CUSTOM_ERROR_MSG_MIN_MAX]
-                                ? (rule[FIELD_CUSTOM_ERROR_MSG_MIN_MAX])
+                                ? (`${rule[FIELD_CUSTOM_ERROR_MSG_MIN_MAX]}`)
                                 : `${rule.name} should have minimum ${rule.min} characters`)
                         });
                     }
@@ -579,7 +583,7 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
                         errorMessages.push({
                             field: rule.name,
                             message: (rule[FIELD_CUSTOM_ERROR_MSG_MIN_MAX]
-                                ? (rule[FIELD_CUSTOM_ERROR_MSG_MIN_MAX])
+                                ? (`${rule[FIELD_CUSTOM_ERROR_MSG_MIN_MAX]}`)
                                 : `${rule.name} should have maximum ${rule.max} characters`)
                         });
                     }
@@ -615,7 +619,7 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
                         errorMessages.push({
                             field: rule.name,
                             message: (rule[FIELD_CUSTOM_ERROR_MSG_MIN_MAX]
-                                ? (rule[FIELD_CUSTOM_ERROR_MSG_MIN_MAX])
+                                ? (`${rule[FIELD_CUSTOM_ERROR_MSG_MIN_MAX]}`)
                                 : `${rule.name} should be a minimum ${rule.min}`)
                         });
                     }
@@ -625,7 +629,7 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
                         errorMessages.push({
                             field: rule.name,
                             message: (rule[FIELD_CUSTOM_ERROR_MSG_MIN_MAX]
-                                ? (rule[FIELD_CUSTOM_ERROR_MSG_MIN_MAX])
+                                ? (`${rule[FIELD_CUSTOM_ERROR_MSG_MIN_MAX]}`)
                                 : `${rule.name} should be maximum ${rule.max}`)
                         });
                     }
