@@ -1085,8 +1085,6 @@ const CreateDataModel = (props: CreateDataModelType) => {
 
     }
 
-    console.log('fieldEditMode', fieldEditMode)
-
     return (
         <Grid>
             {
