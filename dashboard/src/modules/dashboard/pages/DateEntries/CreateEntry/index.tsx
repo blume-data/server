@@ -163,14 +163,15 @@ const CreateEntry = (props: CreateEntryType) => {
                 if(rules && rules.length) {
                     const exist = rules.find(rule => rule.name === valueItem.name);
                     if(exist) {
-                        if(exist.type === BOOLEAN_FIElD_TYPE) {
-                            data[valueItem.name] = valueItem.value === 'true';
-                        }
+                        // check reference
                         if(exist.type === REFERENCE_FIELD_TYPE && exist[REFERENCE_MODEL_TYPE] === ONE_TO_MANY_RELATION) {
                             data[valueItem.name] = valueItem.value.split(',');
                         }
                         else {
                             data[valueItem.name] = valueItem.value;
+                        }
+                        if(exist.type === BOOLEAN_FIElD_TYPE) {
+                            data[valueItem.name] = valueItem.value === 'true';
                         }
                     }
                 }
