@@ -52,19 +52,6 @@ export async function validateCollections(req: Request, res: Response, next: Nex
                 displayName: `${rule.displayName}`,
                 unique: Boolean(rule.unique),
                 required: Boolean(rule.required),
-
-                /*max: 0,
-                min: 0,
-                default: ``,
-                [FIELD_CUSTOM_ERROR_MSG_MIN_MAX]: '',
-                [FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN]: '',
-                [FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN]: '',
-                matchSpecificPattern: '',
-                prohibitSpecificPattern: '',
-                matchCustomSpecificPattern: '',
-                onlyAllowedValues: '',
-                referenceModelName: '',
-                referenceModelType: ''*/
             };
 
             // check if name is there
