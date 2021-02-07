@@ -12,6 +12,7 @@ import {
     KeyboardDatePicker,
 } from '@material-ui/pickers';
 import { DateTime } from 'luxon';
+import {RenderHeading} from "../RenderHeading";
 
 interface DateFieldType extends FieldType{
     onChange: (event: string) => void;
@@ -78,7 +79,7 @@ export const DateField = (props: DateFieldType) => {
                 <Grid container justify="space-around" direction={"column"}>
                     <KeyboardDatePicker
                         margin="normal"
-                        id="date-picker-dialog"
+                        id={`date-picker-dialog-${name}`}
                         label="Date"
                         format="MM/dd/yyyy"
                         value={selectedDate}
@@ -91,7 +92,7 @@ export const DateField = (props: DateFieldType) => {
                     <KeyboardTimePicker
                         disabled={disabled}
                         margin="normal"
-                        id="time-picker"
+                        id={`time-picker-${name}`}
                         label="Time"
                         value={selectedDate}
                         onChange={handleDateChange}
@@ -112,6 +113,9 @@ export const DateField = (props: DateFieldType) => {
                             })} />
                         <DescriptionText description={'timezone'} />
                     </Grid>
+                    {
+                        helperText ?<RenderHeading title={helperText} value={helperText} type={"para"}  /> : null
+                    }
                 </Grid>
             </MuiPickersUtilsProvider>
 
