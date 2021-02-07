@@ -905,12 +905,14 @@ const CreateDataModel = (props: CreateDataModelType) => {
 
 
         return (
-            <Grid className={'field-item'} title={description}>
-                <Button onClick={onClick}>
-                    {Icon}
-                    <h2>{name}</h2>
-                    <p>{description}</p>
-                </Button>
+            <Grid className={'field-item'} >
+                <Tooltip title={description}>
+                    <Button onClick={onClick}>
+                        {Icon}
+                        <h2>{name}</h2>
+                        <p>{description}</p>
+                    </Button>
+                </Tooltip>
             </Grid>
         );
     }
@@ -1106,9 +1108,9 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 value={`${fieldEditMode ? 'Edit' : 'Create'} Model`}
                 title={`${fieldEditMode ? 'Edit' : 'Create'} Model`}
             />
-            <Grid className={'model-name-container'}>
+            <Paper className={'model-name-container'}>
                 {renderNameSection()}
-            </Grid>
+            </Paper>
             <Grid container className="create-model-container">
                 <Grid item className="create-content-model">
                     <Paper className={'paper'}>
