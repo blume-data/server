@@ -48,7 +48,12 @@ import {
     HHTimeReg,
     usPhoneReg,
     usZipReg,
-    APPLICATION_NAME, DATE_AND_TIME_FIElD_TYPE, ONE_TO_ONE_RELATION, ONE_TO_MANY_RELATION, RuleType
+    APPLICATION_NAME,
+    DATE_AND_TIME_FIElD_TYPE,
+    ONE_TO_ONE_RELATION,
+    ONE_TO_MANY_RELATION,
+    RuleType,
+    FIELD_CUSTOM_ERROR_MSG_MATCH_CUSTOM_PATTERN
 } from "@ranjodhbirkaur/constants";
 import TextFieldsIcon from '@material-ui/icons/TextFields';
 import './style.scss';
@@ -276,6 +281,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
     const propertyNameFields = () => {
 
         const hello: ConfigField[] = [
+            // field name
             {
                 required: true,
                 placeholder: 'Field Name',
@@ -290,6 +296,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 descriptionText: 'Name of the field',
                 groupName: FIELD_NAME_GROUP
             },
+            // field id
             {
                 disabled: fieldEditMode,
                 required: false,
@@ -305,6 +312,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 descriptionText: 'Generated from name (uniquely identify field)',
                 groupName: FIELD_NAME_GROUP
             },
+            // field description
             {
                 required: false,
                 placeholder: 'Field description',
@@ -319,6 +327,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 descriptionText: 'Description of field',
                 groupName: FIELD_NAME_GROUP
             },
+            // field is required
             {
                 required: false,
                 placeholder: 'Is required',
@@ -332,6 +341,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
             }
         ];
 
+        // field is unique
         if(![DATE_FIElD_TYPE, JSON_FIELD_TYPE, REFERENCE_FIELD_TYPE, FORMATTED_TEXT, MEDIA_FIELD_TYPE].includes(fieldType)) {
             hello.push({
                 required: false,
@@ -421,7 +431,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 value: `${fieldProhibitPatternCustomError}`,
                 className: 'field-min-count',
                 type: 'string',
-                name: FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN,
+                name: FIELD_CUSTOM_ERROR_MSG_MATCH_CUSTOM_PATTERN,
                 label: 'Prohibit specific pattern custom error message',
                 inputType: TEXT,
                 descriptionText: 'Custom message will be sent if the value matches this pattern',
@@ -437,6 +447,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
             switch (fieldType) {
                 case INTEGER_FIElD_TYPE:{
                     type = 'number';
+                    inputType = TEXT;
                     break;
                 }
                 case LONG_STRING_FIELD_TYPE: {
@@ -613,10 +624,15 @@ const CreateDataModel = (props: CreateDataModelType) => {
             let propertyMin = 0;
             let propertyMinMaxCustomErrorMessage = '';
             let propertyIsUnique = '';
+
             let propertyMatchPattern = '';
             let propertyMatchPatternError = '';
+
+            let propertyMatchCustomPatternErrorMessage = '';
+
             let propertyProhibitPattern = '';
             let propertyProhibitPatternError = '';
+
             let propertyMatchPatternString = '';
             let propertyOnlySpecifiedValues = '';
             let propertyDefaultValue = '';
@@ -641,6 +657,11 @@ const CreateDataModel = (props: CreateDataModelType) => {
                         propertyMatchPatternError = v;
                         break;
                     }
+                    case FIELD_CUSTOM_ERROR_MSG_MATCH_CUSTOM_PATTERN: {
+                        propertyMatchCustomPatternErrorMessage = v;
+                        break;
+                    }
+
                     case FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN: {
                         propertyProhibitPatternError = v;
                         break;
@@ -726,20 +747,28 @@ const CreateDataModel = (props: CreateDataModelType) => {
                         displayName: propertyName,
                         required: propertyIsRequired === 'true',
                         type: fieldType,
-                        default: propertyDefaultValue,
-                        matchSpecificPattern: propertyMatchPattern,
-                        prohibitSpecificPattern: propertyProhibitPattern,
                         description: propertyDescription,
-                        [FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN]: propertyProhibitPatternError,
-                        [FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN]: propertyMatchPatternError,
-                        [FIELD_MIN]: propertyMin,
-                        [FIELD_MAX]: propertyMax,
                         [IS_FIELD_UNIQUE]: propertyIsUnique === 'true',
-                        [FIELD_CUSTOM_ERROR_MSG_MIN_MAX]: propertyMinMaxCustomErrorMessage,
-                        onlyAllowedValues: propertyOnlySpecifiedValues,
+
+                        default: propertyDefaultValue ? propertyDefaultValue : undefined,
+
+                        matchSpecificPattern: propertyMatchPattern ? propertyMatchPattern : undefined,
+                        [FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN]: propertyMatchPatternError ? propertyMatchPatternError : undefined,
+
+                        prohibitSpecificPattern: propertyProhibitPattern ? propertyProhibitPattern : undefined,
+                        [FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN]: propertyProhibitPatternError ? propertyProhibitPatternError : undefined,
+
+                        [FIELD_MIN]: propertyMin ? propertyMin : undefined,
+                        [FIELD_MAX]: propertyMax ? propertyMax : undefined,
+                        [FIELD_CUSTOM_ERROR_MSG_MIN_MAX]: propertyMinMaxCustomErrorMessage ? propertyMinMaxCustomErrorMessage : undefined,
+
+                        onlyAllowedValues: propertyOnlySpecifiedValues ? propertyOnlySpecifiedValues : undefined,
+
                         matchCustomSpecificPattern: propertyMatchPatternString,
-                        referenceModelName: propertyReferenceModelName,
-                        referenceModelType: propertyReferenceModelType
+                        [FIELD_CUSTOM_ERROR_MSG_MATCH_CUSTOM_PATTERN]: propertyMatchCustomPatternErrorMessage ? propertyMatchCustomPatternErrorMessage : undefined,
+
+                        referenceModelName: propertyReferenceModelName ? propertyReferenceModelName : undefined,
+                        referenceModelType: propertyReferenceModelType ? propertyReferenceModelType : undefined
                     };
 
                     const tempProperties = JSON.parse(JSON.stringify(properties ? properties : []));

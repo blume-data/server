@@ -1,14 +1,13 @@
 import { randomBytes } from 'crypto';
 import {Request, Response} from 'express';
 import mongoose from 'mongoose';
-import {RuleType} from "./interface";
 import {
     BOOLEAN_FIElD_TYPE,
     DATE_AND_TIME_FIElD_TYPE,
     DATE_FIElD_TYPE,
     INTEGER_FIElD_TYPE, PUBLISHED_ENTRY_STATUS,
     JSON_FIELD_TYPE, ONE_TO_MANY_RELATION, ONE_TO_ONE_RELATION, REFERENCE_FIELD_TYPE,
-    ARCHIVED_ENTRY_STATUS,
+    ARCHIVED_ENTRY_STATUS, RuleType,
     DELETED_ENTRY_STATUS, DRAFT_ENTRY_STATUS,
 } from "@ranjodhbirkaur/constants";
 import {
@@ -16,14 +15,10 @@ import {
 } from "./constants";
 import {
     APPLICATION_NAME,
-    APPLICATION_NAMES, CLIENT_USER_MODEL_NAME,
     CLIENT_USER_NAME,
-    JWT_ID,
-    okayStatus,
-    PASSWORD
+    okayStatus
 } from "@ranjodhbirkaur/common"
 import {getCollection} from "../Controllers/StoreController";
-import _ from 'lodash';
 
 export const RANDOM_STRING = function (minSize=10) {
     return randomBytes(minSize).toString('hex')
