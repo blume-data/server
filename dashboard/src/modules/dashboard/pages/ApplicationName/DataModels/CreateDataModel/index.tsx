@@ -661,7 +661,6 @@ const CreateDataModel = (props: CreateDataModelType) => {
                         propertyMatchCustomPatternErrorMessage = v;
                         break;
                     }
-
                     case FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN: {
                         propertyProhibitPatternError = v;
                         break;
@@ -675,7 +674,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                         break;
                     }
                     case FIELD_ID: {
-                        propertyId = trimCharactersAndNumbers(v);
+                        propertyId = fieldEditMode ? v :  trimCharactersAndNumbers(v);
                         break;
                     }
                     case FIELD_NAME: {
