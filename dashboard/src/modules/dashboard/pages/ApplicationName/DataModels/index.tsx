@@ -4,7 +4,7 @@ import {dashboardCreateDataModelsUrl, dashboardDataEntriesUrl, getBaseUrl} from 
 import {APPLICATION_NAME, CLIENT_USER_NAME} from "@ranjodhbirkaur/constants";
 import './store-list.scss';
 import {getItemFromLocalStorage, getModelDataAndRules} from "../../../../../utils/tools";
-import {doDeleteRequest, doGetRequest} from "../../../../../utils/baseApi";
+import {doDeleteRequest} from "../../../../../utils/baseApi";
 import BasicTableMIUI from "../../../../../components/common/BasicTableMIUI";
 
 import TextField from "@material-ui/core/TextField";
