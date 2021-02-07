@@ -376,6 +376,7 @@ export const Form = (props: FormType) => {
         if(inputType === RADIO) {
             return (
                 <CommonRadioField
+                    key={index}
                     descriptionText={descriptionText}
                     disabled={disabled}
                     required={required}
@@ -399,6 +400,7 @@ export const Form = (props: FormType) => {
                     disabled={disabled}
                     required={required}
                     name={name}
+                    key={index}
                     placeholder={''}
                     onBlur={onBlur}
                     onChange={onChange}
@@ -418,6 +420,7 @@ export const Form = (props: FormType) => {
                     className={`${classNames} html-editor`}
                     required={required}
                     name={name}
+                    key={index}
                     label={label}
                     setValue={(str: string) => setHtmlEditorValue(str, label, SET_VALUE_ACTION)}
                     value={value}
