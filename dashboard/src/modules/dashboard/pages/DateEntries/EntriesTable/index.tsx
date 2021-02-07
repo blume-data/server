@@ -126,10 +126,6 @@ const EntriesTableComponent = (props: EntriesTableType) => {
         }
     }, [where]);
 
-    console.log('columns', columns);
-    console.log('rows', rows)
-
-
     return (
         <Grid
             className={'entries-table-container-wrapper'}>
