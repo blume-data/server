@@ -10,8 +10,8 @@
 
     .fields-container {
       margin-top: 20px;
-      button {
-        align-self: flex-end;
+      .cancel-button {
+        margin-top: 13px;
       }
       .fields-grid {
         .numbers {
@@ -47,20 +47,6 @@
       }
     }
 
-    .name-section {
-      .name-section-grid-item {
-        display: flex;
-        .name-section-item {
-          margin: 0;
-          margin-right: 40px;
-          display: flex;
-          h2 {
-            margin: 10px 0;
-          }
-        }
-      }
-    }
-
     .property-section-container {
       .property-item {
         margin: 0 20px;
@@ -84,5 +70,33 @@
       }
 
     }
+  }
+}
+.model-name-container {
+  .name-section-container {
+    max-width: 300px;
+    @include mobiles {
+      width: 100%;
+    }
+    .text-container {
+      .model-display-name, .model-description {
+        text-transform: capitalize;
+        max-width: 200px;
+        @include mobiles {
+          width: 100%;
+        }
+        @include trim(1);
+      }
+      .model-display-name {
+        font-size: 1.3125rem;
+        font-weight: 700;
+      }
+    }
+    .edit-button {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
   }
 }

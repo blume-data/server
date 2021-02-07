@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Grid} from "@material-ui/core";
+import {Grid, Tooltip} from "@material-ui/core";
 import {AlertType, Form} from "../../../../../../components/common/Form";
 import {
     CHECKBOX,
@@ -79,6 +79,10 @@ import {Alert} from "../../../../../../components/common/Toast";
 import {AlertDialog} from "../../../../../../components/common/AlertDialog";
 import {CenterTab} from "../../../../../../components/common/CenterTab";
 import {useHistory} from "react-router";
+import ModalDialog from "../../../../../../components/common/ModalDialog";
+import Typography from "@material-ui/core/Typography";
+import {RenderHeading} from "../../../../../../components/common/RenderHeading";
+import {CommonButton} from "../../../../../../components/common/CommonButton";
 
 export interface PropertiesType {
     type: string;
@@ -924,30 +928,32 @@ const CreateDataModel = (props: CreateDataModelType) => {
             setHideNames(false);
         }
 
-        const tableRows = [
-            {name: 'Name', value: DISPLAY_NAME},
-            {name: 'Description', value: DESCRIPTION},
-            {name: 'Field Identifier', value: NAME},
-            {name: 'Edit', value: 'edit', onClick: true},
-        ];
-
-        const items = [{
-            [DISPLAY_NAME]: contentModelDisplayName,
-            [DESCRIPTION]: contentModelDescription,
-            [NAME]: contentModelName,
-            edit: <IconButton><EditIcon /></IconButton>,
-            'edit-click': () => onClick(),
-        }];
-
         return (
-            <Grid container justify={"space-between"} direction={"row"} className="name-section">
-                {
-                    items && items.length ? <BasicTableMIUI
-                        rows={items}
-                        columns={tableRows}
-                        tableName={'Model Name'}
-                    /> : null
-                }
+            <Grid container justify={"space-between"} className="name-section-container">
+                <Grid item className={'text-container'}>
+                    <RenderHeading
+                        title={'Model name'}
+                        className={'model-display-name'}
+                        value={contentModelDisplayName ? contentModelDisplayName : 'untitled model'}
+                    />
+                    {
+                        contentModelDescription ?
+                            <RenderHeading
+                                className={'model-description'}
+                                title={'model-description'}
+                                value={contentModelDescription}
+                            />
+                            : null
+                    }
+                </Grid>
+                <Grid item className={'edit-button'}>
+                    <Tooltip title={`Edit model ${contentModelDisplayName}`}>
+                        <IconButton onClick={onClick}>
+                            <EditIcon />
+                        </IconButton>
+                    </Tooltip>
+
+                </Grid>
             </Grid>
         )
     }
@@ -1091,44 +1097,41 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 isLoading ? <Loader /> :  null
             }
             <h1>{fieldEditMode ? 'Edit' : 'Create'} Model</h1>
+            <Grid className={'model-name-container'}>
+                {renderNameSection()}
+            </Grid>
             <Grid container className="create-model-container">
                 <Grid item className="create-content-model">
 
-                    <CenterTab
-                        headings={['Model Name', 'Fields']}
-                        items={[
-                            <Grid>
-                                {
-                                    hideNames
-                                        ? renderNameSection()
-                                        : <Form
-                                            response={response}
-                                            submitButtonName={'Save model name'}
-                                            className={'create-content-model-form'}
-                                            fields={nameFields}
-                                            onSubmit={onSubmitCreateContentModel}
-                                        />
-
-                                }
-                            </Grid>
-                            ,
-                            <Grid>
-                                {
-                                    contentModelDisplayName
-                                        ? renderPropertiesSection()
-                                        : 'Please add name for the model'
-                                }
-                            </Grid>
-
-                        ]}
-
-                    />
+                    <Grid>
+                        {
+                            contentModelDisplayName
+                                ? renderPropertiesSection()
+                                : 'Please add name for the model'
+                        }
+                    </Grid>
 
                     {
                         addingField
                             ? <Grid container  className="fields-container">
-                                <Grid container justify={"flex-end"}>
-                                    <Button onClick={onClickCancelAddField}>Cancel</Button>
+
+                                <Grid container justify={"space-between"}>
+                                    <Grid item>
+                                        <RenderHeading
+                                            title={'Add new field'}
+                                            value={'Add new field'}
+                                        />
+                                    </Grid>
+                                    <Grid item>
+                                        <Grid container justify={"center"} direction={"column"}>
+                                            <CommonButton
+                                                className={'cancel-button'}
+                                                variant={'text'}
+                                                name={'Cancel'}
+                                                onClick={onClickCancelAddField}
+                                            />
+                                        </Grid>
+                                    </Grid>
                                 </Grid>
                                 <Grid container justify={"center"} className="fields-grid">
                                     {fieldItem('Formatted Text', 'customised text with links and media', <TextFieldsIcon />, LONG_STRING_FIELD_TYPE)}
@@ -1211,6 +1214,21 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 onAlertClose={setIsAlertOpen}
                 severity={alert.severity}
                 message={alert.message} />
+            <ModalDialog
+                title={'Create new model'}
+                isOpen={!hideNames}
+                handleClose={() => setHideNames(true)}
+                children={
+                    <Form
+                        response={response}
+                        submitButtonName={'Save model name'}
+                        className={'create-content-model-form'}
+                        fields={nameFields}
+                        showClearButton={true}
+                        onSubmit={onSubmitCreateContentModel}
+                    />
+                }
+            />
         </Grid>
     );
 }
