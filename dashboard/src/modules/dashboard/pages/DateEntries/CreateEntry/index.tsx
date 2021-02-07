@@ -158,8 +158,6 @@ const CreateEntry = (props: CreateEntryType) => {
 
             let data: any = {};
 
-            debugger
-
             values.forEach((valueItem: {name: string; value: string}) => {
 
                 if(rules && rules.length) {
@@ -177,7 +175,6 @@ const CreateEntry = (props: CreateEntryType) => {
                     }
                 }
             });
-            debugger
 
             const res = await doPostRequest(`${getBaseUrl()}${url}`, data, true);
             if(createEntryCallBack && res && res.id) {
