@@ -1,11 +1,10 @@
 import React from 'react';
-import SwipeableViews from 'react-swipeable-views';
 import { makeStyles, Theme, useTheme } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-
 import './index.scss';
+import Grid from "@material-ui/core/Grid";
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -81,11 +80,10 @@ export const CenterTab = (props: CenterTabProps) => {
                     }
                 </Tabs>
             </AppBar>
-            <SwipeableViews
-                axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
-                index={value}
+            <Grid
+                container
                 className={'swipeable'}
-                onChangeIndex={handleChangeIndex}
+                //onChangeIndex={handleChangeIndex}
             >
                 {
                     items.map((item, index) => {
@@ -97,7 +95,8 @@ export const CenterTab = (props: CenterTabProps) => {
                     })
                 }
 
-            </SwipeableViews>
+
+            </Grid>
         </div>
     );
 }

@@ -8,9 +8,10 @@ export const CommonButton = (props: {
     color?: 'primary' | 'secondary',
     variant?: "contained" | "text" | "outlined" | undefined;
     title?: string;
+    className?: string;
 }) => {
 
-    const {name, onClick=null, color='primary', variant='contained', title} = props;
+    const {name, onClick=null, color='primary', variant='contained', title, className=''} = props;
 
     function onButtonClick() {
         if(onClick) {
@@ -21,6 +22,7 @@ export const CommonButton = (props: {
     return (
         <Tooltip title={title ? title : name} aria-label={title ? title : name}>
             <Button
+                className={className}
                 onClick={onButtonClick}
                 variant={variant}
                 color={color}>
