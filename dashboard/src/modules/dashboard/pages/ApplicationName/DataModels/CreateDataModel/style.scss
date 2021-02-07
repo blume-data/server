@@ -7,68 +7,71 @@
     @include mobileAndTablet {
       width: 100%;
     }
+    .paper {
+      padding: 10px;
 
-    .fields-container {
-      margin-top: 20px;
-      .cancel-button {
-        margin-top: 13px;
-      }
-      .fields-grid {
-        .numbers {
-          display: flex;
+      .fields-container {
+        margin-top: 20px;
+        .cancel-button {
+          margin-top: 13px;
         }
-        .field-item {
-          button {
-            margin: 0 30px;
-            width: 125px;
-            span {
-              display: flex;
-              flex-direction: column;
-              justify-content: center;
-            }
-            padding: 10px;
-            svg {
-              margin: 0 auto;
-              padding: 5px;
-            }
-            h2 {
-              text-align: center;
-              padding: 5px;
-              font-weight: 700;
-              font-size: 14px;
-            }
-            p{
-              text-transform: lowercase;
-              padding: 5px;
-              font-size: 12px;
+        .fields-grid {
+          .numbers {
+            display: flex;
+          }
+          .field-item {
+            button {
+              margin: 0 30px;
+              width: 125px;
+              span {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+              }
+              padding: 10px;
+              svg {
+                margin: 0 auto;
+                padding: 5px;
+              }
+              h2 {
+                text-align: center;
+                padding: 5px;
+                font-weight: 700;
+                font-size: 14px;
+              }
+              p{
+                text-transform: lowercase;
+                padding: 5px;
+                font-size: 12px;
+              }
             }
           }
         }
       }
-    }
 
-    .property-section-container {
-      .property-item {
-        margin: 0 20px;
-        h2 {
-          @include trim(1);
+      .property-section-container {
+        .property-item {
+          margin: 0 20px;
+          h2 {
+            @include trim(1);
+          }
         }
+
       }
 
-    }
-
-    .modal-action-buttons {
-      float: right;
-      margin-top: 20px;
-    }
-
-    .set-fields-property-container {
-      padding: 20px 0;
-      .cancel-button-container {
-        display: flex;
-        justify-content: flex-end;
+      .modal-action-buttons {
+        float: right;
+        margin-top: 20px;
       }
 
+      .set-fields-property-container {
+        padding: 20px 0;
+        .cancel-button-container {
+          display: flex;
+          justify-content: flex-end;
+        }
+
+      }
     }
   }
 }
