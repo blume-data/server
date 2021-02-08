@@ -1,5 +1,5 @@
 import {Response, Request} from 'express';
-import {okayStatus, sendSingleError} from "@ranjodhbirkaur/common";
+import {errorStatus, okayStatus, sendSingleError} from "@ranjodhbirkaur/common";
 import {FileModel} from "../models/file-models";
 import {imagekitConfig} from "../utils/methods";
 import {
@@ -18,19 +18,28 @@ export async function fetchAsset(req: Request, res: Response) {
     const {fileName} = req.query;
     if(fileName) {
 
-        const imageURL = imagekitConfig.url({
-            path : `${fileName}`,
-            queryParameters : {
-                "v" : "123"
-            },
-            transformation : [{
-                original: "true"
-            }],
-            signed : true,
-            expireSeconds : 300
-        });
+        const exist = await FileModel.findOne({
+            fileName: `${fileName}`
+        }, '_id');
 
-        res.redirect(imageURL);
+        if(exist) {
+            const imageURL = imagekitConfig.url({
+                path : `${fileName}`,
+                queryParameters : {
+                    "v" : "123"
+                },
+                transformation : [{
+                    original: "true"
+                }],
+                signed : true,
+                expireSeconds : 300
+            });
+            res.redirect(imageURL);
+        }
+        else {
+            res.status(errorStatus).send('not found')
+        }
+
     }
     else {
         sendSingleError(res, 'name is required');
