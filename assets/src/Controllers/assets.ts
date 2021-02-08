@@ -7,9 +7,10 @@ import {
     AssetsAuthImageKit,
     AssetsVerifyUrl,
     AssetsCreateTempRecord,
-    AssetsVerifyTempRecord
+    AssetsVerifyTempRecord, AssetsFetchAssetUrl
 } from "../utils/urls";
 import {DateTime} from "luxon";
+import {ENTRY_CREATED_BY, FIRST_NAME, LAST_NAME} from "@ranjodhbirkaur/constants";
 
 // fetch assets
 export async function fetchAsset(req: Request, res: Response) {
@@ -40,6 +41,9 @@ export async function fetchAsset(req: Request, res: Response) {
 export async function getAssetsRoutes(req: Request, res: Response) {
     // fetch routes of other services
     res.status(okayStatus).send({
+        // get single image
+        getAsset: AssetsFetchAssetUrl,
+        // get all assets
         getAssets: AssetsGetAssetsUrl,
         verifyAssets: AssetsVerifyUrl,
         authAssets: AssetsAuthImageKit,
@@ -67,7 +71,7 @@ export async function createTempAssetsRecord(req: Request, res: Response) {
 
 export async function verifyTempAssetsRecord(req: Request, res: Response) {
 
-    const {di_98, emanelif_89, htap_21, tu, h, w, s} = req.body;
+    const {di_98, emanelif_89, htap_21, tu, h, w, s, ty} = req.body;
     const exist = await FileModel.find({
         _id: di_98
     });
@@ -81,13 +85,17 @@ export async function verifyTempAssetsRecord(req: Request, res: Response) {
             thumbnailUrl: tu,
             height: Number(h),
             width: Number(w),
-            size: Number(s)
+            size: Number(s),
+            type: ty
         });
         res.status(okayStatus).send(true);
     }
 }
 
+// get list of all assets
 export async function getAssets(req: Request, res: Response) {
-    const assets = await FileModel.find({}).skip(0).limit(10);
+    const assets = await FileModel.find({})
+        .populate(ENTRY_CREATED_BY, [FIRST_NAME, LAST_NAME])
+        .skip(0).limit(10);
     res.status(okayStatus).send(assets);
 }

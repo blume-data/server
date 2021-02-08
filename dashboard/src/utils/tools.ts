@@ -92,3 +92,46 @@ export async function fetchModelEntries(data: FetchModelEntriesType) {
         ]
     }, true);
 }
+
+interface UploadImagesType{
+    e: any,
+    t_s_4_6_3_t: string;
+    clientUserName: string;
+    v_3_5_6: string;
+    imagekit: any;
+
+}
+
+export async function uploadImages(data: UploadImagesType) {
+
+    const {e, t_s_4_6_3_t, clientUserName, v_3_5_6, imagekit} = data;
+
+    const file = e.target.files[0];
+    const r945 = t_s_4_6_3_t.replace(`:${CLIENT_USER_NAME}`, clientUserName);
+    const r43 = v_3_5_6.replace(`:${CLIENT_USER_NAME}`, clientUserName);
+
+    const t_0 = await doPostRequest(`${getBaseUrl()}${r945}`, {
+        fileName: file.name
+    }, true);
+
+    imagekit.upload({
+        file,
+        fileName: file.name,
+        tags: ["tag1"],
+        isPrivateFile: true
+    }, async function(err: any, result: any) {
+        console.log('Result', result);
+
+        const ty = await doPostRequest(`${getBaseUrl()}${r43}`, {
+            di_98: t_0,
+            emanelif_89: result.name,
+            htap_21: result.filePath,
+            tu: result.thumbnailUrl,
+            h: result.height,
+            w: result.width,
+            s: result.size,
+            ty: result.fileType
+        })
+        console.log('tu', ty);
+    })
+}
