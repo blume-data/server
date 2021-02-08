@@ -19,7 +19,7 @@ import {
     SHORT_STRING_FIElD_TYPE,
     shortenString,
     SUPPORTED_FIELDS_TYPE,
-    RuleType, FIELD_CUSTOM_ERROR_MSG_MATCH_CUSTOM_PATTERN
+    RuleType, FIELD_CUSTOM_ERROR_MSG_MATCH_CUSTOM_PATTERN, MEDIA_FIELD_TYPE, SINGLE_ASSETS_TYPE, MULTIPLE_ASSETS_TYPE
 } from "@ranjodhbirkaur/constants";
 import {isValidRegEx} from "../../../util/methods";
 
@@ -240,6 +240,23 @@ export async function validateCollections(req: Request, res: Response, next: Nex
                     }
                 }
             }
+
+            if(rule.type === MEDIA_FIELD_TYPE) {
+                if(!rule.assetsType) {
+                    rule.assetsType = SINGLE_ASSETS_TYPE
+                }
+                else {
+                    const supportedAssetsType = [SINGLE_ASSETS_TYPE, MULTIPLE_ASSETS_TYPE]
+                    if(!supportedAssetsType.includes(rule.assetsType) ) {
+                        isValidBody = false;
+                        inValidMessage.push({
+                            message: `assetType is not valid type`,
+                            field: 'rules'
+                        });
+                    }
+                }
+            }
+
 
             // If valid rule
             parsedRules.push(parsedRule);

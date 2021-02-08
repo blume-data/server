@@ -12,7 +12,7 @@ import {
     FormType, JSON_TEXT,
     RADIO,
     TEXT,
-    ONLY_DATE_FORM_FIELD_TYPE, REFERENCE_EDITOR
+    ONLY_DATE_FORM_FIELD_TYPE, REFERENCE_EDITOR, ASSETS_ADDER
 } from "./interface";
 import './style.scss';
 import {
@@ -31,6 +31,7 @@ import {VerticalTab, VerticalTabPanel} from "../VerticalTab";
 import {JsonEditor} from "./JsonEditor";
 import ReferenceEditor from "./ReferenceEditor";
 import HtmlEditor from "../HtmlEditor";
+import AssetsAdder from "./AssetsAdder";
 
 interface FormState {
     label: string;
@@ -444,6 +445,18 @@ export const Form = (props: FormType) => {
                 );
             }
             return null;
+        }
+        if(inputType === ASSETS_ADDER) {
+            return (
+                <AssetsAdder
+                    label={label}
+                    descriptionText={descriptionText}
+                    value={value}
+                    onBlur={onBlur}
+                    onChange={onChange}
+                    className={classNames}
+                />
+            );
         }
     }
 
