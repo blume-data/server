@@ -12,7 +12,7 @@ import {
     ErrorMessagesType,
     INTEGER_FIElD_TYPE,
     JSON_FIELD_TYPE,
-    LONG_STRING_FIELD_TYPE, ONE_TO_MANY_RELATION,
+    LONG_STRING_FIELD_TYPE, MEDIA_FIELD_TYPE, ONE_TO_MANY_RELATION,
     REFERENCE_FIELD_TYPE,
     REFERENCE_MODEL_NAME,
     REFERENCE_MODEL_TYPE,
@@ -23,6 +23,7 @@ import {doPostRequest} from "../../../../../utils/baseApi";
 import {getBaseUrl} from "../../../../../utils/urls";
 import Loader from "../../../../../components/common/Loader";
 import {
+    ASSETS_ADDER,
     CHECKBOX,
     ConfigField,
     FORMATTED_TEXT,
@@ -124,6 +125,11 @@ const CreateEntry = (props: CreateEntryType) => {
                     type = TEXT;
                     miscData[REFERENCE_MODEL_TYPE] = rule[REFERENCE_MODEL_TYPE];
                     miscData[REFERENCE_MODEL_NAME] = rule[REFERENCE_MODEL_NAME];
+                    break;
+                }
+                case MEDIA_FIELD_TYPE: {
+                    inputType = ASSETS_ADDER;
+                    type = TEXT;
                     break;
                 }
 

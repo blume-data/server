@@ -12,6 +12,7 @@ export const CHECKBOX = 'check-box';
 export const FORMATTED_TEXT = 'formatted-text';
 export const JSON_TEXT = 'json';
 export const REFERENCE_EDITOR = 'REFERENCE_EDITOR';
+export const ASSETS_ADDER = 'ASSETS_ADDER';
 
 export interface FormType {
     className: string;

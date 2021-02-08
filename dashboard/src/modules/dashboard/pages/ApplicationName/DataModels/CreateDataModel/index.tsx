@@ -53,7 +53,7 @@ import {
     ONE_TO_ONE_RELATION,
     ONE_TO_MANY_RELATION,
     RuleType,
-    FIELD_CUSTOM_ERROR_MSG_MATCH_CUSTOM_PATTERN
+    FIELD_CUSTOM_ERROR_MSG_MATCH_CUSTOM_PATTERN, SINGLE_ASSETS_TYPE, MULTIPLE_ASSETS_TYPE
 } from "@ranjodhbirkaur/constants";
 import TextFieldsIcon from '@material-ui/icons/TextFields';
 import './style.scss';
@@ -147,6 +147,8 @@ const CreateDataModel = (props: CreateDataModelType) => {
     const FIELD_REFERENCE_MODEL_NAME = 'referenceModelName';
     // one to many or one to one
     const FIELD_REFERENCE_MODEL_TYPE = 'referenceModelType';
+    // type of assets field
+    const FIELD_ASSET_TYPE = 'assetsType';
 
     /*Field Group Names*/
     const FIELD_LIMIT_CHARACTER_COUNT_GROUP = 'Limit character count';
@@ -565,7 +567,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 groupName: FIELD_REFERENCE_MODEL_GROUP,
                 required: false,
                 placeholder: 'Select type of reference',
-                value: `${fieldMatchPattern}`,
+                value: ``,
                 className: 'field-min-count',
                 type: 'string',
                 name: FIELD_REFERENCE_MODEL_TYPE,
@@ -577,6 +579,25 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 inputType: DROPDOWN,
                 descriptionText: 'Select type of reference'
             });
+        }
+
+        if(fieldType === MEDIA_FIELD_TYPE) {
+            hello.push({
+                groupName: FIELD_NAME_GROUP,
+                required: false,
+                placeholder: 'Select type of media storage',
+                value: ``,
+                className: 'field-min-count',
+                type: 'string',
+                name: FIELD_ASSET_TYPE,
+                label: 'Select type of reference',
+                options: [
+                    {label: 'single media', value: SINGLE_ASSETS_TYPE},
+                    {label: 'multiple media', value: MULTIPLE_ASSETS_TYPE}
+                ],
+                inputType: DROPDOWN,
+                descriptionText: 'Select type of media storage'
+            })
         }
 
         return hello;
@@ -638,9 +659,14 @@ const CreateDataModel = (props: CreateDataModelType) => {
             let propertyDefaultValue = '';
             let propertyReferenceModelName = '';
             let propertyReferenceModelType = '';
+            let propertyMediaType = '';
             values.forEach((value: any) => {
                 const v = value.value;
                 switch (value.name) {
+                    case FIELD_ASSET_TYPE: {
+                        propertyMediaType = v;
+                        break;
+                    }
                     case FIELD_DEFAULT_VALUE: {
                         propertyDefaultValue = v;
                         break;
@@ -763,11 +789,13 @@ const CreateDataModel = (props: CreateDataModelType) => {
 
                         onlyAllowedValues: propertyOnlySpecifiedValues ? propertyOnlySpecifiedValues : undefined,
 
-                        matchCustomSpecificPattern: propertyMatchPatternString,
+                        matchCustomSpecificPattern: propertyMatchPatternString ? propertyMatchPatternString : undefined,
                         [FIELD_CUSTOM_ERROR_MSG_MATCH_CUSTOM_PATTERN]: propertyMatchCustomPatternErrorMessage ? propertyMatchCustomPatternErrorMessage : undefined,
 
                         referenceModelName: propertyReferenceModelName ? propertyReferenceModelName : undefined,
-                        referenceModelType: propertyReferenceModelType ? propertyReferenceModelType : undefined
+                        referenceModelType: propertyReferenceModelType ? propertyReferenceModelType : undefined,
+
+                        assetsType: propertyMediaType ? propertyMediaType : undefined
                     };
 
                     const tempProperties = JSON.parse(JSON.stringify(properties ? properties : []));

@@ -31,9 +31,10 @@ export const UploadAsset = (props) => {
 
     async function upload(e) {
 
-        await uploadImages({
+        const a = await uploadImages({
             e, clientUserName, v_3_5_6, t_s_4_6_3_t, imagekit
         });
+
     }
 
     if(props.authUrl) {
