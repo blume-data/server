@@ -1,11 +1,15 @@
-import React, {useEffect} from "react";
+import React from "react";
 import {getBaseUrl} from "../../utils/urls";
-import {doGetRequest, doPostRequest} from "../../utils/baseApi";
 import {connect, ConnectedProps} from "react-redux";
 import {RootState} from "../../rootReducer";
 import {CLIENT_USER_NAME} from "@ranjodhbirkaur/constants";
 import {getItemFromLocalStorage} from "../../utils/tools";
 import {UploadAsset} from "../../components/common/UploadAsset";
+import Grid from "@material-ui/core/Grid";
+import './assets-component.scss';
+import {AssetsTable} from "./AssetsTable";
+
+
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 export const AssetsComponent = (props: PropsFromRedux) => {
@@ -13,35 +17,25 @@ export const AssetsComponent = (props: PropsFromRedux) => {
     const {assetsUrls} = props;
     const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
 
-    console.log('t_s_4_6_3_t', props);
-
-    // Fetch Assets
-    async function fetchAssets() {
-
-        if(clientUserName && assetsUrls && assetsUrls.getAssets){
-            const url = assetsUrls.getAssets.replace(`:${CLIENT_USER_NAME}`, clientUserName);
-            const response = await doGetRequest(`${getBaseUrl()}${url}`, null, true);
-            console.log('res', response);
-        }
-
-    }
-    // fetch assets
-    useEffect(() => {
-        fetchAssets();
-    }, [assetsUrls]);
-
     const url = props.assetsUrls ? props.assetsUrls.authAssets : '';
     const authUrl = `${getBaseUrl()}${url}`
 
     if(authUrl && clientUserName) {
         return (
-            <div>
-                <UploadAsset
-                    v_3_5_6={props.assetsUrls && props.assetsUrls.v_3_5_6}
-                    t_s_4_6_3_t={props.assetsUrls && props.assetsUrls.t_s_4_6_3_t}
-                    authUrl={authUrl.replace(`:${CLIENT_USER_NAME}`, clientUserName)}
-                />
-            </div>
+            <Grid container className={'assets-main-container-wrapper'}>
+                <Grid container justify={"flex-end"}>
+                    <UploadAsset
+                        v_3_5_6={props.assetsUrls && props.assetsUrls.v_3_5_6}
+                        t_s_4_6_3_t={props.assetsUrls && props.assetsUrls.t_s_4_6_3_t}
+                        authUrl={authUrl.replace(`:${CLIENT_USER_NAME}`, clientUserName)}
+                    />
+                </Grid>
+                <Grid className="table">
+                    {
+                        assetsUrls ? <AssetsTable assetsUrls={assetsUrls} /> : null
+                    }
+                </Grid>
+            </Grid>
         );
     }
     return null;

@@ -29,6 +29,7 @@ export interface AssetsRoutesType {
     authAssets: string;
     t_s_4_6_3_t: string;
     v_3_5_6: string;
+    getAsset: string;
 }
 
 
