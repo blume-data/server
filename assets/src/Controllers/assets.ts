@@ -80,7 +80,7 @@ export async function createTempAssetsRecord(req: Request, res: Response) {
 
 export async function verifyTempAssetsRecord(req: Request, res: Response) {
 
-    const {di_98, emanelif_89, htap_21, tu, h, w, s, ty} = req.body;
+    const {di_98, emanelif_89, htap_21, tu, h, w, s, ty, dilife} = req.body;
     const exist = await FileModel.find({
         _id: di_98
     });
@@ -95,7 +95,8 @@ export async function verifyTempAssetsRecord(req: Request, res: Response) {
             height: Number(h),
             width: Number(w),
             size: Number(s),
-            type: ty
+            type: ty,
+            fileId: dilife
         });
         res.status(okayStatus).send(true);
     }

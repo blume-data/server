@@ -130,7 +130,8 @@ export async function uploadImages(data: UploadImagesType) {
             h: result.height,
             w: result.width,
             s: result.size,
-            ty: result.fileType
+            ty: result.fileType,
+            dilife: result.fileId
         })
         console.log('tu', ty);
     })
