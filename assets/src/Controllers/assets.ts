@@ -103,7 +103,9 @@ export async function verifyTempAssetsRecord(req: Request, res: Response) {
 
 // get list of all assets
 export async function getAssets(req: Request, res: Response) {
-    const assets = await FileModel.find({})
+    const assets = await FileModel.find({
+        isVerified: true
+    })
         .populate(ENTRY_CREATED_BY, [FIRST_NAME, LAST_NAME])
         .skip(0).limit(10);
     res.status(okayStatus).send(assets);

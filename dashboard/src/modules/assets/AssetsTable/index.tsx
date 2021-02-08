@@ -79,7 +79,7 @@ export const AssetsTable = (prop: AssetsTableType) => {
     }, [assetsUrls]);
 
     return (
-        <Grid className={'assets-table-container'}>
+        <Grid container justify={"center"} direction={"column"} className={'assets-table-container'}>
             <BasicTableMIUI
                 columns={columns}
                 tableName={'Assets'}
