@@ -26,7 +26,11 @@ export interface RouteActionType {
 export interface AssetsRoutesType {
     getSignedUrl: string;
     getAssets: string;
+    authAssets: string;
+    t_s_4_6_3_t: string;
+    v_3_5_6: string;
 }
+
 
 interface DataRoutesType {
     StoreUrl: string;

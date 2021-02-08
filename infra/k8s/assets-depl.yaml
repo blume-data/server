@@ -24,11 +24,11 @@ spec:
                 secretKeyRef:
                   name: jwt-secret
                   key: JWT_KEY
-            - name: AWS_SECRET_ACCESS_KEY
+            - name: IMAGE_KIT_PRIVATE_KEY
               valueFrom:
                 secretKeyRef:
-                  name: aws-secret-access-key
-                  key: AWS_SECRET_ACCESS_KEY
+                  name: image-kit-private-key
+                  key: IMAGE_KIT_PRIVATE_KEY
 ---
 apiVersion: v1
 kind: Service

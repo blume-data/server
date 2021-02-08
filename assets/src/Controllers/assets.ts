@@ -1,28 +1,35 @@
 import {Response, Request} from 'express';
-import {CLIENT_USER_NAME, okayStatus, RANDOM_STRING, sendSingleError} from "@ranjodhbirkaur/common";
+import {okayStatus, sendSingleError} from "@ranjodhbirkaur/common";
 import {FileModel} from "../models/file-models";
-import {s3} from "../utils/methods";
-import {AwsBucketName, AwsImageRootUrl} from "../config";
-import {AssetsGetAssetsUrl, AssetsGetSignedUrl, AssetsVerifyUrl} from "../utils/urls";
+import {imagekitConfig} from "../utils/methods";
+import {
+    AssetsGetAssetsUrl,
+    AssetsAuthImageKit,
+    AssetsVerifyUrl,
+    AssetsCreateTempRecord,
+    AssetsVerifyTempRecord
+} from "../utils/urls";
+import {DateTime} from "luxon";
 
+// fetch assets
 export async function fetchAsset(req: Request, res: Response) {
 
-    const {fileName} = req.params;
+    const {fileName} = req.query;
     if(fileName) {
-        const asset = await FileModel.findOne({
-            fileName
-        }, ['fileName']);
-        if(asset && asset.fileName) {
-            const options = {
-                Bucket: AwsBucketName,
-                Key: fileName
-            };
-            res.attachment(fileName);
-            s3.getObject(options).createReadStream().pipe(res);
-        }
-        else {
-            sendSingleError(res, 'asset is not found');
-        }
+
+        const imageURL = imagekitConfig.url({
+            path : `${fileName}`,
+            queryParameters : {
+                "v" : "123"
+            },
+            transformation : [{
+                original: "true"
+            }],
+            signed : true,
+            expireSeconds : 300
+        });
+
+        res.redirect(imageURL);
     }
     else {
         sendSingleError(res, 'name is required');
@@ -31,54 +38,56 @@ export async function fetchAsset(req: Request, res: Response) {
 }
 
 export async function getAssetsRoutes(req: Request, res: Response) {
+    // fetch routes of other services
     res.status(okayStatus).send({
-        getSignedUrl: AssetsGetSignedUrl,
         getAssets: AssetsGetAssetsUrl,
-        verifyAssets: AssetsVerifyUrl
+        verifyAssets: AssetsVerifyUrl,
+        authAssets: AssetsAuthImageKit,
+        t_s_4_6_3_t: AssetsCreateTempRecord,
+        v_3_5_6: AssetsVerifyTempRecord
     });
+}
+
+export async function createTempAssetsRecord(req: Request, res: Response) {
+
+    const {fileName} = req.body;
+    const clientUserName  = req.params && req.params.clientUserName;
+    const createdAt = DateTime.local().setZone('UTC').toJSDate();
+
+    const tempRecord = FileModel.build({
+        fileName,
+        clientUserName,
+        isVerified: false,
+        createdBy: `${req.currentUser['id']}`,
+        createdAt
+    });
+    await tempRecord.save();
+    res.send(tempRecord.id);
+}
+
+export async function verifyTempAssetsRecord(req: Request, res: Response) {
+
+    const {di_98, emanelif_89, htap_21, tu, h, w, s} = req.body;
+    const exist = await FileModel.find({
+        _id: di_98
+    });
+    if(exist) {
+        await FileModel.findOneAndUpdate({
+            _id: di_98
+        }, {
+            fileName: emanelif_89,
+            path: htap_21,
+            isVerified: true,
+            thumbnailUrl: tu,
+            height: Number(h),
+            width: Number(w),
+            size: Number(s)
+        });
+        res.status(okayStatus).send(true);
+    }
 }
 
 export async function getAssets(req: Request, res: Response) {
-
     const assets = await FileModel.find({}).skip(0).limit(10);
     res.status(okayStatus).send(assets);
-}
-
-export async function getSignedUrl(req: Request, res: Response) {
-    const {ContentType = 'image', name} = req.body;
-    const clientUserName = req.params[CLIENT_USER_NAME];
-    const fileName = `${RANDOM_STRING(10)}-${name}`;
-    const currentUser = req.currentUser;
-
-    s3.getSignedUrl('putObject', {
-        Bucket: AwsBucketName,
-        ContentType,
-        Key: fileName,
-    }, async (err, url) => {
-        
-        const newFile = FileModel.build({
-            fileName: fileName,
-            type: ContentType,
-            clientUserName,
-            isVerified: false,
-            createdBy: currentUser.id ? currentUser.id : '',
-
-        });
-        await newFile.save();
-        res.send({url, fileName});
-    });
-}
-
-export async function verifyAssets(req: Request, res: Response) {
-    const {fileName} = req.query;
-    const clientUserName = req.params[CLIENT_USER_NAME];
-
-    await FileModel.update({
-        fileName: `${fileName}`,
-        clientUserName
-
-    }, {isVerified: true});
-
-    res.status(okayStatus).send(true);
-
 }

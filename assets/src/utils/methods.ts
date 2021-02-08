@@ -1,12 +1,13 @@
-import AWS from "aws-sdk";
-import {accessKeyId, AwsRegionCode} from "../config";
+// remove aws sdk
 
-if (!process.env.AWS_SECRET_ACCESS_KEY) {
-    throw new Error('AWS_SECRET_ACCESS_KEY_2 must be defined');
+import ImageKit from "imagekit";
+
+if (!process.env.IMAGE_KIT_PRIVATE_KEY) {
+    throw new Error('IMAGE_KIT_PRIVATE_KEY must be defined');
 }
-export const s3 = new AWS.S3({
-    accessKeyId,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-    region: AwsRegionCode,
-    signatureVersion: 'v4',
+
+export const imagekitConfig = new ImageKit({
+    urlEndpoint: 'https://ik.imagekit.io/kafwriey64l/',
+    publicKey: 'public_k1JAmfGkYnDN/dhR+aVH6EpD9WM=',
+    privateKey: process.env.IMAGE_KIT_PRIVATE_KEY || ''
 });
