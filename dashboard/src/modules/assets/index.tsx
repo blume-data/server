@@ -4,12 +4,10 @@ import {connect, ConnectedProps} from "react-redux";
 import {RootState} from "../../rootReducer";
 import {CLIENT_USER_NAME} from "@ranjodhbirkaur/constants";
 import {getItemFromLocalStorage} from "../../utils/tools";
-import {UploadAsset} from "../../components/common/UploadAsset";
 import Grid from "@material-ui/core/Grid";
 import './assets-component.scss';
 import {AssetsTable} from "./AssetsTable";
-
-
+import UploadAsset from '../../components/common/UploadAsset';
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 export const AssetsComponent = (props: PropsFromRedux) => {

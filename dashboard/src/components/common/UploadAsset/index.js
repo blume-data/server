@@ -3,10 +3,9 @@ import ImageKit from "imagekit-javascript"
 import {getItemFromLocalStorage, uploadImages} from "../../../utils/tools";
 import {CLIENT_USER_NAME} from "@ranjodhbirkaur/constants";
 import {CommonButton} from "../CommonButton";
-import {randomBytes} from "crypto";
 import './upload-assets.scss';
 
-export const UploadAsset = (props) => {
+export default (props) => {
     const publicKey = 'public_k1JAmfGkYnDN/dhR+aVH6EpD9WM=';
     const urlEndpoint = 'https://ik.imagekit.io/kafwriey64l/';
     const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
@@ -20,7 +19,7 @@ export const UploadAsset = (props) => {
     });
 
     const RANDOM_STRING = function (minSize=4) {
-        return randomBytes(minSize).toString('hex')
+        return 'randome-stirng'
     };
 
     const componentId = RANDOM_STRING(10);
