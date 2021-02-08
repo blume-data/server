@@ -1,12 +1,11 @@
 import React, {useEffect} from "react";
 import {getBaseUrl} from "../../utils/urls";
-import {Input} from '@material-ui/core';
-import axios from 'axios';
 import {doGetRequest, doPostRequest} from "../../utils/baseApi";
 import {connect, ConnectedProps} from "react-redux";
 import {RootState} from "../../rootReducer";
 import {CLIENT_USER_NAME} from "@ranjodhbirkaur/constants";
 import {getItemFromLocalStorage} from "../../utils/tools";
+import {UploadAsset} from "../../components/common/UploadAsset";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 export const AssetsComponent = (props: PropsFromRedux) => {
@@ -14,7 +13,7 @@ export const AssetsComponent = (props: PropsFromRedux) => {
     const {assetsUrls} = props;
     const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
 
-    console.log('asdf', props);
+    console.log('t_s_4_6_3_t', props);
 
     // Fetch Assets
     async function fetchAssets() {
@@ -31,34 +30,21 @@ export const AssetsComponent = (props: PropsFromRedux) => {
         fetchAssets();
     }, [assetsUrls]);
 
-    async function onChangeFile(e: any) {
-        const file = e.target.files[0];
-        const fileType = file.type;
+    const url = props.assetsUrls ? props.assetsUrls.authAssets : '';
+    const authUrl = `${getBaseUrl()}${url}`
 
-        if(clientUserName && assetsUrls && assetsUrls.getSignedUrl) {
-            const signedUrl = assetsUrls.getSignedUrl.replace(`:${CLIENT_USER_NAME}`, clientUserName);
-            const awsSignedUrl = await doPostRequest(`${getBaseUrl()}${signedUrl}`, {
-                ContentType: file.type,
-                name: file.name
-            }, true);
-            const config = {
-                headers: {
-                    'Content-Type': fileType
-                }
-            };
-            if(awsSignedUrl && awsSignedUrl.url) {
-                const awsREsp = await axios.put(awsSignedUrl.url, file, config);
-                console.log('awsResp', awsREsp);
-            }
-        }
-
+    if(authUrl && clientUserName) {
+        return (
+            <div>
+                <UploadAsset
+                    v_3_5_6={props.assetsUrls && props.assetsUrls.v_3_5_6}
+                    t_s_4_6_3_t={props.assetsUrls && props.assetsUrls.t_s_4_6_3_t}
+                    authUrl={authUrl.replace(`:${CLIENT_USER_NAME}`, clientUserName)}
+                />
+            </div>
+        );
     }
-
-    return (
-        <div>
-            <Input onChange={onChangeFile} type="file"/>
-        </div>
-    );
+    return null;
 }
 
 const mapState = (state: RootState) => {

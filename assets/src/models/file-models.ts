@@ -3,9 +3,20 @@ import mongoose, {Schema} from 'mongoose';
 interface FileAttrs {
     clientUserName: string;
     fileName: string; //unique
-    isVerified: boolean;
-    type: string;
+
+    path?: string;
+    isVerified?: boolean;
+    // png, image, video or pdf
+    type?: string;
+    fileId?: string;
+
+    height?: number;
+    width?: number;
+    size?: number;
+
+    thumbnailUrl?: string;
     createdBy: string;
+    createdAt: Date;
 }
 
 interface FileModelType extends mongoose.Model<FileDoc> {
@@ -15,9 +26,20 @@ interface FileModelType extends mongoose.Model<FileDoc> {
 interface FileDoc extends mongoose.Document {
     clientUserName: string;
     fileName: string; //unique
-    isVerified: boolean;
-    type: string;
+
+    path?: string;
+    isVerified?: boolean;
+    // png, image, video or pdf
+    type?: string;
+    fileId?: string;
+
+    height?: number;
+    width?: number;
+    size?: number;
+
+    thumbnailUrl?: string;
     createdBy: string;
+    createdAt: Date;
 }
 
 const File = new mongoose.Schema(
@@ -31,19 +53,33 @@ const File = new mongoose.Schema(
             type: String,
             required: true
         },
+        fileId: {
+            type: String
+        },
+        thumbnailUrl: {
+            type: String
+        },
+        path: {
+            type: String
+        },
         isVerified: {
             type: Boolean,
             default: false
         },
         type: {
-            type: String,
-            required: true
+            type: String
         },
+
+        height: Number,
+        width: Number,
+        size: Number,
+
         createdBy: {
             type: Schema.Types.ObjectId,
             ref: 'ClientUser',
             required: true
-        }
+        },
+        createdAt: Date
     }
 );
 
