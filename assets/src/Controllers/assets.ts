@@ -1,5 +1,8 @@
 import {Response, Request} from 'express';
-import {errorStatus, okayStatus, sendSingleError} from "@ranjodhbirkaur/common";
+import {
+    errorStatus, okayStatus, sendSingleError,
+    getPageAndPerPage, paginateData
+} from "@ranjodhbirkaur/common";
 import {FileModel} from "../models/file-models";
 import {imagekitConfig} from "../utils/methods";
 import {
@@ -29,7 +32,8 @@ export async function fetchAsset(req: Request, res: Response) {
                     "v" : "123"
                 },
                 transformation : [{
-                    original: "true"
+                    original: "true",
+                    progressive: 'true'
                 }],
                 signed : true,
                 expireSeconds : 300
@@ -104,10 +108,15 @@ export async function verifyTempAssetsRecord(req: Request, res: Response) {
 
 // get list of all assets
 export async function getAssets(req: Request, res: Response) {
-    const assets = await FileModel.find({
+    const {page, perPage} = getPageAndPerPage(req)
+    const where = {
         isVerified: true
-    })
+    }
+    const assets = await FileModel.find(where)
         .populate(ENTRY_CREATED_BY, [FIRST_NAME, LAST_NAME])
-        .skip(0).limit(100);
-    res.status(okayStatus).send(assets);
+        .skip(Number(page) * Number(perPage)).limit(Number(perPage));
+
+    const data = await paginateData({Model: FileModel, items: assets, where, req});
+
+    res.status(okayStatus).send(data);
 }
