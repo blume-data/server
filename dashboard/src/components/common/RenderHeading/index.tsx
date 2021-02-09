@@ -1,4 +1,3 @@
-import {Tooltip} from "@material-ui/core";
 import React from "react";
 import './style.scss';
 
@@ -12,14 +11,12 @@ interface RenderHeadingType {
 }
 
 export const RenderHeading = (props: RenderHeadingType) => {
-    const {title, className, value, type = 'secondary'} = props;
+    const {className, value, type = 'secondary'} = props;
     return (
         <div className={'heading-container'}>
-            <Tooltip title={title} >
-                <h3 className={`${className ? className : ''} heading ${type}`}>
-                    {value}
-                </h3>
-            </Tooltip>
+            <h3 className={`${className ? className : ''} heading ${type}`}>
+                {value}
+            </h3>
         </div>
     );
 }

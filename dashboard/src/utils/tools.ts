@@ -93,19 +93,23 @@ export async function fetchModelEntries(data: FetchModelEntriesType) {
     }, true);
 }
 
+interface UploadedFileType {tbU: string, name: string, id: string, type: string}
+
 interface UploadImagesType{
     e: any,
     t_s_4_6_3_t: string;
     clientUserName: string;
     v_3_5_6: string;
     imagekit: any;
-
+    setLoading?: (status: boolean) => void;
+    // to return the ids of uploaded files
+    uFiles: UploadedFileType[],
+    setUploadedFiles?: (data: UploadedFileType[]) => void;
 }
 
 export async function uploadImages(data: UploadImagesType) {
 
-    const {e, t_s_4_6_3_t, clientUserName, v_3_5_6, imagekit} = data;
-    const uploadedFiles: {tbU: string, name: string}[] = [];
+    const {e, t_s_4_6_3_t, clientUserName, v_3_5_6, imagekit, setLoading, setUploadedFiles, uFiles} = data;
     const files = e.target.files;
     if(files && files.length) {
         for (const file of files) {
@@ -116,7 +120,8 @@ export async function uploadImages(data: UploadImagesType) {
                 fileName: file.name
             }, true);
 
-            imagekit.upload({
+            if(setLoading) setLoading(true);
+            await imagekit.upload({
                 file,
                 fileName: file.name,
                 tags: ["tag1"],
@@ -133,14 +138,17 @@ export async function uploadImages(data: UploadImagesType) {
                     ty: result.fileType,
                     dilife: result.fileId
                 });
-                uploadedFiles.push({
-                    name: result.filePath,
-                    tbU: result.thumbnailUrl
-                });
+                if(setLoading) setLoading(false);
+                const fileType = result.name.split('.').pop();
+                if(setUploadedFiles) {
+                    setUploadedFiles([...uFiles, {
+                        name: result.filePath,
+                        tbU: result.thumbnailUrl,
+                        id: t_0,
+                        type: fileType
+                    }])
+                }
             });
         }
     }
-
-    return uploadedFiles;
-
 }

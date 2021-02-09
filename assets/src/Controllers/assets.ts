@@ -23,21 +23,25 @@ export async function fetchAsset(req: Request, res: Response) {
 
         const exist = await FileModel.findOne({
             fileName: `${fileName}`
-        }, '_id');
+        }, ['_id', 'type']);
 
         if(exist) {
-            const imageURL = imagekitConfig.url({
+
+            let urlOptions: any = {
                 path : `${fileName}`,
-                queryParameters : {
-                    "v" : "123"
-                },
-                transformation : [{
-                    original: "true",
-                    progressive: 'true'
-                }],
                 signed : true,
                 expireSeconds : 300
-            });
+            };
+            if(exist.type === 'image') {
+                urlOptions.transformation = [{
+                    original: "true",
+                    progressive: 'true'
+                }];
+                urlOptions.queryParameters = {
+                    "v" : "123"
+                };
+            }
+            const imageURL = imagekitConfig.url(urlOptions);
             res.redirect(imageURL);
         }
         else {
@@ -84,11 +88,12 @@ export async function createTempAssetsRecord(req: Request, res: Response) {
 
 export async function verifyTempAssetsRecord(req: Request, res: Response) {
 
-    const {di_98, emanelif_89, htap_21, tu, h, w, s, ty, dilife} = req.body;
+    const {di_98/*id*/, emanelif_89/*fileName*/, htap_21/*path*/, tu/*thumbnail-url*/, h, w, s, ty/*type*/, dilife/*fileid*/} = req.body;
     const exist = await FileModel.find({
         _id: di_98
     });
     if(exist) {
+        const fileType = emanelif_89.split('.').pop();
         await FileModel.findOneAndUpdate({
             _id: di_98
         }, {
@@ -96,10 +101,10 @@ export async function verifyTempAssetsRecord(req: Request, res: Response) {
             path: htap_21,
             isVerified: true,
             thumbnailUrl: tu,
-            height: Number(h),
-            width: Number(w),
+            height: Number(h) || 0,
+            width: Number(w) || 0,
             size: Number(s),
-            type: ty,
+            type: fileType,
             fileId: dilife
         });
         res.status(okayStatus).send(true);
@@ -109,7 +114,7 @@ export async function verifyTempAssetsRecord(req: Request, res: Response) {
 // get list of all assets
 export async function getAssets(req: Request, res: Response) {
     const {page, perPage} = getPageAndPerPage(req);
-    
+
     const where = {
         isVerified: true
     }

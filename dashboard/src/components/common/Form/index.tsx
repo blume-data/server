@@ -140,7 +140,6 @@ export const Form = (props: FormType) => {
     useEffect(() => {
 
         const state = fields.map(field => {
-
             return {
                 label: field.label,
                 [`value`]: field.value,
@@ -449,6 +448,7 @@ export const Form = (props: FormType) => {
         if(inputType === ASSETS_ADDER) {
             return (
                 <AssetsAdder
+                    key={index}
                     label={label}
                     descriptionText={descriptionText}
                     value={value}
@@ -459,6 +459,8 @@ export const Form = (props: FormType) => {
             );
         }
     }
+
+    console.log('omr', formState, fields)
 
     async function onClickSubmit() {
         let isValid = true;
