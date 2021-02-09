@@ -62,7 +62,7 @@ const CreateEntry = (props: CreateEntryType) => {
     async function fetchModelDataAndRules() {
         if(GetCollectionNamesUrl) {
             const response = await getModelDataAndRules({
-                GetCollectionNamesUrl, applicationName, modelName, language, env
+                GetCollectionNamesUrl, applicationName, modelName: ModelName, language, env
             });
             if(response && !response.errors && response.length) {
                 setRules(JSON.parse(response[0].rules));

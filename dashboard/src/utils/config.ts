@@ -1,1 +1,1 @@
-export const ROOT_URL = process.env.NODE_ENV === 'development' ? `https://dev.ranjod.com` : 'https://api.ranjod.com';
+export const ROOT_URL = process.env.NODE_ENV === 'test' ? `https://dev.ranjod.com` : 'https://api.ranjod.com';

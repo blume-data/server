@@ -7,7 +7,7 @@ import {dashboardCreateDataEntryUrl, dashboardDataEntriesUrl} from "../../../../
 import Button from "@material-ui/core/Button";
 import {Link} from "react-router-dom";
 import './data-entries.scss';
-import {EntriesTable} from './EntriesTable';
+import {EntriesTable} from "../../../../components/common/EntriesTable";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
