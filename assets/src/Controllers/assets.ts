@@ -108,7 +108,8 @@ export async function verifyTempAssetsRecord(req: Request, res: Response) {
 
 // get list of all assets
 export async function getAssets(req: Request, res: Response) {
-    const {page, perPage} = getPageAndPerPage(req)
+    const {page, perPage} = getPageAndPerPage(req);
+    
     const where = {
         isVerified: true
     }
