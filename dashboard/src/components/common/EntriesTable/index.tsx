@@ -25,6 +25,7 @@ type EntriesTableType = PropsFromRedux & {
     selectable?: boolean;
     onEntrySelect?: (str: string) => void;
     onEntryDeSelect?: (str: string) => void;
+    initialSelectedEntries?: string[];
 }
 
 const EntriesTableComponent = (props: EntriesTableType) => {
@@ -37,12 +38,19 @@ const EntriesTableComponent = (props: EntriesTableType) => {
     const [selectedEntries, setSelectedEntries] = useState<string[]>([]);
     const [response, setResponse] = useState<any[]>([]);
 
-    const {env, applicationName, GetCollectionNamesUrl, language, GetEntriesUrl, modelName, setModelName, selectable=true, onEntrySelect, onEntryDeSelect} = props;
+    const {env, applicationName, GetCollectionNamesUrl, language, initialSelectedEntries,
+        GetEntriesUrl, modelName, setModelName, selectable=true, onEntrySelect, onEntryDeSelect} = props;
 
     useEffect(() => {
         getItems()
     }, [GetEntriesUrl]);
 
+    // set selected entries on initialization
+    useEffect(() => {
+        if(initialSelectedEntries) {
+            setSelectedEntries(initialSelectedEntries);
+        }
+    }, []);
     // update rows when selected or response is fetched
     useEffect(() => {
         const newRows = response.map((i: any) => {

@@ -16,6 +16,9 @@
     display: flex;
     justify-content: center;
     padding: 5px;
+    button {
+      margin: 0 5px;
+    }
   }
 }
 .dialog-modal-container.reference-editor-modal-container {

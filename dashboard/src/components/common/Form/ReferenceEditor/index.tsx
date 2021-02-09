@@ -10,6 +10,7 @@ import {CommonButton} from "../../CommonButton";
 import {ONE_TO_ONE_RELATION} from "@ranjodhbirkaur/constants";
 import ModalDialog from "../../ModalDialog";
 import {EntriesTable} from "../../EntriesTable";
+import {RenderHeading} from "../../RenderHeading";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type ReferenceEditorType = PropsFromRedux & {
@@ -73,15 +74,11 @@ export const ReferenceEditor = (props: ReferenceEditorType) => {
 
     return (
         <Grid className={`${className} reference-editor-wrapper`}>
-            <Typography component={'p'}>
-                {label}
-            </Typography>
-            <Typography component={'p'}>
-                Reference model: <strong>{`${REFERENCE_MODEL_NAME}`}</strong>
-            </Typography>
+            <RenderHeading title={label} value={label} type={"primary"} />
+            <RenderHeading value={`Reference model: ${REFERENCE_MODEL_NAME}`} title={`Reference model: ${REFERENCE_MODEL_NAME}`} type={"secondary"}/>
             {
                 descriptionText
-                ? <Typography component={'p'}>{descriptionText}</Typography>
+                ? <RenderHeading title={descriptionText} value={descriptionText} type={"para"} />
                 : null
             }
             {
@@ -138,6 +135,7 @@ export const ReferenceEditor = (props: ReferenceEditorType) => {
                     modelName={REFERENCE_MODEL_NAME}
                     onEntrySelect={createRefEntryCallBack}
                     selectable={true}
+                    initialSelectedEntries={refIds}
                     onEntryDeSelect={removeReference}
                 />
             </ModalDialog>
