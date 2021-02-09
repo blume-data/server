@@ -10,7 +10,8 @@ import {UserCell} from "../../../components/common/UserCell";
 import {DateCell} from "../../../components/common/DateCell";
 import {Avatar} from "@material-ui/core";
 import Checkbox from "@material-ui/core/Checkbox";
-import {PaginationComponent} from "../../../components/common/Pagination";
+import {PaginationTab} from "../../../components/common/Pagination";
+import Loader from "../../../components/common/Loader";
 
 interface AssetsType {
     clientUserName: string;
@@ -34,10 +35,15 @@ export const AssetsTable = (prop: AssetsTableType) => {
 
     const {assetsUrls} = prop;
 
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const [assets, setAssets] = useState<AssetsType[]>([]);
     const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
     const [selectedEntries, setSelectedEntries] = useState<string[]>([]);
     const [response, setResponse] = useState<any[]>([]);
+    const [page, setPage] = useState<number>(1);
+    const [pageSize, setPageSize] = useState<number>(0);
+    const [pageTotal, setPageTotal] = useState<number>(0);
+    const perPage= 10;
 
     const columns = [
         {name: 'Id', value: 'id'},
@@ -99,16 +105,25 @@ export const AssetsTable = (prop: AssetsTableType) => {
     async function fetchAssets() {
 
         if(clientUserName && assetsUrls && assetsUrls.getAssets){
+            setIsLoading(true);
             const url = assetsUrls.getAssets.replace(`:${CLIENT_USER_NAME}`, clientUserName);
-            const resp = await doGetRequest(`${getBaseUrl()}${url}`, null, true);
-            setResponse(resp);
+            const resp = await doGetRequest(`${getBaseUrl()}${url}?page=${page}&perPage=${perPage}`, null, true);
+            if(resp && resp.data && resp.data.length) {
+                setResponse(resp.data);
+                setIsLoading(false);
+            }
+            if(resp && resp.total) {
+                setPageTotal(resp.total);
+                //setPage(resp.page);
+                setPageSize(resp.pageSize);
+            }
         }
 
     }
     // fetch assets
     useEffect(() => {
         fetchAssets();
-    }, [assetsUrls]);
+    }, [assetsUrls, page]);
 
     // on all selected
     function selectAll() {
@@ -124,6 +139,10 @@ export const AssetsTable = (prop: AssetsTableType) => {
         return response.length === selectedEntries.length
     }
 
+    function onPageClick(e: any,page: number) {
+        setPage(page);
+    }
+
     return (
         <Grid container justify={"center"} direction={"column"} className={'assets-table-container'}>
             <BasicTableMIUI
@@ -133,9 +152,16 @@ export const AssetsTable = (prop: AssetsTableType) => {
                 tableName={'Assets'}
                 rows={assets}
             />
-            <Grid container justify={"center"} className={'pagination-component'}>
-                <PaginationComponent/>
+            <Grid className={'pagination-component'}>
+                {isLoading ? null : <PaginationTab
+                    currentPage={page}
+                    limit={perPage}
+                    handleChange={onPageClick}
+                    totalItems={pageTotal}
+                    id={'pag'}
+                />}
             </Grid>
+            {isLoading ? <Loader /> : null}
 
         </Grid>
     );

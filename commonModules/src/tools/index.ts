@@ -1,4 +1,5 @@
 import { randomBytes } from 'crypto';
+import {Request} from 'express';
 
 export const RANDOM_STRING = function (minSize=4) {
     return randomBytes(minSize).toString('hex')
@@ -16,3 +17,31 @@ export function isTestEnv() {
 export * from './jwt';
 export * from './validation';
 export * from './logs';
+
+interface PaginateDataType {
+    Model: any,
+    req: Request,
+    where: any,
+    items: any[]
+}
+export function getPageAndPerPage(req: Request): {page: Number, perPage: Number} {
+    let {page=1, perPage=10} = req.query;
+    page = ((Number(page) - 1) < 0) ? 0 : (Number(page) - 1);
+    perPage = Number(perPage) || 10;
+    if(perPage > 50) {
+        perPage = 50;
+    }
+    return {page, perPage};
+}
+
+export async function paginateData(data: PaginateDataType) {
+    const {Model, req, where, items} = data;
+    const {page} = getPageAndPerPage(req);
+    const count = await Model.countDocuments(where);
+    return {
+        total: count,
+        page,
+        pageSize: items.length,
+        data: items
+    }
+}
