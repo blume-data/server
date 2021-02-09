@@ -10,6 +10,7 @@ import {UserCell} from "../../../components/common/UserCell";
 import {DateCell} from "../../../components/common/DateCell";
 import {Avatar} from "@material-ui/core";
 import Checkbox from "@material-ui/core/Checkbox";
+import {PaginationComponent} from "../../../components/common/Pagination";
 
 interface AssetsType {
     clientUserName: string;
@@ -132,6 +133,9 @@ export const AssetsTable = (prop: AssetsTableType) => {
                 tableName={'Assets'}
                 rows={assets}
             />
+            <Grid container justify={"center"} className={'pagination-component'}>
+                <PaginationComponent/>
+            </Grid>
 
         </Grid>
     );

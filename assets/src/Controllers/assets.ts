@@ -108,6 +108,6 @@ export async function getAssets(req: Request, res: Response) {
         isVerified: true
     })
         .populate(ENTRY_CREATED_BY, [FIRST_NAME, LAST_NAME])
-        .skip(0).limit(10);
+        .skip(0).limit(100);
     res.status(okayStatus).send(assets);
 }
