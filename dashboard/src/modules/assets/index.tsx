@@ -30,7 +30,9 @@ export const AssetsComponent = (props: PropsFromRedux) => {
                 </Grid>
                 <Grid className="table">
                     {
-                        assetsUrls ? <AssetsTable assetsUrls={assetsUrls} /> : null
+                        assetsUrls
+                            ? <AssetsTable assetsUrls={assetsUrls} />
+                            : null
                     }
                 </Grid>
             </Grid>

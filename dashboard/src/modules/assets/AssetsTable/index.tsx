@@ -9,6 +9,8 @@ import {DateTime} from "luxon";
 import {UserCell} from "../../../components/common/UserCell";
 import {DateCell} from "../../../components/common/DateCell";
 import {Avatar} from "@material-ui/core";
+import Checkbox from "@material-ui/core/Checkbox";
+import {PaginationComponent} from "../../../components/common/Pagination";
 
 interface AssetsType {
     clientUserName: string;
@@ -34,8 +36,11 @@ export const AssetsTable = (prop: AssetsTableType) => {
 
     const [assets, setAssets] = useState<AssetsType[]>([]);
     const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
+    const [selectedEntries, setSelectedEntries] = useState<string[]>([]);
+    const [response, setResponse] = useState<any[]>([]);
 
     const columns = [
+        {name: 'Id', value: 'id'},
         {name: 'Thumbnail', value: 'thumbnailUrl'},
         {name: 'Created by', value: ENTRY_CREATED_BY},
         {name: 'Created At', value: ENTRY_CREATED_AT},
@@ -45,18 +50,34 @@ export const AssetsTable = (prop: AssetsTableType) => {
         {name: 'Dimensions', value: 'dimensions'},
     ]
 
-    // Fetch Assets
-    async function fetchAssets() {
+    function onEntryDeSelect(id: string) {
+        setSelectedEntries(selectedEntries.filter(i => i !== id));
+    }
 
-        if(clientUserName && assetsUrls && assetsUrls.getAssets){
-            const url = assetsUrls.getAssets.replace(`:${CLIENT_USER_NAME}`, clientUserName);
-            const response = await doGetRequest(`${getBaseUrl()}${url}`, null, true);
+    function onEntrySelect(id: string) {
+        setSelectedEntries([...selectedEntries, id]);
+    }
 
+
+    useEffect(() => {
+        if(clientUserName) {
             setAssets(response.map((i: any) => {
                 const updatedAt = DateTime.fromISO(i.createdAt);
                 const createdBy = <UserCell value={i.createdBy} />;
                 const a = assetsUrls.getAsset.replace(`:${CLIENT_USER_NAME}`, clientUserName);
                 const assetUrl = `${getBaseUrl()}${a}?fileName=${i.fileName}`;
+                const isChecked = selectedEntries.includes(i._id);
+                function onChangeCheckBox() {
+                    if(selectedEntries.includes(i._id)) {
+                        setSelectedEntries(selectedEntries.filter(item => item !== i._id));
+                        onEntryDeSelect(i._id);
+                    }
+                    else {
+                        setSelectedEntries([...selectedEntries, i._id]);
+                        onEntrySelect(i._id);
+                    }
+                }
+                const id = <Checkbox checked={isChecked} value={i._id} onChange={onChangeCheckBox} />
 
                 const thumbnailUrl = <a href={assetUrl} target={'_blank'}>
                     <Avatar alt={'a'} src={i.thumbnailUrl} />
@@ -64,12 +85,23 @@ export const AssetsTable = (prop: AssetsTableType) => {
                 const dimensions = `${i.height ? i.height : 0} * ${i.width ? i.width : 0} px`;
                 return {
                     ...i,
+                    id,
                     thumbnailUrl,
                     createdAt: <DateCell value={updatedAt} />,
                     createdBy,
                     dimensions
                 }
             }));
+        }
+    }, [response, selectedEntries])
+
+    // Fetch Assets
+    async function fetchAssets() {
+
+        if(clientUserName && assetsUrls && assetsUrls.getAssets){
+            const url = assetsUrls.getAssets.replace(`:${CLIENT_USER_NAME}`, clientUserName);
+            const resp = await doGetRequest(`${getBaseUrl()}${url}`, null, true);
+            setResponse(resp);
         }
 
     }
@@ -78,13 +110,32 @@ export const AssetsTable = (prop: AssetsTableType) => {
         fetchAssets();
     }, [assetsUrls]);
 
+    // on all selected
+    function selectAll() {
+        if(response.length === selectedEntries.length) {
+            setSelectedEntries([]);
+        }
+        else {
+            setSelectedEntries(response.map((i: any) => i._id));
+        }
+    }
+
+    function isAllSelected() {
+        return response.length === selectedEntries.length
+    }
+
     return (
         <Grid container justify={"center"} direction={"column"} className={'assets-table-container'}>
             <BasicTableMIUI
+                onSelectAll={selectAll}
+                isAllSelected={isAllSelected()}
                 columns={columns}
                 tableName={'Assets'}
                 rows={assets}
             />
+            <Grid container justify={"center"} className={'pagination-component'}>
+                <PaginationComponent/>
+            </Grid>
 
         </Grid>
     );

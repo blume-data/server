@@ -4,11 +4,13 @@ import {connect, ConnectedProps} from "react-redux";
 import './reference-editor.scss';
 import {RootState} from "../../../../rootReducer";
 import CreateEntry from "../../../../modules/dashboard/pages/DateEntries/CreateEntry";
-import {Chip} from "@material-ui/core";
+import {Chip, Tooltip} from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import {CommonButton} from "../../CommonButton";
 import {ONE_TO_ONE_RELATION} from "@ranjodhbirkaur/constants";
 import ModalDialog from "../../ModalDialog";
+import {EntriesTable} from "../../EntriesTable";
+import {RenderHeading} from "../../RenderHeading";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type ReferenceEditorType = PropsFromRedux & {
@@ -26,6 +28,7 @@ export const ReferenceEditor = (props: ReferenceEditorType) => {
     const {REFERENCE_MODEL_NAME, REFERENCE_MODEL_TYPE, className, value, onChange, descriptionText, onBlur, label} = props;
     const [refIds, setRefIds] = useState<string[]>([]);
     const [showCreateButton, setShowCreateButton] = useState<boolean>(true);
+    const [isEntryFormOpen, setIsEntryFormOpen] = useState<boolean>(false);
 
     useEffect(() => {
         // value is csv
@@ -71,15 +74,11 @@ export const ReferenceEditor = (props: ReferenceEditorType) => {
 
     return (
         <Grid className={`${className} reference-editor-wrapper`}>
-            <Typography component={'p'}>
-                {label}
-            </Typography>
-            <Typography component={'p'}>
-                Reference model: <strong>{`${REFERENCE_MODEL_NAME}`}</strong>
-            </Typography>
+            <RenderHeading title={label} value={label} type={"primary"} />
+            <RenderHeading value={`Reference model: ${REFERENCE_MODEL_NAME}`} title={`Reference model: ${REFERENCE_MODEL_NAME}`} type={"secondary"}/>
             {
                 descriptionText
-                ? <Typography component={'p'}>{descriptionText}</Typography>
+                ? <RenderHeading title={descriptionText} value={descriptionText} type={"para"} />
                 : null
             }
             {
@@ -91,13 +90,13 @@ export const ReferenceEditor = (props: ReferenceEditorType) => {
                     <Grid className={'reference-ids-list-wrapper'}>
                         {refIds.map((data, index) => {
                             return (
-                                <Chip
-                                    className={'chip'}
-                                    key={index}
-                                    title={'delete reference'}
-                                    label={data}
-                                    onDelete={() => removeReference(data)}
-                                />
+                                <Tooltip key={index} title={'Reference'}>
+                                    <Chip
+                                        className={'chip'}
+                                        label={data}
+                                        onDelete={() => removeReference(data)}
+                                    />
+                                </Tooltip>
                             );
                         })}
                     </Grid>
@@ -111,6 +110,11 @@ export const ReferenceEditor = (props: ReferenceEditorType) => {
                             name={`Add ${REFERENCE_MODEL_NAME}`}
                             onClick={() => setShowCreateButton(false)}
                         />
+                        <CommonButton
+                            title={`Select existing ${REFERENCE_MODEL_NAME}`}
+                            name={`Select ${REFERENCE_MODEL_NAME}`}
+                            onClick={() => setIsEntryFormOpen(true)}
+                        />
                   </Grid>
                 : null
             }
@@ -121,6 +125,19 @@ export const ReferenceEditor = (props: ReferenceEditorType) => {
                 title={`Create ${REFERENCE_MODEL_NAME}`}
             >
                 <CreateEntry modelNameProp={REFERENCE_MODEL_NAME} createEntryCallBack={createRefEntryCallBack} />
+            </ModalDialog>
+            <ModalDialog
+                isOpen={isEntryFormOpen}
+                handleClose={() => setIsEntryFormOpen(false)}
+                title={`Select ${REFERENCE_MODEL_NAME}`}
+                className={'reference-editor-modal-container'}>
+                <EntriesTable
+                    modelName={REFERENCE_MODEL_NAME}
+                    onEntrySelect={createRefEntryCallBack}
+                    selectable={true}
+                    initialSelectedEntries={refIds}
+                    onEntryDeSelect={removeReference}
+                />
             </ModalDialog>
         </Grid>
     );

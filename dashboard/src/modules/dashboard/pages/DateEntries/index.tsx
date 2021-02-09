@@ -7,25 +7,20 @@ import {dashboardCreateDataEntryUrl, dashboardDataEntriesUrl} from "../../../../
 import Button from "@material-ui/core/Button";
 import {Link} from "react-router-dom";
 import './data-entries.scss';
-import {EntriesTable} from './EntriesTable';
+import {EntriesTable} from "../../../../components/common/EntriesTable";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
-function dataEntriesComponent(props: PropsFromRedux) {
+function DataEntriesComponent(props: PropsFromRedux) {
     const {applicationName} = props;
-    // eslint-disable-next-line react-hooks/rules-of-hooks
     const [selectedModelName, setSelectedModelName] = useState<string>('');
-
-    // eslint-disable-next-line react-hooks/rules-of-hooks
     const {modelName} = useParams<{modelName: string}>();
-    // eslint-disable-next-line react-hooks/rules-of-hooks
     const history = useHistory();
 
     const createDataEntryUrl = dashboardCreateDataEntryUrl
         .replace(':applicationName', applicationName)
         .replace(':modelName', modelName);
 
-    // eslint-disable-next-line react-hooks/rules-of-hooks
     useEffect(() => {
         // Redirect to correct route
         if(selectedModelName) {
@@ -69,4 +64,4 @@ const mapState = (state: RootState) => {
 };
 
 const connector = connect(mapState);
-export const DataEntries = connector(dataEntriesComponent);
+export const DataEntries = connector(DataEntriesComponent);

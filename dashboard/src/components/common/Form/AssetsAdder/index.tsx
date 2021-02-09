@@ -2,7 +2,9 @@ import React, {useEffect, useState} from "react";
 import Grid from "@material-ui/core/Grid";
 import {connect, ConnectedProps} from "react-redux";
 import {RootState} from "../../../../rootReducer";
-import Typography from "@material-ui/core/Typography";
+import './asset-adder.scss';
+import {RenderHeading} from "../../RenderHeading";
+import UploadAsset from '../../../common/UploadAsset';
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type AssetsAdderType = PropsFromRedux & {
@@ -45,10 +47,15 @@ export const AssetsAdderComponent = (props: AssetsAdderType) => {
 
 
     return (
-        <Grid className={`${className} reference-editor-wrapper`}>
-            <Typography component={'p'}>
-                {label}
-            </Typography>
+        <Grid className={`${className} assets-adder-editor-wrapper`}>
+            <RenderHeading title={label} value={label} type={"primary"} />
+            <Grid container justify={"flex-end"}>
+                <UploadAsset
+
+
+
+                />
+            </Grid>
         </Grid>
     );
 }
@@ -59,7 +66,8 @@ const mapState = (state: RootState) => {
         language: state.authentication.language,
         applicationName: state.authentication.applicationName,
         GetCollectionNamesUrl: state.routeAddress.routes.data?.GetCollectionNamesUrl,
-        StoreUrl: state.routeAddress.routes.data?.StoreUrl
+        StoreUrl: state.routeAddress.routes.data?.StoreUrl,
+        assetUrl: state.routeAddress.routes.assets?.authAssets
     }
 };
 

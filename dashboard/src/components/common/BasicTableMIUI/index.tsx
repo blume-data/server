@@ -8,6 +8,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import {Link} from "react-router-dom";
+import {Checkbox} from "@material-ui/core";
 
 const useStyles = makeStyles({
     table: {
@@ -24,12 +25,14 @@ interface BasicTableMIUIProps {
     }[];
     rows: any;
     tableName: string;
+    onSelectAll?: () => void;
+    isAllSelected?: boolean;
 }
 
 export default function BasicTableMIUI(props: BasicTableMIUIProps) {
     const classes = useStyles();
 
-    const {tableName, columns, rows} = props;
+    const {tableName, columns, rows, onSelectAll, isAllSelected=false} = props;
 
     function renderRow(row: any, index: number) {
 
@@ -63,6 +66,11 @@ export default function BasicTableMIUI(props: BasicTableMIUIProps) {
                     <TableRow>
                         {
                             columns.map((tableRow, index) => {
+                                if(index === 0 && onSelectAll) {
+                                    return <TableCell key={index} align={"left"}>
+                                        <Checkbox checked={isAllSelected} onClick={onSelectAll} />
+                                    </TableCell>
+                                }
                                 return (
                                     <TableCell align={index === 0 ? 'left' : "right"} key={index}>{tableRow.name}</TableCell>
                                 );
