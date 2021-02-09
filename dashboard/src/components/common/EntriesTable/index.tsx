@@ -15,6 +15,7 @@ import {fetchModelEntries, getModelDataAndRules} from "../../../utils/tools";
 import {EntriesFilter} from "../../../modules/dashboard/pages/DateEntries/Entries-Filter/EntriesFilter";
 import {EntryStatus} from "./EntryStatus";
 import Checkbox from "@material-ui/core/Checkbox";
+import Loader from "../Loader";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type EntriesTableType = PropsFromRedux & {
@@ -196,6 +197,8 @@ const EntriesTableComponent = (props: EntriesTableType) => {
                     rules={rules}
                 />
             </Grid>
+
+            {isLoading ? <Loader /> : null}
 
             <Grid className="entries-table">
                 {

@@ -21,6 +21,7 @@ import {useHistory} from "react-router";
 import {DateCell} from "../../../../../components/common/DateCell";
 import {DateTime} from "luxon";
 import {UserCell} from "../../../../../components/common/UserCell";
+import Checkbox from "@material-ui/core/Checkbox";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
@@ -30,43 +31,69 @@ const DataModels = (props: PropsFromRedux) => {
     const [confirmDialogOpen, setConfirmDialogOpen] = useState<boolean>(false);
     const [deleteEntryName, setDeleteEntryName] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [response, setResponse] = useState<any[]>([]);
+    const [selectedEntries, setSelectedEntries] = useState<string[]>([]);
 
     const history = useHistory();
 
-    async function getCollectionNames() {
+    function onEntrySelect(i: string) {
+        setSelectedEntries([...selectedEntries, i])
+    }
 
-        function openConfirmAlert(modelName: string) {
-            setDeleteEntryName(modelName);
-            setConfirmDialogOpen(true);
-        }
+    function onEntryDeSelect(i: string) {
+        setSelectedEntries(selectedEntries.filter(ii => ii !== i));
+    }
+
+    useEffect(() => {
+        setStores(response.map(item => {
+            function openConfirmAlert(modelName: string) {
+                setDeleteEntryName(modelName);
+                setConfirmDialogOpen(true);
+            }
+            const updatedAt = DateTime.fromISO(item.updatedAt);
+            const updatedBy = <UserCell value={item.updatedBy} />;
+            const isChecked = selectedEntries.includes(item._id);
+            function onChangeCheckBox() {
+                if(selectedEntries.includes(item._id)) {
+                    setSelectedEntries(selectedEntries.filter(ite => ite !== item._id));
+                    onEntryDeSelect(item._id);
+                }
+                else {
+                    setSelectedEntries([...selectedEntries, item._id]);
+                    onEntrySelect(item._id);
+                }
+            }
+            const id = <Checkbox checked={isChecked} value={item._id} onChange={onChangeCheckBox} />
+            return {
+                ...item,
+                id,
+                linkUrl: `${dashboardDataEntriesUrl
+                    .replace(':modelName?', item.name)
+                    .replace(':applicationName',applicationName)
+                }`,
+                edit: <IconButton><EditIcon /></IconButton>,
+                delete: <IconButton><DeleteIcon /></IconButton>,
+                'delete-click': () => openConfirmAlert(item.name),
+                'edit-click': () => onClickEdit(item.name),
+                updatedAt: <DateCell value={updatedAt} />,
+                updatedBy
+            }
+        }));
+
+    }, [response, selectedEntries]);
+
+    async function getCollectionNames() {
 
         if(GetCollectionNamesUrl) {
 
             setIsLoading(true);
 
-            const response = await getModelDataAndRules({
+            const resp = await getModelDataAndRules({
                 applicationName, env, language, GetCollectionNamesUrl
             });
 
-            //console.log('response dd', response);
-            if(response && Array.isArray(response)) {
-                setStores(response.map(item => {
-                    const updatedAt = DateTime.fromISO(item.updatedAt);
-                    const updatedBy = <UserCell value={item.updatedBy} />;
-                    return {
-                        ...item,
-                        linkUrl: `${dashboardDataEntriesUrl
-                            .replace(':modelName?', item.name)
-                            .replace(':applicationName',applicationName)
-                        }`,
-                        edit: <IconButton><EditIcon /></IconButton>,
-                        delete: <IconButton><DeleteIcon /></IconButton>,
-                        'delete-click': () => openConfirmAlert(item.name),
-                        'edit-click': () => onClickEdit(item.name),
-                        updatedAt: <DateCell value={updatedAt} />,
-                        updatedBy
-                    }
-                }));
+            if(resp && Array.isArray(resp)) {
+                setResponse(resp);
             }
             setIsLoading(false);
         }
@@ -77,6 +104,7 @@ const DataModels = (props: PropsFromRedux) => {
     }, [applicationName, env, language, GetCollectionNamesUrl]);
 
     const tableRows = [
+        {name: 'Id', value: 'id'},
         {name: 'Name', value: 'displayName', linkUrl: true},
         {name: 'Description', value: 'description'},
         {name: 'Updated by', value: 'updatedBy'},
@@ -105,13 +133,24 @@ const DataModels = (props: PropsFromRedux) => {
 
     }
 
-    console.log('TableRows -> rows', tableRows);
-    console.log('rows', stores);
-
     const createModelUrl = dashboardCreateDataModelsUrl.replace(`:${APPLICATION_NAME}`, applicationName);
 
     function onClickEdit(name: string) {
         history.push(`${createModelUrl}?name=${name}`);
+    }
+    // on all selected
+    function selectAll() {
+        if(response.length === selectedEntries.length) {
+            setSelectedEntries([]);
+        }
+        else {
+            setSelectedEntries(response.map((i: any) => i._id));
+        }
+    }
+
+    // is all selected
+    function isAllSelected() {
+        return response.length === selectedEntries.length
     }
 
     return (
@@ -142,6 +181,8 @@ const DataModels = (props: PropsFromRedux) => {
 
                 {
                     stores && stores.length ? <BasicTableMIUI
+                        isAllSelected={isAllSelected()}
+                        onSelectAll={selectAll}
                         rows={stores}
                         columns={tableRows}
                         tableName={'stores'}
