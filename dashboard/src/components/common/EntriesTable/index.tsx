@@ -16,6 +16,7 @@ import {EntriesFilter} from "../../../modules/dashboard/pages/DateEntries/Entrie
 import {EntryStatus} from "./EntryStatus";
 import Checkbox from "@material-ui/core/Checkbox";
 import Loader from "../Loader";
+import {PaginationTab} from "../Pagination";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type EntriesTableType = PropsFromRedux & {
@@ -38,13 +39,16 @@ const EntriesTableComponent = (props: EntriesTableType) => {
     const [where, setWhere] = useState<any>({});
     const [selectedEntries, setSelectedEntries] = useState<string[]>([]);
     const [response, setResponse] = useState<any[]>([]);
+    const [page, setPage] = useState<number>(1);
+    const [pageTotal, setPageTotal] = useState<number>(0);
+    const perPage = 10;
 
     const {env, applicationName, GetCollectionNamesUrl, language, initialSelectedEntries,
         GetEntriesUrl, modelName, setModelName, selectable=true, onEntrySelect, onEntryDeSelect} = props;
 
     useEffect(() => {
-        getItems()
-    }, [GetEntriesUrl]);
+        getItems();
+    }, [GetEntriesUrl, page]);
 
     // set selected entries on initialization
     useEffect(() => {
@@ -90,9 +94,14 @@ const EntriesTableComponent = (props: EntriesTableType) => {
             setIsLoading(true);
             const resp = await fetchModelEntries({
                 applicationName, modelName: modelName, language, env,
-                GetEntriesUrl, where
+                GetEntriesUrl: `${GetEntriesUrl}?page=${page}`, where
             });
-            setResponse(resp);
+            if(resp && resp.data && Array.isArray(resp.data)) {
+                setResponse(resp.data);
+                if(resp && resp.total) {
+                    setPageTotal(resp.total);
+                }
+            }
             setIsLoading(false);
         }
 
@@ -186,6 +195,10 @@ const EntriesTableComponent = (props: EntriesTableType) => {
         return response.length === selectedEntries.length
     }
 
+    function onPageClick(e: any,page: number) {
+        setPage(page);
+    }
+
     return (
         <Grid
             className={'entries-table-container-wrapper'}>
@@ -210,6 +223,17 @@ const EntriesTableComponent = (props: EntriesTableType) => {
                         tableName={'Entries'}
                     /> : <p>No models</p>
                 }
+            </Grid>
+
+            <Grid className="data-entries-pagination-container">
+                {isLoading ? null : <PaginationTab
+                    currentPage={page}
+                    limit={perPage}
+                    handleChange={onPageClick}
+                    totalItems={pageTotal}
+                    id={'pag'}
+                />}
+
             </Grid>
 
 

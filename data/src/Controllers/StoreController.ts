@@ -7,7 +7,7 @@ import {
     errorStatus,
     okayStatus,
     sendSingleError,
-    CLIENT_USER_MODEL_NAME
+    CLIENT_USER_MODEL_NAME, getPageAndPerPage, paginateData
 } from "@ranjodhbirkaur/common";
 
 import {ENTRY_LANGUAGE_PROPERTY_NAME, PER_PAGE} from "../util/constants";
@@ -185,24 +185,30 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
             name: collectionName
         });
 
+        const {page, perPage} = getPageAndPerPage(req);
+
         if(isValid) {
             const query =  model
                 .find(where, getOnly)
-                .skip(skip)
-                .limit(limit);
+                .skip(Number(page) * Number(perPage))
+                .limit(Number(perPage));
+
             if(req.body && req.body.populate && req.body.populate.length) {
                 await recursivePopulation(res, req.body.populate, {path: ''}, collectionName, query);
             }
 
-            query.exec((err: any, items: any) => {
+            query.exec(async (err: any, items: any) => {
                 if(isValid) {
-                    res.status(okayStatus).send(items);
+                    const data = await paginateData({
+                        Model: model, where, items, req
+                    });
+                    return res.status(okayStatus).send(data);
                 }
             });
 
         }
         else {
-            res.status(errorStatus).send(errorMessages);
+            return res.status(errorStatus).send(errorMessages);
         }
 
     }
