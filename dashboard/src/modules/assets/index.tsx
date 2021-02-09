@@ -8,6 +8,7 @@ import Grid from "@material-ui/core/Grid";
 import './assets-component.scss';
 import {AssetsTable} from "./AssetsTable";
 import UploadAsset from '../../components/common/UploadAsset';
+import Loader from "../../components/common/Loader";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 export const AssetsComponent = (props: PropsFromRedux) => {
@@ -33,7 +34,7 @@ export const AssetsComponent = (props: PropsFromRedux) => {
                 <Grid className="table">
                     {
                         assetsUrls
-                            ? <AssetsTable assetsUrls={assetsUrls} />
+                            ? isLoading ? <Loader /> : <AssetsTable assetsUrls={assetsUrls} />
                             : null
                     }
                 </Grid>

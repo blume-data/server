@@ -142,6 +142,7 @@ export async function uploadImages(data: UploadImagesType) {
             });
         }
     }
+    console.log('uploaded files', uploadedFiles);
     if(setLoading) setLoading(false);
 
     return uploadedFiles;

@@ -26,7 +26,7 @@ export async function fetchAsset(req: Request, res: Response) {
         }, ['_id', 'type']);
 
         if(exist) {
-            console.log('exist', exist);
+
             let urlOptions: any = {
                 path : `${fileName}`,
                 signed : true,
@@ -93,6 +93,7 @@ export async function verifyTempAssetsRecord(req: Request, res: Response) {
         _id: di_98
     });
     if(exist) {
+        const fileType = emanelif_89.split('.').pop();
         await FileModel.findOneAndUpdate({
             _id: di_98
         }, {
@@ -103,7 +104,7 @@ export async function verifyTempAssetsRecord(req: Request, res: Response) {
             height: Number(h) || 0,
             width: Number(w) || 0,
             size: Number(s),
-            type: ty,
+            type: fileType,
             fileId: dilife
         });
         res.status(okayStatus).send(true);
