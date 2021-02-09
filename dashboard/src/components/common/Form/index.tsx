@@ -449,6 +449,7 @@ export const Form = (props: FormType) => {
         if(inputType === ASSETS_ADDER) {
             return (
                 <AssetsAdder
+                    key={index}
                     label={label}
                     descriptionText={descriptionText}
                     value={value}

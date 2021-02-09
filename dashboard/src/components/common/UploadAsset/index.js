@@ -10,7 +10,9 @@ export default (props) => {
     const urlEndpoint = 'https://ik.imagekit.io/kafwriey64l/';
     const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
 
-    const {t_s_4_6_3_t, v_3_5_6, setLoading=null} = props;
+    const {t_s_4_6_3_t, v_3_5_6} = props;
+    // to get asset ids
+    const {setLoading=null, setUploadedFiles=null, uFiles} = props;
 
     const imagekit = new ImageKit({
         publicKey,
@@ -26,11 +28,9 @@ export default (props) => {
 
     async function upload(e) {
 
-        const uploadedAssets = await uploadImages({
-            e, clientUserName, v_3_5_6, t_s_4_6_3_t, imagekit, setLoading
+        await uploadImages({
+            e, clientUserName, v_3_5_6, t_s_4_6_3_t, imagekit, setLoading, setUploadedFiles, uFiles
         });
-
-        console.log('uploaded assets', uploadedAssets);
 
     }
 

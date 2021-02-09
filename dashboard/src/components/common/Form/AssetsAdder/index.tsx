@@ -8,6 +8,7 @@ import UploadAsset from '../../../common/UploadAsset';
 import {getItemFromLocalStorage} from "../../../../utils/tools";
 import {CLIENT_USER_NAME} from "@ranjodhbirkaur/constants";
 import {getBaseUrl} from "../../../../utils/urls";
+import {Avatar, Chip} from "@material-ui/core";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type AssetsAdderType = PropsFromRedux & {
@@ -19,32 +20,26 @@ type AssetsAdderType = PropsFromRedux & {
     label: string;
 }
 
+interface FileUploadType {
+    id: string;
+    tbU: string;
+    name: string;
+    type: string;
+}
+
 export const AssetsAdderComponent = (props: AssetsAdderType) => {
 
     const {className, value, onChange, descriptionText, onBlur, label} = props;
-    const [refIds, setRefIds] = useState<string[]>([]);
     const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
+    const [filesIds, setFilesIds] = useState<FileUploadType[]>([]);
 
     const url = props.assetsUrls ? props.assetsUrls.authAssets : '';
     const authUrl = `${getBaseUrl()}${url}`;
 
-    useEffect(() => {
-        // value is csv
-        if(value && value.length) {
-            const split = value.split(',');
-            if(split && split.length) {
-                setRefIds(split);
-            }
-        }
-        else {
-            setRefIds([]);
-        }
-    }, [value]);
-
-    function updateValue(refIds: string[]) {
+    function updateValue(ids: FileUploadType[]) {
         const event = {
             target: {
-                value: refIds.join(',')
+                value: ids.map(id => id.id).join(',')
             }
         }
         onBlur(event);
@@ -53,12 +48,31 @@ export const AssetsAdderComponent = (props: AssetsAdderType) => {
         }, 100);
     }
 
+    /*Remove reference*/
+    function removeReference(id: string) {
+        const filtered = filesIds.filter(item => item.id !== id);
+        setFilesIds(filtered);
+        setTimeout(() => {
+            updateValue(filtered);
+        });
+    }
+
+    // when file ids change update value
+    useEffect(() => {
+        updateValue(filesIds);
+    }, [filesIds]);
+
+    console.log('refs', value);
+
 
     return (
         <Grid className={`${className} assets-adder-editor-wrapper`}>
             <RenderHeading title={label} value={label} type={"primary"} />
+            <RenderHeading title={descriptionText} value={descriptionText} type={"secondary"} />
             <Grid container justify={"flex-end"}>
                 <UploadAsset
+                    setUploadedFiles={setFilesIds}
+                    uFiles={filesIds}
                     // verify url
                     v_3_5_6={props.assetsUrls && props.assetsUrls.v_3_5_6}
                     // temporary url
@@ -66,6 +80,24 @@ export const AssetsAdderComponent = (props: AssetsAdderType) => {
                     authUrl={authUrl.replace(`:${CLIENT_USER_NAME}`, clientUserName || '')}
 
                 />
+            </Grid>
+            <Grid container className={'files-component'} justify={"flex-start"}>
+                {
+                    filesIds.map((refId,index) => {
+                        return (
+                            <Chip
+                                key={index}
+                                onDelete={() => removeReference(refId.id)}
+                                label={refId.name}
+                                variant="outlined"
+                                avatar={<Avatar
+                                    alt={refId.name}
+                                    src={refId.tbU}
+                                />}
+                            />
+                        );
+                    })
+                }
             </Grid>
         </Grid>
     );
