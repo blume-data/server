@@ -226,13 +226,14 @@ const EntriesTableComponent = (props: EntriesTableType) => {
             </Grid>
 
             <Grid className="data-entries-pagination-container">
-                {isLoading ? null : <PaginationTab
+                {isLoading
+                    ? <Loader /> : response && response.length ? <PaginationTab
                     currentPage={page}
                     limit={perPage}
                     handleChange={onPageClick}
                     totalItems={pageTotal}
                     id={'pag'}
-                />}
+                /> : null}
 
             </Grid>
 
