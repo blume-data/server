@@ -1,6 +1,6 @@
 import React from 'react';
 import ImageKit from "imagekit-javascript"
-import {getItemFromLocalStorage, uploadImages} from "../../../utils/tools";
+import {getItemFromLocalStorage, randomString, uploadImages} from "../../../utils/tools";
 import {CLIENT_USER_NAME} from "@ranjodhbirkaur/constants";
 import {CommonButton} from "../CommonButton";
 import './upload-assets.scss';
@@ -10,7 +10,7 @@ export default (props) => {
     const urlEndpoint = 'https://ik.imagekit.io/kafwriey64l/';
     const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
 
-    const {t_s_4_6_3_t, v_3_5_6} = props;
+    const {t_s_4_6_3_t, v_3_5_6, setLoading=null} = props;
 
     const imagekit = new ImageKit({
         publicKey,
@@ -18,21 +18,19 @@ export default (props) => {
         authenticationEndpoint: props.authUrl ? props.authUrl : ''
     });
 
-    const RANDOM_STRING = function (minSize=4) {
-        return 'randome-stirng'
-    };
-
-    const componentId = RANDOM_STRING(10);
+    const componentId = randomString(10);
 
     function clickOnUploadInput() {
-        const el = document.getElementById(componentId).click();
+        document.getElementById(componentId).click();
     }
 
     async function upload(e) {
 
-        const a = await uploadImages({
-            e, clientUserName, v_3_5_6, t_s_4_6_3_t, imagekit
+        const uploadedAssets = await uploadImages({
+            e, clientUserName, v_3_5_6, t_s_4_6_3_t, imagekit, setLoading
         });
+
+        console.log('uploaded assets', uploadedAssets);
 
     }
 

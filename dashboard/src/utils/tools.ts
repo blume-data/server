@@ -99,14 +99,16 @@ interface UploadImagesType{
     clientUserName: string;
     v_3_5_6: string;
     imagekit: any;
+    setLoading?: (status: boolean) => void;
 
 }
 
 export async function uploadImages(data: UploadImagesType) {
 
-    const {e, t_s_4_6_3_t, clientUserName, v_3_5_6, imagekit} = data;
+    const {e, t_s_4_6_3_t, clientUserName, v_3_5_6, imagekit, setLoading} = data;
     const uploadedFiles: {tbU: string, name: string}[] = [];
     const files = e.target.files;
+    if(setLoading) setLoading(true);
     if(files && files.length) {
         for (const file of files) {
             const r945 = t_s_4_6_3_t.replace(`:${CLIENT_USER_NAME}`, clientUserName);
@@ -140,6 +142,7 @@ export async function uploadImages(data: UploadImagesType) {
             });
         }
     }
+    if(setLoading) setLoading(false);
 
     return uploadedFiles;
 
