@@ -37,15 +37,17 @@ export const AssetsAdderComponent = (props: AssetsAdderType) => {
     const authUrl = `${getBaseUrl()}${url}`;
 
     function updateValue(ids: FileUploadType[]) {
-        const event = {
-            target: {
-                value: ids.map(id => id.id).join(',')
+        if(ids && ids.length) {
+            const event = {
+                target: {
+                    value: ids.map(id => id.id).join(',')
+                }
             }
+            onBlur(event);
+            setTimeout(() => {
+                onChange(event);
+            }, 100);
         }
-        onBlur(event);
-        setTimeout(() => {
-            onChange(event);
-        }, 100);
     }
 
     /*Remove reference*/
