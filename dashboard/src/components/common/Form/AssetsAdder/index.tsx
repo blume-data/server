@@ -6,7 +6,7 @@ import './asset-adder.scss';
 import {RenderHeading} from "../../RenderHeading";
 import UploadAsset from '../../../common/UploadAsset';
 import {getItemFromLocalStorage} from "../../../../utils/tools";
-import {CLIENT_USER_NAME} from "@ranjodhbirkaur/constants";
+import {CLIENT_USER_NAME, MULTIPLE_ASSETS_TYPE, SINGLE_ASSETS_TYPE} from "@ranjodhbirkaur/constants";
 import {getBaseUrl} from "../../../../utils/urls";
 import {Avatar, Chip} from "@material-ui/core";
 
@@ -18,6 +18,7 @@ type AssetsAdderType = PropsFromRedux & {
     onBlur: (event: any) => void;
     descriptionText: string;
     label: string;
+    assetType?: string;
 }
 
 interface FileUploadType {
@@ -29,12 +30,29 @@ interface FileUploadType {
 
 export const AssetsAdderComponent = (props: AssetsAdderType) => {
 
-    const {className, value, onChange, descriptionText, onBlur, label} = props;
+    const {className, value, onChange, descriptionText, onBlur, label, assetType} = props;
     const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
     const [filesIds, setFilesIds] = useState<FileUploadType[]>([]);
 
     const url = props.assetsUrls ? props.assetsUrls.authAssets : '';
     const authUrl = `${getBaseUrl()}${url}`;
+
+    /*If value changes from back update the ids*/
+    useEffect(() => {
+        if(value) {
+            const joinedValue = value.split(',');
+            const newIds: FileUploadType[] = [];
+            if(joinedValue && joinedValue.length) {
+                joinedValue.forEach(item => {
+                    const exist = filesIds.find(id => id.id === item);
+                    if(exist) {
+                        newIds.push(exist);
+                    }
+                });
+                setFilesIds(newIds);
+            }
+        }
+    }, [value]);
 
     function updateValue(ids: FileUploadType[]) {
         if(ids && ids.length) {
@@ -64,7 +82,7 @@ export const AssetsAdderComponent = (props: AssetsAdderType) => {
         updateValue(filesIds);
     }, [filesIds]);
 
-    console.log('refs', value);
+    console.log('refs', filesIds, filesIds.map(id => id.id).join(','));
 
 
     return (
@@ -72,16 +90,20 @@ export const AssetsAdderComponent = (props: AssetsAdderType) => {
             <RenderHeading title={label} value={label} type={"primary"} />
             <RenderHeading title={descriptionText} value={descriptionText} type={"secondary"} />
             <Grid container justify={"flex-end"}>
-                <UploadAsset
-                    setUploadedFiles={setFilesIds}
-                    uFiles={filesIds}
-                    // verify url
-                    v_3_5_6={props.assetsUrls && props.assetsUrls.v_3_5_6}
-                    // temporary url
-                    t_s_4_6_3_t={props.assetsUrls && props.assetsUrls.t_s_4_6_3_t}
-                    authUrl={authUrl.replace(`:${CLIENT_USER_NAME}`, clientUserName || '')}
+                {
+                    assetType === MULTIPLE_ASSETS_TYPE || ((filesIds.length < 1) && (assetType === SINGLE_ASSETS_TYPE))
+                    ? <UploadAsset
+                            setUploadedFiles={setFilesIds}
+                            uFiles={filesIds}
+                            // verify url
+                            v_3_5_6={props.assetsUrls && props.assetsUrls.v_3_5_6}
+                            // temporary url
+                            t_s_4_6_3_t={props.assetsUrls && props.assetsUrls.t_s_4_6_3_t}
+                            authUrl={authUrl.replace(`:${CLIENT_USER_NAME}`, clientUserName || '')}
 
-                />
+                        />
+                    : null
+                }
             </Grid>
             <Grid container className={'files-component'} justify={"flex-start"}>
                 {
@@ -110,8 +132,6 @@ const mapState = (state: RootState) => {
         env: state.authentication.env,
         language: state.authentication.language,
         applicationName: state.authentication.applicationName,
-        /*GetCollectionNamesUrl: state.routeAddress.routes.data?.GetCollectionNamesUrl,
-        StoreUrl: state.routeAddress.routes.data?.StoreUrl,*/
         assetsUrls: state.routeAddress.routes.assets
     }
 };

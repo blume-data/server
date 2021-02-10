@@ -4,5 +4,14 @@
   .MuiDataGrid-overlay {
     display: none;
   }
+  .entries-avatar-list {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    max-width: 250px;
+    .MuiAvatar-circle {
+      margin-right: 10px;
+      margin-top: 10px;
+    }
+  }
 
 }

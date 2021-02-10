@@ -31,10 +31,13 @@ export const AssetsComponent = (props: PropsFromRedux) => {
                         authUrl={authUrl.replace(`:${CLIENT_USER_NAME}`, clientUserName)}
                     />
                 </Grid>
+                {isLoading ? <Loader /> : null}
                 <Grid className="table">
                     {
                         assetsUrls
-                            ? isLoading ? <Loader /> : <AssetsTable assetsUrls={assetsUrls} />
+                            ? <Grid className="asset-table-container-wrapper">
+                                <AssetsTable assetsUrls={assetsUrls} />
+                              </Grid>
                             : null
                     }
                 </Grid>

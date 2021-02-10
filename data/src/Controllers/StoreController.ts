@@ -49,7 +49,13 @@ import {
     UsPhoneRegName,
     usZipReg,
     UsZipRegName,
-    ENTRY_CREATED_AT, ENTRY_UPDATED_AT, ENTRY_CREATED_BY, ENTRY_UPDATED_BY, ENTRY_DELETED_BY
+    ENTRY_CREATED_AT,
+    ENTRY_UPDATED_AT,
+    ENTRY_CREATED_BY,
+    ENTRY_UPDATED_BY,
+    ENTRY_DELETED_BY,
+    MEDIA_FIELD_TYPE,
+    SINGLE_ASSETS_TYPE, MULTIPLE_ASSETS_TYPE
 } from "@ranjodhbirkaur/constants";
 import {createModel, getModel, sendOkayResponse, trimGetOnly} from "../util/methods";
 
@@ -192,6 +198,12 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
                 .find(where, getOnly)
                 .skip(Number(page) * Number(perPage))
                 .limit(Number(perPage));
+
+            // check if there is an asset
+            const existAsset = rules.find(rule => rule.type === MEDIA_FIELD_TYPE);
+            if(existAsset) {
+                query.populate(existAsset.name, 'fileName thumbnailUrl');
+            }
 
             if(req.body && req.body.populate && req.body.populate.length) {
                 await recursivePopulation(res, req.body.populate, {path: ''}, collectionName, query);
@@ -683,6 +695,28 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
                         }
                     }
                     if(rule[REFERENCE_MODEL_TYPE] === ONE_TO_MANY_RELATION && reqBody[rule.name]) {
+                        if(!(Array.isArray(reqBody[rule.name]) && reqBody[rule.name].length)) {
+                            isValid = false;
+                            errorMessages.push({
+                                field: rule.name,
+                                message: `${rule.name} should be an array of id`
+                            });
+                        }
+                    }
+
+                    break;
+                }
+                case MEDIA_FIELD_TYPE: {
+                    if(rule.assetsType === SINGLE_ASSETS_TYPE) {
+                        if(typeof reqBody[rule.name] !== "string" || !reqBody[rule.name]) {
+                            isValid = false;
+                            errorMessages.push({
+                                field: rule.name,
+                                message: `${rule.name} should be a valid id`
+                            });
+                        }
+                    }
+                    if(rule.assetsType === MULTIPLE_ASSETS_TYPE && reqBody[rule.name]) {
                         if(!(Array.isArray(reqBody[rule.name]) && reqBody[rule.name].length)) {
                             isValid = false;
                             errorMessages.push({

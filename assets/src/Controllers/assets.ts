@@ -13,7 +13,7 @@ import {
     AssetsVerifyTempRecord, AssetsFetchAssetUrl
 } from "../utils/urls";
 import {DateTime} from "luxon";
-import {ENTRY_CREATED_BY, FIRST_NAME, LAST_NAME} from "@ranjodhbirkaur/constants";
+import {ENTRY_CREATED_BY, ENTRY_UPDATED_AT, ENTRY_UPDATED_BY, FIRST_NAME, LAST_NAME} from "@ranjodhbirkaur/constants";
 
 // fetch assets
 export async function fetchAsset(req: Request, res: Response) {
@@ -119,6 +119,7 @@ export async function getAssets(req: Request, res: Response) {
         isVerified: true
     }
     const assets = await FileModel.find(where)
+        .sort(`-${ENTRY_UPDATED_AT}`)
         .populate(ENTRY_CREATED_BY, [FIRST_NAME, LAST_NAME])
         .skip(Number(page) * Number(perPage)).limit(Number(perPage));
 

@@ -448,6 +448,7 @@ export const Form = (props: FormType) => {
         if(inputType === ASSETS_ADDER) {
             return (
                 <AssetsAdder
+                    assetType={field.miscData.assetType}
                     key={index}
                     label={label}
                     descriptionText={descriptionText}
@@ -460,7 +461,7 @@ export const Form = (props: FormType) => {
         }
     }
 
-    console.log('omr', formState, fields)
+    console.log('omr', formState)
 
     async function onClickSubmit() {
         let isValid = true;
