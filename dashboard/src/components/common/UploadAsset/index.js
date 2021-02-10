@@ -30,22 +30,26 @@ export default (props) => {
 
     async function uploadImages(e) {
         const files = e.target.files;
-        const localFiles = JSON.parse(JSON.stringify(uFiles));
+        let localFiles;
+        if(uFiles) {
+            localFiles = JSON.parse(JSON.stringify(uFiles));
+        }
+        if(setLoading) {
+            setLoading(true);
+        }
         if(files && files.length) {
             for (const file of files) {
                 const r945 = t_s_4_6_3_t.replace(`:${CLIENT_USER_NAME}`, clientUserName);
                 const r43 = v_3_5_6.replace(`:${CLIENT_USER_NAME}`, clientUserName);
-
                 const t_0 = await doPostRequest(`${getBaseUrl()}${r945}`, {
                     fileName: file.name
                 }, true);
-
                 await imagekit.upload({
                     file,
                     fileName: file.name,
-                    tags: ["tag1"],
+                    tags: [clientUserName],
                     isPrivateFile: true
-                }, async function(err, result) {
+                },async function (err, result) {
                     await doPostRequest(`${getBaseUrl()}${r43}`, {
                         di_98: t_0,
                         emanelif_89: result.name,
@@ -54,12 +58,11 @@ export default (props) => {
                         h: result.height,
                         w: result.width,
                         s: result.size,
-                        ty: result.fileType,
+                        ty: file.type,
                         dilife: result.fileId
                     });
-
                     const fileType = result.name.split('.').pop();
-                    if(setUploadedFiles) {
+                    if (setUploadedFiles) {
                         localFiles.push({
                             name: result.filePath,
                             tbU: result.thumbnailUrl,
@@ -71,12 +74,13 @@ export default (props) => {
                 });
             }
         }
+        if(setLoading) {
+            setLoading(false);
+        }
     }
 
     async function upload(e) {
-
         await uploadImages(e);
-
     }
 
     if(props.authUrl) {

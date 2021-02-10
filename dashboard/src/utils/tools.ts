@@ -107,54 +107,6 @@ interface UploadImagesType{
     uFiles?: UploadImagesType[];
 }
 
-export async function uploadImages(data: UploadImagesType) {
-
-    const {e, t_s_4_6_3_t, clientUserName, v_3_5_6, imagekit, setLoading, setUploadedFiles, uFiles} = data;
-    const files = e.target.files;
-    const localFiles: UploadedFileType[] = JSON.parse(JSON.stringify(uFiles));
-    if(files && files.length) {
-        for (const file of files) {
-            const r945 = t_s_4_6_3_t.replace(`:${CLIENT_USER_NAME}`, clientUserName);
-            const r43 = v_3_5_6.replace(`:${CLIENT_USER_NAME}`, clientUserName);
-
-            const t_0 = await doPostRequest(`${getBaseUrl()}${r945}`, {
-                fileName: file.name
-            }, true);
-
-            if(setLoading) setLoading(true);
-            await imagekit.upload({
-                file,
-                fileName: file.name,
-                tags: ["tag1"],
-                isPrivateFile: true
-            }, async function(err: any, result: any) {
-                await doPostRequest(`${getBaseUrl()}${r43}`, {
-                    di_98: t_0,
-                    emanelif_89: result.name,
-                    htap_21: result.filePath,
-                    tu: result.thumbnailUrl,
-                    h: result.height,
-                    w: result.width,
-                    s: result.size,
-                    ty: result.fileType,
-                    dilife: result.fileId
-                });
-                if(setLoading) setLoading(false);
-                const fileType = result.name.split('.').pop();
-                if(setUploadedFiles) {
-                    localFiles.push({
-                        name: result.filePath,
-                        tbU: result.thumbnailUrl,
-                        id: t_0,
-                        type: fileType
-                    })
-                    setUploadedFiles(localFiles);
-                }
-            });
-        }
-    }
-}
-
 export function isExternalLink(url: string) {
     if(url){
         const $url = url.toLowerCase();
