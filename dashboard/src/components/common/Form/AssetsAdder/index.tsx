@@ -37,6 +37,23 @@ export const AssetsAdderComponent = (props: AssetsAdderType) => {
     const url = props.assetsUrls ? props.assetsUrls.authAssets : '';
     const authUrl = `${getBaseUrl()}${url}`;
 
+    /*If value changes from back update the ids*/
+    useEffect(() => {
+        if(value) {
+            const joinedValue = value.split(',');
+            const newIds: FileUploadType[] = [];
+            if(joinedValue && joinedValue.length) {
+                joinedValue.forEach(item => {
+                    const exist = filesIds.find(id => id.id === item);
+                    if(exist) {
+                        newIds.push(exist);
+                    }
+                });
+                setFilesIds(newIds);
+            }
+        }
+    }, [value]);
+
     function updateValue(ids: FileUploadType[]) {
         if(ids && ids.length) {
             const event = {
@@ -115,8 +132,6 @@ const mapState = (state: RootState) => {
         env: state.authentication.env,
         language: state.authentication.language,
         applicationName: state.authentication.applicationName,
-        /*GetCollectionNamesUrl: state.routeAddress.routes.data?.GetCollectionNamesUrl,
-        StoreUrl: state.routeAddress.routes.data?.StoreUrl,*/
         assetsUrls: state.routeAddress.routes.assets
     }
 };

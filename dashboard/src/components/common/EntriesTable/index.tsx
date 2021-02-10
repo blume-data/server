@@ -17,7 +17,6 @@ import {EntryStatus} from "./EntryStatus";
 import Checkbox from "@material-ui/core/Checkbox";
 import Loader from "../Loader";
 import {PaginationTab} from "../Pagination";
-import {Avatar} from "@material-ui/core";
 import {AvatarCommon} from "../AvatarCommon";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
@@ -95,11 +94,12 @@ const EntriesTableComponent = (props: EntriesTableType) => {
                         component = <AvatarCommon alt={assetTypeRow.name} src={i[assetTypeRow.name].thumbnailUrl} />
                     }
                     else if(i[assetTypeRow.name] && i[assetTypeRow.name].length) {
-                        component = <Grid>
+                        component = <Grid container className={'entries-avatar-list'}>
                             {
-                                i[assetTypeRow.name].map((assetRow: {fileName: string, tbU: string}) => {
+                                i[assetTypeRow.name].map((assetRow: {fileName: string, thumbnailUrl: string}) => {
+                                    console.log('row-map', i[assetTypeRow.name])
                                     return (
-                                        <AvatarCommon alt={assetRow.fileName} src={assetRow.tbU} />
+                                        <AvatarCommon alt={assetRow.fileName} src={assetRow.thumbnailUrl} />
                                     );
                                 })
                             }
