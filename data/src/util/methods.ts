@@ -15,10 +15,11 @@ import {
 } from "./constants";
 import {
     APPLICATION_NAME,
-    CLIENT_USER_NAME,
+    CLIENT_USER_NAME, FileSchemaType,
     okayStatus
 } from "@ranjodhbirkaur/common"
 import {getCollection} from "../Controllers/StoreController";
+import {FileModel} from '../models/file-models';
 
 export const RANDOM_STRING = function (minSize=10) {
     return randomBytes(minSize).toString('hex')
@@ -132,21 +133,22 @@ export function createModel(params: CreateModelType) {
 
             const ref = 'FileModel';
 
-            console.log('rule', rule.assetsType)
+            // upload asset model
+            if(!mongoose.modelNames().includes(ref)) {
+                mongoose.model(ref, FileSchemaType)
+            }
 
             if(!rule.assetsType || rule.assetsType === SINGLE_ASSETS_TYPE) {
                 schemaData = {
                     ...schemaData,
                     [rule.name]: { type: Schema.Types.ObjectId, ref }
                 }
-                console.log('done', rule.name);
             }
             else if(rule.assetsType === MULTIPLE_ASSETS_TYPE) {
                 schemaData = {
                     ...schemaData,
                     [rule.name]: [{ type: Schema.Types.ObjectId, ref}]
                 }
-                console.log('done', rule.name);
             }
         }
         else {

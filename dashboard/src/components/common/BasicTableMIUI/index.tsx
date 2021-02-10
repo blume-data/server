@@ -43,7 +43,7 @@ export default function BasicTableMIUI(props: BasicTableMIUIProps) {
                     return (
                         <TableCell
                             key={index}
-                            component={index === 0 ? "th" : undefined} scope={index === 0 ? "row" : undefined}  align={index === 0 ? undefined : "right"}>
+                            component={index === 0 ? "th" : undefined} scope={index === 0 ? "row" : undefined}  align={index === 0 ? undefined : "left"}>
                             {
                                 tableRow.linkUrl
                                 ? <Link to={row['linkUrl']}>{row[tableRow.value]}</Link>
@@ -72,7 +72,7 @@ export default function BasicTableMIUI(props: BasicTableMIUIProps) {
                                     </TableCell>
                                 }
                                 return (
-                                    <TableCell align={index === 0 ? 'left' : "right"} key={index}>{tableRow.name}</TableCell>
+                                    <TableCell align={index === 0 ? 'left' : "left"} key={index}>{tableRow.name}</TableCell>
                                 );
                             })
                         }

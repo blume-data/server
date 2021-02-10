@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import {connect, ConnectedProps} from "react-redux";
 import {
-    ENTRY_UPDATED_AT, ENTRY_UPDATED_BY,
-    RuleType, STATUS
+    ENTRY_UPDATED_AT, ENTRY_UPDATED_BY, MEDIA_FIELD_TYPE,
+    RuleType, SINGLE_ASSETS_TYPE, STATUS
 } from "@ranjodhbirkaur/constants";
 import Grid from "@material-ui/core/Grid";
 import './entries-table.scss';
@@ -17,6 +17,8 @@ import {EntryStatus} from "./EntryStatus";
 import Checkbox from "@material-ui/core/Checkbox";
 import Loader from "../Loader";
 import {PaginationTab} from "../Pagination";
+import {Avatar} from "@material-ui/core";
+import {AvatarCommon} from "../AvatarCommon";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type EntriesTableType = PropsFromRedux & {
@@ -59,6 +61,7 @@ const EntriesTableComponent = (props: EntriesTableType) => {
     // update rows when selected or response is fetched
     useEffect(() => {
         const newRows = response.map((i: any) => {
+            const assetTypeRows = rules && rules.filter(rule => rule.type === MEDIA_FIELD_TYPE);
             const updatedAt = DateTime.fromISO(i.updatedAt);
             const updatedBy = <UserCell value={i.updatedBy} />;
             const isChecked = selectedEntries.includes(i._id);
@@ -77,13 +80,41 @@ const EntriesTableComponent = (props: EntriesTableType) => {
                 }
             }
             const id = <Checkbox checked={isChecked} value={i._id} onChange={onChangeCheckBox} />
-            return {
+            let newRow = {
                 ...i,
                 status: <EntryStatus title={i.status} />,
                 updatedAt: <DateCell value={updatedAt} />,
                 updatedBy,
                 id
+            };
+
+            if(assetTypeRows && assetTypeRows.length) {
+                assetTypeRows.forEach(assetTypeRow => {
+                    let component: JSX.Element | null;
+                    if(assetTypeRow.assetsType === SINGLE_ASSETS_TYPE) {
+                        component = <AvatarCommon alt={assetTypeRow.name} src={i[assetTypeRow.name].thumbnailUrl} />
+                    }
+                    else if(i[assetTypeRow.name] && i[assetTypeRow.name].length) {
+                        component = <Grid>
+                            {
+                                i[assetTypeRow.name].map((assetRow: {fileName: string, tbU: string}) => {
+                                    return (
+                                        <AvatarCommon alt={assetRow.fileName} src={assetRow.tbU} />
+                                    );
+                                })
+                            }
+                        </Grid>
+                    }
+                    else {
+                        component = null
+                    }
+                    newRow = {
+                        ...newRow,
+                        [assetTypeRow.name]: component
+                    }
+                })
             }
+            return newRow;
         })
         setRows(newRows);
     }, [selectedEntries, response]);

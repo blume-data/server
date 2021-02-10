@@ -15,7 +15,6 @@ import {COLLECTION_NOT_FOUND, PARAM_SHOULD_BE_UNIQUE} from "./Messages";
 import * as mongoose from "mongoose";
 import {Model} from "mongoose";
 import {DateTime} from 'luxon';
-import {FileModel} from '../models/file-models';
 import {
     RuleType,
     BOOLEAN_FIElD_TYPE,
@@ -194,8 +193,6 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
 
         const {page, perPage} = getPageAndPerPage(req);
 
-        console.log('model', model)
-
         if(isValid) {
             const query =  model
                 .find(where, getOnly)
@@ -205,7 +202,7 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
             // check if there is an asset
             const existAsset = rules.find(rule => rule.type === MEDIA_FIELD_TYPE);
             if(existAsset) {
-                query.populate(existAsset.name, 'name');
+                query.populate(existAsset.name, 'fileName thumbnailUrl');
             }
 
             if(req.body && req.body.populate && req.body.populate.length) {
@@ -213,7 +210,6 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
             }
 
             query.exec(async (err: any, items: any) => {
-                console.log('err', err);
                 if(isValid) {
                     const data = await paginateData({
                         Model: model, where, items, req

@@ -152,3 +152,11 @@ export async function uploadImages(data: UploadImagesType) {
         }
     }
 }
+
+export function isExternalLink(url: string) {
+    if(url){
+        const $url = url.toLowerCase();
+        return $url.includes("http://") || $url.includes("https://") || $url.includes("mailto:");
+    }
+    return false;
+}
