@@ -111,6 +111,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
     const [fieldDisplayName, setFieldDisplayName] = useState<string>('');
     const [fieldIsRequired, setFieldIsRequired] = useState<string>('');
     const [fieldIsUnique, setFieldIsUnique] = useState<string>('');
+    const [fieldAssetsType, setFieldAssetsType] = useState<string>(SINGLE_ASSETS_TYPE);
     const [fieldType, setFieldType] = useState<string>('');
 
     const [fieldEditMode, setFieldEditMode] = useState<boolean>(false);
@@ -586,9 +587,9 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 groupName: FIELD_NAME_GROUP,
                 required: false,
                 placeholder: 'Select type of media storage',
-                value: ``,
+                value: fieldAssetsType,
                 className: 'field-min-count',
-                type: 'string',
+                type: TEXT,
                 name: FIELD_ASSET_TYPE,
                 label: 'Select type of reference',
                 options: [
@@ -797,6 +798,8 @@ const CreateDataModel = (props: CreateDataModelType) => {
 
                         assetsType: propertyMediaType ? propertyMediaType : undefined
                     };
+                    console.log('property', property);
+                    debugger
 
                     const tempProperties = JSON.parse(JSON.stringify(properties ? properties : []));
                     const exist = tempProperties.find((item: any) => item.name === property.name);
@@ -1040,6 +1043,10 @@ const CreateDataModel = (props: CreateDataModelType) => {
                     setFieldDefaultValue(property.default || '');
                 }
 
+                if(property.type === MEDIA_FIELD_TYPE) {
+                    setFieldAssetsType(property.assetsType || '');
+                }
+
                 if(property.type === SHORT_STRING_FIElD_TYPE || property.type === INTEGER_FIElD_TYPE) {
                     setFieldMax(property.max || '');
                     setFieldMin(property.min || '');
@@ -1101,6 +1108,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
         setFieldMinMaxCustomErrorMessage('');
         setFieldProhibitPattern('');
         setFieldMatchCustomPattern('');
+        setFieldAssetsType('');
     }
 
     function renderAddFieldsAndSaveModelButtonGroup() {

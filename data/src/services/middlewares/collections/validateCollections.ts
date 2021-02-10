@@ -243,7 +243,7 @@ export async function validateCollections(req: Request, res: Response, next: Nex
 
             if(rule.type === MEDIA_FIELD_TYPE) {
                 if(!rule.assetsType) {
-                    rule.assetsType = SINGLE_ASSETS_TYPE
+                    parsedRule.assetsType = SINGLE_ASSETS_TYPE
                 }
                 else {
                     const supportedAssetsType = [SINGLE_ASSETS_TYPE, MULTIPLE_ASSETS_TYPE]
@@ -253,6 +253,9 @@ export async function validateCollections(req: Request, res: Response, next: Nex
                             message: `assetType is not valid type`,
                             field: 'rules'
                         });
+                    }
+                    else {
+                        parsedRule.assetsType = rule.assetsType;
                     }
                 }
             }

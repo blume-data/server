@@ -130,6 +130,8 @@ const CreateEntry = (props: CreateEntryType) => {
                 case MEDIA_FIELD_TYPE: {
                     inputType = ASSETS_ADDER;
                     type = TEXT;
+                    miscData.assetType = rule.assetsType;
+                    console.log('rule', rule)
                     break;
                 }
 

@@ -448,6 +448,7 @@ export const Form = (props: FormType) => {
         if(inputType === ASSETS_ADDER) {
             return (
                 <AssetsAdder
+                    assetType={field.miscData.assetType}
                     key={index}
                     label={label}
                     descriptionText={descriptionText}
