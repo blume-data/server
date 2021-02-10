@@ -1,9 +1,11 @@
 import React from 'react';
 import ImageKit from "imagekit-javascript"
-import {getItemFromLocalStorage, randomString, uploadImages} from "../../../utils/tools";
+import {getItemFromLocalStorage, randomString} from "../../../utils/tools";
 import {CLIENT_USER_NAME} from "@ranjodhbirkaur/constants";
 import {CommonButton} from "../CommonButton";
 import './upload-assets.scss';
+import {doPostRequest} from "../../../utils/baseApi";
+import {getBaseUrl} from "../../../utils/urls";
 
 export default (props) => {
     const publicKey = 'public_k1JAmfGkYnDN/dhR+aVH6EpD9WM=';
@@ -26,11 +28,54 @@ export default (props) => {
         document.getElementById(componentId).click();
     }
 
+    async function uploadImages(e) {
+        const files = e.target.files;
+        const localFiles = JSON.parse(JSON.stringify(uFiles));
+        if(files && files.length) {
+            for (const file of files) {
+                const r945 = t_s_4_6_3_t.replace(`:${CLIENT_USER_NAME}`, clientUserName);
+                const r43 = v_3_5_6.replace(`:${CLIENT_USER_NAME}`, clientUserName);
+
+                const t_0 = await doPostRequest(`${getBaseUrl()}${r945}`, {
+                    fileName: file.name
+                }, true);
+
+                await imagekit.upload({
+                    file,
+                    fileName: file.name,
+                    tags: ["tag1"],
+                    isPrivateFile: true
+                }, async function(err, result) {
+                    await doPostRequest(`${getBaseUrl()}${r43}`, {
+                        di_98: t_0,
+                        emanelif_89: result.name,
+                        htap_21: result.filePath,
+                        tu: result.thumbnailUrl,
+                        h: result.height,
+                        w: result.width,
+                        s: result.size,
+                        ty: result.fileType,
+                        dilife: result.fileId
+                    });
+
+                    const fileType = result.name.split('.').pop();
+                    if(setUploadedFiles) {
+                        localFiles.push({
+                            name: result.filePath,
+                            tbU: result.thumbnailUrl,
+                            id: t_0,
+                            type: fileType
+                        })
+                        setUploadedFiles(localFiles);
+                    }
+                });
+            }
+        }
+    }
+
     async function upload(e) {
 
-        await uploadImages({
-            e, clientUserName, v_3_5_6, t_s_4_6_3_t, imagekit, setLoading, setUploadedFiles, uFiles
-        });
+        await uploadImages(e);
 
     }
 

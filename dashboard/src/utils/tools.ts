@@ -103,14 +103,15 @@ interface UploadImagesType{
     imagekit: any;
     setLoading?: (status: boolean) => void;
     // to return the ids of uploaded files
-    uFiles: UploadedFileType[],
     setUploadedFiles?: (data: UploadedFileType[]) => void;
+    uFiles?: UploadImagesType[];
 }
 
 export async function uploadImages(data: UploadImagesType) {
 
     const {e, t_s_4_6_3_t, clientUserName, v_3_5_6, imagekit, setLoading, setUploadedFiles, uFiles} = data;
     const files = e.target.files;
+    const localFiles: UploadedFileType[] = JSON.parse(JSON.stringify(uFiles));
     if(files && files.length) {
         for (const file of files) {
             const r945 = t_s_4_6_3_t.replace(`:${CLIENT_USER_NAME}`, clientUserName);
@@ -141,12 +142,13 @@ export async function uploadImages(data: UploadImagesType) {
                 if(setLoading) setLoading(false);
                 const fileType = result.name.split('.').pop();
                 if(setUploadedFiles) {
-                    setUploadedFiles([...uFiles, {
+                    localFiles.push({
                         name: result.filePath,
                         tbU: result.thumbnailUrl,
                         id: t_0,
                         type: fileType
-                    }])
+                    })
+                    setUploadedFiles(localFiles);
                 }
             });
         }

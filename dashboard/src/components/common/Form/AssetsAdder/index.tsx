@@ -65,7 +65,7 @@ export const AssetsAdderComponent = (props: AssetsAdderType) => {
         updateValue(filesIds);
     }, [filesIds]);
 
-    console.log('refs', assetType);
+    console.log('refs', filesIds, filesIds.map(id => id.id).join(','));
 
 
     return (

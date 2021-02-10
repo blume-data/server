@@ -461,7 +461,7 @@ export const Form = (props: FormType) => {
         }
     }
 
-    console.log('omr', formState, fields)
+    console.log('omr', formState)
 
     async function onClickSubmit() {
         let isValid = true;
