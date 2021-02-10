@@ -13,7 +13,7 @@ import {
     AssetsVerifyTempRecord, AssetsFetchAssetUrl
 } from "../utils/urls";
 import {DateTime} from "luxon";
-import {ENTRY_CREATED_BY, FIRST_NAME, LAST_NAME} from "@ranjodhbirkaur/constants";
+import {ENTRY_CREATED_BY, ENTRY_UPDATED_BY, FIRST_NAME, LAST_NAME} from "@ranjodhbirkaur/constants";
 
 // fetch assets
 export async function fetchAsset(req: Request, res: Response) {

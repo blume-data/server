@@ -798,8 +798,6 @@ const CreateDataModel = (props: CreateDataModelType) => {
 
                         assetsType: propertyMediaType ? propertyMediaType : undefined
                     };
-                    console.log('property', property);
-                    debugger
 
                     const tempProperties = JSON.parse(JSON.stringify(properties ? properties : []));
                     const exist = tempProperties.find((item: any) => item.name === property.name);

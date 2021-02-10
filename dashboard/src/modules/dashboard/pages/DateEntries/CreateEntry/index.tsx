@@ -12,7 +12,7 @@ import {
     ErrorMessagesType,
     INTEGER_FIElD_TYPE,
     JSON_FIELD_TYPE,
-    LONG_STRING_FIELD_TYPE, MEDIA_FIELD_TYPE, ONE_TO_MANY_RELATION,
+    LONG_STRING_FIELD_TYPE, MEDIA_FIELD_TYPE, MULTIPLE_ASSETS_TYPE, ONE_TO_MANY_RELATION,
     REFERENCE_FIELD_TYPE,
     REFERENCE_MODEL_NAME,
     REFERENCE_MODEL_TYPE,
@@ -131,7 +131,6 @@ const CreateEntry = (props: CreateEntryType) => {
                     inputType = ASSETS_ADDER;
                     type = TEXT;
                     miscData.assetType = rule.assetsType;
-                    console.log('rule', rule)
                     break;
                 }
 
@@ -177,6 +176,16 @@ const CreateEntry = (props: CreateEntryType) => {
                         }
                         else {
                             data[valueItem.name] = valueItem.value;
+                        }
+
+                        // check assets
+                        if(exist.type === MEDIA_FIELD_TYPE && exist.assetsType === MULTIPLE_ASSETS_TYPE) {
+                            if(exist.assetsType === MULTIPLE_ASSETS_TYPE) {
+                                data[valueItem.name] = valueItem.value.split(',');
+                            }
+                            else {
+                                data[valueItem.name] = valueItem.value;
+                            }
                         }
                         if(exist.type === BOOLEAN_FIElD_TYPE) {
                             data[valueItem.name] = valueItem.value === 'true';

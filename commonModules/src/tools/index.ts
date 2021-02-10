@@ -41,7 +41,7 @@ export async function paginateData(data: PaginateDataType) {
     return {
         total: count,
         page,
-        pageSize: items.length,
+        pageSize: (items && items.length) ? items.length : 0,
         data: items
     }
 }

@@ -8,7 +8,7 @@ import {
     INTEGER_FIElD_TYPE, PUBLISHED_ENTRY_STATUS,
     JSON_FIELD_TYPE, ONE_TO_MANY_RELATION, ONE_TO_ONE_RELATION, REFERENCE_FIELD_TYPE,
     ARCHIVED_ENTRY_STATUS, RuleType,
-    DELETED_ENTRY_STATUS, DRAFT_ENTRY_STATUS,
+    DELETED_ENTRY_STATUS, DRAFT_ENTRY_STATUS, MEDIA_FIELD_TYPE, SINGLE_ASSETS_TYPE, MULTIPLE_ASSETS_TYPE,
 } from "@ranjodhbirkaur/constants";
 import {
     ENTRY_LANGUAGE_PROPERTY_NAME,
@@ -126,6 +126,27 @@ export function createModel(params: CreateModelType) {
                     ...schemaData,
                     [rule.name]: { type: Schema.Types.ObjectId, ref }
                 }
+            }
+        }
+        else if(rule.type === MEDIA_FIELD_TYPE) {
+
+            const ref = 'FileModel';
+
+            console.log('rule', rule.assetsType)
+
+            if(!rule.assetsType || rule.assetsType === SINGLE_ASSETS_TYPE) {
+                schemaData = {
+                    ...schemaData,
+                    [rule.name]: { type: Schema.Types.ObjectId, ref }
+                }
+                console.log('done', rule.name);
+            }
+            else if(rule.assetsType === MULTIPLE_ASSETS_TYPE) {
+                schemaData = {
+                    ...schemaData,
+                    [rule.name]: [{ type: Schema.Types.ObjectId, ref}]
+                }
+                console.log('done', rule.name);
             }
         }
         else {
