@@ -31,6 +31,7 @@ export default (props) => {
     async function uploadImages(e) {
         const files = e.target.files;
         let localFiles;
+        const promises = [];
         if(uFiles) {
             localFiles = JSON.parse(JSON.stringify(uFiles));
         }
@@ -39,43 +40,51 @@ export default (props) => {
         }
         if(files && files.length) {
             for (const file of files) {
-                const r945 = t_s_4_6_3_t.replace(`:${CLIENT_USER_NAME}`, clientUserName);
-                const r43 = v_3_5_6.replace(`:${CLIENT_USER_NAME}`, clientUserName);
-                const t_0 = await doPostRequest(`${getBaseUrl()}${r945}`, {
-                    fileName: file.name
-                }, true);
-                await imagekit.upload({
-                    file,
-                    fileName: file.name,
-                    tags: [clientUserName],
-                    isPrivateFile: true
-                },async function (err, result) {
-                    await doPostRequest(`${getBaseUrl()}${r43}`, {
-                        di_98: t_0,
-                        emanelif_89: result.name,
-                        htap_21: result.filePath,
-                        tu: result.thumbnailUrl,
-                        h: result.height,
-                        w: result.width,
-                        s: result.size,
-                        ty: file.type,
-                        dilife: result.fileId
+                promises.push(new Promise(async (resolve) => {
+                    const r945 = t_s_4_6_3_t.replace(`:${CLIENT_USER_NAME}`, clientUserName);
+                    const r43 = v_3_5_6.replace(`:${CLIENT_USER_NAME}`, clientUserName);
+                    // get temporary url
+                    const t_0 = await doPostRequest(`${getBaseUrl()}${r945}`, {
+                        fileName: file.name
+                    }, true);
+                    await imagekit.upload({
+                        file,
+                        fileName: file.name,
+                        tags: [clientUserName],
+                        isPrivateFile: true
+                    },async function (err, result) {
+                        // verify the photos
+                        await doPostRequest(`${getBaseUrl()}${r43}`, {
+                            di_98: t_0,
+                            emanelif_89: result.name,
+                            htap_21: result.filePath,
+                            tu: result.thumbnailUrl,
+                            h: result.height,
+                            w: result.width,
+                            s: result.size,
+                            ty: file.type,
+                            dilife: result.fileId
+                        });
+                        const fileType = result.name.split('.').pop();
+                        if (setUploadedFiles) {
+                            localFiles.push({
+                                name: result.filePath,
+                                tbU: result.thumbnailUrl,
+                                id: t_0,
+                                type: fileType
+                            })
+                            setUploadedFiles(localFiles);
+                        }
+                        resolve(true);
                     });
-                    const fileType = result.name.split('.').pop();
-                    if (setUploadedFiles) {
-                        localFiles.push({
-                            name: result.filePath,
-                            tbU: result.thumbnailUrl,
-                            id: t_0,
-                            type: fileType
-                        })
-                        setUploadedFiles(localFiles);
+                }))
+            }
+            Promise.all(promises)
+                .then(() => {
+                    if(setLoading) {
+                        setLoading(false);
                     }
                 });
-            }
-        }
-        if(setLoading) {
-            setLoading(false);
         }
     }
 

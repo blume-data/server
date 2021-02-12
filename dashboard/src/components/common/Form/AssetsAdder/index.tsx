@@ -9,6 +9,7 @@ import {getItemFromLocalStorage} from "../../../../utils/tools";
 import {CLIENT_USER_NAME, MULTIPLE_ASSETS_TYPE, SINGLE_ASSETS_TYPE} from "@ranjodhbirkaur/constants";
 import {getBaseUrl} from "../../../../utils/urls";
 import {Avatar, Chip} from "@material-ui/core";
+import Loader from "../../Loader";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type AssetsAdderType = PropsFromRedux & {
@@ -33,13 +34,14 @@ export const AssetsAdderComponent = (props: AssetsAdderType) => {
     const {className, value, onChange, descriptionText, onBlur, label, assetType} = props;
     const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
     const [filesIds, setFilesIds] = useState<FileUploadType[]>([]);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const url = props.assetsUrls ? props.assetsUrls.authAssets : '';
     const authUrl = `${getBaseUrl()}${url}`;
 
     /*If value changes from back update the ids*/
     useEffect(() => {
-        if(value) {
+        if(value && !isLoading) {
             const joinedValue = value.split(',');
             const newIds: FileUploadType[] = [];
             if(joinedValue && joinedValue.length) {
@@ -93,6 +95,7 @@ export const AssetsAdderComponent = (props: AssetsAdderType) => {
                 {
                     assetType === MULTIPLE_ASSETS_TYPE || ((filesIds.length < 1) && (assetType === SINGLE_ASSETS_TYPE))
                     ? <UploadAsset
+                            setLoading={setIsLoading}
                             setUploadedFiles={setFilesIds}
                             uFiles={filesIds}
                             // verify url
@@ -105,6 +108,7 @@ export const AssetsAdderComponent = (props: AssetsAdderType) => {
                     : null
                 }
             </Grid>
+            {isLoading ? <Loader /> : null}
             <Grid container className={'files-component'} justify={"flex-start"}>
                 {
                     filesIds.map((refId,index) => {

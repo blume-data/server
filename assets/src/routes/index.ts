@@ -1,7 +1,7 @@
 import {Router, Response, Request} from 'express';
 import {
     AssetsAuthImageKit, AssetsCreateTempRecord,
-    AssetsFetchAssetUrl,
+    AssetsFetchAssetUrl, AssetsGetAssetsDataUrl,
     AssetsGetAssetsUrl,
     AssetsRoutesUrl, AssetsVerifyTempRecord
 } from "../utils/urls";
@@ -10,7 +10,7 @@ import {
     getAssetsRoutes,
     fetchAsset,
     createTempAssetsRecord,
-    verifyTempAssetsRecord
+    verifyTempAssetsRecord, updateAsset, fetchAssetData
 } from "../Controllers/assets";
 import {checkAuth} from "../middleware/checkAuth";
 import {imagekitConfig} from "../utils/methods";
@@ -19,10 +19,17 @@ import {validateRequest} from "@ranjodhbirkaur/common";
 
 const router = Router();
 
+// asset routes
 router.get(AssetsRoutesUrl, getAssetsRoutes);
 
 // fetch images
 router.get(AssetsFetchAssetUrl, fetchAsset);
+
+// fetch asset data
+router.get(AssetsGetAssetsDataUrl, fetchAssetData);
+
+// update file asset
+router.put(AssetsGetAssetsDataUrl, updateAsset);
 
 // create temp image record
 router.post(AssetsCreateTempRecord,

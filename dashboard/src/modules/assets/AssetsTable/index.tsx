@@ -41,7 +41,6 @@ export const AssetsTable = (prop: AssetsTableType) => {
     const [selectedEntries, setSelectedEntries] = useState<string[]>([]);
     const [response, setResponse] = useState<any[]>([]);
     const [page, setPage] = useState<number>(1);
-    const [pageSize, setPageSize] = useState<number>(0);
     const [pageTotal, setPageTotal] = useState<number>(0);
     const perPage= 10;
 
@@ -63,7 +62,6 @@ export const AssetsTable = (prop: AssetsTableType) => {
     function onEntrySelect(id: string) {
         setSelectedEntries([...selectedEntries, id]);
     }
-
 
     useEffect(() => {
         if(clientUserName) {
@@ -114,8 +112,6 @@ export const AssetsTable = (prop: AssetsTableType) => {
             }
             if(resp && resp.total) {
                 setPageTotal(resp.total);
-                //setPage(resp.page);
-                setPageSize(resp.pageSize);
             }
         }
 

@@ -10,12 +10,13 @@ import {
     AssetsAuthImageKit,
     AssetsVerifyUrl,
     AssetsCreateTempRecord,
-    AssetsVerifyTempRecord, AssetsFetchAssetUrl
+    AssetsVerifyTempRecord, AssetsFetchAssetUrl, AssetsGetAssetsDataUrl
 } from "../utils/urls";
 import {DateTime} from "luxon";
 import {ENTRY_CREATED_BY, ENTRY_UPDATED_AT, ENTRY_UPDATED_BY, FIRST_NAME, LAST_NAME} from "@ranjodhbirkaur/constants";
 
-// fetch assets
+// fetch asset url
+// on fetch redirect to the asset url
 export async function fetchAsset(req: Request, res: Response) {
 
     const {fileName} = req.query;
@@ -23,7 +24,7 @@ export async function fetchAsset(req: Request, res: Response) {
 
         const exist = await FileModel.findOne({
             fileName: `${fileName}`
-        }, ['_id', 'type']);
+        }, ['type']);
 
         if(exist) {
 
@@ -55,6 +56,48 @@ export async function fetchAsset(req: Request, res: Response) {
 
 }
 
+// fetch asset data
+export async function fetchAssetData(req: Request, res: Response) {
+    const {fileName} = req.query;
+    
+
+}
+
+// update asset
+export async function updateAsset(req: Request, res: Response) {
+
+    const {id, newFileName, description=''} = req.query;
+    if(id) {
+        const exist = await FileModel.findOne({
+            _id: `${id}`
+        }, ['_id']);
+        if(exist) {
+            const notExist = await FileModel.findOne({
+                fileName: `${newFileName}`
+            }, ['_id']);
+
+            if(!notExist) {
+                await FileModel.findOneAndUpdate({
+                    _id: id
+                }, {
+                    fileName: `${newFileName}`,
+                    description: `${description}`
+                });
+            }
+            else {
+                return sendSingleError(res, `file with fileName ${newFileName} already exist`);
+            }
+        }
+        else {
+            sendSingleError(res, `File of id ${id} does not exist`);
+        }
+
+    }
+    else {
+        sendSingleError(res, `id is required`);
+    }
+}
+
 export async function getAssetsRoutes(req: Request, res: Response) {
     // fetch routes of other services
     res.status(okayStatus).send({
@@ -62,6 +105,8 @@ export async function getAssetsRoutes(req: Request, res: Response) {
         getAsset: AssetsFetchAssetUrl,
         // get all assets
         getAssets: AssetsGetAssetsUrl,
+        // fetch asset Data
+        AssetsGetAssetsDataUrl: AssetsGetAssetsDataUrl,
         verifyAssets: AssetsVerifyUrl,
         authAssets: AssetsAuthImageKit,
         t_s_4_6_3_t: AssetsCreateTempRecord,

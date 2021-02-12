@@ -1,5 +1,3 @@
-// remove aws sdk
-
 import ImageKit from "imagekit";
 
 if (!process.env.IMAGE_KIT_PRIVATE_KEY) {
