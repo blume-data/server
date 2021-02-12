@@ -44,14 +44,15 @@ interface FileDoc extends mongoose.Document {
 
 const FileSchemaType = new mongoose.Schema(
     {
-
+        description: String,
         clientUserName: {
             type: String,
             required: true
         },
         fileName: {
             type: String,
-            required: true
+            required: true,
+            unique: true
         },
         fileId: {
             type: String
