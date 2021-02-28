@@ -233,7 +233,9 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
 async function createEntry(rules: RuleType[], req: Request, res: Response, collection: {name: string, clientUserName: string, applicationName: string}) {
     const clientUserName = req.params[CLIENT_USER_NAME];
     const applicationName = req.params[APPLICATION_NAME];
-    let body = checkBodyAndRules(rules, req, res);
+
+    const requestBody = req && req.body;
+    const body = checkBodyAndRules(rules, req, res);
     if(body) {
 
         const model: any = createModel({
@@ -247,9 +249,19 @@ async function createEntry(rules: RuleType[], req: Request, res: Response, colle
 
         if (!hasError) {
             try {
-                const item = new model(body);
-                await item.save();
-                return item;
+
+                if(requestBody.id) {
+                    console.log('hello', requestBody)
+                    const i = await model.findOneAndUpdate({
+                        _id: requestBody.id
+                    }, requestBody);
+                    return requestBody;
+                }
+                else {
+                    const item = new model(body);
+                    await item.save();
+                    return item;
+                }
             }
             catch (e) {
                 const errors: ErrorMessagesType[] = [];
@@ -511,7 +523,7 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
     function checkOnlyAllowedValues(rule: RuleType, stringMode = true) {
         const allowedValues = rule.onlyAllowedValues && rule.onlyAllowedValues.split(',');
         if(allowedValues) {
-            const exist = allowedValues.find(allowedValue => {
+            const exist = allowedValues.find((allowedValue: string) => {
                 if(!stringMode) {
                     return (Number(reqBody[rule.name]) === Number(allowedValue.trim()))
                 }
@@ -571,7 +583,7 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
 
     rules.forEach((rule) => {
         // check for required params
-        if (((reqBody[rule.name] === undefined || reqBody[rule.name] === null)  && rule.required)) {
+        if (((reqBody[rule.name] === undefined || reqBody[rule.name] === null)  && rule.required && !reqBody.id)) {
             isValid = false;
             errorMessages.push({
                 field: rule.name,
