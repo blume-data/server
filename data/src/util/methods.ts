@@ -65,9 +65,7 @@ export async function getModel(req: Request, modelName: string, applicationName:
     return null;
 }
 
-export function createModel(params: CreateModelType) {
-    const {rules, name, applicationName, clientUserName} = params;
-    const CollectionName = createStoreModelName(name, applicationName, clientUserName);
+export function createModelSchema(applicationName: string, clientUserName: string, rules: RuleType[]) {
     const Schema = mongoose.Schema;
     let schemaData = {};
     // Create the schema
@@ -180,9 +178,15 @@ export function createModel(params: CreateModelType) {
         }
     };
 
-    const schema = new Schema(schemaData, {
+    return new Schema(schemaData, {
         strict: false
     });
+}
+
+export function createModel(params: CreateModelType) {
+    const {rules, name, applicationName, clientUserName} = params;
+    const CollectionName = createStoreModelName(name, applicationName, clientUserName);
+    const schema = createModelSchema(applicationName, clientUserName, rules)
 
     if (process.env.NODE_ENV !== 'test') {
         try {

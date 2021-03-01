@@ -251,7 +251,6 @@ async function createEntry(rules: RuleType[], req: Request, res: Response, colle
             try {
 
                 if(requestBody.id) {
-                    console.log('hello', requestBody)
                     const i = await model.findOneAndUpdate({
                         _id: requestBody.id
                     }, requestBody);

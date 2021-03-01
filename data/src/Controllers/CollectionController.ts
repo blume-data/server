@@ -10,8 +10,9 @@ import {
     ENTRY_UPDATED_BY,
     trimCharactersAndNumbers
 } from "@ranjodhbirkaur/constants";
-import {createModel} from "../util/methods";
+import {createModel, createModelSchema, createStoreModelName} from "../util/methods";
 import {DateTime} from "luxon";
+import * as mongoose from "mongoose";
 
 export async function createCollectionSchema(req: Request, res: Response) {
 
@@ -89,6 +90,10 @@ export async function createCollectionSchema(req: Request, res: Response) {
             await CollectionModel.findOneAndUpdate({
                 _id: reqBody.id
             }, update);
+        
+            // delete model schemas
+            const uName = createStoreModelName(reqBody.name, applicationName, clientUserName);
+            mongoose.model(uName).schema = createModelSchema(applicationName, clientUserName, reqBody.rules);
 
             res.status(okayStatus).send('done');
 
