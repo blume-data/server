@@ -167,12 +167,21 @@ const CreateEntry = (props: CreateEntryType) => {
 
             values.forEach((valueItem: {name: string; value: string}) => {
 
+                function parseValues() {
+                    if(valueItem.value) {
+                        return valueItem.value.split(',')
+                    }
+                    else {
+                        return undefined;
+                    }
+                }
+
                 if(rules && rules.length) {
                     const exist = rules.find(rule => rule.name === valueItem.name);
                     if(exist) {
                         // check reference
                         if(exist.type === REFERENCE_FIELD_TYPE && exist[REFERENCE_MODEL_TYPE] === ONE_TO_MANY_RELATION) {
-                            data[valueItem.name] = valueItem.value.split(',');
+                            data[valueItem.name] = parseValues();
                         }
                         else {
                             data[valueItem.name] = valueItem.value;
@@ -181,10 +190,11 @@ const CreateEntry = (props: CreateEntryType) => {
                         // check assets
                         if(exist.type === MEDIA_FIELD_TYPE && exist.assetsType === MULTIPLE_ASSETS_TYPE) {
                             if(exist.assetsType === MULTIPLE_ASSETS_TYPE) {
-                                data[valueItem.name] = valueItem.value.split(',');
+                            
+                                data[valueItem.name] = parseValues();
                             }
                             else {
-                                data[valueItem.name] = valueItem.value;
+                                data[valueItem.name] = valueItem.value ? valueItem : undefined;
                             }
                         }
                         if(exist.type === BOOLEAN_FIElD_TYPE) {
