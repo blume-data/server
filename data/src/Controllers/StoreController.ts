@@ -783,7 +783,7 @@ function validateParams(req: Request, res: Response, rules: RuleType[], findWher
                         [condition]: findWhere[condition]
                     }
                 }
-                if (!ruleExist) {
+                if (!ruleExist && condition !== '_id') {
                     isValid = false;
                     errorMessages.push({
                         field: 'where',
