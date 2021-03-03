@@ -148,7 +148,6 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
                         if(query) {
                             query.populate(mongoosePopulate);
                         }
-
                     }
                     else {
                         isValid = false;
@@ -249,12 +248,16 @@ async function createEntry(rules: RuleType[], req: Request, res: Response, colle
 
         if (!hasError) {
             try {
+                
 
-                if(requestBody.id) {
+                if(requestBody._id) {
                     const i = await model.findOneAndUpdate({
-                        _id: requestBody.id
+                        _id: requestBody._id
                     }, requestBody);
-                    return requestBody;
+                    
+                    return {
+                        id: requestBody._id
+                    };
                 }
                 else {
                     const item = new model(body);
@@ -284,7 +287,7 @@ async function createEntry(rules: RuleType[], req: Request, res: Response, colle
 
 }
 
-// Create Record
+// Create/Update Record
 export async function createStoreRecord(req: Request, res: Response) {
 
     const clientUserName = req.params[CLIENT_USER_NAME];
@@ -582,7 +585,7 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
 
     rules.forEach((rule) => {
         // check for required params
-        if (((reqBody[rule.name] === undefined || reqBody[rule.name] === null)  && rule.required && !reqBody.id)) {
+        if (((reqBody[rule.name] === undefined || reqBody[rule.name] === null)  && rule.required && !reqBody._id)) {
             isValid = false;
             errorMessages.push({
                 field: rule.name,

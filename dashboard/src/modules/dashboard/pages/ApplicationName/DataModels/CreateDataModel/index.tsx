@@ -73,7 +73,7 @@ import ButtonGroup from "@material-ui/core/ButtonGroup";
 import {RootState} from "../../../../../../rootReducer";
 import {connect, ConnectedProps} from "react-redux";
 import {doGetRequest, doPostRequest, doPutRequest} from "../../../../../../utils/baseApi";
-import {getItemFromLocalStorage} from "../../../../../../utils/tools";
+import {getItemFromLocalStorage, getUrlSearchParams} from "../../../../../../utils/tools";
 import {dashboardCreateDataModelsUrl, dashboardDataModelsUrl, getBaseUrl} from "../../../../../../utils/urls";
 import Loader from "../../../../../../components/common/Loader";
 import BasicTableMIUI from "../../../../../../components/common/BasicTableMIUI";
@@ -230,11 +230,6 @@ const CreateDataModel = (props: CreateDataModelType) => {
         getData();
         getCollectionNames();
     }, [GetCollectionNamesUrl, contentModelName]);
-
-    function getUrlSearchParams(param: string) {
-        const urlParams = new URLSearchParams(window.location.search);
-        return urlParams.get(param);
-    }
 
     useEffect(() => {
         if(contentModelName) {

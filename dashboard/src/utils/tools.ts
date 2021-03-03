@@ -36,6 +36,11 @@ export function getApplicationNamesLocalStorage() {
     }
 }
 
+export function getUrlSearchParams(param: string) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
+}
+
 interface GetModelData {
     GetCollectionNamesUrl: string;
     env: string;

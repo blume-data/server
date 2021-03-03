@@ -25,7 +25,7 @@ export const dashboardDataModelsUrl = `${APP_ROOT_URL}dashboard/:applicationName
 export const dashboardCreateDataModelsUrl = `${APP_ROOT_URL}dashboard/:applicationName/model`;
 
 export const dashboardDataEntriesUrl = `${APP_ROOT_URL}dashboard/:applicationName/entries/:modelName?`;
-export const dashboardCreateDataEntryUrl = `${APP_ROOT_URL}dashboard/:applicationName/create-entry/:modelName`;
+export const dashboardCreateDataEntryUrl = `${APP_ROOT_URL}dashboard/:applicationName/entry/:modelName`;
 
 export const authUrl = `${APP_ROOT_URL}secure`;
 
