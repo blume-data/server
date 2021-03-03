@@ -15,17 +15,26 @@
         .fields-container {
           padding-top: 10px;
           padding-left: 10px;
+          .field-heading-container {
+            margin-top: 19px;
+          }
           .cancel-button {
             margin-top: 13px;
             margin-right: 10px;
+            margin-bottom: 20px;
           }
           .fields-grid {
             .numbers {
               display: flex;
             }
+            .paper-field-item {
+              margin-right: 10px;
+              margin-bottom: 10px;
+            }
             .field-item {
+              height: 100%;
               button {
-                margin: 0 30px;
+                height: 100%;
                 width: 125px;
                 span {
                   display: flex;

@@ -941,15 +941,17 @@ const CreateDataModel = (props: CreateDataModelType) => {
 
 
         return (
-            <Grid className={'field-item'} >
-                <Tooltip title={description}>
-                    <Button onClick={onClick}>
+            <Tooltip title={description}>
+            <Paper onClick={onClick} className='paper-field-item'>
+                <Grid className={'field-item'} >
+                    <Button>
                         {Icon}
                         <h2>{name}</h2>
                         <p>{description}</p>
                     </Button>
-                </Tooltip>
             </Grid>
+            </Paper>
+            </Tooltip>
         );
     }
 
@@ -1175,6 +1177,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                                     <Grid container justify={"space-between"}>
                                         <Grid item>
                                             <RenderHeading
+                                                className='field-heading-container'
                                                 type={"primary"}
                                                 title={'Add new field'}
                                                 value={'Add new field'}
@@ -1184,14 +1187,14 @@ const CreateDataModel = (props: CreateDataModelType) => {
                                             <Grid container justify={"center"} direction={"column"}>
                                                 <CommonButton
                                                     className={'cancel-button'}
-                                                    variant={'text'}
+                                                    variant={'outlined'}
                                                     name={'Cancel'}
                                                     onClick={onClickCancelAddField}
                                                 />
                                             </Grid>
                                         </Grid>
                                     </Grid>
-                                    <Grid container justify={"center"} className="fields-grid">
+                                    <Grid spacing={1} container justify={"center"} className="fields-grid">
                                         {fieldItem('Formatted Text', 'customised text with links and media', <TextFieldsIcon />, LONG_STRING_FIELD_TYPE)}
                                         {fieldItem('Text','names, paragraphs, title', <TextFieldsIcon />, SHORT_STRING_FIElD_TYPE)}
                                         {fieldItem('Number', 'numbers like age, count, quantity', <Grid className={'numbers'}>
