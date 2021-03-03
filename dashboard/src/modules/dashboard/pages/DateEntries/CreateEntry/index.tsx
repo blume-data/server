@@ -163,13 +163,14 @@ const CreateEntry = (props: CreateEntryType) => {
                 min: rule.min,
                 max: rule.max,
                 className: '',
-                value: modelData && modelData[rule.name] ? modelData[rule.name] : '',
+                value: entryId && modelData && modelData[rule.name] ? modelData[rule.name] : '',
                 name: rule.name,
                 descriptionText: rule.description,
                 miscData
             });
         })
     }
+    console.log('field', fields, entryId)
 
     // get url string params
     useEffect(() => {
@@ -232,6 +233,7 @@ const CreateEntry = (props: CreateEntryType) => {
             });
 
             let res: any;
+            setModelData(data)
             if(entryId) {
                 data._id = entryId;
                 res = await doPutRequest(`${getBaseUrl()}${url}`, data, true);
