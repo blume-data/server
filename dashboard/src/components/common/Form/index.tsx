@@ -58,6 +58,16 @@ export const Form = (props: FormType) => {
     const [formState, setFormState] = useState<FormState[]>([]);
     const {className, groups, fields, onSubmit, submitButtonName, response='', clearOnSubmit=false, showClearButton=false} = props;
 
+
+    // focus on first input field in the form
+    useEffect(() => {
+        const inputFields = document.getElementsByTagName('input');
+        if(inputFields && inputFields.length && inputFields[0].focus) {
+            inputFields[0].focus();
+        }
+
+    }, []);
+
     function setErrorMessage(name: string) {
         return `${name} is required`;
     }

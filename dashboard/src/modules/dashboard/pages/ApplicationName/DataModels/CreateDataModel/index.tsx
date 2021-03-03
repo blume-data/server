@@ -74,7 +74,7 @@ import {RootState} from "../../../../../../rootReducer";
 import {connect, ConnectedProps} from "react-redux";
 import {doGetRequest, doPostRequest, doPutRequest} from "../../../../../../utils/baseApi";
 import {getItemFromLocalStorage} from "../../../../../../utils/tools";
-import {dashboardDataModelsUrl, getBaseUrl} from "../../../../../../utils/urls";
+import {dashboardCreateDataModelsUrl, dashboardDataModelsUrl, getBaseUrl} from "../../../../../../utils/urls";
 import Loader from "../../../../../../components/common/Loader";
 import BasicTableMIUI from "../../../../../../components/common/BasicTableMIUI";
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -184,6 +184,12 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 true
             );
             if(response && !response.errors && response.length) {
+                if(response[0]._id && response[0].name) {
+                    const hasUrlParam = getUrlSearchParams('name');
+                    if(!hasUrlParam) {
+                        history.push(`${dashboardCreateDataModelsUrl}?name=${response[0].name}`);
+                    }
+                }
                 setProperties(JSON.parse(response[0].rules));
                 setContentModelDisplayName(response[0].displayName);
                 setContentModelDescription(response[0].description);
@@ -223,15 +229,18 @@ const CreateDataModel = (props: CreateDataModelType) => {
     useEffect(() => {
         getData();
         getCollectionNames();
-    }, [GetCollectionNamesUrl, contentModelName])
+    }, [GetCollectionNamesUrl, contentModelName]);
+
+    function getUrlSearchParams(param: string) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
+    }
 
     useEffect(() => {
         if(contentModelName) {
             setContentModelName(contentModelName);
-
         }
-        const urlParams = new URLSearchParams(window.location.search);
-        const Name = urlParams.get('name');
+        const Name = getUrlSearchParams('name');
         if(Name) {
             setContentModelName(Name);
             setFieldEditMode(true);
@@ -1148,8 +1157,8 @@ const CreateDataModel = (props: CreateDataModelType) => {
             <RenderHeading
                 className={'main-heading'}
                 type={"main"}
-                value={`${fieldEditMode ? 'Edit' : 'Create'} Model`}
-                title={`${fieldEditMode ? 'Edit' : 'Create'} Model`}
+                value={`${fieldEditMode || contentModelId ? 'Edit' : 'Create'} Model`}
+                title={`${fieldEditMode || contentModelId ? 'Edit' : 'Create'} Model`}
             />
             <Paper className={'model-name-container'}>
                 {renderNameSection()}
@@ -1276,7 +1285,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 severity={alert.severity}
                 message={alert.message} />
             <ModalDialog
-                title={'Create new model'}
+                title={`${fieldEditMode || contentModelId ? 'Edit' : 'Create new'} Model`}
                 isOpen={!hideNames}
                 handleClose={() => setHideNames(true)}
                 children={
