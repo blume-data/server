@@ -208,7 +208,6 @@ export const Form = (props: FormType) => {
 
     /*set value in html editors*/
     function setHtmlEditorValue(value: string, label: string, action: string) {
-
         changeValue({target: {value}}, label, action);
     }
 
@@ -460,8 +459,6 @@ export const Form = (props: FormType) => {
             );
         }
     }
-
-    console.log('omr', formState)
 
     async function onClickSubmit() {
         let isValid = true;

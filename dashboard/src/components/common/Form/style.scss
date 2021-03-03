@@ -15,7 +15,9 @@
     }
   }
   .form-field-container-wrapper {
-    border-left: 2px solid $blue;
+    border-left: 5px solid $blue;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
     padding-left: 10px;
     padding-bottom: 10px;
     margin-bottom: 20px;
