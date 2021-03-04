@@ -19,6 +19,7 @@ function DataEntriesComponent(props: PropsFromRedux) {
 
     const createDataEntryUrl = dashboardCreateDataEntryUrl
         .replace(':applicationName', applicationName)
+        .replace(':id?', '')
         .replace(':modelName', modelName);
 
     useEffect(() => {

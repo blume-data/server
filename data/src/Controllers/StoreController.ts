@@ -791,7 +791,14 @@ function validateParams(req: Request, res: Response, rules: RuleType[], findWher
                     errorMessages.push({
                         field: 'where',
                         message: `${condition} does not exist in schema`
-                    })
+                    });
+                }
+                if(condition === '_id' && (!findWhere['_id'] || !findWhere['_id'].match(/^[0-9a-fA-F]{24}$/))) {
+                    isValid = false;
+                    errorMessages.push({
+                        field: 'where',
+                        message: '_id is not valid'
+                    });
                 }
             }
         }

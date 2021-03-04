@@ -51,6 +51,7 @@ const CreateEntry = (props: CreateEntryType) => {
     const [modelData, setModelData] = useState<any>(null);
     // update the entry with the following id
     const [entryId, setEntryId] = useState<string>('');
+    const {id} = useParams<{id: string}>();
 
     // Set model name
     let ModelName = '';
@@ -79,7 +80,7 @@ const CreateEntry = (props: CreateEntryType) => {
         if(GetEntriesUrl && !modelData) {
             const response = await fetchModelEntries({
                 env, language, applicationName, modelName: ModelName, GetEntriesUrl, where: {
-                    _id: entryId
+                    _id: entryId ? entryId : id ? id : undefined
                 }
             });
             
@@ -170,17 +171,16 @@ const CreateEntry = (props: CreateEntryType) => {
             });
         })
     }
-    console.log('field', fields, entryId)
+    console.log('field', fields, entryId, id)
 
     // get url string params
     useEffect(() => {
-        const ID = getUrlSearchParams('id');
-        if(ID) {
+        if(id) {
             setIsLoading(true);
-            setEntryId(ID);
+            setEntryId(id);
             fetchEntryData();
         }
-    }, [GetEntriesUrl]);
+    }, [GetEntriesUrl, id]);
 
     async function createEntry(values: any) {
         if(StoreUrl && values && values.length) {

@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {connect, ConnectedProps} from "react-redux";
 import {
+    APPLICATION_NAME,
     ENTRY_UPDATED_AT, ENTRY_UPDATED_BY, MEDIA_FIELD_TYPE,
     RuleType, SINGLE_ASSETS_TYPE, STATUS
 } from "@ranjodhbirkaur/constants";
@@ -18,6 +19,8 @@ import Checkbox from "@material-ui/core/Checkbox";
 import Loader from "../Loader";
 import {PaginationTab} from "../Pagination";
 import {AvatarCommon} from "../AvatarCommon";
+import { dashboardCreateDataEntryUrl } from '../../../utils/urls';
+import { Link } from 'react-router-dom';
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type EntriesTableType = PropsFromRedux & {
@@ -64,6 +67,10 @@ const EntriesTableComponent = (props: EntriesTableType) => {
             const updatedAt = DateTime.fromISO(i.updatedAt);
             const updatedBy = <UserCell value={i.updatedBy} />;
             const isChecked = selectedEntries.includes(i._id);
+            const redirectUrl = dashboardCreateDataEntryUrl
+                .replace(':id?', i._id)
+                .replace(`:${APPLICATION_NAME}`, applicationName)
+                .replace(`:modelName`, modelName);
             function onChangeCheckBox() {
                 if(selectedEntries.includes(i._id)) {
                     setSelectedEntries(selectedEntries.filter(item => item !== i._id));
@@ -83,6 +90,7 @@ const EntriesTableComponent = (props: EntriesTableType) => {
                 ...i,
                 status: <EntryStatus title={i.status} />,
                 updatedAt: <DateCell value={updatedAt} />,
+                edit: <Link to={redirectUrl}>Edit</Link>,
                 updatedBy,
                 id
             };
@@ -160,6 +168,7 @@ const EntriesTableComponent = (props: EntriesTableType) => {
                     value: rule.name
                 });
             });
+            newColumns.push({name: 'Edit', value: 'edit'});
             newColumns.push({name: 'Status', value: STATUS});
             newColumns.push({name: 'Updated At', value: ENTRY_UPDATED_AT});
             newColumns.push({name: 'Updated by', value: ENTRY_UPDATED_BY});
