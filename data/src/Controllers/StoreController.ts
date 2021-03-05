@@ -443,10 +443,15 @@ export async function deleteStoreRecord(req: Request, res: Response) {
             && params.where._id 
             && Array.isArray(params.where._id) 
             && params.where._id.length) {
-                await model.deleteMany({
-                    id: { $in: params.where._id}
+                const r =await model.deleteMany({
+                    _id: { $in: params.where._id}
                 });
-                return res.status(okayStatus).send(true);
+                if(r && r.deletedCount === params.where._id.length) {
+                    return res.status(okayStatus).send(`deleted ${r.deletedCount} entries`);
+                }
+                else {
+                    return res.status(okayStatus).send(0);
+                }
             }
         else {
             await model.deleteOne(params && params.where ? params.where : {});

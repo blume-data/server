@@ -12,7 +12,7 @@ import {DateTime} from "luxon";
 import {UserCell} from "../UserCell";
 import {DateCell} from "../DateCell";
 import {RootState} from "../../../rootReducer";
-import {fetchModelEntries, getModelDataAndRules} from "../../../utils/tools";
+import {deleteModelEntries, fetchModelEntries, getModelDataAndRules} from "../../../utils/tools";
 import {EntriesFilter} from "../../../modules/dashboard/pages/DateEntries/Entries-Filter/EntriesFilter";
 import {EntryStatus} from "./EntryStatus";
 import Checkbox from "@material-ui/core/Checkbox";
@@ -21,6 +21,8 @@ import {PaginationTab} from "../Pagination";
 import {AvatarCommon} from "../AvatarCommon";
 import { dashboardCreateDataEntryUrl } from '../../../utils/urls';
 import { Link } from 'react-router-dom';
+import { CommonButton } from '../CommonButton';
+import { doDeleteRequest } from '../../../utils/baseApi';
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type EntriesTableType = PropsFromRedux & {
@@ -48,6 +50,7 @@ const EntriesTableComponent = (props: EntriesTableType) => {
     const perPage = 10;
 
     const {env, applicationName, GetCollectionNamesUrl, language, initialSelectedEntries,
+        StoreUrl,
         GetEntriesUrl, modelName, setModelName, selectable=true, onEntrySelect, onEntryDeSelect} = props;
 
     useEffect(() => {
@@ -60,6 +63,7 @@ const EntriesTableComponent = (props: EntriesTableType) => {
             setSelectedEntries(initialSelectedEntries);
         }
     }, []);
+    
     // update rows when selected or response is fetched
     useEffect(() => {
         const newRows = response.map((i: any) => {
@@ -152,8 +156,6 @@ const EntriesTableComponent = (props: EntriesTableType) => {
         );
     }
 
-    console.log('selected entries', selectedEntries);
-
     // update the columns with new fetched rules
     function updateColumns() {
         if(rules && rules.length) {
@@ -239,6 +241,27 @@ const EntriesTableComponent = (props: EntriesTableType) => {
         setPage(page);
     }
 
+    async function deleteSelectedEntries() {
+
+        if(StoreUrl) {
+            setIsLoading(true);
+            const response = await deleteModelEntries({
+                StoreUrl,
+                applicationName,
+                env,
+                language,
+                modelName,
+                where: {
+                    _id: selectedEntries
+                }
+
+            });
+            getItems();
+        }
+    }
+
+    console.log('selected entries', selectedEntries);
+
     return (
         <Grid
             className={'entries-table-container-wrapper'}>
@@ -252,6 +275,19 @@ const EntriesTableComponent = (props: EntriesTableType) => {
             </Grid>
 
             {isLoading ? <Loader /> : null}
+            
+            {
+                selectedEntries && selectedEntries.length
+                ? <Grid container justify={'flex-end'} className="action-buttons">
+                    <Grid item className="action-button">
+                        <CommonButton
+                            onClick={deleteSelectedEntries}
+                            name={'Delete Entries'}
+                        />
+                    </Grid>
+                 </Grid>
+                : null
+            }
 
             <Grid className="entries-table">
                 {
@@ -276,9 +312,6 @@ const EntriesTableComponent = (props: EntriesTableType) => {
                 /> : null}
 
             </Grid>
-
-
-
         </Grid>
     );
 }
@@ -289,7 +322,8 @@ const mapState = (state: RootState) => {
         language: state.authentication.language,
         applicationName: state.authentication.applicationName,
         GetCollectionNamesUrl: state.routeAddress.routes.data?.GetCollectionNamesUrl,
-        GetEntriesUrl: state.routeAddress.routes.data?.GetEntriesUrl
+        GetEntriesUrl: state.routeAddress.routes.data?.GetEntriesUrl,
+        StoreUrl: state.routeAddress.routes.data?.StoreUrl
     }
 };
 

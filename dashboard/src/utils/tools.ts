@@ -6,7 +6,7 @@ import {
     FIRST_NAME,
     LAST_NAME
 } from "@ranjodhbirkaur/constants";
-import {doGetRequest, doPostRequest} from "./baseApi";
+import {doDeleteRequest, doGetRequest, doPostRequest} from "./baseApi";
 import {getBaseUrl} from "./urls";
 
 export const randomString = () => {
@@ -75,6 +75,16 @@ interface FetchModelEntriesType {
     GetEntriesUrl: string;
     where?: object;
 }
+
+interface DeleteModelEntriesType {
+    env: string;
+    language: string;
+    applicationName: string;
+    modelName: string;
+    StoreUrl: string;
+    where?: object;
+}
+
 // Fetch model entries
 export async function fetchModelEntries(data: FetchModelEntriesType) {
 
@@ -95,6 +105,21 @@ export async function fetchModelEntries(data: FetchModelEntriesType) {
                 getOnly: [FIRST_NAME, LAST_NAME]
             }
         ]
+    }, true);
+}
+
+export async function deleteModelEntries(data: DeleteModelEntriesType) {
+    const {env, language, applicationName, modelName, StoreUrl, where} = data;
+    const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
+    const url = StoreUrl
+        .replace(`:${CLIENT_USER_NAME}`, clientUserName ? clientUserName : '')
+        .replace(':env', env)
+        .replace(':language', language)
+        .replace(':modelName', modelName)
+        .replace(`:${APPLICATION_NAME}`,applicationName);
+
+    return await doDeleteRequest(`${getBaseUrl()}${url}`, {
+        where
     }, true);
 }
 
