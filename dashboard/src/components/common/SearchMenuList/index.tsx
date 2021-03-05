@@ -49,7 +49,7 @@ export const SearchMenuList = (props: SearchMenuListProps) => {
         if(ti && ti.offsetWidth) {
             setOffSetWidth(ti.offsetWidth - 3);
         }
-    }, []);
+    }, [value, placeholder]);
 
     useEffect(() => {
         setTimeZones(options);
