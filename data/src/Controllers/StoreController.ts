@@ -419,6 +419,41 @@ export async function createStoreReferenceRecord(req: Request, res: Response) {
 // Update Record
 
 // Delete Record
+export async function deleteStoreRecord(req: Request, res: Response) {
+
+    const reqBody = req.body;
+    const clientUserName = req.params[CLIENT_USER_NAME];
+    const applicationName = req.params[APPLICATION_NAME];
+    // get collection
+    const collection = await getCollection(req);
+    const findWhere = req.body.where;
+
+    if(collection) {
+        const rules = JSON.parse(collection.rules);
+        const params = validateParams(req, res, rules, findWhere, []);
+        const model: any = createModel({
+            rules,
+            clientUserName,
+            applicationName,
+            name: collection.name
+        });
+
+        // if there is an array of ids in where
+        if(params && params.where 
+            && params.where._id 
+            && Array.isArray(params.where._id) 
+            && params.where._id.length) {
+                await model.deleteMany({
+                    id: { $in: params.where._id}
+                });
+                return res.status(okayStatus).send(true);
+            }
+        else {
+            await model.deleteOne(params && params.where ? params.where : {});
+            return res.status(okayStatus).send(true);
+        }
+    }
+}
 
 
 export async function getCollection(req: Request, specificModelName?: string) {
@@ -793,12 +828,35 @@ function validateParams(req: Request, res: Response, rules: RuleType[], findWher
                         message: `${condition} does not exist in schema`
                     });
                 }
-                if(condition === '_id' && (!findWhere['_id'] || !findWhere['_id'].match(/^[0-9a-fA-F]{24}$/))) {
+
+                if(condition === '_id' && (!findWhere['_id'])) {
                     isValid = false;
                     errorMessages.push({
                         field: 'where',
                         message: '_id is not valid'
                     });
+                }
+                if(condition === '_id' && findWhere['_id']) {
+                    if(Array.isArray(findWhere['_id'] && findWhere['_id'].length)) {
+                        // check every id string
+                        findWhere['_id'].array.forEach((element: string) => {
+                            if(element && !element.match(/^[0-9a-fA-F]{24}$/)) {
+                                isValid = false;
+                                errorMessages.push({
+                                    field: 'where',
+                                    message: '_id should be array of valid id'
+                                });
+                            }
+                        });
+                    }
+                    else if((findWhere['_id'] && typeof findWhere['_id'] === 'string' && !findWhere['_id'].match(/^[0-9a-fA-F]{24}$/))) {
+                        // check id string
+                        isValid = false;
+                        errorMessages.push({
+                            field: 'where',
+                            message: '_id should be valid id'
+                        });
+                    }
                 }
             }
         }
@@ -856,7 +914,7 @@ function validateParams(req: Request, res: Response, rules: RuleType[], findWher
     };
 }
 
-// To be deleted
+// validate unique params
 async function validateUniqueParam(model: Model<any>, rules: RuleType[], reqBody: any) {
     let errorMessage: string | null = null;
     let field: string = '';

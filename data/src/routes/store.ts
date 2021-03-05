@@ -1,6 +1,6 @@
 import express, { NextFunction, Request, Response } from "express";
 import {GetEntriesUrl, StoreReferenceUrl, StoreUrl} from "../util/urls";
-import {createStoreRecord, getStoreRecord} from "../Controllers/StoreController";
+import {createStoreRecord, deleteStoreRecord, getStoreRecord} from "../Controllers/StoreController";
 import {validateEnvType} from "../util/enviornmentTypes";
 import {checkAuth} from "../services/checkAuth";
 import {validateApplicationNameMiddleWare} from "../services/validateApplicationNameMiddleWare";
@@ -38,6 +38,9 @@ router.put(
 );
 
 // Create Reference
-router.post(StoreReferenceUrl, validateEnvType, checkAuth, validateApplicationNameMiddleWare)
+router.post(StoreReferenceUrl, validateEnvType, checkAuth, validateApplicationNameMiddleWare);
+
+// Delete Entry
+router.delete(StoreUrl, validateEnvType, checkAuth, validateApplicationNameMiddleWare, deleteStoreRecord);
 
 export { router as StoreRoutes };
