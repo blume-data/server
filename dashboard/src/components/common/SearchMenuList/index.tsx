@@ -37,6 +37,7 @@ export const SearchMenuList = (props: SearchMenuListProps) => {
     const [selectedValue, setSelectedValue] = useState<string>('');
     const [timeZones, setTimeZones] = useState<OptionType[]>([]);
     const [hide, setHide] = useState<boolean>(true);
+    const [offSetWidth, setOffSetWidth] = useState<number>(200);
     const classes = useStyles();
 
     const {options, value, onMenuChange, placeholder='Search', classNames=''} = props;
@@ -44,6 +45,10 @@ export const SearchMenuList = (props: SearchMenuListProps) => {
     useEffect(() => {
         setSelectedValue(value);
         setSearch(value);
+        const ti: any = document.getElementById(`search-input-text-box-${placeholder}`);
+        if(ti && ti.offsetWidth) {
+            setOffSetWidth(ti.offsetWidth - 3);
+        }
     }, []);
 
     useEffect(() => {
@@ -97,13 +102,15 @@ export const SearchMenuList = (props: SearchMenuListProps) => {
         <Grid className={`${classNames} search-menu-list`}>
             <InputLabel>{placeholder}</InputLabel>
             <TextField
+                id={`search-input-text-box-${placeholder}`}
+                variant='outlined'
                 onFocus={() => setHide(false)}
                 onBlur={onBlurTextSearch}
                 value={hide ? selectedValue : search}
                 placeholder={placeholder}
                 onChange={onChange} />
             <div className={`${classes.root} list`} style={{display: `${hide ? 'none' : 'block'}`}}>
-                <List className={'fixed-size-list'}>
+                <List className={'fixed-size-list'} style={{width: offSetWidth}}>
                     {timeZones.map(renderRow)}
                 </List >
             </div>

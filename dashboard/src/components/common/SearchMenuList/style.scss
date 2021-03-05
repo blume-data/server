@@ -3,6 +3,9 @@
   position: relative;
   padding-top: 10px;
   padding-bottom: 10px;
+  .MuiFormLabel-root {
+    margin-bottom: 8px;
+  }
   .MuiTextField-root {
     width: 300px;
     @include mobileAndTablet {
@@ -24,14 +27,11 @@
       z-index: 9;
       border: 2px solid $light-gray;
       border-radius: 5px;
-      width: 300px;
+      
       min-height: 52px;
       max-height: 400px;
       overflow:hidden;
       overflow-y: scroll;
-      @include mobileAndTablet {
-        width: calc(100vw - 16px) !important;
-      }
     }
   }
 }

@@ -1,12 +1,33 @@
 @import "src/assets/style/index";
 .entries-filter-wrapper-container {
   .filter-wrapper {
-    max-width: 600px;
+    
+    @include tablets {
+      max-width: 600px;
+    }
+    @include desktops {
+      max-width: 700px;
+    }
     .input-field-wrapper, .close-button {
       display: flex;
       flex-direction: column;
       justify-content: center;
-      padding-top: 15px;
+      padding-top: 25px;
+      .filter-text-input {
+        input {
+          @include tablets-up {
+            min-width: 300px;
+          }
+        }
+      }
+    }
+    .property-dropdown {
+      input {
+        min-width: 250px;
+        @include tablets-up {
+          min-width: 300px;
+        }
+      }
     }
 
   }

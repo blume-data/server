@@ -49,9 +49,13 @@ const EntriesTableComponent = (props: EntriesTableType) => {
     const [pageTotal, setPageTotal] = useState<number>(0);
     const perPage = 10;
 
-    const {env, applicationName, GetCollectionNamesUrl, language, initialSelectedEntries,
+    const {
+        env, applicationName, GetCollectionNamesUrl, language, initialSelectedEntries,
         StoreUrl,
-        GetEntriesUrl, modelName, setModelName, selectable=true, onEntrySelect, onEntryDeSelect} = props;
+        GetEntriesUrl, modelName, setModelName, 
+        selectable=true, 
+        onEntrySelect, onEntryDeSelect
+    } = props;
 
     useEffect(() => {
         getItems();
@@ -241,6 +245,7 @@ const EntriesTableComponent = (props: EntriesTableType) => {
         setPage(page);
     }
 
+    // delete selected entries
     async function deleteSelectedEntries() {
 
         if(StoreUrl) {

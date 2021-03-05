@@ -460,7 +460,6 @@ export async function deleteStoreRecord(req: Request, res: Response) {
     }
 }
 
-
 export async function getCollection(req: Request, specificModelName?: string) {
     const clientUserName  = req.params && req.params[CLIENT_USER_NAME];
     const modelName = req.params && req.params.modelName;
@@ -814,8 +813,9 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
 function validateParams(req: Request, res: Response, rules: RuleType[], findWhere: any, getOnly: string[] | string | null) {
     let isValid = true;
     const errorMessages = [];
+    let where: any = {};
+    let match: any = {};
     if (findWhere && typeof findWhere === 'object') {
-        let where = {};
         // Iterate where
         for(const condition in findWhere) {
             if (findWhere.hasOwnProperty(condition)) {
@@ -866,7 +866,7 @@ function validateParams(req: Request, res: Response, rules: RuleType[], findWher
             }
         }
     }
-    if (getOnly && (typeof getOnly === 'object' || typeof getOnly === 'string')) {
+    if (getOnly && (Array.isArray(getOnly) || typeof getOnly === 'string')) {
         if (typeof getOnly === 'string') {
             const exist = rules.find(rule => rule.name === getOnly);
             if (!exist) {
@@ -901,11 +901,37 @@ function validateParams(req: Request, res: Response, rules: RuleType[], findWher
             isValid = false;
             errorMessages.push({
                 field: 'getOnly',
-                message: 'getOnly should be an array of params to get or a string of param'
+                message: 'getOnly should be an array of params or a string of param'
             });
         }
         // getOnly does not exist
         getOnly = null;
+    }
+
+    if(req.body.match && typeof req.body.match === 'object') {
+        const matchObject = req.body.match
+        for(const condition in matchObject) {
+            if(matchObject.hasOwnProperty(condition)) {
+                const ruleExist = rules.find(rule => rule.name === condition);
+                if(ruleExist) {
+                    match = {
+                        ...match,
+                        [condition]: match[condition]
+                    }
+                }
+                else {
+                    isValid = false;
+                    errorMessages.push({
+                        field: 'match',
+                        message: `${condition} does not exist in schema`
+                    });
+                }
+
+            }
+
+        }
+
+
     }
 
     if (!isValid) {
@@ -915,7 +941,7 @@ function validateParams(req: Request, res: Response, rules: RuleType[], findWher
         return false;
     }
     return {
-        where: findWhere, getOnly
+        where, getOnly, match
     };
 }
 

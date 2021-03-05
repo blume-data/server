@@ -62,12 +62,14 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
     useEffect(() => {
         fetchModelRulesAndData();
     }, [GetCollectionNamesUrl]);
+
     // Set rules
     useEffect(() => {
         if(props.rules) {
             setRules(props.rules);
         }
     }, [props.rules]);
+
     // set where when filters change
     useEffect(() => {
         const w: any = {};
@@ -182,8 +184,10 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
                     return <TextField
                         value={filterValue}
                         name={name}
+                        variant='outlined'
                         type={'number'}
                         placeholder={placeholder}
+                        className='filter-text-input'
                         onChange={onChange}
                     />
                 }
@@ -191,7 +195,9 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
                     return <TextField
                         value={filterValue}
                         name={name}
+                        variant='outlined'
                         type={'text'}
+                        className='filter-text-input'
                         placeholder={placeholder}
                         onChange={onChange}
                     />
@@ -239,7 +245,7 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
                 }
             </Grid>
             <Grid className={'add-filters-button-wrapper'}>
-                <CommonButton name={'Add filter'} onClick={onClickAddFilter} />
+                <CommonButton variant='text' name={'Add filter'} onClick={onClickAddFilter} />
             </Grid>
         </Grid>
     );
