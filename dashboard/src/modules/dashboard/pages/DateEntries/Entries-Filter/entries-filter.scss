@@ -2,11 +2,8 @@
 .entries-filter-wrapper-container {
   .filter-wrapper {
     
-    @include tablets {
-      max-width: 600px;
-    }
-    @include desktops {
-      max-width: 700px;
+    @include tablets-up {
+      max-width: 665px;
     }
     .input-field-wrapper, .close-button {
       display: flex;
@@ -16,7 +13,7 @@
       .filter-text-input {
         input {
           @include tablets-up {
-            min-width: 300px;
+            min-width: 224px;
           }
         }
       }
