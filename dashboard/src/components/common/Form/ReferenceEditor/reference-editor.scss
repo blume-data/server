@@ -3,7 +3,11 @@
   .reference-ids-list-wrapper {
     margin-top: 10px;
     margin-bottom: 10px;
+    a.ref-link {
+      text-decoration: underline;
+    }
     .chip {
+      cursor: pointer;
       margin-left: 5px;
     }
     .reference-list-name {

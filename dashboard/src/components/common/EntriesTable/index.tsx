@@ -22,7 +22,8 @@ import {AvatarCommon} from "../AvatarCommon";
 import { dashboardCreateDataEntryUrl } from '../../../utils/urls';
 import { Link } from 'react-router-dom';
 import { CommonButton } from '../CommonButton';
-import { doDeleteRequest } from '../../../utils/baseApi';
+import { IconButton } from '@material-ui/core';
+import EditIcon from "@material-ui/icons/Edit";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type EntriesTableType = PropsFromRedux & {
@@ -52,8 +53,8 @@ const EntriesTableComponent = (props: EntriesTableType) => {
     const {
         env, applicationName, GetCollectionNamesUrl, language, initialSelectedEntries,
         StoreUrl,
-        GetEntriesUrl, modelName, setModelName, 
-        selectable=true, 
+        GetEntriesUrl, modelName, setModelName,
+        selectable=true,
         onEntrySelect, onEntryDeSelect
     } = props;
 
@@ -98,7 +99,7 @@ const EntriesTableComponent = (props: EntriesTableType) => {
                 ...i,
                 status: <EntryStatus title={i.status} />,
                 updatedAt: <DateCell value={updatedAt} />,
-                edit: <Link to={redirectUrl}>Edit</Link>,
+                edit: <Link to={redirectUrl}><IconButton><EditIcon /></IconButton></Link>,
                 updatedBy,
                 id
             };
