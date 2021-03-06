@@ -7,10 +7,12 @@ import CreateEntry from "../../../../modules/dashboard/pages/DateEntries/CreateE
 import {Chip, Tooltip} from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import {CommonButton} from "../../CommonButton";
-import {ONE_TO_ONE_RELATION} from "@ranjodhbirkaur/constants";
+import {APPLICATION_NAME, ONE_TO_ONE_RELATION} from "@ranjodhbirkaur/constants";
 import ModalDialog from "../../ModalDialog";
 import {EntriesTable} from "../../EntriesTable";
 import {RenderHeading} from "../../RenderHeading";
+import {Link, useHistory} from 'react-router-dom';
+import { dashboardCreateDataEntryUrl } from "../../../../utils/urls";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type ReferenceEditorType = PropsFromRedux & {
@@ -29,6 +31,7 @@ export const ReferenceEditor = (props: ReferenceEditorType) => {
     const [refIds, setRefIds] = useState<string[]>([]);
     const [showCreateButton, setShowCreateButton] = useState<boolean>(true);
     const [isEntryFormOpen, setIsEntryFormOpen] = useState<boolean>(false);
+    const history = useHistory();
 
     useEffect(() => {
         // value is csv
@@ -72,6 +75,8 @@ export const ReferenceEditor = (props: ReferenceEditorType) => {
         });
     }
 
+    const {applicationName} = props;
+
     return (
         <Grid className={`${className} reference-editor-wrapper`}>
             <RenderHeading title={label} value={label} type={"primary"} />
@@ -89,13 +94,30 @@ export const ReferenceEditor = (props: ReferenceEditorType) => {
                     </Typography>
                     <Grid className={'reference-ids-list-wrapper'}>
                         {refIds.map((data, index) => {
+                            const redirectUrl = dashboardCreateDataEntryUrl
+                                .replace(':id?', data)
+                                .replace(`:${APPLICATION_NAME}`, applicationName)
+                                .replace(`:modelName`, REFERENCE_MODEL_NAME);
+                            function onClickChip(e: any) {
+                                e.stopPropagation();
+                                e.preventDefault();
+                            }
                             return (
                                 <Tooltip key={index} title={'Reference'}>
-                                    <Chip
-                                        className={'chip'}
-                                        label={data}
-                                        onDelete={() => removeReference(data)}
-                                    />
+                                    <Link 
+                                        className='ref-link'
+                                        target='_blank'
+                                        //onClick={onClickChip}
+                                        to={redirectUrl}>
+                                        <Chip
+                                            className={'chip'}
+                                            label={data}
+                                            onDelete={(e: any) => {
+                                                onClickChip(e);
+                                                removeReference(data)
+                                            }}
+                                        />
+                                    </Link>
                                 </Tooltip>
                             );
                         })}
