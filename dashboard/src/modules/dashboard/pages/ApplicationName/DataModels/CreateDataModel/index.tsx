@@ -1145,10 +1145,12 @@ const CreateDataModel = (props: CreateDataModelType) => {
     }
 
     return (
-        <Grid className={'create-data-model-container'}>
+        <Grid container justify={'space-between'} className={'create-data-model-container'}>
             {
                 isLoading ? <Loader /> :  null
             }
+
+            <Grid item lg={8} sm={8} xs={12} className='left-side-container'>
             <RenderHeading
                 className={'main-heading'}
                 type={"main"}
@@ -1294,6 +1296,13 @@ const CreateDataModel = (props: CreateDataModelType) => {
                     />
                 }
             />
+            </Grid>
+
+            <Grid item lg={4} sm={4} xs={12}>
+              Settings
+
+            </Grid>
+
         </Grid>
     );
 }
