@@ -128,10 +128,25 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
         }
     }
 
+    // remove property from dropdown
+    function removePropertyDropDown(index: number) {
+        const newFilters = filters.filter((f,i) => i !== index);
+        const newRules: RuleType[] = [];
+            props.rules && props.rules.forEach(f => {
+                const exist = newFilters.find(r => r.propertyName === f.name);
+                if(!exist) {
+                    newRules.push(f);
+                }
+            });
+            setRules(newRules);
+            console.log('new filters', newFilters);
+            setFilters(newFilters);
+    }
+
     function renderFilters() {
         return rulesOptions && filters.map((filter, index) => {
             return (
-                <Grid key={index} container justify={"space-between"} className="filter-wrapper">
+                <Grid key={index} container justify={"flex-start"} className="filter-wrapper">
                     <Grid item className={'property-list'}>
                         <SearchMenuList
                             value={filter.propertyName}
@@ -147,7 +162,9 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
                     <Grid item className={'close-button'}>
                         <Tooltip title={'Delete filter'}>
                             <IconButton>
-                                <CloseIcon />
+                                <CloseIcon
+                                    onClick={() => removePropertyDropDown(index)}
+                                 />
                             </IconButton>
                         </Tooltip>
 
@@ -219,8 +236,6 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
             setFilters([...filters, { propertyName: '', filterValue: '', inputType: 'text' }]);
         }
     }
-
-    //console.log('filters', filters);
 
     return (
         <Grid className={'entries-filter-wrapper-container'}>

@@ -914,9 +914,10 @@ function validateParams(req: Request, res: Response, rules: RuleType[], findWher
             if(matchObject.hasOwnProperty(condition)) {
                 const ruleExist = rules.find(rule => rule.name === condition);
                 if(ruleExist) {
-                    match = {
-                        ...match,
-                        [condition]: match[condition]
+                    const reg = { "$regex": req.body.match[condition], "$options": "i" };
+                    where = {
+                        ...where,
+                        [condition]: ruleExist.type === SHORT_STRING_FIElD_TYPE ? reg : req.body.match[condition]
                     }
                 }
                 else {
@@ -926,12 +927,8 @@ function validateParams(req: Request, res: Response, rules: RuleType[], findWher
                         message: `${condition} does not exist in schema`
                     });
                 }
-
             }
-
         }
-
-
     }
 
     if (!isValid) {
@@ -941,7 +938,7 @@ function validateParams(req: Request, res: Response, rules: RuleType[], findWher
         return false;
     }
     return {
-        where, getOnly, match
+        where, getOnly
     };
 }
 

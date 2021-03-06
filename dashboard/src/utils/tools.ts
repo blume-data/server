@@ -74,6 +74,7 @@ interface FetchModelEntriesType {
     modelName: string;
     GetEntriesUrl: string;
     where?: object;
+    match?: object;
 }
 
 interface DeleteModelEntriesType {
@@ -88,7 +89,7 @@ interface DeleteModelEntriesType {
 // Fetch model entries
 export async function fetchModelEntries(data: FetchModelEntriesType) {
 
-    const {env, language, applicationName, modelName, GetEntriesUrl, where} = data;
+    const {env, language, applicationName, modelName, GetEntriesUrl, where, match} = data;
     const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
     const url = GetEntriesUrl
         .replace(`:${CLIENT_USER_NAME}`, clientUserName ? clientUserName : '')
@@ -98,7 +99,7 @@ export async function fetchModelEntries(data: FetchModelEntriesType) {
         .replace(`:${APPLICATION_NAME}`,applicationName);
 
     return await doPostRequest(`${getBaseUrl()}${url}`, {
-        where,
+        where, match,
         populate: [
             {
                 name: ENTRY_UPDATED_BY,

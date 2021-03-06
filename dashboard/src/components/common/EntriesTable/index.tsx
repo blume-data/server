@@ -141,7 +141,7 @@ const EntriesTableComponent = (props: EntriesTableType) => {
             setIsLoading(true);
             const resp = await fetchModelEntries({
                 applicationName, modelName: modelName, language, env,
-                GetEntriesUrl: `${GetEntriesUrl}?page=${page}`, where
+                GetEntriesUrl: `${GetEntriesUrl}?page=${page}`, match: where
             });
             if(resp && resp.data && Array.isArray(resp.data)) {
                 setResponse(resp.data);
