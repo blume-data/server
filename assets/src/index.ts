@@ -25,7 +25,7 @@ const start = async () => {
   });
 
   app.listen(3000, () => {
-    console.log('Assets Service: Server is Listening');
+    console.log('Assets Service: Server is Listening!');
   });
 };
 

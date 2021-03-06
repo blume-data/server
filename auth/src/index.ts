@@ -17,7 +17,7 @@ const start = async () => {
   }
 
   app.listen(3000, () => {
-    console.log('Auth Service: Server is Listening');
+    console.log('Auth Service: Server is Listening!');
   });
 };
 

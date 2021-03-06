@@ -16,7 +16,7 @@ const start = async () => {
   }
 
   app.listen(3000, () => {
-    console.log('Data Service: Server is Listening');
+    console.log('Data Service: Server is Listening!');
   });
 };
 
