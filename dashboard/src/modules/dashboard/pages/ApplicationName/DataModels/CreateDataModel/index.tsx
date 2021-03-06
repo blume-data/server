@@ -73,8 +73,8 @@ import ButtonGroup from "@material-ui/core/ButtonGroup";
 import {RootState} from "../../../../../../rootReducer";
 import {connect, ConnectedProps} from "react-redux";
 import {doGetRequest, doPostRequest, doPutRequest} from "../../../../../../utils/baseApi";
-import {getItemFromLocalStorage} from "../../../../../../utils/tools";
-import {dashboardDataModelsUrl, getBaseUrl} from "../../../../../../utils/urls";
+import {getItemFromLocalStorage, getUrlSearchParams} from "../../../../../../utils/tools";
+import {dashboardCreateDataModelsUrl, dashboardDataModelsUrl, getBaseUrl} from "../../../../../../utils/urls";
 import Loader from "../../../../../../components/common/Loader";
 import BasicTableMIUI from "../../../../../../components/common/BasicTableMIUI";
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -184,6 +184,12 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 true
             );
             if(response && !response.errors && response.length) {
+                if(response[0]._id && response[0].name) {
+                    const hasUrlParam = getUrlSearchParams('name');
+                    if(!hasUrlParam) {
+                        history.push(`${dashboardCreateDataModelsUrl}?name=${response[0].name}`);
+                    }
+                }
                 setProperties(JSON.parse(response[0].rules));
                 setContentModelDisplayName(response[0].displayName);
                 setContentModelDescription(response[0].description);
@@ -223,15 +229,13 @@ const CreateDataModel = (props: CreateDataModelType) => {
     useEffect(() => {
         getData();
         getCollectionNames();
-    }, [GetCollectionNamesUrl, contentModelName])
+    }, [GetCollectionNamesUrl, contentModelName]);
 
     useEffect(() => {
         if(contentModelName) {
             setContentModelName(contentModelName);
-
         }
-        const urlParams = new URLSearchParams(window.location.search);
-        const Name = urlParams.get('name');
+        const Name = getUrlSearchParams('name');
         if(Name) {
             setContentModelName(Name);
             setFieldEditMode(true);
@@ -941,15 +945,17 @@ const CreateDataModel = (props: CreateDataModelType) => {
 
 
         return (
-            <Grid className={'field-item'} >
-                <Tooltip title={description}>
-                    <Button onClick={onClick}>
+            <Tooltip title={description}>
+            <Paper onClick={onClick} className='paper-field-item'>
+                <Grid className={'field-item'} >
+                    <Button>
                         {Icon}
                         <h2>{name}</h2>
                         <p>{description}</p>
                     </Button>
-                </Tooltip>
             </Grid>
+            </Paper>
+            </Tooltip>
         );
     }
 
@@ -1146,8 +1152,8 @@ const CreateDataModel = (props: CreateDataModelType) => {
             <RenderHeading
                 className={'main-heading'}
                 type={"main"}
-                value={`${fieldEditMode ? 'Edit' : 'Create'} Model`}
-                title={`${fieldEditMode ? 'Edit' : 'Create'} Model`}
+                value={`${fieldEditMode || contentModelId ? 'Edit' : 'Create'} Model`}
+                title={`${fieldEditMode || contentModelId ? 'Edit' : 'Create'} Model`}
             />
             <Paper className={'model-name-container'}>
                 {renderNameSection()}
@@ -1175,6 +1181,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                                     <Grid container justify={"space-between"}>
                                         <Grid item>
                                             <RenderHeading
+                                                className='field-heading-container'
                                                 type={"primary"}
                                                 title={'Add new field'}
                                                 value={'Add new field'}
@@ -1184,14 +1191,14 @@ const CreateDataModel = (props: CreateDataModelType) => {
                                             <Grid container justify={"center"} direction={"column"}>
                                                 <CommonButton
                                                     className={'cancel-button'}
-                                                    variant={'text'}
+                                                    variant={'outlined'}
                                                     name={'Cancel'}
                                                     onClick={onClickCancelAddField}
                                                 />
                                             </Grid>
                                         </Grid>
                                     </Grid>
-                                    <Grid container justify={"center"} className="fields-grid">
+                                    <Grid spacing={1} container justify={"center"} className="fields-grid">
                                         {fieldItem('Formatted Text', 'customised text with links and media', <TextFieldsIcon />, LONG_STRING_FIELD_TYPE)}
                                         {fieldItem('Text','names, paragraphs, title', <TextFieldsIcon />, SHORT_STRING_FIElD_TYPE)}
                                         {fieldItem('Number', 'numbers like age, count, quantity', <Grid className={'numbers'}>
@@ -1273,7 +1280,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 severity={alert.severity}
                 message={alert.message} />
             <ModalDialog
-                title={'Create new model'}
+                title={`${fieldEditMode || contentModelId ? 'Edit' : 'Create new'} Model`}
                 isOpen={!hideNames}
                 handleClose={() => setHideNames(true)}
                 children={

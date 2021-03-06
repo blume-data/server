@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {Grid} from "@material-ui/core";
 import {RootState} from "../../../../../rootReducer";
 import {connect, ConnectedProps} from "react-redux";
-import {getItemFromLocalStorage, getModelDataAndRules} from "../../../../../utils/tools";
+import {fetchModelEntries, getItemFromLocalStorage, getModelDataAndRules, getUrlSearchParams} from "../../../../../utils/tools";
 import {
     APPLICATION_NAME,
     BOOLEAN_FIElD_TYPE,
@@ -19,7 +19,7 @@ import {
     RuleType,
     SHORT_STRING_FIElD_TYPE
 } from "@ranjodhbirkaur/constants";
-import {doPostRequest} from "../../../../../utils/baseApi";
+import {doPostRequest, doPutRequest} from "../../../../../utils/baseApi";
 import {getBaseUrl} from "../../../../../utils/urls";
 import Loader from "../../../../../components/common/Loader";
 import {
@@ -44,12 +44,16 @@ type CreateEntryType = PropsFromRedux & {
 const CreateEntry = (props: CreateEntryType) => {
 
     const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
-    const {env, applicationName, GetCollectionNamesUrl, language, StoreUrl, modelNameProp, createEntryCallBack} = props;
+    const {env, applicationName, GetCollectionNamesUrl, language, StoreUrl, modelNameProp, createEntryCallBack, GetEntriesUrl} = props;
     const [rules, setRules] = useState<RuleType[] | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [apiResponse, setApiResponse] = useState<string | ErrorMessagesType[]>('');
+    const [modelData, setModelData] = useState<any>(null);
     // update the entry with the following id
     const [entryId, setEntryId] = useState<string>('');
+    const {id} = useParams<{id: string}>();
+
+    // Set model name
     let ModelName = '';
     const {modelName} = useParams<{modelName: string}>();
     if(modelNameProp) {
@@ -66,6 +70,22 @@ const CreateEntry = (props: CreateEntryType) => {
             });
             if(response && !response.errors && response.length) {
                 setRules(JSON.parse(response[0].rules));
+            }
+            setIsLoading(false);
+        }
+    }
+
+    // fetch entry data if there is id
+    async function fetchEntryData() {
+        if(GetEntriesUrl && !modelData) {
+            const response = await fetchModelEntries({
+                env, language, applicationName, modelName: ModelName, GetEntriesUrl, where: {
+                    _id: entryId ? entryId : id ? id : undefined
+                }
+            });
+            
+            if(response && response.data && response.data.length) {
+                setModelData(response.data[0]);
             }
             setIsLoading(false);
         }
@@ -133,7 +153,6 @@ const CreateEntry = (props: CreateEntryType) => {
                     miscData.assetType = rule.assetsType;
                     break;
                 }
-
             }
 
             fields.push({
@@ -145,16 +164,25 @@ const CreateEntry = (props: CreateEntryType) => {
                 min: rule.min,
                 max: rule.max,
                 className: '',
-                value: '',
+                value: entryId && modelData && modelData[rule.name] ? modelData[rule.name] : '',
                 name: rule.name,
                 descriptionText: rule.description,
                 miscData
             });
         })
     }
+    console.log('field', fields, entryId, id)
+
+    // get url string params
+    useEffect(() => {
+        if(id) {
+            setIsLoading(true);
+            setEntryId(id);
+            fetchEntryData();
+        }
+    }, [GetEntriesUrl, id]);
 
     async function createEntry(values: any) {
-
         if(StoreUrl && values && values.length) {
             const url = StoreUrl
                 .replace(`:${CLIENT_USER_NAME}`, clientUserName ? clientUserName : '')
@@ -167,12 +195,21 @@ const CreateEntry = (props: CreateEntryType) => {
 
             values.forEach((valueItem: {name: string; value: string}) => {
 
+                function parseValues() {
+                    if(valueItem.value) {
+                        return valueItem.value.split(',')
+                    }
+                    else {
+                        return undefined;
+                    }
+                }
+
                 if(rules && rules.length) {
                     const exist = rules.find(rule => rule.name === valueItem.name);
                     if(exist) {
                         // check reference
                         if(exist.type === REFERENCE_FIELD_TYPE && exist[REFERENCE_MODEL_TYPE] === ONE_TO_MANY_RELATION) {
-                            data[valueItem.name] = valueItem.value.split(',');
+                            data[valueItem.name] = parseValues();
                         }
                         else {
                             data[valueItem.name] = valueItem.value;
@@ -181,10 +218,11 @@ const CreateEntry = (props: CreateEntryType) => {
                         // check assets
                         if(exist.type === MEDIA_FIELD_TYPE && exist.assetsType === MULTIPLE_ASSETS_TYPE) {
                             if(exist.assetsType === MULTIPLE_ASSETS_TYPE) {
-                                data[valueItem.name] = valueItem.value.split(',');
+                            
+                                data[valueItem.name] = parseValues();
                             }
                             else {
-                                data[valueItem.name] = valueItem.value;
+                                data[valueItem.name] = valueItem.value ? valueItem : undefined;
                             }
                         }
                         if(exist.type === BOOLEAN_FIElD_TYPE) {
@@ -194,21 +232,30 @@ const CreateEntry = (props: CreateEntryType) => {
                 }
             });
 
-            const res = await doPostRequest(`${getBaseUrl()}${url}`, data, true);
+            let res: any;
+            setModelData(data)
+            if(entryId) {
+                data._id = entryId;
+                res = await doPutRequest(`${getBaseUrl()}${url}`, data, true);
+            }
+            else {
+                res = await doPostRequest(`${getBaseUrl()}${url}`, data, true);
+            }
             if(createEntryCallBack && res && res.id) {
                 createEntryCallBack(res.id);
+            }
+            
+            else if(res && res.id && !entryId) {
+                setEntryId(res.id);
             }
             else if(res && res.errors && res.errors.length) {
                 setApiResponse(res.errors);
             }
-
         }
-
     }
 
     function onsubmit(values: any) {
         createEntry(values);
-
     }
 
     return (
@@ -222,7 +269,7 @@ const CreateEntry = (props: CreateEntryType) => {
                     className={'create-content-model-form'}
                     fields={fields}
                     showClearButton={true}
-                    //clearOnSubmit={true}
+                    clearOnSubmit={false}
                     onSubmit={onsubmit}
                     />
             </Grid>
@@ -238,7 +285,8 @@ const mapState = (state: RootState) => {
         language: state.authentication.language,
         applicationName: state.authentication.applicationName,
         GetCollectionNamesUrl: state.routeAddress.routes.data?.GetCollectionNamesUrl,
-        StoreUrl: state.routeAddress.routes.data?.StoreUrl
+        StoreUrl: state.routeAddress.routes.data?.StoreUrl,
+        GetEntriesUrl: state.routeAddress.routes.data?.GetEntriesUrl
     }
 };
 

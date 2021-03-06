@@ -3,7 +3,6 @@
 .vertical-tab-container {
   .vertical-tab-panel {
     width: 100%;
-    height: 400px;
     overflow: auto;
     .vertical-tab-box-container {
       padding: 0 10px 10px;
@@ -20,9 +19,7 @@
       color: $blue !important;
     }
   }
-  button.MuiTab-textColorInherit:hover {
-    background-color: $light-gray;
-  }
+  
   .MuiTabs-flexContainerVertical {
     button.MuiTab-textColorInherit:nth-child(even) {
       background-color: $light-gray !important;

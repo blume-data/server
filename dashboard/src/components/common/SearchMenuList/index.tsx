@@ -3,10 +3,11 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import TextField from "@material-ui/core/TextField";
-import {Grid} from "@material-ui/core";
+import {Grid, InputAdornment} from "@material-ui/core";
 import './style.scss';
 import List from "@material-ui/core/List";
 import InputLabel from "@material-ui/core/InputLabel";
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -37,6 +38,7 @@ export const SearchMenuList = (props: SearchMenuListProps) => {
     const [selectedValue, setSelectedValue] = useState<string>('');
     const [timeZones, setTimeZones] = useState<OptionType[]>([]);
     const [hide, setHide] = useState<boolean>(true);
+    const [offSetWidth, setOffSetWidth] = useState<number>(200);
     const classes = useStyles();
 
     const {options, value, onMenuChange, placeholder='Search', classNames=''} = props;
@@ -44,7 +46,11 @@ export const SearchMenuList = (props: SearchMenuListProps) => {
     useEffect(() => {
         setSelectedValue(value);
         setSearch(value);
-    }, []);
+        const ti: any = document.getElementById(`search-input-text-box-container-${placeholder}`);
+        if(ti && ti.offsetWidth) {
+            setOffSetWidth(ti.offsetWidth - 3);
+        }
+    }, [value, placeholder]);
 
     useEffect(() => {
         setTimeZones(options);
@@ -93,17 +99,39 @@ export const SearchMenuList = (props: SearchMenuListProps) => {
         setTimeout(() => setHide(true));
     }
 
+    // focus on input
+    function focusOnInputOnIconClick() {
+        const ti: any = document.getElementById(`input-field-${placeholder}`);
+        if(ti && ti.focus) {
+            ti.focus();
+        }
+    }
+
     return (
-        <Grid className={`${classNames} search-menu-list`}>
+        <Grid 
+            id={`search-input-text-box-container-${placeholder}`}
+            className={`${classNames} search-menu-list`} >
             <InputLabel>{placeholder}</InputLabel>
             <TextField
+                variant='outlined'
+                id={`input-field-${placeholder}`}
                 onFocus={() => setHide(false)}
                 onBlur={onBlurTextSearch}
                 value={hide ? selectedValue : search}
                 placeholder={placeholder}
+                InputProps={{
+                    endAdornment: (
+                      <InputAdornment 
+                        onClick={focusOnInputOnIconClick}
+                        position="end">
+                        <ArrowDropDownIcon />
+                      </InputAdornment>
+                    ),
+                  }}
+                
                 onChange={onChange} />
             <div className={`${classes.root} list`} style={{display: `${hide ? 'none' : 'block'}`}}>
-                <List className={'fixed-size-list'}>
+                <List className={'fixed-size-list'} style={{width: offSetWidth}}>
                     {timeZones.map(renderRow)}
                 </List >
             </div>

@@ -1,9 +1,10 @@
-import express from "express";
+import express, { NextFunction, Request, Response } from "express";
 import {GetEntriesUrl, StoreReferenceUrl, StoreUrl} from "../util/urls";
-import {createStoreRecord, getStoreRecord} from "../Controllers/StoreController";
+import {createStoreRecord, deleteStoreRecord, getStoreRecord} from "../Controllers/StoreController";
 import {validateEnvType} from "../util/enviornmentTypes";
 import {checkAuth} from "../services/checkAuth";
 import {validateApplicationNameMiddleWare} from "../services/validateApplicationNameMiddleWare";
+import { sendSingleError } from "@ranjodhbirkaur/common";
 
 const router = express.Router();
 
@@ -20,7 +21,26 @@ router.post(
     validateApplicationNameMiddleWare, createStoreRecord
 );
 
+// Update Data
+router.put(
+    StoreUrl, validateEnvType, checkAuth,
+    validateApplicationNameMiddleWare,
+    (req: Request, res: Response, next: NextFunction) => {
+        const {_id} = req.body;
+        if(!_id) {
+            sendSingleError(res, 'id is required');
+        }
+        else {
+            next();
+        }
+    },
+    createStoreRecord
+);
+
 // Create Reference
-router.post(StoreReferenceUrl, validateEnvType, checkAuth, validateApplicationNameMiddleWare)
+router.post(StoreReferenceUrl, validateEnvType, checkAuth, validateApplicationNameMiddleWare);
+
+// Delete Entry
+router.delete(StoreUrl, validateEnvType, checkAuth, validateApplicationNameMiddleWare, deleteStoreRecord);
 
 export { router as StoreRoutes };

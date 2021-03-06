@@ -62,12 +62,14 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
     useEffect(() => {
         fetchModelRulesAndData();
     }, [GetCollectionNamesUrl]);
+
     // Set rules
     useEffect(() => {
         if(props.rules) {
             setRules(props.rules);
         }
     }, [props.rules]);
+
     // set where when filters change
     useEffect(() => {
         const w: any = {};
@@ -126,10 +128,25 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
         }
     }
 
+    // remove property from dropdown
+    function removePropertyDropDown(index: number) {
+        const newFilters = filters.filter((f,i) => i !== index);
+        const newRules: RuleType[] = [];
+            props.rules && props.rules.forEach(f => {
+                const exist = newFilters.find(r => r.propertyName === f.name);
+                if(!exist) {
+                    newRules.push(f);
+                }
+            });
+            setRules(newRules);
+            console.log('new filters', newFilters);
+            setFilters(newFilters);
+    }
+
     function renderFilters() {
         return rulesOptions && filters.map((filter, index) => {
             return (
-                <Grid key={index} container justify={"space-between"} className="filter-wrapper">
+                <Grid key={index} container justify={"flex-start"} className="filter-wrapper">
                     <Grid item className={'property-list'}>
                         <SearchMenuList
                             value={filter.propertyName}
@@ -145,7 +162,9 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
                     <Grid item className={'close-button'}>
                         <Tooltip title={'Delete filter'}>
                             <IconButton>
-                                <CloseIcon />
+                                <CloseIcon
+                                    onClick={() => removePropertyDropDown(index)}
+                                 />
                             </IconButton>
                         </Tooltip>
 
@@ -182,8 +201,10 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
                     return <TextField
                         value={filterValue}
                         name={name}
+                        variant='outlined'
                         type={'number'}
                         placeholder={placeholder}
+                        className='filter-text-input'
                         onChange={onChange}
                     />
                 }
@@ -191,7 +212,9 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
                     return <TextField
                         value={filterValue}
                         name={name}
+                        variant='outlined'
                         type={'text'}
+                        className='filter-text-input'
                         placeholder={placeholder}
                         onChange={onChange}
                     />
@@ -213,8 +236,6 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
             setFilters([...filters, { propertyName: '', filterValue: '', inputType: 'text' }]);
         }
     }
-
-    //console.log('filters', filters);
 
     return (
         <Grid className={'entries-filter-wrapper-container'}>
@@ -239,7 +260,7 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
                 }
             </Grid>
             <Grid className={'add-filters-button-wrapper'}>
-                <CommonButton name={'Add filter'} onClick={onClickAddFilter} />
+                <CommonButton variant='text' name={'Add filter'} onClick={onClickAddFilter} />
             </Grid>
         </Grid>
     );

@@ -6,7 +6,7 @@ import {
     FIRST_NAME,
     LAST_NAME
 } from "@ranjodhbirkaur/constants";
-import {doGetRequest, doPostRequest} from "./baseApi";
+import {doDeleteRequest, doGetRequest, doPostRequest} from "./baseApi";
 import {getBaseUrl} from "./urls";
 
 export const randomString = () => {
@@ -34,6 +34,11 @@ export function getApplicationNamesLocalStorage() {
     else {
         return ['']
     }
+}
+
+export function getUrlSearchParams(param: string) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
 }
 
 interface GetModelData {
@@ -69,11 +74,22 @@ interface FetchModelEntriesType {
     modelName: string;
     GetEntriesUrl: string;
     where?: object;
+    match?: object;
 }
+
+interface DeleteModelEntriesType {
+    env: string;
+    language: string;
+    applicationName: string;
+    modelName: string;
+    StoreUrl: string;
+    where?: object;
+}
+
 // Fetch model entries
 export async function fetchModelEntries(data: FetchModelEntriesType) {
 
-    const {env, language, applicationName, modelName, GetEntriesUrl, where} = data;
+    const {env, language, applicationName, modelName, GetEntriesUrl, where, match} = data;
     const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
     const url = GetEntriesUrl
         .replace(`:${CLIENT_USER_NAME}`, clientUserName ? clientUserName : '')
@@ -83,13 +99,28 @@ export async function fetchModelEntries(data: FetchModelEntriesType) {
         .replace(`:${APPLICATION_NAME}`,applicationName);
 
     return await doPostRequest(`${getBaseUrl()}${url}`, {
-        where,
+        where, match,
         populate: [
             {
                 name: ENTRY_UPDATED_BY,
                 getOnly: [FIRST_NAME, LAST_NAME]
             }
         ]
+    }, true);
+}
+
+export async function deleteModelEntries(data: DeleteModelEntriesType) {
+    const {env, language, applicationName, modelName, StoreUrl, where} = data;
+    const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
+    const url = StoreUrl
+        .replace(`:${CLIENT_USER_NAME}`, clientUserName ? clientUserName : '')
+        .replace(':env', env)
+        .replace(':language', language)
+        .replace(':modelName', modelName)
+        .replace(`:${APPLICATION_NAME}`,applicationName);
+
+    return await doDeleteRequest(`${getBaseUrl()}${url}`, {
+        where
     }, true);
 }
 

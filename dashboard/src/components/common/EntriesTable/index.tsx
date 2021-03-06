@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {connect, ConnectedProps} from "react-redux";
 import {
+    APPLICATION_NAME,
     ENTRY_UPDATED_AT, ENTRY_UPDATED_BY, MEDIA_FIELD_TYPE,
     RuleType, SINGLE_ASSETS_TYPE, STATUS
 } from "@ranjodhbirkaur/constants";
@@ -11,13 +12,17 @@ import {DateTime} from "luxon";
 import {UserCell} from "../UserCell";
 import {DateCell} from "../DateCell";
 import {RootState} from "../../../rootReducer";
-import {fetchModelEntries, getModelDataAndRules} from "../../../utils/tools";
+import {deleteModelEntries, fetchModelEntries, getModelDataAndRules} from "../../../utils/tools";
 import {EntriesFilter} from "../../../modules/dashboard/pages/DateEntries/Entries-Filter/EntriesFilter";
 import {EntryStatus} from "./EntryStatus";
 import Checkbox from "@material-ui/core/Checkbox";
 import Loader from "../Loader";
 import {PaginationTab} from "../Pagination";
 import {AvatarCommon} from "../AvatarCommon";
+import { dashboardCreateDataEntryUrl } from '../../../utils/urls';
+import { Link } from 'react-router-dom';
+import { CommonButton } from '../CommonButton';
+import { doDeleteRequest } from '../../../utils/baseApi';
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type EntriesTableType = PropsFromRedux & {
@@ -44,8 +49,13 @@ const EntriesTableComponent = (props: EntriesTableType) => {
     const [pageTotal, setPageTotal] = useState<number>(0);
     const perPage = 10;
 
-    const {env, applicationName, GetCollectionNamesUrl, language, initialSelectedEntries,
-        GetEntriesUrl, modelName, setModelName, selectable=true, onEntrySelect, onEntryDeSelect} = props;
+    const {
+        env, applicationName, GetCollectionNamesUrl, language, initialSelectedEntries,
+        StoreUrl,
+        GetEntriesUrl, modelName, setModelName, 
+        selectable=true, 
+        onEntrySelect, onEntryDeSelect
+    } = props;
 
     useEffect(() => {
         getItems();
@@ -57,6 +67,7 @@ const EntriesTableComponent = (props: EntriesTableType) => {
             setSelectedEntries(initialSelectedEntries);
         }
     }, []);
+    
     // update rows when selected or response is fetched
     useEffect(() => {
         const newRows = response.map((i: any) => {
@@ -64,6 +75,10 @@ const EntriesTableComponent = (props: EntriesTableType) => {
             const updatedAt = DateTime.fromISO(i.updatedAt);
             const updatedBy = <UserCell value={i.updatedBy} />;
             const isChecked = selectedEntries.includes(i._id);
+            const redirectUrl = dashboardCreateDataEntryUrl
+                .replace(':id?', i._id)
+                .replace(`:${APPLICATION_NAME}`, applicationName)
+                .replace(`:modelName`, modelName);
             function onChangeCheckBox() {
                 if(selectedEntries.includes(i._id)) {
                     setSelectedEntries(selectedEntries.filter(item => item !== i._id));
@@ -83,6 +98,7 @@ const EntriesTableComponent = (props: EntriesTableType) => {
                 ...i,
                 status: <EntryStatus title={i.status} />,
                 updatedAt: <DateCell value={updatedAt} />,
+                edit: <Link to={redirectUrl}>Edit</Link>,
                 updatedBy,
                 id
             };
@@ -125,7 +141,7 @@ const EntriesTableComponent = (props: EntriesTableType) => {
             setIsLoading(true);
             const resp = await fetchModelEntries({
                 applicationName, modelName: modelName, language, env,
-                GetEntriesUrl: `${GetEntriesUrl}?page=${page}`, where
+                GetEntriesUrl: `${GetEntriesUrl}?page=${page}`, match: where
             });
             if(resp && resp.data && Array.isArray(resp.data)) {
                 setResponse(resp.data);
@@ -144,8 +160,6 @@ const EntriesTableComponent = (props: EntriesTableType) => {
         );
     }
 
-    console.log('selected entries', selectedEntries);
-
     // update the columns with new fetched rules
     function updateColumns() {
         if(rules && rules.length) {
@@ -160,6 +174,7 @@ const EntriesTableComponent = (props: EntriesTableType) => {
                     value: rule.name
                 });
             });
+            newColumns.push({name: 'Edit', value: 'edit'});
             newColumns.push({name: 'Status', value: STATUS});
             newColumns.push({name: 'Updated At', value: ENTRY_UPDATED_AT});
             newColumns.push({name: 'Updated by', value: ENTRY_UPDATED_BY});
@@ -230,6 +245,28 @@ const EntriesTableComponent = (props: EntriesTableType) => {
         setPage(page);
     }
 
+    // delete selected entries
+    async function deleteSelectedEntries() {
+
+        if(StoreUrl) {
+            setIsLoading(true);
+            const response = await deleteModelEntries({
+                StoreUrl,
+                applicationName,
+                env,
+                language,
+                modelName,
+                where: {
+                    _id: selectedEntries
+                }
+
+            });
+            getItems();
+        }
+    }
+
+    console.log('selected entries', selectedEntries);
+
     return (
         <Grid
             className={'entries-table-container-wrapper'}>
@@ -243,6 +280,19 @@ const EntriesTableComponent = (props: EntriesTableType) => {
             </Grid>
 
             {isLoading ? <Loader /> : null}
+            
+            {
+                selectedEntries && selectedEntries.length
+                ? <Grid container justify={'flex-end'} className="action-buttons">
+                    <Grid item className="action-button">
+                        <CommonButton
+                            onClick={deleteSelectedEntries}
+                            name={'Delete Entries'}
+                        />
+                    </Grid>
+                 </Grid>
+                : null
+            }
 
             <Grid className="entries-table">
                 {
@@ -267,9 +317,6 @@ const EntriesTableComponent = (props: EntriesTableType) => {
                 /> : null}
 
             </Grid>
-
-
-
         </Grid>
     );
 }
@@ -280,7 +327,8 @@ const mapState = (state: RootState) => {
         language: state.authentication.language,
         applicationName: state.authentication.applicationName,
         GetCollectionNamesUrl: state.routeAddress.routes.data?.GetCollectionNamesUrl,
-        GetEntriesUrl: state.routeAddress.routes.data?.GetEntriesUrl
+        GetEntriesUrl: state.routeAddress.routes.data?.GetEntriesUrl,
+        StoreUrl: state.routeAddress.routes.data?.StoreUrl
     }
 };
 

@@ -148,7 +148,6 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
                         if(query) {
                             query.populate(mongoosePopulate);
                         }
-
                     }
                     else {
                         isValid = false;
@@ -233,7 +232,9 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
 async function createEntry(rules: RuleType[], req: Request, res: Response, collection: {name: string, clientUserName: string, applicationName: string}) {
     const clientUserName = req.params[CLIENT_USER_NAME];
     const applicationName = req.params[APPLICATION_NAME];
-    let body = checkBodyAndRules(rules, req, res);
+
+    const requestBody = req && req.body;
+    const body = checkBodyAndRules(rules, req, res);
     if(body) {
 
         const model: any = createModel({
@@ -247,9 +248,22 @@ async function createEntry(rules: RuleType[], req: Request, res: Response, colle
 
         if (!hasError) {
             try {
-                const item = new model(body);
-                await item.save();
-                return item;
+                
+
+                if(requestBody._id) {
+                    const i = await model.findOneAndUpdate({
+                        _id: requestBody._id
+                    }, requestBody);
+                    
+                    return {
+                        id: requestBody._id
+                    };
+                }
+                else {
+                    const item = new model(body);
+                    await item.save();
+                    return item;
+                }
             }
             catch (e) {
                 const errors: ErrorMessagesType[] = [];
@@ -273,7 +287,7 @@ async function createEntry(rules: RuleType[], req: Request, res: Response, colle
 
 }
 
-// Create Record
+// Create/Update Record
 export async function createStoreRecord(req: Request, res: Response) {
 
     const clientUserName = req.params[CLIENT_USER_NAME];
@@ -405,7 +419,46 @@ export async function createStoreReferenceRecord(req: Request, res: Response) {
 // Update Record
 
 // Delete Record
+export async function deleteStoreRecord(req: Request, res: Response) {
 
+    const reqBody = req.body;
+    const clientUserName = req.params[CLIENT_USER_NAME];
+    const applicationName = req.params[APPLICATION_NAME];
+    // get collection
+    const collection = await getCollection(req);
+    const findWhere = req.body.where;
+
+    if(collection) {
+        const rules = JSON.parse(collection.rules);
+        const params = validateParams(req, res, rules, findWhere, []);
+        const model: any = createModel({
+            rules,
+            clientUserName,
+            applicationName,
+            name: collection.name
+        });
+
+        // if there is an array of ids in where
+        if(params && params.where 
+            && params.where._id 
+            && Array.isArray(params.where._id) 
+            && params.where._id.length) {
+                const r =await model.deleteMany({
+                    _id: { $in: params.where._id}
+                });
+                if(r && r.deletedCount === params.where._id.length) {
+                    return res.status(okayStatus).send(`deleted ${r.deletedCount} entries`);
+                }
+                else {
+                    return res.status(okayStatus).send(0);
+                }
+            }
+        else {
+            await model.deleteOne(params && params.where ? params.where : {});
+            return res.status(okayStatus).send(true);
+        }
+    }
+}
 
 export async function getCollection(req: Request, specificModelName?: string) {
     const clientUserName  = req.params && req.params[CLIENT_USER_NAME];
@@ -511,7 +564,7 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
     function checkOnlyAllowedValues(rule: RuleType, stringMode = true) {
         const allowedValues = rule.onlyAllowedValues && rule.onlyAllowedValues.split(',');
         if(allowedValues) {
-            const exist = allowedValues.find(allowedValue => {
+            const exist = allowedValues.find((allowedValue: string) => {
                 if(!stringMode) {
                     return (Number(reqBody[rule.name]) === Number(allowedValue.trim()))
                 }
@@ -571,7 +624,7 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
 
     rules.forEach((rule) => {
         // check for required params
-        if (((reqBody[rule.name] === undefined || reqBody[rule.name] === null)  && rule.required)) {
+        if (((reqBody[rule.name] === undefined || reqBody[rule.name] === null)  && rule.required && !reqBody._id)) {
             isValid = false;
             errorMessages.push({
                 field: rule.name,
@@ -760,8 +813,9 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
 function validateParams(req: Request, res: Response, rules: RuleType[], findWhere: any, getOnly: string[] | string | null) {
     let isValid = true;
     const errorMessages = [];
+    let where: any = {};
+    let match: any = {};
     if (findWhere && typeof findWhere === 'object') {
-        let where = {};
         // Iterate where
         for(const condition in findWhere) {
             if (findWhere.hasOwnProperty(condition)) {
@@ -772,17 +826,47 @@ function validateParams(req: Request, res: Response, rules: RuleType[], findWher
                         [condition]: findWhere[condition]
                     }
                 }
-                if (!ruleExist) {
+                if (!ruleExist && condition !== '_id') {
                     isValid = false;
                     errorMessages.push({
                         field: 'where',
                         message: `${condition} does not exist in schema`
-                    })
+                    });
+                }
+
+                if(condition === '_id' && (!findWhere['_id'])) {
+                    isValid = false;
+                    errorMessages.push({
+                        field: 'where',
+                        message: '_id is not valid'
+                    });
+                }
+                if(condition === '_id' && findWhere['_id']) {
+                    if(Array.isArray(findWhere['_id'] && findWhere['_id'].length)) {
+                        // check every id string
+                        findWhere['_id'].array.forEach((element: string) => {
+                            if(element && !element.match(/^[0-9a-fA-F]{24}$/)) {
+                                isValid = false;
+                                errorMessages.push({
+                                    field: 'where',
+                                    message: '_id should be array of valid id'
+                                });
+                            }
+                        });
+                    }
+                    else if((findWhere['_id'] && typeof findWhere['_id'] === 'string' && !findWhere['_id'].match(/^[0-9a-fA-F]{24}$/))) {
+                        // check id string
+                        isValid = false;
+                        errorMessages.push({
+                            field: 'where',
+                            message: '_id should be valid id'
+                        });
+                    }
                 }
             }
         }
     }
-    if (getOnly && (typeof getOnly === 'object' || typeof getOnly === 'string')) {
+    if (getOnly && (Array.isArray(getOnly) || typeof getOnly === 'string')) {
         if (typeof getOnly === 'string') {
             const exist = rules.find(rule => rule.name === getOnly);
             if (!exist) {
@@ -817,11 +901,34 @@ function validateParams(req: Request, res: Response, rules: RuleType[], findWher
             isValid = false;
             errorMessages.push({
                 field: 'getOnly',
-                message: 'getOnly should be an array of params to get or a string of param'
+                message: 'getOnly should be an array of params or a string of param'
             });
         }
         // getOnly does not exist
         getOnly = null;
+    }
+
+    if(req.body.match && typeof req.body.match === 'object') {
+        const matchObject = req.body.match
+        for(const condition in matchObject) {
+            if(matchObject.hasOwnProperty(condition)) {
+                const ruleExist = rules.find(rule => rule.name === condition);
+                if(ruleExist) {
+                    const reg = { "$regex": req.body.match[condition], "$options": "i" };
+                    where = {
+                        ...where,
+                        [condition]: ruleExist.type === SHORT_STRING_FIElD_TYPE ? reg : req.body.match[condition]
+                    }
+                }
+                else {
+                    isValid = false;
+                    errorMessages.push({
+                        field: 'match',
+                        message: `${condition} does not exist in schema`
+                    });
+                }
+            }
+        }
     }
 
     if (!isValid) {
@@ -831,11 +938,11 @@ function validateParams(req: Request, res: Response, rules: RuleType[], findWher
         return false;
     }
     return {
-        where: findWhere, getOnly
+        where, getOnly
     };
 }
 
-// To be deleted
+// validate unique params
 async function validateUniqueParam(model: Model<any>, rules: RuleType[], reqBody: any) {
     let errorMessage: string | null = null;
     let field: string = '';

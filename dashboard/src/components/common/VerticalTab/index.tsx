@@ -54,7 +54,7 @@ const useStyles = makeStyles((theme: Theme) => ({
         flexGrow: 1,
         backgroundColor: theme.palette.background.paper,
         display: 'flex',
-        height: '400px'
+        //height: '400px'
     },
     tabs: {
         borderRight: `1px solid ${theme.palette.divider}`,

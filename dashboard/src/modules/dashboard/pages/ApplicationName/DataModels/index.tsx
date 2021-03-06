@@ -133,7 +133,8 @@ const DataModels = (props: PropsFromRedux) => {
 
     }
 
-    const createModelUrl = dashboardCreateDataModelsUrl.replace(`:${APPLICATION_NAME}`, applicationName);
+    const createModelUrl = dashboardCreateDataModelsUrl
+        .replace(`:${APPLICATION_NAME}`, applicationName);
 
     function onClickEdit(name: string) {
         history.push(`${createModelUrl}?name=${name}`);

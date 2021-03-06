@@ -22,10 +22,10 @@ export const dashboardApplicationNamesUrl = `${APP_ROOT_URL}dashboard/applicatio
 export const dashboardApplicationNameUrl = `${APP_ROOT_URL}dashboard/:applicationName/application-space`;
 
 export const dashboardDataModelsUrl = `${APP_ROOT_URL}dashboard/:applicationName/models`;
-export const dashboardCreateDataModelsUrl = `${APP_ROOT_URL}dashboard/:applicationName/create-model`;
+export const dashboardCreateDataModelsUrl = `${APP_ROOT_URL}dashboard/:applicationName/model`;
 
 export const dashboardDataEntriesUrl = `${APP_ROOT_URL}dashboard/:applicationName/entries/:modelName?`;
-export const dashboardCreateDataEntryUrl = `${APP_ROOT_URL}dashboard/:applicationName/create-entry/:modelName`;
+export const dashboardCreateDataEntryUrl = `${APP_ROOT_URL}dashboard/:applicationName/entry/:modelName/:id?`;
 
 export const authUrl = `${APP_ROOT_URL}secure`;
 
