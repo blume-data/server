@@ -113,6 +113,7 @@ export const SearchMenuList = (props: SearchMenuListProps) => {
             className={`${classNames} search-menu-list`} >
             <InputLabel>{placeholder}</InputLabel>
             <TextField
+                autoComplete='off'
                 variant='outlined'
                 id={`input-field-${placeholder}`}
                 onFocus={() => setHide(false)}
@@ -126,8 +127,9 @@ export const SearchMenuList = (props: SearchMenuListProps) => {
                         position="end">
                         <ArrowDropDownIcon />
                       </InputAdornment>
-                    ),
+                    )
                   }}
+                
                 
                 onChange={onChange} />
             <div className={`${classes.root} list`} style={{display: `${hide ? 'none' : 'block'}`}}>
