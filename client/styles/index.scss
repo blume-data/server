@@ -1,0 +1,15 @@
+@import "color.scss";
+@import "font-size.scss";
+@import "responsive.scss";
+@import "ellipses";
+
+.MuiFormControl-root {
+  max-width: 100vw;
+  p.MuiFormHelperText-root {
+    @include trim(3);
+  }
+}
+
+.MuiDialog-paperWidthSm {
+  width: 100%;
+}

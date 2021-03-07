@@ -1,0 +1,7 @@
+@import "./index.scss";
+.aboutContainer {
+  display: flex;
+  @include mobiles {
+    display: none;
+  }
+}
