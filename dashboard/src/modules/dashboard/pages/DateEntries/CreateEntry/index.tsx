@@ -90,7 +90,6 @@ const CreateEntry = (props: CreateEntryType) => {
                 if(response.data[0]) {
                     for(let prop in response.data[0]) {
                         if(response.data[0].hasOwnProperty(prop)) {
-                            console.log('props', prop)
                             // check if the type is asset then only add id
                             const ruleExist = rules && rules.find(rule => {
                                 if(rule.name === prop && (rule.type === 'media' || rule.type === 'reference')) {
@@ -112,7 +111,6 @@ const CreateEntry = (props: CreateEntryType) => {
                                         else {
                                             ids= ids + (ids ? `,${r}` : r);
                                         }
-
                                     });
                                     newResponse[prop] = ids;
                                 }
