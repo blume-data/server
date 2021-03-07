@@ -32,14 +32,14 @@ spec:
             backend:
               serviceName: assets-srv
               servicePort: 3000
-    - host: ranjod.com
+    - host: app.ranjod.com
       http:
         paths:
           - path: /?(.*)
             backend:
               serviceName: dashboard-srv
               servicePort: 3000
-    - host: app.ranjod.com
+    - host: ranjod.com
       http:
         paths:
           - path: /?(.*)
