@@ -139,7 +139,6 @@ const EntriesTableComponent = (props: EntriesTableType) => {
     // Fetch records in the model
     async function getItems() {
         if(GetEntriesUrl && modelName && applicationName) {
-            console.log('ap', applicationName)
             setIsLoading(true);
             const resp = await fetchModelEntries({
                 applicationName, modelName: modelName, language, env,
