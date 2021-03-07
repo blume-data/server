@@ -46,7 +46,7 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
     const [rules, setRules] = useState<RuleType[]>([]);
 
     async function fetchModelRulesAndData(fetchModels = false, getOnly = `${DESCRIPTION},${NAME},${DISPLAY_NAME}`) {
-        if(GetCollectionNamesUrl) {
+        if(GetCollectionNamesUrl && applicationName) {
             const response = await getModelDataAndRules({
                 applicationName, language,
                 modelName: fetchModels ? modelName : '', env, GetCollectionNamesUrl,
@@ -61,7 +61,7 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
     // Fetch Model Data and Rules
     useEffect(() => {
         fetchModelRulesAndData();
-    }, [GetCollectionNamesUrl]);
+    }, [GetCollectionNamesUrl, applicationName]);
 
     // Set rules
     useEffect(() => {

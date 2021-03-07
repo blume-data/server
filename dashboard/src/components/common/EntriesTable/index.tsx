@@ -138,7 +138,7 @@ const EntriesTableComponent = (props: EntriesTableType) => {
 
     // Fetch records in the model
     async function getItems() {
-        if(GetEntriesUrl && modelName) {
+        if(GetEntriesUrl && modelName && applicationName) {
             setIsLoading(true);
             const resp = await fetchModelEntries({
                 applicationName, modelName: modelName, language, env,
@@ -185,7 +185,7 @@ const EntriesTableComponent = (props: EntriesTableType) => {
 
     // fetch the rules and data of the model
     async function fetchModelDataAndRules() {
-        if(GetCollectionNamesUrl) {
+        if(GetCollectionNamesUrl && applicationName) {
             const response = await getModelDataAndRules({
                 GetCollectionNamesUrl, applicationName, modelName: modelName, language, env
             });
@@ -205,14 +205,14 @@ const EntriesTableComponent = (props: EntriesTableType) => {
     // Fetch the model data and rules when collection names url is available
     useEffect(() => {
         fetchModelDataAndRules();
-    }, [modelName, GetCollectionNamesUrl]);
+    }, [modelName, GetCollectionNamesUrl, applicationName]);
 
     // If the model name is selected or changed fetch the entries of that model
     useEffect(() => {
         if(modelName) {
             getItems();
         }
-    }, [modelName]);
+    }, [modelName, applicationName]);
 
     // where the where filters change fetch the entries
     useEffect(() => {
@@ -251,7 +251,7 @@ const EntriesTableComponent = (props: EntriesTableType) => {
 
         if(StoreUrl) {
             setIsLoading(true);
-            const response = await deleteModelEntries({
+            await deleteModelEntries({
                 StoreUrl,
                 applicationName,
                 env,

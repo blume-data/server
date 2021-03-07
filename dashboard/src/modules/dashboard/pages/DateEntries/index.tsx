@@ -32,6 +32,8 @@ function DataEntriesComponent(props: PropsFromRedux) {
         }
     }, [selectedModelName]);
 
+    console.log('ap', applicationName)
+
     return (
         <Grid className={'data-entries-wrapper-container'}>
             <Grid className="data-entries">

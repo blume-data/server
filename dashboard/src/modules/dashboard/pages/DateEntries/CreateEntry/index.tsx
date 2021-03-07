@@ -17,7 +17,7 @@ import {
     REFERENCE_MODEL_NAME,
     REFERENCE_MODEL_TYPE,
     RuleType,
-    SHORT_STRING_FIElD_TYPE
+    SHORT_STRING_FIElD_TYPE, SINGLE_ASSETS_TYPE
 } from "@ranjodhbirkaur/constants";
 import {doPostRequest, doPutRequest} from "../../../../../utils/baseApi";
 import {getBaseUrl} from "../../../../../utils/urls";
@@ -64,7 +64,7 @@ const CreateEntry = (props: CreateEntryType) => {
     }
 
     async function fetchModelDataAndRules() {
-        if(GetCollectionNamesUrl) {
+        if(GetCollectionNamesUrl && applicationName) {
             const response = await getModelDataAndRules({
                 GetCollectionNamesUrl, applicationName, modelName: ModelName, language, env
             });
@@ -77,7 +77,7 @@ const CreateEntry = (props: CreateEntryType) => {
 
     // fetch entry data if there is id
     async function fetchEntryData() {
-        if(GetEntriesUrl && !modelData) {
+        if(GetEntriesUrl && !modelData && applicationName && rules && rules.length) {
             const response = await fetchModelEntries({
                 env, language, applicationName, modelName: ModelName, GetEntriesUrl, where: {
                     _id: entryId ? entryId : id ? id : undefined
@@ -85,7 +85,43 @@ const CreateEntry = (props: CreateEntryType) => {
             });
             
             if(response && response.data && response.data.length) {
-                setModelData(response.data[0]);
+                const newResponse: any = {};
+                // check for rules and data
+                if(response.data[0]) {
+                    for(let prop in response.data[0]) {
+                        if(response.data[0].hasOwnProperty(prop)) {
+                            // check if the type is asset then only add id
+                            const ruleExist = rules && rules.find(rule => {
+                                if(rule.name === prop && (rule.type === 'media' || rule.type === 'reference')) {
+                                    return rule;
+                                }
+                            });
+                            // not array and an object
+                            if(ruleExist && !Array.isArray(response.data[0][prop])) {
+                                newResponse[prop] = response.data[0][prop]._id;
+                            }
+                            // if array
+                            else if(ruleExist && Array.isArray(response.data[0][prop])) {
+                                if(response.data[0][prop] && response.data[0][prop].length) {
+                                    let ids = '';
+                                    response.data[0][prop].forEach((r: any) => {
+                                        if(r._id) {
+                                            ids= ids + (ids ? `,${r._id}` : r._id);
+                                        }
+                                        else {
+                                            ids= ids + (ids ? `,${r}` : r);
+                                        }
+                                    });
+                                    newResponse[prop] = ids;
+                                }
+                            }
+                            else {
+                                newResponse[prop] = response.data[0][prop];
+                            }
+                        }
+                    }
+                }
+                setModelData(newResponse);
             }
             setIsLoading(false);
         }
@@ -93,7 +129,7 @@ const CreateEntry = (props: CreateEntryType) => {
 
     useEffect(() => {
         fetchModelDataAndRules();
-    }, [GetCollectionNamesUrl]);
+    }, [GetCollectionNamesUrl, applicationName]);
 
     let fields: ConfigField[] = [];
 
@@ -169,10 +205,8 @@ const CreateEntry = (props: CreateEntryType) => {
                 descriptionText: rule.description,
                 miscData
             });
-        })
+        });
     }
-    console.log('field', fields, entryId, id)
-
     // get url string params
     useEffect(() => {
         if(id) {
@@ -180,7 +214,7 @@ const CreateEntry = (props: CreateEntryType) => {
             setEntryId(id);
             fetchEntryData();
         }
-    }, [GetEntriesUrl, id]);
+    }, [GetEntriesUrl, id, applicationName, rules]);
 
     async function createEntry(values: any) {
         if(StoreUrl && values && values.length) {
@@ -257,6 +291,8 @@ const CreateEntry = (props: CreateEntryType) => {
     function onsubmit(values: any) {
         createEntry(values);
     }
+
+    console.log('Fields', fields);
 
     return (
         <Grid>

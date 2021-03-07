@@ -193,6 +193,7 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
         const {page, perPage} = getPageAndPerPage(req);
 
         if(isValid) {
+            console.log('where', where, req.body.where);
             const query =  model
                 .find(where, getOnly)
                 .skip(Number(page) * Number(perPage))
@@ -248,7 +249,6 @@ async function createEntry(rules: RuleType[], req: Request, res: Response, colle
 
         if (!hasError) {
             try {
-                
 
                 if(requestBody._id) {
                     const i = await model.findOneAndUpdate({
@@ -814,7 +814,6 @@ function validateParams(req: Request, res: Response, rules: RuleType[], findWher
     let isValid = true;
     const errorMessages = [];
     let where: any = {};
-    let match: any = {};
     if (findWhere && typeof findWhere === 'object') {
         // Iterate where
         for(const condition in findWhere) {
@@ -861,6 +860,12 @@ function validateParams(req: Request, res: Response, rules: RuleType[], findWher
                             field: 'where',
                             message: '_id should be valid id'
                         });
+                    }
+                    else {
+                        where = {
+                            ...where,
+                            [condition]: findWhere[condition]
+                        }
                     }
                 }
             }
