@@ -39,10 +39,10 @@ spec:
             backend:
               serviceName: dashboard-srv
               servicePort: 3000
-    - host: ranjod.com
-      http:
-        paths:
-          - path: /?(.*)
-            backend:
-              serviceName: client-src
-              servicePort: 3000
+#    - host: ranjod.com
+#      http:
+#        paths:
+#          - path: /?(.*)
+#            backend:
+#              serviceName: client-src
+#              servicePort: 3000
