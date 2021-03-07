@@ -84,7 +84,7 @@ const DataModels = (props: PropsFromRedux) => {
 
     async function getCollectionNames() {
 
-        if(GetCollectionNamesUrl) {
+        if(GetCollectionNamesUrl && applicationName) {
 
             setIsLoading(true);
 

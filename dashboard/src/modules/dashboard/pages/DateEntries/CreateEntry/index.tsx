@@ -64,7 +64,7 @@ const CreateEntry = (props: CreateEntryType) => {
     }
 
     async function fetchModelDataAndRules() {
-        if(GetCollectionNamesUrl) {
+        if(GetCollectionNamesUrl && applicationName) {
             const response = await getModelDataAndRules({
                 GetCollectionNamesUrl, applicationName, modelName: ModelName, language, env
             });
@@ -77,7 +77,7 @@ const CreateEntry = (props: CreateEntryType) => {
 
     // fetch entry data if there is id
     async function fetchEntryData() {
-        if(GetEntriesUrl && !modelData) {
+        if(GetEntriesUrl && !modelData && applicationName) {
             const response = await fetchModelEntries({
                 env, language, applicationName, modelName: ModelName, GetEntriesUrl, where: {
                     _id: entryId ? entryId : id ? id : undefined
@@ -93,7 +93,7 @@ const CreateEntry = (props: CreateEntryType) => {
 
     useEffect(() => {
         fetchModelDataAndRules();
-    }, [GetCollectionNamesUrl]);
+    }, [GetCollectionNamesUrl, applicationName]);
 
     let fields: ConfigField[] = [];
 
@@ -180,7 +180,7 @@ const CreateEntry = (props: CreateEntryType) => {
             setEntryId(id);
             fetchEntryData();
         }
-    }, [GetEntriesUrl, id]);
+    }, [GetEntriesUrl, id, applicationName]);
 
     async function createEntry(values: any) {
         if(StoreUrl && values && values.length) {

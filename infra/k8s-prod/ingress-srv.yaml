@@ -13,8 +13,6 @@ spec:
     - hosts:
         - api.ranjod.com
         - app.ranjod.com
-        - ranjod.com
-        - www.ranjod.com
       secretName: ranjod-com
   rules:
     - host: api.ranjod.com
@@ -39,10 +37,4 @@ spec:
             backend:
               serviceName: dashboard-srv
               servicePort: 3000
-#    - host: ranjod.com
-#      http:
-#        paths:
-#          - path: /?(.*)
-#            backend:
-#              serviceName: client-src
-#              servicePort: 3000
+
