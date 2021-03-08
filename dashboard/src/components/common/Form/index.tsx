@@ -465,6 +465,7 @@ export const Form = (props: FormType) => {
                     onBlur={onBlur}
                     onChange={onChange}
                     className={classNames}
+                    assetInit={field.miscData.assetInit ? field.miscData.assetInit : []}
                 />
             );
         }

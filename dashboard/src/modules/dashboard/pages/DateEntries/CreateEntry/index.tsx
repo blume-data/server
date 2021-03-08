@@ -34,6 +34,7 @@ import {
 } from "../../../../../components/common/Form/interface";
 import {Form} from "../../../../../components/common/Form";
 import {useParams} from "react-router";
+import {FileUploadType} from "../../../../../components/common/Form/AssetsAdder";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type CreateEntryType = PropsFromRedux & {
@@ -52,6 +53,10 @@ const CreateEntry = (props: CreateEntryType) => {
     // update the entry with the following id
     const [entryId, setEntryId] = useState<string>('');
     const {id} = useParams<{id: string}>();
+
+    /*Add initial data for assets with thumbnail urls*/
+    const [assetInit, setAssetInit] = useState<FileUploadType[]>([]);
+
 
     // Set model name
     let ModelName = '';
@@ -99,20 +104,36 @@ const CreateEntry = (props: CreateEntryType) => {
                             // not array and an object
                             if(ruleExist && !Array.isArray(response.data[0][prop])) {
                                 newResponse[prop] = response.data[0][prop]._id;
+                                setAssetInit([{
+                                    tbU: response.data[0][prop].thumbnailUrl || '',
+                                    name: response.data[0][prop].fileName,
+                                    id: response.data[0][prop]._id,
+                                    type: ''
+                                }]);
                             }
                             // if array
                             else if(ruleExist && Array.isArray(response.data[0][prop])) {
                                 if(response.data[0][prop] && response.data[0][prop].length) {
                                     let ids = '';
+                                    const newAssetInit :any = [];
                                     response.data[0][prop].forEach((r: any) => {
                                         if(r._id) {
                                             ids= ids + (ids ? `,${r._id}` : r._id);
+                                            if(ruleExist.type === 'media' && r._id && r.fileName) {
+                                                newAssetInit.push({
+                                                    tbU: r.thumbnailUrl || '',
+                                                    name: r.fileName,
+                                                    id: r._id,
+                                                    type: ''
+                                                });
+                                            }
                                         }
                                         else {
                                             ids= ids + (ids ? `,${r}` : r);
                                         }
                                     });
                                     newResponse[prop] = ids;
+                                    setAssetInit(newAssetInit);
                                 }
                             }
                             else {
@@ -187,6 +208,7 @@ const CreateEntry = (props: CreateEntryType) => {
                     inputType = ASSETS_ADDER;
                     type = TEXT;
                     miscData.assetType = rule.assetsType;
+                    miscData.assetInit = assetInit;
                     break;
                 }
             }
