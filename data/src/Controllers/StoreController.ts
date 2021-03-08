@@ -193,7 +193,6 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
         const {page, perPage} = getPageAndPerPage(req);
 
         if(isValid) {
-            console.log('where', where, req.body.where);
             const query =  model
                 .find(where, getOnly)
                 .skip(Number(page) * Number(perPage))
@@ -475,11 +474,11 @@ export async function getCollection(req: Request, specificModelName?: string) {
 
 function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
 
-    const reqBody = req.body;
+    const reqBody: any = req.body;
     const currentUserId = (req.currentUser && req.currentUser.id) ? req.currentUser.id : '';
     const language = req.params.language;
     const createdAt = DateTime.local().setZone('UTC').toJSDate();
-    let body = {
+    let body: any = {
         [ENTRY_CREATED_AT]: createdAt,
         [ENTRY_UPDATED_AT]: createdAt,
         [ENTRY_CREATED_BY]: currentUserId,
@@ -797,6 +796,10 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
                     [rule.name] : defaultValue
                 };
             }
+            // if there is _id in req body add it in boy
+            if(reqBody._id) {
+                body._id = reqBody._id;
+            }
         }
     });
     if (isValid) {
@@ -955,6 +958,11 @@ async function validateUniqueParam(model: Model<any>, rules: RuleType[], reqBody
     for(let i = 0; i<=rules.length-1; i++) {
         if (rules && rules[i].unique && reqBody[rules[i].name]) {
             const exist = await model.find({[rules[i].name]: reqBody[rules[i].name]}, '_id');
+            // if req body has _id and the ids match then don't check unique property
+            if(reqBody && reqBody._id && exist && exist.length && reqBody._id === `${exist[0]._id}`) {
+                // skip
+                return;
+            }
             if (exist && exist.length) {
                 errorMessage = `${rules[i].name} ${PARAM_SHOULD_BE_UNIQUE}. Value ${reqBody[rules[i].name]} already exist.`;
                 field = rules[i].name;
