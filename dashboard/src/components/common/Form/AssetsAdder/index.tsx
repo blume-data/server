@@ -20,9 +20,11 @@ type AssetsAdderType = PropsFromRedux & {
     descriptionText: string;
     label: string;
     assetType?: string;
+    // init assets data while editing assets type
+    assetInit?: FileUploadType[];
 }
 
-interface FileUploadType {
+export interface FileUploadType {
     id: string;
     tbU: string;
     name: string;
@@ -31,7 +33,7 @@ interface FileUploadType {
 
 export const AssetsAdderComponent = (props: AssetsAdderType) => {
 
-    const {className, value, onChange, descriptionText, onBlur, label, assetType} = props;
+    const {className, value, onChange, descriptionText, onBlur, label, assetType, assetInit} = props;
     const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
     const [filesIds, setFilesIds] = useState<FileUploadType[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -83,6 +85,13 @@ export const AssetsAdderComponent = (props: AssetsAdderType) => {
     useEffect(() => {
         updateValue(filesIds);
     }, [filesIds]);
+
+    // set fileIds when initAsset is there
+    useEffect(() => {
+        if(assetInit) {
+            setFilesIds(assetInit);
+        }
+    }, [assetInit]);
 
     console.log('refs', filesIds, filesIds.map(id => id.id).join(','));
 
