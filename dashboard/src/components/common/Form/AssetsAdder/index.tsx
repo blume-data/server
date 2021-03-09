@@ -43,7 +43,7 @@ export const AssetsAdderComponent = (props: AssetsAdderType) => {
 
     /*If value changes from back update the ids*/
     useEffect(() => {
-        if(value && !isLoading) {
+        if(value && !isLoading && typeof value === 'string') {
             const joinedValue = value.split(',');
             const newIds: FileUploadType[] = [];
             if(joinedValue && joinedValue.length) {
