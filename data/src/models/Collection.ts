@@ -12,6 +12,7 @@ interface CollectionAttrs {
     isPublic: boolean;
     isEnabled?: boolean;
     metaData?: string;
+    setting?: string;
 
     // created
     createdBy: string;
@@ -42,6 +43,7 @@ interface CollectionDoc extends mongoose.Document {
     isPublic: boolean;
     isEnabled: boolean;
     metaData?: string;
+    setting?: string;
 
     createdBy: string;
     createdAt?: Date;
@@ -94,6 +96,7 @@ const Collection = new mongoose.Schema(
         metaData : {
             type: String
         },
+        setting: {type: Schema.Types.ObjectId, ref: 'SettingModel'},
 
         deletedBy : { type: Schema.Types.ObjectId, ref: 'ClientUser' },
         deletedAt : { type: Date },

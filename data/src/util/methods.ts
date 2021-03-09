@@ -19,7 +19,6 @@ import {
     okayStatus
 } from "@ranjodhbirkaur/common"
 import {getCollection} from "../Controllers/StoreController";
-import {FileModel} from '../models/file-models';
 
 export const RANDOM_STRING = function (minSize=10) {
     return randomBytes(minSize).toString('hex')
