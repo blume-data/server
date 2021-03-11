@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {connect, ConnectedProps} from "react-redux";
 import {
     APPLICATION_NAME,
-    ENTRY_UPDATED_AT, ENTRY_UPDATED_BY, MEDIA_FIELD_TYPE,
+    ENTRY_UPDATED_AT, ENTRY_UPDATED_BY, JSON_FIELD_TYPE, MEDIA_FIELD_TYPE,
     RuleType, SINGLE_ASSETS_TYPE, STATUS
 } from "@ranjodhbirkaur/constants";
 import Grid from "@material-ui/core/Grid";
@@ -73,6 +73,7 @@ const EntriesTableComponent = (props: EntriesTableType) => {
     useEffect(() => {
         const newRows = response.map((i: any) => {
             const assetTypeRows = rules && rules.filter(rule => rule.type === MEDIA_FIELD_TYPE);
+            const jsonTypeRows = rules && rules.filter(rule => rule.type === JSON_FIELD_TYPE);
             const updatedAt = DateTime.fromISO(i.updatedAt);
             const updatedBy = <UserCell value={i.updatedBy} />;
             const isChecked = selectedEntries.includes(i._id);
@@ -114,7 +115,6 @@ const EntriesTableComponent = (props: EntriesTableType) => {
                         component = <Grid container className={'entries-avatar-list'}>
                             {
                                 i[assetTypeRow.name].map((assetRow: {fileName: string, thumbnailUrl: string}) => {
-                                    console.log('row-map', i[assetTypeRow.name])
                                     return (
                                         <AvatarCommon alt={assetRow.fileName} src={assetRow.thumbnailUrl} />
                                     );
@@ -128,6 +128,14 @@ const EntriesTableComponent = (props: EntriesTableType) => {
                     newRow = {
                         ...newRow,
                         [assetTypeRow.name]: component
+                    }
+                })
+            }
+            if(jsonTypeRows && jsonTypeRows.length) {
+                jsonTypeRows.forEach(assetTypeRow => {
+                    newRow = {
+                        ...newRow,
+                        [assetTypeRow.name]: JSON.stringify(assetTypeRow)
                     }
                 })
             }

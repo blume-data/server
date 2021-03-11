@@ -14,3 +14,5 @@ router.get(
     validateApplicationNameMiddleWare,
     getSetting
 );
+
+export { router as SettingRoutes };
