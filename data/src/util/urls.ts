@@ -1,3 +1,4 @@
+import { APPLICATION_NAME, CLIENT_USER_NAME } from "@ranjodhbirkaur/common";
 import {rootUrl, serviceName} from "./constants";
 
 export const dataRouteUrls = `${serviceName}/routes`;
@@ -15,11 +16,5 @@ export const GetEntriesUrl = `${StoreUrl}/get-entries`;
 
 export const StoreReferenceUrl = `${rootUrl}/:language/:clientUserName/:applicationName/entry/:modelName`;
 
-export const AUTH_SRV_URL = 'http://auth-srv:3000/events';
-
-//export const dataBaseRootUrl = `http://database-srv:3000/store`;
-
-/*
-export const schemaDataBaseUrl = 'schema';
-export const getDataBaseUrl = 'get';
-export const addDataBaseUrl = 'add';*/
+// same setting for all languages
+export const SettingUrl = `${rootUrl}/:${CLIENT_USER_NAME}/:${APPLICATION_NAME}/setting/:modelName`;

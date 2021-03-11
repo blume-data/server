@@ -98,8 +98,8 @@ export const AssetsAdderComponent = (props: AssetsAdderType) => {
 
     return (
         <Grid className={`${className} assets-adder-editor-wrapper`}>
-            <RenderHeading title={label} value={label} type={"primary"} />
-            <RenderHeading title={descriptionText} value={descriptionText} type={"secondary"} />
+            <RenderHeading value={label} type={"primary"} />
+            <RenderHeading value={descriptionText} type={"secondary"} />
             <Grid container justify={"flex-end"}>
                 {
                     assetType === MULTIPLE_ASSETS_TYPE || ((filesIds.length < 1) && (assetType === SINGLE_ASSETS_TYPE))

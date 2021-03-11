@@ -31,7 +31,7 @@ export const CommonButton = (props: {
             onClick={onButtonClick}
             variant={variant}
             color={color}>
-            <RenderHeading type={type} value={name} title={buttonTitle} />
+            <RenderHeading type={type} value={name} />
         </Button>
     );
 }

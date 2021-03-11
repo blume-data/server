@@ -114,7 +114,7 @@ export const DateField = (props: DateFieldType) => {
                         <DescriptionText description={'timezone'} />
                     </Grid>
                     {
-                        helperText ?<RenderHeading title={helperText} value={helperText} type={"para"}  /> : null
+                        helperText ?<RenderHeading value={helperText} type={"para"}  /> : null
                     }
                 </Grid>
             </MuiPickersUtilsProvider>

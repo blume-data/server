@@ -566,13 +566,16 @@ export const Form = (props: FormType) => {
                                     const exist = fields.filter(ranjod => ranjod.groupName === groupName);
                                     if(exist && exist.length) {
                                         return (
-                                            <VerticalTabPanel value={tabValue} index={index}>
-                                                {exist.map((option: ConfigField) => {
+                                            <VerticalTabPanel
+                                                value={tabValue}
+                                                index={index}
+                                                key={`${index}-${groupName}`}>
+                                                {exist.map((option: ConfigField, optionIndex) => {
                                                     if(option.groupName === groupName) {
                                                         return (
-                                                            <>
+                                                            <div key={optionIndex}>
                                                                 {renderFields(option, index, groupName)}
-                                                            </>
+                                                            </div>
                                                         );
                                                     }
                                                     return null;

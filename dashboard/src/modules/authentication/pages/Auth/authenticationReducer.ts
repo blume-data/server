@@ -3,18 +3,21 @@ import {
     AuthActionType,
     ACTION_AUTHENTICATE, ACTION_SET_ENV, ACTION_SET_LANGUAGE, ACTION_SET_APPLICATION_NAME
 } from './types'
-import {DEVELOPMENT_ENV, EnglishLanguage, PRODUCTION_ENV} from "@ranjodhbirkaur/constants";
+import {EnglishLanguage, PRODUCTION_ENV} from "@ranjodhbirkaur/constants";
 import {
     LOCAL_STORAGE_ENV,
     LOCAL_STORAGE_LANGUAGE,
     LOCAL_STORAGE_SELECTED_APPLICATION_NAME
 } from "../../../../utils/constants";
+import {getItemFromLocalStorage} from "../../../../utils/tools";
+
+const selectedApplicationName = getItemFromLocalStorage(LOCAL_STORAGE_SELECTED_APPLICATION_NAME);
 
 const initialState: AuthenticationInitialStateType = {
     isAuth: false,
     env: PRODUCTION_ENV,
     language: EnglishLanguage,
-    applicationName: ''
+    applicationName: selectedApplicationName ? selectedApplicationName : ''
 };
 
 export function authenticationReducer(

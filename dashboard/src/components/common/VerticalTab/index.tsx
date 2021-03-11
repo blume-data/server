@@ -81,6 +81,7 @@ export const VerticalTab = (props: VerticalTabProps) => {
             >
                 {tabs.map((tab, index) => {
                     return <Tab
+                        key={index}
                         className={value === index ? 'selected' : ''}
                         label={tab}
                         {...a11yProps(index)}
