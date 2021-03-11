@@ -975,7 +975,6 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 <Grid item className={'text-container'}>
                     <RenderHeading
                         type={'primary'}
-                        title={'Model name'}
                         className={'model-display-name'}
                         value={contentModelDisplayName ? contentModelDisplayName : 'untitled model'}
                     />
@@ -984,7 +983,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                             <RenderHeading
                                 type={"secondary"}
                                 className={'model-description'}
-                                title={'model-description'}
+                                //title={'model-description'}
                                 value={contentModelDescription}
                             />
                             : null
@@ -1087,7 +1086,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                         tableName={'Fields'}
                     /> : addingField
                         ? null
-                        : <RenderHeading className={'no-fields-added'} type={"primary"} title={'No fields added'} value={'No fields added'} />
+                        : <RenderHeading className={'no-fields-added'} type={"primary"} value={'No fields added'} />
                 }
             </Grid>
         );
@@ -1124,13 +1123,13 @@ const CreateDataModel = (props: CreateDataModelType) => {
                         onClick={onClickAddFields}
                         color={"secondary"}
                         variant={"contained"}
-                        title={'Add Fields'}
+                        //title={'Add Fields'}
                     />
                     {
                         properties && properties.length
                             ? <CommonButton
                                 name={'Save Model'}
-                                title={'Save Model'}
+                                //title={'Save Model'}
                                 onClick={onClickSaveDataModel}
                                 color={"primary"}
                                 variant={"contained"}
@@ -1154,7 +1153,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 className={'main-heading'}
                 type={"main"}
                 value={`${fieldEditMode || contentModelId ? 'Edit' : 'Create'} Model`}
-                title={`${fieldEditMode || contentModelId ? 'Edit' : 'Create'} Model`}
+                // title={`${fieldEditMode || contentModelId ? 'Edit' : 'Create'} Model`}
             />
             <Paper className={'model-name-container'}>
                 {renderNameSection()}
@@ -1170,7 +1169,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                                         className={'add-name-heading'}
                                         value={'Please add name of the model'}
                                         type={'secondary'}
-                                        title={'Please add name of the model'}
+                                        //title={'Please add name of the model'}
                                     />
                             }
                         </Grid>
@@ -1184,7 +1183,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                                             <RenderHeading
                                                 className='field-heading-container'
                                                 type={"primary"}
-                                                title={'Add new field'}
+                                                //title={'Add new field'}
                                                 value={'Add new field'}
                                             />
                                         </Grid>

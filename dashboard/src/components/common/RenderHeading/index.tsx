@@ -4,7 +4,6 @@ import './style.scss';
 export type HeadingTypeInterface = 'main' | 'primary' | 'secondary' | 'para';
 
 interface RenderHeadingType {
-    title: string;
     className?: string;
     value: string;
     type?: HeadingTypeInterface

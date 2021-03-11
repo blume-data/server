@@ -79,11 +79,11 @@ export const ReferenceEditor = (props: ReferenceEditorType) => {
 
     return (
         <Grid className={`${className} reference-editor-wrapper`}>
-            <RenderHeading title={label} value={label} type={"primary"} />
-            <RenderHeading value={`Reference model: ${REFERENCE_MODEL_NAME}`} title={`Reference model: ${REFERENCE_MODEL_NAME}`} type={"secondary"}/>
+            <RenderHeading value={label} type={"primary"} />
+            <RenderHeading value={`Reference model: ${REFERENCE_MODEL_NAME}`} type={"secondary"}/>
             {
                 descriptionText
-                ? <RenderHeading title={descriptionText} value={descriptionText} type={"para"} />
+                ? <RenderHeading value={descriptionText} type={"para"} />
                 : null
             }
             {

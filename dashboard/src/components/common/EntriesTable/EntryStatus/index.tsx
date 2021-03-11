@@ -11,7 +11,7 @@ export const EntryStatus = (props: EntryStatusProps) => {
 
     return (
         <Grid className={'entry-status-container'}>
-            <RenderHeading title={title} value={title} />
+            <RenderHeading value={title} />
         </Grid>
     );
 }

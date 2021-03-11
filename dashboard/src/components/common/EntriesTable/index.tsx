@@ -24,6 +24,7 @@ import { Link } from 'react-router-dom';
 import { CommonButton } from '../CommonButton';
 import { IconButton } from '@material-ui/core';
 import EditIcon from "@material-ui/icons/Edit";
+import {RenderHeading} from "../RenderHeading";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type EntriesTableType = PropsFromRedux & {
@@ -311,7 +312,7 @@ const EntriesTableComponent = (props: EntriesTableType) => {
                         columns={columns}
                         isAllSelected={isAllSelected()}
                         tableName={'Entries'}
-                    /> : <p>No models</p>
+                    /> : <RenderHeading value={'No entries'} />
                 }
             </Grid>
 
