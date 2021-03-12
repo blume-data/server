@@ -20,6 +20,8 @@ import {Alert} from "../../../../components/common/Toast";
 import {AlertType} from "../../../../components/common/Form";
 import { TopLink } from "./TopLink";
 import React from "react";
+import {getItemFromLocalStorage} from "../../../../utils/tools";
+import {LOCAL_STORAGE_REDIRECT_URL} from "../../../../utils/constants";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type AuthProps = PropsFromRedux & {
@@ -136,7 +138,13 @@ const AuthComponent = (props: AuthProps) => {
                         saveAuthentication(response);
                         setAuthentication(true);
                         timeOut(() => {
-                            redirectToUrl(dashboardHomeUrl);
+                            const rU = getItemFromLocalStorage(LOCAL_STORAGE_REDIRECT_URL);
+                            if(rU) {
+                                redirectToUrl(rU);
+                            }
+                            else {
+                                redirectToUrl(dashboardHomeUrl);
+                            }
                         });
                     }
                     break;
