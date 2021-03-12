@@ -30,12 +30,14 @@ import ApplicationName from "./modules/dashboard/pages/ApplicationName";
 import ApplicationNames from "./modules/dashboard/pages/applicationNames";
 import {DataEntries} from './modules/dashboard/pages/DateEntries';
 import React from "react";
+import {LOCAL_STORAGE_REDIRECT_URL} from "./utils/constants";
 
 function PrivateRoute(Component: any) {
     return () => {
         const isAuth = checkAuthentication();
         if (!isAuth) {
-            return <Redirect to={`/${AUTH_ROOT}/${SIGN_IN}`} />
+            localStorage.setItem(LOCAL_STORAGE_REDIRECT_URL, window.location.pathname);
+            return <Redirect to={`${AUTH_ROOT}/${SIGN_IN}`} />
         }
         return <Component />
     }
