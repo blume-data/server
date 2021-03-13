@@ -1,8 +1,7 @@
 import React from "react";
 import Button from '@material-ui/core/Button';
 import {HeadingTypeInterface, RenderHeading} from "../RenderHeading";
-
-;
+import './style.scss';
 
 export const CommonButton = (props: {
     name: string;
@@ -12,10 +11,10 @@ export const CommonButton = (props: {
     title?: string;
     type?: HeadingTypeInterface;
     className?: string;
-
+    startIcon?: React.ReactNode;
 }) => {
 
-    const {name, onClick=null, color='primary', variant='contained', title, type='secondary', className=''} = props;
+    const {name, startIcon, onClick=null, color='primary', variant='contained', title, type='secondary', className=''} = props;
 
     function onButtonClick() {
         if(onClick) {
@@ -23,15 +22,16 @@ export const CommonButton = (props: {
         }
     }
 
-    const buttonTitle = title ? title : name;
-
     return (
-        <Button
-            className={className}
-            onClick={onButtonClick}
-            variant={variant}
-            color={color}>
-            <RenderHeading type={type} value={name} />
-        </Button>
+        <div className="common-button-container">
+            <Button
+                className={className}
+                onClick={onButtonClick}
+                variant={variant}
+                startIcon={startIcon}
+                color={color}>
+                <RenderHeading type={type} value={name} />
+            </Button>
+        </div>
     );
 }

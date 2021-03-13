@@ -1,5 +1,11 @@
 @import "src/assets/style/index";
 .menu-list-container {
+  margin: 0 10px;
+  .application-name-container {
+    span.MuiButton-label {
+      display: flex;
+    }
+  }
   button {
     max-width: 300px;
     span {
