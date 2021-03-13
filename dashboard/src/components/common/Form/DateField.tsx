@@ -17,7 +17,7 @@ import {RenderHeading} from "../RenderHeading";
 interface DateFieldType extends FieldType{
     onChange: (event: string) => void;
     onBlur: (event: ChangeEvent<any>) => void;
-
+    timeZone?: string;
 }
 
 export const DateField = (props: DateFieldType) => {
