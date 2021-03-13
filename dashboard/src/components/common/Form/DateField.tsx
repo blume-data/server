@@ -1,6 +1,6 @@
 import React, {ChangeEvent, useEffect, useState} from "react";
 import {Grid} from "@material-ui/core";
-import {FieldType, ONLY_DATE_FORM_FIELD_TYPE} from "./interface";
+import {DATE_FORM_FIELD_TYPE, FieldType, ONLY_DATE_FORM_FIELD_TYPE} from "./interface";
 
 import {SearchMenuList} from "../SearchMenuList";
 import {validMomentTimezones} from "@ranjodhbirkaur/constants";
@@ -70,7 +70,7 @@ export const DateField = (props: DateFieldType) => {
 
     const t = DateTime.fromISO(value);
 
-    console.log('selected date', value);
+    console.log('selected date', props);
 
     return (
         <Grid id={id ? id : ''} className={`date-field ${className ? className : ''}`}>
@@ -105,18 +105,22 @@ export const DateField = (props: DateFieldType) => {
                         }}
                         style={{display: `${type === ONLY_DATE_FORM_FIELD_TYPE ? 'none' : 'block' }`}}
                     />
-                    <Grid>
-                        <SearchMenuList
-                            value={timeZone}
-                            onMenuChange={(value) => setTimeZone(value)}
-                            options={validMomentTimezones.map(timeZone => {
-                                return {
-                                    value: timeZone.value,
-                                    label: timeZone.label
-                                }
-                            })} />
-                        <DescriptionText description={'timezone'} />
-                    </Grid>
+                    {
+                        type === DATE_FORM_FIELD_TYPE
+                        ? <Grid>
+                                <SearchMenuList
+                                    value={timeZone}
+                                    onMenuChange={(value) => setTimeZone(value)}
+                                    options={validMomentTimezones.map(timeZone => {
+                                        return {
+                                            value: timeZone.value,
+                                            label: timeZone.label
+                                        }
+                                    })} />
+                                <DescriptionText description={'timezone'} />
+                            </Grid>
+                        : null
+                    }
                     {
                         helperText ?<RenderHeading value={helperText} type={"para"}  /> : null
                     }
