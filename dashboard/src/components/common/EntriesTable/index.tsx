@@ -59,8 +59,6 @@ const EntriesTableComponent = (props: EntriesTableType) => {
         onEntrySelect, onEntryDeSelect
     } = props;
 
-    console.log('rows', rows)
-
     useEffect(() => {
         getItems();
     }, [GetEntriesUrl, page]);
@@ -117,9 +115,13 @@ const EntriesTableComponent = (props: EntriesTableType) => {
                     else if(i[assetTypeRow.name] && i[assetTypeRow.name].length) {
                         component = <Grid container className={'entries-avatar-list'}>
                             {
-                                i[assetTypeRow.name].map((assetRow: {fileName: string, thumbnailUrl: string}) => {
+                                i[assetTypeRow.name].map((assetRow: {fileName: string, thumbnailUrl: string}, i: number) => {
                                     return (
-                                        <AvatarCommon alt={assetRow.fileName} src={assetRow.thumbnailUrl} />
+                                        <AvatarCommon
+                                            key={i}
+                                            alt={assetRow.fileName}
+                                            src={assetRow.thumbnailUrl}
+                                        />
                                     );
                                 })
                             }
@@ -277,8 +279,6 @@ const EntriesTableComponent = (props: EntriesTableType) => {
         }
     }
 
-    console.log('selected entries', selectedEntries);
-
     return (
         <Grid
             className={'entries-table-container-wrapper'}>
@@ -308,13 +308,13 @@ const EntriesTableComponent = (props: EntriesTableType) => {
 
             <Grid className="entries-table">
                 {
-                    columns && columns.length ? <BasicTableMIUI
+                    columns && columns.length && rows && rows.length ? <BasicTableMIUI
                         rows={rows}
                         onSelectAll={selectAll}
                         columns={columns}
                         isAllSelected={isAllSelected()}
                         tableName={'Entries'}
-                    /> : <RenderHeading value={'No entries'} />
+                    /> : null
                 }
             </Grid>
 

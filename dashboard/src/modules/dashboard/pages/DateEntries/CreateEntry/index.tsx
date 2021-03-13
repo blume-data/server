@@ -57,6 +57,9 @@ const CreateEntry = (props: CreateEntryType) => {
     /*Add initial data for assets with thumbnail urls*/
     const [assetInit, setAssetInit] = useState<FileUploadType[]>([]);
 
+    /*Fields state*/
+    const [fields, setFields] = useState<ConfigField[]>([]);
+
 
     // Set model name
     let ModelName = '';
@@ -100,7 +103,10 @@ const CreateEntry = (props: CreateEntryType) => {
                                 if(rule.name === prop && (rule.type === 'media' || rule.type === 'reference')) {
                                     return rule;
                                 }
+                                return false;
                             });
+                            const isJsonField = rules && rules.find(rule => (rule.name === prop && rule.type === JSON_FIELD_TYPE));
+
                             // not array and an object
                             if(ruleExist && !Array.isArray(response.data[0][prop])) {
                                 newResponse[prop] = response.data[0][prop]._id;
@@ -136,6 +142,15 @@ const CreateEntry = (props: CreateEntryType) => {
                                     setAssetInit(newAssetInit);
                                 }
                             }
+                            else if(isJsonField) {
+                                if(typeof response.data[0][prop] !== 'string') {
+                                    newResponse[prop] = JSON.stringify(response.data[0][prop]);
+                                }
+                                else {
+                                    newResponse[prop] = response.data[0][prop];
+                                }
+
+                            }
                             else {
                                 newResponse[prop] = response.data[0][prop];
                             }
@@ -152,83 +167,6 @@ const CreateEntry = (props: CreateEntryType) => {
         fetchModelDataAndRules();
     }, [GetCollectionNamesUrl, applicationName]);
 
-    let fields: ConfigField[] = [];
-
-    if(rules) {
-        rules.forEach(rule => {
-
-            let inputType = 'text';
-            let type = 'text';
-            let option: string[] = [];
-            let miscData: any = {};
-            switch (rule.type) {
-                case SHORT_STRING_FIElD_TYPE: {
-                    inputType = TEXT;
-                    type = 'text';
-                    break;
-                }
-                case LONG_STRING_FIELD_TYPE: {
-                    inputType = FORMATTED_TEXT;
-                    type = 'text'
-                    break;
-                }
-                case INTEGER_FIElD_TYPE: {
-                    inputType = TEXT;
-                    type = 'number';
-                    break;
-                }
-                case DATE_FIElD_TYPE: {
-                    inputType = ONLY_DATE_FORM_FIELD_TYPE;
-                    type = ONLY_DATE_FORM_FIELD_TYPE;
-                    break;
-                }
-                case DATE_AND_TIME_FIElD_TYPE: {
-                    inputType = DATE_FIElD_TYPE;
-                    type = DATE_FIElD_TYPE;
-                    break;
-                }
-                case BOOLEAN_FIElD_TYPE: {
-                    inputType = CHECKBOX;
-                    type = TEXT;
-                    break;
-                }
-                case JSON_FIELD_TYPE: {
-                    inputType = JSON_TEXT;
-                    type = TEXT;
-                    break;
-                }
-                case REFERENCE_FIELD_TYPE: {
-                    inputType = REFERENCE_EDITOR;
-                    type = TEXT;
-                    miscData[REFERENCE_MODEL_TYPE] = rule[REFERENCE_MODEL_TYPE];
-                    miscData[REFERENCE_MODEL_NAME] = rule[REFERENCE_MODEL_NAME];
-                    break;
-                }
-                case MEDIA_FIELD_TYPE: {
-                    inputType = ASSETS_ADDER;
-                    type = TEXT;
-                    miscData.assetType = rule.assetsType;
-                    miscData.assetInit = assetInit;
-                    break;
-                }
-            }
-
-            fields.push({
-                required: !!rule.required,
-                type,
-                inputType,
-                label: rule.displayName ? rule.displayName : '',
-                placeholder: rule.displayName ? rule.displayName : '',
-                min: rule.min,
-                max: rule.max,
-                className: '',
-                value: entryId && modelData && modelData[rule.name] ? modelData[rule.name] : '',
-                name: rule.name,
-                descriptionText: rule.description,
-                miscData
-            });
-        });
-    }
     // get url string params
     useEffect(() => {
         if(id) {
@@ -237,6 +175,89 @@ const CreateEntry = (props: CreateEntryType) => {
             fetchEntryData();
         }
     }, [GetEntriesUrl, id, applicationName, rules]);
+
+    /*
+    * Set Fields state
+    * */
+    useEffect(() => {
+        if(rules) {
+            const fieldArray: ConfigField[] = [];
+            rules.forEach(rule => {
+
+                let inputType = 'text';
+                let type = 'text';
+                let option: string[] = [];
+                let miscData: any = {};
+                switch (rule.type) {
+                    case SHORT_STRING_FIElD_TYPE: {
+                        inputType = TEXT;
+                        type = 'text';
+                        break;
+                    }
+                    case LONG_STRING_FIELD_TYPE: {
+                        inputType = FORMATTED_TEXT;
+                        type = 'text'
+                        break;
+                    }
+                    case INTEGER_FIElD_TYPE: {
+                        inputType = TEXT;
+                        type = 'number';
+                        break;
+                    }
+                    case DATE_FIElD_TYPE: {
+                        inputType = ONLY_DATE_FORM_FIELD_TYPE;
+                        type = ONLY_DATE_FORM_FIELD_TYPE;
+                        break;
+                    }
+                    case DATE_AND_TIME_FIElD_TYPE: {
+                        inputType = DATE_FIElD_TYPE;
+                        type = DATE_FIElD_TYPE;
+                        break;
+                    }
+                    case BOOLEAN_FIElD_TYPE: {
+                        inputType = CHECKBOX;
+                        type = TEXT;
+                        break;
+                    }
+                    case JSON_FIELD_TYPE: {
+                        inputType = JSON_TEXT;
+                        type = TEXT;
+                        break;
+                    }
+                    case REFERENCE_FIELD_TYPE: {
+                        inputType = REFERENCE_EDITOR;
+                        type = TEXT;
+                        miscData[REFERENCE_MODEL_TYPE] = rule[REFERENCE_MODEL_TYPE];
+                        miscData[REFERENCE_MODEL_NAME] = rule[REFERENCE_MODEL_NAME];
+                        break;
+                    }
+                    case MEDIA_FIELD_TYPE: {
+                        inputType = ASSETS_ADDER;
+                        type = TEXT;
+                        miscData.assetType = rule.assetsType;
+                        miscData.assetInit = assetInit;
+                        break;
+                    }
+                }
+
+                fieldArray.push({
+                    required: !!rule.required,
+                    type,
+                    inputType,
+                    label: rule.displayName ? rule.displayName : '',
+                    placeholder: rule.displayName ? rule.displayName : '',
+                    min: rule.min,
+                    max: rule.max,
+                    className: '',
+                    value: (entryId && modelData && modelData[rule.name]) ? modelData[rule.name] : '',
+                    name: rule.name,
+                    descriptionText: rule.description,
+                    miscData
+                });
+            });
+            setFields(fieldArray);
+        }
+    }, [rules, modelData]);
 
     async function createEntry(values: any) {
         if(StoreUrl && values && values.length) {
@@ -314,7 +335,7 @@ const CreateEntry = (props: CreateEntryType) => {
         createEntry(values);
     }
 
-    console.log('Fields', fields);
+    console.log('fields', fields);
 
     return (
         <Grid>
@@ -329,7 +350,7 @@ const CreateEntry = (props: CreateEntryType) => {
                     showClearButton={true}
                     clearOnSubmit={false}
                     onSubmit={onsubmit}
-                    />
+                />
             </Grid>
 
         </Grid>

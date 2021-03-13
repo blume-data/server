@@ -1,4 +1,4 @@
-import React, {ChangeEvent, useEffect, useState} from "react";
+import React, {ChangeEvent, lazy, useEffect, useState, Suspense} from "react";
 import Grid from '@material-ui/core/Grid';
 import {TextBox} from "./TextBox";
 import {DropDown} from "./DropDown";
@@ -26,12 +26,15 @@ import {Alert} from "../Toast";
 import {CommonRadioField} from "./CommonRadioField";
 import {CommonCheckBoxField} from "./CommonCheckBoxField";
 import {CommonButton} from "../CommonButton";
-import {DateField} from "./DateField";
 import {VerticalTab, VerticalTabPanel} from "../VerticalTab";
 import {JsonEditor} from "./JsonEditor";
 import ReferenceEditor from "./ReferenceEditor";
 import HtmlEditor from "../HtmlEditor";
 import AssetsAdder from "./AssetsAdder";
+
+const DateField = lazy(() => import('./DateField')
+    .then(module => ({ default: module.DateField }))
+);
 
 interface FormState {
     label: string;
@@ -256,45 +259,47 @@ export const Form = (props: FormType) => {
 
         if(inputType === ONLY_DATE_FORM_FIELD_TYPE) {
             return (
-                <DateField
-                    descriptionText={descriptionText}
-                    type={ONLY_DATE_FORM_FIELD_TYPE}
-                    key={index}
-                    name={name}
-                    disabled={disabled}
-                    error={error}
-                    required={required}
-                    placeholder={placeholder}
-                    helperText={helperText}
-                    onChange={(value: any) => {changeValue({target: {value}}, label, SET_VALUE_ACTION)}}
-                    onBlur={onBlur}
-                    label={label}
-                    id={id}
-                    value={value}
-                    className={classNames}
-                />
+                <Suspense key={index} fallback={<div>Loading...</div>}>
+                    <DateField
+                        descriptionText={descriptionText}
+                        type={ONLY_DATE_FORM_FIELD_TYPE}
+                        name={name}
+                        disabled={disabled}
+                        error={error}
+                        required={required}
+                        placeholder={placeholder}
+                        helperText={helperText}
+                        onChange={(value: any) => {changeValue({target: {value}}, label, SET_VALUE_ACTION)}}
+                        onBlur={onBlur}
+                        label={label}
+                        id={id}
+                        value={value}
+                        className={classNames}
+                    />
+                </Suspense>
             );
         }
         if(inputType === DATE_FORM_FIELD_TYPE) {
 
             return (
-                <DateField
-                    descriptionText={descriptionText}
-                    type={DATE_FORM_FIELD_TYPE}
-                    key={index}
-                    name={name}
-                    disabled={disabled}
-                    error={error}
-                    required={required}
-                    placeholder={placeholder}
-                    helperText={helperText}
-                    onChange={(value: any) => {changeValue({target: {value}}, label, SET_VALUE_ACTION)}}
-                    onBlur={onBlur}
-                    label={label}
-                    id={id}
-                    value={value}
-                    className={classNames}
-                />
+                <Suspense key={index} fallback={<div>Loading...</div>}>
+                    <DateField
+                        descriptionText={descriptionText}
+                        type={DATE_FORM_FIELD_TYPE}
+                        name={name}
+                        disabled={disabled}
+                        error={error}
+                        required={required}
+                        placeholder={placeholder}
+                        helperText={helperText}
+                        onChange={(value: any) => {changeValue({target: {value}}, label, SET_VALUE_ACTION)}}
+                        onBlur={onBlur}
+                        label={label}
+                        id={id}
+                        value={value}
+                        className={classNames}
+                    />
+                </Suspense>
             );
         }
         if (inputType === TEXT) {

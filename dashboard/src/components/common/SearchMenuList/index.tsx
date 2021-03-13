@@ -8,6 +8,7 @@ import './style.scss';
 import List from "@material-ui/core/List";
 import InputLabel from "@material-ui/core/InputLabel";
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import {randomString} from "../../../utils/tools";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -39,6 +40,8 @@ export const SearchMenuList = (props: SearchMenuListProps) => {
     const [hide, setHide] = useState<boolean>(true);
     const [offSetWidth, setOffSetWidth] = useState<number>(200);
     const classes = useStyles();
+
+    const randomId = randomString();
 
     const {options, value, onMenuChange, placeholder='Search', classNames=''} = props;
 
@@ -100,7 +103,7 @@ export const SearchMenuList = (props: SearchMenuListProps) => {
 
     // focus on input
     function focusOnInputOnIconClick() {
-        const ti: any = document.getElementById(`input-field-${placeholder}`);
+        const ti: any = document.getElementById(`input-field-${placeholder}-${randomId}`);
         if(ti && ti.focus) {
             ti.focus();
         }
@@ -114,7 +117,7 @@ export const SearchMenuList = (props: SearchMenuListProps) => {
             <TextField
                 autoComplete='off'
                 variant='outlined'
-                id={`input-field-${placeholder}`}
+                id={`input-field-${placeholder}-${randomId}`}
                 onFocus={() => setHide(false)}
                 onBlur={onBlurTextSearch}
                 value={hide ? selectedValue : search}

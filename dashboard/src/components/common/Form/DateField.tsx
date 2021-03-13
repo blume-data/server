@@ -107,8 +107,8 @@ export const DateField = (props: DateFieldType) => {
                             onMenuChange={(value) => setTimeZone(value)}
                             options={validMomentTimezones.map(timeZone => {
                                 return {
-                                    value: timeZone,
-                                    label: timeZone
+                                    value: timeZone.value,
+                                    label: timeZone.label
                                 }
                             })} />
                         <DescriptionText description={'timezone'} />
