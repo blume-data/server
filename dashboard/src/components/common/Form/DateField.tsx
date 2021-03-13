@@ -70,7 +70,7 @@ export const DateField = (props: DateFieldType) => {
 
     const t = DateTime.fromISO(value);
 
-    console.log('selected date', t);
+    console.log('selected date', value);
 
     return (
         <Grid id={id ? id : ''} className={`date-field ${className ? className : ''}`}>
