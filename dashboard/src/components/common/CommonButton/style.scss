@@ -6,6 +6,9 @@
       display: flex;
       span.MuiButton-startIcon {
         margin-top: 5px;
+        @include tablets {
+          display: none;
+        }
       }
     }
   }
