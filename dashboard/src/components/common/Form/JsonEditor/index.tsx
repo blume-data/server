@@ -18,9 +18,7 @@ export const JsonEditor = (props: JsonEditorProps) => {
 
     function onChangeJson(e: any) {
         const value = e.target.value;
-        console.log('i love you ranjodhbir kaur', value);
-
-        console.log('ís valid json', IsJsonString(value));
+        console.log('json value', value, IsJsonString(value))
         onChange(e);
     }
     return (

@@ -108,7 +108,7 @@ const EntriesTableComponent = (props: EntriesTableType) => {
             if(assetTypeRows && assetTypeRows.length) {
                 assetTypeRows.forEach(assetTypeRow => {
                     let component: JSX.Element | null;
-                    if(assetTypeRow.assetsType === SINGLE_ASSETS_TYPE) {
+                    if(assetTypeRow.assetsType === SINGLE_ASSETS_TYPE && i[assetTypeRow.name]) {
                         component = <AvatarCommon alt={assetTypeRow.name} src={i[assetTypeRow.name].thumbnailUrl} />
                     }
                     else if(i[assetTypeRow.name] && i[assetTypeRow.name].length) {

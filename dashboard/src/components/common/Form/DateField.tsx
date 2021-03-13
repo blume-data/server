@@ -28,9 +28,7 @@ export const DateField = (props: DateFieldType) => {
     const [timeZone, setTimeZone] = useState<string>('UCT');
     const [finalValue, setFinalValue] = useState<string>('');
 
-    const [selectedDate, setSelectedDate] = React.useState<Date | null>(
-        new Date(),
-    );
+    const [selectedDate, setSelectedDate] = React.useState<Date | null>(null);
 
     function updateFinalValue() {
         if(selectedDate) {
@@ -70,10 +68,16 @@ export const DateField = (props: DateFieldType) => {
         setSelectedDate(date);
     };
 
+    const t = DateTime.fromISO(value);
+
+    console.log('selected date', t);
+
     return (
         <Grid id={id ? id : ''} className={`date-field ${className ? className : ''}`}>
 
-            <h3>{label}: {finalValue}</h3>
+            <RenderHeading
+                value={`${label}: ${finalValue}`}
+            />
 
             <MuiPickersUtilsProvider utils={DateFnsUtils}>
                 <Grid container justify="space-around" direction={"column"}>
