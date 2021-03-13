@@ -42,13 +42,13 @@ const LeftDrawerListComponent = (props: PropsFromRedux) => {
             <List>
                 <ListItem button>
                     <Link className={'link-item-link'} to={dashboardHomeUrl}>
-                        <ListItemIcon><DashboardIcon color={"primary"} /></ListItemIcon>
+                        <ListItemIcon><DashboardIcon /></ListItemIcon>
                         <ListItemText primary={'Dashboard'} />
                     </Link>
                 </ListItem>
                 <ListItem button>
                     <Link className={'link-item-link'} to={dashboardApplicationNamesUrl}>
-                        <ListItemIcon><ApartmentIcon color={"primary"} /></ListItemIcon>
+                        <ListItemIcon><ApartmentIcon /></ListItemIcon>
                         <ListItemText primary={'Application Space'} />
                     </Link>
                 </ListItem>
@@ -57,25 +57,25 @@ const LeftDrawerListComponent = (props: PropsFromRedux) => {
                     ? <div>
                         <ListItem button>
                             <Link className={'link-item-link'} to={dashboardApplicationNamesUrl}>
-                                <ListItemIcon><LanguageIcon color={"primary"} /></ListItemIcon>
+                                <ListItemIcon><LanguageIcon /></ListItemIcon>
                                 <ListItemText primary={'Languages'} />
                             </Link>
                         </ListItem>
                         <ListItem button>
                             <Link className={'link-item-link'} to={dataModelsUrl}>
-                                <ListItemIcon><WidgetsIcon color={"primary"} /></ListItemIcon>
+                                <ListItemIcon><WidgetsIcon /></ListItemIcon>
                                 <ListItemText primary={'Models'} />
                             </Link>
                         </ListItem>
                         <ListItem button>
                             <Link className={'link-item-link'} to={dataEntriesUrl}>
-                                <ListItemIcon><NoteIcon color={"primary"} /></ListItemIcon>
+                                <ListItemIcon><NoteIcon /></ListItemIcon>
                                 <ListItemText primary={'Entries'} />
                             </Link>
                         </ListItem>
                         <ListItem button>
                             <Link className={'link-item-link'} to={assetsUrl}>
-                                <ListItemIcon><PhotoAlbumIcon color={"primary"} /></ListItemIcon>
+                                <ListItemIcon><PhotoAlbumIcon /></ListItemIcon>
                                 <ListItemText primary={'Assets'} />
                             </Link>
                         </ListItem>

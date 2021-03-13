@@ -3,7 +3,7 @@
 .common-button-container {
   button {
     span.MuiButton-label {
-      display: flex;
+      display: flex !important;
       span.MuiButton-startIcon {
         margin-top: 5px;
         @include tablets {
