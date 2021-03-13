@@ -55,7 +55,7 @@ import {
     ENTRY_UPDATED_BY,
     ENTRY_DELETED_BY,
     MEDIA_FIELD_TYPE,
-    SINGLE_ASSETS_TYPE, MULTIPLE_ASSETS_TYPE
+    SINGLE_ASSETS_TYPE, MULTIPLE_ASSETS_TYPE, JSON_FIELD_TYPE, IsJsonString
 } from "@ranjodhbirkaur/constants";
 import {createModel, getModel, sendOkayResponse, trimGetOnly} from "../util/methods";
 
@@ -602,12 +602,12 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
             isValid = false;
             errorMessages.push({
                 field: rule.name,
-                message: `${rule.name} should be of type string`
+                message: `${rule.name} is not a valid date`
             });
         }
         else {
             // validate date
-            const luxonTime = DateTime.fromISO(reqBody[rule.name]).setZone('UCT');
+            const luxonTime = DateTime.fromISO(reqBody[rule.name]);
             if(luxonTime.invalidReason) {
                 isValid = false;
                 errorMessages.push({
@@ -616,7 +616,7 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
                 });
             }
             else {
-                reqBody[rule.name] = DateTime.fromISO(reqBody[rule.name]).setZone('UTC').toJSDate();
+                reqBody[rule.name] = DateTime.fromISO(reqBody[rule.name]).toJSDate();
             }
         }
     }
@@ -778,6 +778,16 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
                         }
                     }
 
+                    break;
+                }
+                case JSON_FIELD_TYPE: {
+                    if(!IsJsonString(reqBody[rule.name])) {
+                        isValid = false;
+                        errorMessages.push({
+                            field: rule.name,
+                            message: `${rule.name} is not a valid json`
+                        });
+                    }
                     break;
                 }
             }
