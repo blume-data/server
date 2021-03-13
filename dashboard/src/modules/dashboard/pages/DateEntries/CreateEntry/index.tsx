@@ -101,6 +101,8 @@ const CreateEntry = (props: CreateEntryType) => {
                                     return rule;
                                 }
                             });
+                            const isJsonField = rules && rules.find(rule => (rule.name === prop && rule.type === JSON_FIELD_TYPE));
+
                             // not array and an object
                             if(ruleExist && !Array.isArray(response.data[0][prop])) {
                                 newResponse[prop] = response.data[0][prop]._id;
@@ -135,6 +137,9 @@ const CreateEntry = (props: CreateEntryType) => {
                                     newResponse[prop] = ids;
                                     setAssetInit(newAssetInit);
                                 }
+                            }
+                            else if(isJsonField) {
+                                newResponse[prop] = JSON.stringify(response.data[0][prop]);
                             }
                             else {
                                 newResponse[prop] = response.data[0][prop];

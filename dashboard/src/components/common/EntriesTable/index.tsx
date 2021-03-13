@@ -59,7 +59,7 @@ const EntriesTableComponent = (props: EntriesTableType) => {
         onEntrySelect, onEntryDeSelect
     } = props;
 
-    console.log('rows', rows)
+    console.log('entries rows', rows)
 
     useEffect(() => {
         getItems();
