@@ -259,7 +259,7 @@ export const Form = (props: FormType) => {
 
         if(inputType === ONLY_DATE_FORM_FIELD_TYPE) {
             return (
-                <Suspense key={index} fallback={<div>Loading...</div>}>
+                <Suspense key={index} fallback={<div />}>
                     <DateField
                         descriptionText={descriptionText}
                         type={ONLY_DATE_FORM_FIELD_TYPE}
@@ -282,7 +282,7 @@ export const Form = (props: FormType) => {
         if(inputType === DATE_FORM_FIELD_TYPE) {
 
             return (
-                <Suspense key={index} fallback={<div>Loading...</div>}>
+                <Suspense key={index} fallback={<div />}>
                     <DateField
                         descriptionText={descriptionText}
                         type={DATE_FORM_FIELD_TYPE}
