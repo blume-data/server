@@ -215,6 +215,7 @@ const CreateEntry = (props: CreateEntryType) => {
                 let type = 'text';
                 let option: string[] = [];
                 let miscData: any = {};
+                let value = ((entryId && modelData && modelData[rule.name]) ? modelData[rule.name] : '');
                 switch (rule.type) {
                     case SHORT_STRING_FIElD_TYPE: {
                         inputType = TEXT;
@@ -244,6 +245,7 @@ const CreateEntry = (props: CreateEntryType) => {
                     case BOOLEAN_FIElD_TYPE: {
                         inputType = CHECKBOX;
                         type = TEXT;
+                        value = value ? 'true' : 'false';
                         break;
                     }
                     case JSON_FIELD_TYPE: {
@@ -276,7 +278,7 @@ const CreateEntry = (props: CreateEntryType) => {
                     min: rule.min,
                     max: rule.max,
                     className: '',
-                    value: (entryId && modelData && modelData[rule.name]) ? modelData[rule.name] : '',
+                    value,
                     name: rule.name,
                     descriptionText: rule.description,
                     miscData
@@ -361,9 +363,6 @@ const CreateEntry = (props: CreateEntryType) => {
     function onsubmit(values: any) {
         createEntry(values);
     }
-
-    console.log('fields', fields);
-    console.log('Modal data', modelData);
 
     return (
         <Grid>
