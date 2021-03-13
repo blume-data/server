@@ -1,7 +1,6 @@
 import React from "react";
 import { Editor } from '@tinymce/tinymce-react';
 import './style.scss';
-import Paper from "@material-ui/core/Paper";
 import { Grid } from "@material-ui/core";
 interface PagalEditorType {
     value: string;
@@ -23,6 +22,7 @@ const PagalEditor = (props: PagalEditorType) => {
                 <Editor
                     apiKey={'m406r3gdjqg4dvjs4r10p0njjw4zvh4yczzv8bmog98865f4'}
                     initialValue={value}
+                    value={value}
                     init={{
                         menubar: true,
                         plugins: [

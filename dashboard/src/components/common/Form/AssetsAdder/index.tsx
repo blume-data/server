@@ -93,9 +93,6 @@ export const AssetsAdderComponent = (props: AssetsAdderType) => {
         }
     }, [assetInit]);
 
-    console.log('refs', filesIds, filesIds.map(id => id.id).join(','));
-
-
     return (
         <Grid className={`${className} assets-adder-editor-wrapper`}>
             <RenderHeading value={label} type={"primary"} />
