@@ -23,6 +23,7 @@ const PagalEditor = (props: PagalEditorType) => {
                 <Editor
                     apiKey={'m406r3gdjqg4dvjs4r10p0njjw4zvh4yczzv8bmog98865f4'}
                     initialValue={value}
+                    value={value}
                     init={{
                         menubar: true,
                         plugins: [

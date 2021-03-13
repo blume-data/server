@@ -98,61 +98,83 @@ const CreateEntry = (props: CreateEntryType) => {
                 if(response.data[0]) {
                     for(let prop in response.data[0]) {
                         if(response.data[0].hasOwnProperty(prop)) {
-                            // check if the type is asset then only add id
+
                             const ruleExist = rules && rules.find(rule => {
-                                if(rule.name === prop && (rule.type === 'media' || rule.type === 'reference')) {
+                                if(rule.name === prop) {
                                     return rule;
                                 }
                                 return false;
                             });
-                            const isJsonField = rules && rules.find(rule => (rule.name === prop && rule.type === JSON_FIELD_TYPE));
 
-                            // not array and an object
-                            if(ruleExist && !Array.isArray(response.data[0][prop])) {
-                                newResponse[prop] = response.data[0][prop]._id;
-                                setAssetInit([{
-                                    tbU: response.data[0][prop].thumbnailUrl || '',
-                                    name: response.data[0][prop].fileName,
-                                    id: response.data[0][prop]._id,
-                                    type: ''
-                                }]);
-                            }
-                            // if array
-                            else if(ruleExist && Array.isArray(response.data[0][prop])) {
-                                if(response.data[0][prop] && response.data[0][prop].length) {
-                                    let ids = '';
-                                    const newAssetInit :any = [];
-                                    response.data[0][prop].forEach((r: any) => {
-                                        if(r._id) {
-                                            ids= ids + (ids ? `,${r._id}` : r._id);
-                                            if(ruleExist.type === 'media' && r._id && r.fileName) {
-                                                newAssetInit.push({
-                                                    tbU: r.thumbnailUrl || '',
-                                                    name: r.fileName,
-                                                    id: r._id,
-                                                    type: ''
-                                                });
-                                            }
+                            if(ruleExist && ruleExist.type) {
+                                switch (ruleExist.type) {
+                                    case JSON_FIELD_TYPE: {
+                                        if(typeof response.data[0][prop] !== 'string') {
+                                            newResponse[prop] = JSON.stringify(response.data[0][prop]);
                                         }
                                         else {
-                                            ids= ids + (ids ? `,${r}` : r);
+                                            newResponse[prop] = response.data[0][prop];
                                         }
-                                    });
-                                    newResponse[prop] = ids;
-                                    setAssetInit(newAssetInit);
-                                }
-                            }
-                            else if(isJsonField) {
-                                if(typeof response.data[0][prop] !== 'string') {
-                                    newResponse[prop] = JSON.stringify(response.data[0][prop]);
-                                }
-                                else {
-                                    newResponse[prop] = response.data[0][prop];
-                                }
+                                        break;
 
-                            }
-                            else {
-                                newResponse[prop] = response.data[0][prop];
+                                    }
+                                    case MEDIA_FIELD_TYPE: {
+                                        // not array and an object
+                                        if(!Array.isArray(response.data[0][prop])) {
+                                            newResponse[prop] = response.data[0][prop]._id;
+                                            setAssetInit([{
+                                                tbU: response.data[0][prop].thumbnailUrl || '',
+                                                name: response.data[0][prop].fileName,
+                                                id: response.data[0][prop]._id,
+                                                type: ''
+                                            }]);
+                                        }
+                                        else {
+                                            let ids = '';
+                                            const newAssetInit :any = [];
+                                            response.data[0][prop].forEach((r: any) => {
+                                                if(r._id) {
+                                                    ids= ids + (ids ? `,${r._id}` : r._id);
+                                                    if(r._id && r.fileName) {
+                                                        newAssetInit.push({
+                                                            tbU: r.thumbnailUrl || '',
+                                                            name: r.fileName,
+                                                            id: r._id,
+                                                            type: ''
+                                                        });
+                                                    }
+                                                }
+                                                else {
+                                                    ids= ids + (ids ? `,${r}` : r);
+                                                }
+                                            });
+                                            newResponse[prop] = ids;
+                                            setAssetInit(newAssetInit);
+                                        }
+                                        break;
+                                    }
+                                    case REFERENCE_FIELD_TYPE: {
+                                        if(!Array.isArray(response.data[0][prop])) {
+                                            newResponse[prop] = response.data[0][prop]._id;
+                                        }
+                                        else {
+                                            let ids = '';
+                                            response.data[0][prop].forEach((r: any) => {
+                                                if(r._id) {
+                                                    ids= ids + (ids ? `,${r._id}` : r._id);
+                                                }
+                                                else {
+                                                    ids= ids + (ids ? `,${r}` : r);
+                                                }
+                                            });
+                                            newResponse[prop] = ids;
+                                        }
+                                        break;
+                                    }
+                                    default: {
+                                        newResponse[prop] = response.data[0][prop];
+                                    }
+                                }
                             }
                         }
                     }
