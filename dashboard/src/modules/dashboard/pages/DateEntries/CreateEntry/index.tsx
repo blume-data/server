@@ -155,7 +155,12 @@ const CreateEntry = (props: CreateEntryType) => {
                                     }
                                     case REFERENCE_FIELD_TYPE: {
                                         if(!Array.isArray(response.data[0][prop])) {
-                                            newResponse[prop] = response.data[0][prop]._id;
+                                            if(response.data[0][prop]._id) {
+                                                newResponse[prop] = response.data[0][prop]._id;
+                                            }
+                                            else {
+                                                newResponse[prop] = response.data[0][prop];
+                                            }
                                         }
                                         else {
                                             let ids = '';
@@ -358,6 +363,7 @@ const CreateEntry = (props: CreateEntryType) => {
     }
 
     console.log('fields', fields);
+    console.log('Modal data', modelData);
 
     return (
         <Grid>

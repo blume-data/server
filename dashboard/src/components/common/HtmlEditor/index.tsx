@@ -16,7 +16,6 @@ function HtmlEditor(props: HtmlEditorType) {
 
     const {value, setValue} = props;
     const {className, label, descriptionText='', placeholder} = props;
-    console.log('value', value);
     return (
 
         <Grid className={`${className} app-text-box`}>
