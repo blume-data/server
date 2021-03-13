@@ -607,7 +607,7 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
         }
         else {
             // validate date
-            const luxonTime = DateTime.fromISO(reqBody[rule.name]);
+            const luxonTime = DateTime.fromISO(reqBody[rule.name]).setZone('UCT');
             if(luxonTime.invalidReason) {
                 isValid = false;
                 errorMessages.push({
@@ -616,7 +616,7 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
                 });
             }
             else {
-                reqBody[rule.name] = DateTime.fromISO(reqBody[rule.name]).toJSDate();
+                reqBody[rule.name] = DateTime.fromISO(reqBody[rule.name]).setZone('UTC').toJSDate();
             }
         }
     }
