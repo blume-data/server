@@ -4,7 +4,7 @@ import Menu from "@material-ui/core/Menu";
 import {Grid, Tooltip} from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import './menu-list.scss';
-import {APPLICATION_NAME} from "@ranjodhbirkaur/constants";
+import ApartmentIcon from "@material-ui/icons/Apartment";
 
 interface ApplicationNamesListProps {
     onSelectMenuItem: (name: string) => void;
@@ -37,7 +37,10 @@ export const MenuList = (props: ApplicationNamesListProps) => {
         <Grid container justify={"flex-start"} className={'menu-list-container'}>
             <Tooltip title={'Application Name'} aria-label={'Application Name'}>
                 <Button
-                    variant={'text'}
+                    className={'application-name-container'}
+                    startIcon={<ApartmentIcon color={"primary"} />}
+                    color={'primary'}
+                    variant={'outlined'}
                     aria-controls={id}
                     aria-haspopup="true"
                     onClick={openMenu}>

@@ -14,7 +14,6 @@ const useStyles = makeStyles((theme: Theme) =>
         root: {
             width: '100%',
             maxHeight: 400,
-            maxWidth: 300,
             backgroundColor: theme.palette.background.paper,
         },
     }),
@@ -46,9 +45,9 @@ export const SearchMenuList = (props: SearchMenuListProps) => {
     useEffect(() => {
         setSelectedValue(value);
         setSearch(value);
-        const ti: any = document.getElementById(`search-input-text-box-container-${placeholder}`);
-        if(ti && ti.offsetWidth) {
-            setOffSetWidth(ti.offsetWidth - 3);
+        const ti: any = document.getElementsByClassName(`input-field-${placeholder}`);
+        if(ti && ti[0] && ti[0].offsetWidth) {
+            setOffSetWidth(ti[0].offsetWidth - 3);
         }
     }, [value, placeholder]);
 
@@ -129,9 +128,9 @@ export const SearchMenuList = (props: SearchMenuListProps) => {
                       </InputAdornment>
                     )
                   }}
-                
-                
-                onChange={onChange} />
+                className={`input-field-${placeholder}`}
+                onChange={onChange}
+            />
             <div className={`${classes.root} list`} style={{display: `${hide ? 'none' : 'block'}`}}>
                 <List className={'fixed-size-list'} style={{width: offSetWidth}}>
                     {timeZones.map(renderRow)}

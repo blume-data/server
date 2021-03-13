@@ -6,7 +6,12 @@ import ApartmentIcon from '@material-ui/icons/Apartment';
 import ListItemText from "@material-ui/core/ListItemText";
 import Divider from "@material-ui/core/Divider";
 import { Link } from "react-router-dom";
-import {assetsUrl, dashboardApplicationNamesUrl, dashboardHomeUrl} from "../../../../utils/urls";
+import {
+    assetsUrl,
+    dashboardApplicationNamesUrl, dashboardDataEntriesUrl,
+    dashboardDataModelsUrl,
+    dashboardHomeUrl
+} from "../../../../utils/urls";
 import {Grid} from "@material-ui/core";
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import LanguageIcon from '@material-ui/icons/Language';
@@ -14,10 +19,23 @@ import PhotoAlbumIcon from '@material-ui/icons/PhotoAlbum';
 import './style.scss';
 import {connect, ConnectedProps} from "react-redux";
 import {RootState} from "../../../../rootReducer";
+import NoteIcon from '@material-ui/icons/Note';
+import WidgetsIcon from '@material-ui/icons/Widgets';
+
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
 const LeftDrawerListComponent = (props: PropsFromRedux) => {
     const {applicationName} = props;
+
+    const dataModelsUrl = `${dashboardDataModelsUrl
+        .replace(':applicationName',applicationName)
+    }`;
+
+    const dataEntriesUrl = `${dashboardDataEntriesUrl
+        .replace(':applicationName',applicationName)
+        .replace(':modelName?', '')
+    }`;
+
     return (
         <Grid className={'left-drawer-list'}>
             <Divider />
@@ -36,11 +54,23 @@ const LeftDrawerListComponent = (props: PropsFromRedux) => {
                 </ListItem>
                 {
                     applicationName
-                    ? <>
+                    ? <div>
                         <ListItem button>
                             <Link className={'link-item-link'} to={dashboardApplicationNamesUrl}>
                                 <ListItemIcon><LanguageIcon /></ListItemIcon>
                                 <ListItemText primary={'Languages'} />
+                            </Link>
+                        </ListItem>
+                        <ListItem button>
+                            <Link className={'link-item-link'} to={dataModelsUrl}>
+                                <ListItemIcon><WidgetsIcon /></ListItemIcon>
+                                <ListItemText primary={'Models'} />
+                            </Link>
+                        </ListItem>
+                        <ListItem button>
+                            <Link className={'link-item-link'} to={dataEntriesUrl}>
+                                <ListItemIcon><NoteIcon /></ListItemIcon>
+                                <ListItemText primary={'Entries'} />
                             </Link>
                         </ListItem>
                         <ListItem button>
@@ -49,7 +79,7 @@ const LeftDrawerListComponent = (props: PropsFromRedux) => {
                                 <ListItemText primary={'Assets'} />
                             </Link>
                         </ListItem>
-                      </>
+                      </div>
                     : null
                 }
 
