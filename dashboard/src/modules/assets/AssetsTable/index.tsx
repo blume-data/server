@@ -30,10 +30,13 @@ interface AssetsTableType {
         getAssets: string;
         getAsset: string;
     };
+    onEntrySelectCallBack?: (str: string) => void;
+    onEntryDeSelectCallBack?: (str: string) => void;
+    initialSelectedEntries?: string[];
 }
 export const AssetsTable = (prop: AssetsTableType) => {
 
-    const {assetsUrls} = prop;
+    const {assetsUrls, onEntrySelectCallBack, onEntryDeSelectCallBack} = prop;
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [assets, setAssets] = useState<AssetsType[]>([]);

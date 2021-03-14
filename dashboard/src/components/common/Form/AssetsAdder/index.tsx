@@ -10,6 +10,9 @@ import {CLIENT_USER_NAME, MULTIPLE_ASSETS_TYPE, SINGLE_ASSETS_TYPE} from "@ranjo
 import {getBaseUrl} from "../../../../utils/urls";
 import {Avatar, Chip} from "@material-ui/core";
 import Loader from "../../Loader";
+import {CommonButton} from "../../CommonButton";
+import {AssetsTable} from "../../../../modules/assets/AssetsTable";
+import ModalDialog from "../../ModalDialog";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type AssetsAdderType = PropsFromRedux & {
@@ -33,9 +36,13 @@ export interface FileUploadType {
 
 export const AssetsAdderComponent = (props: AssetsAdderType) => {
 
-    const {className, value, onChange, descriptionText, onBlur, label, assetType, assetInit} = props;
+    const {className, value, onChange, descriptionText, onBlur, label, assetType, assetInit, assetsUrls} = props;
     const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
     const [filesIds, setFilesIds] = useState<FileUploadType[]>([]);
+
+    // to handle select assets
+    const [isEntryFormOpen, setIsEntryFormOpen] = useState<boolean>(false);
+
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const url = props.assetsUrls ? props.assetsUrls.authAssets : '';
@@ -100,17 +107,24 @@ export const AssetsAdderComponent = (props: AssetsAdderType) => {
             <Grid container justify={"flex-end"}>
                 {
                     assetType === MULTIPLE_ASSETS_TYPE || ((filesIds.length < 1) && (assetType === SINGLE_ASSETS_TYPE))
-                    ? <UploadAsset
-                            setLoading={setIsLoading}
-                            setUploadedFiles={setFilesIds}
-                            uFiles={filesIds}
-                            // verify url
-                            v_3_5_6={props.assetsUrls && props.assetsUrls.v_3_5_6}
-                            // temporary url
-                            t_s_4_6_3_t={props.assetsUrls && props.assetsUrls.t_s_4_6_3_t}
-                            authUrl={authUrl.replace(`:${CLIENT_USER_NAME}`, clientUserName || '')}
+                    ? <Grid container justify={"center"} className={'action-button-wrapper'}>
+                            <UploadAsset
+                                setLoading={setIsLoading}
+                                setUploadedFiles={setFilesIds}
+                                uFiles={filesIds}
+                                // verify url
+                                v_3_5_6={props.assetsUrls && props.assetsUrls.v_3_5_6}
+                                // temporary url
+                                t_s_4_6_3_t={props.assetsUrls && props.assetsUrls.t_s_4_6_3_t}
+                                authUrl={authUrl.replace(`:${CLIENT_USER_NAME}`, clientUserName || '')}
 
-                        />
+                            />
+                            <CommonButton
+                                onClick={() => setIsEntryFormOpen(true)}
+                                name={'Select Asset'}
+                            />
+
+                      </Grid>
                     : null
                 }
             </Grid>
@@ -133,6 +147,21 @@ export const AssetsAdderComponent = (props: AssetsAdderType) => {
                     })
                 }
             </Grid>
+
+            {/*Asset Select Modal*/}
+            {
+                assetsUrls
+                ? <ModalDialog
+                    isOpen={isEntryFormOpen}
+                    handleClose={() => setIsEntryFormOpen(false)}
+                    title={`Select Asset`}
+                    className={'asset-selector-modal-container'}>
+                    <AssetsTable
+                        assetsUrls={assetsUrls}
+                    />
+                  </ModalDialog>
+                : null
+            }
         </Grid>
     );
 }

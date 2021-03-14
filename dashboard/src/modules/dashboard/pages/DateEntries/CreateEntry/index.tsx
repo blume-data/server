@@ -202,7 +202,7 @@ const CreateEntry = (props: CreateEntryType) => {
                                         const timeStamp = DateTime
                                             .fromISO(response.data[0][prop])
                                             .toJSDate();
-                                        
+
                                         setDateAndTimeInit({
                                             ...dateAndTimeInit,
                                             ...{

@@ -30,6 +30,8 @@ type EntriesFilterComponentType = PropsFromRedux & {
     setModelName?: (name: string) => void;
     rules: RuleType[] | null;
     setWhere: (o: object) => void;
+    // if selectable don't show the dropdown to change the model
+    disableModelChange? : boolean;
 }
 
 interface FilterType {
@@ -40,7 +42,7 @@ interface FilterType {
 
 export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
 
-    const {applicationName, env, language, GetCollectionNamesUrl, modelName, setModelName, setWhere } = props;
+    const {applicationName, env, language, GetCollectionNamesUrl, modelName, setModelName, setWhere, disableModelChange = false } = props;
     const [models, setModels] = useState<ModelsType[]>([]);
     const [filters, setFilters] = useState<FilterType[]>([]);
     const [rules, setRules] = useState<RuleType[]>([]);
@@ -237,18 +239,25 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
         }
     }
 
+    console.log('selecteable', disableModelChange);
+
     return (
         <Grid className={'entries-filter-wrapper-container'}>
-            <Grid className="filters-wrapper">
-                <Grid className="model-dropdown-wrapper">
-                    <SearchMenuList
-                        value={modelName}
-                        placeholder={'Filter model'}
-                        options={modelOptions}
-                        onMenuChange={onChangeModelDropDown}
-                    />
-                </Grid>
-            </Grid>
+            {/*Selectable hide the dropdown with models*/}
+            {
+                disableModelChange
+                ? null
+                : <Grid className="filters-wrapper">
+                        <Grid className="model-dropdown-wrapper">
+                            <SearchMenuList
+                                value={modelName}
+                                placeholder={'Filter model'}
+                                options={modelOptions}
+                                onMenuChange={onChangeModelDropDown}
+                            />
+                        </Grid>
+                    </Grid>
+            }
             <Grid className="property-dropdown-wrapper">
                 {
                     modelName
