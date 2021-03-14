@@ -347,7 +347,8 @@ const CreateEntry = (props: CreateEntryType) => {
 
                 function parseValues() {
                     if(valueItem.value) {
-                        return valueItem.value.split(',')
+                        const splitedValue = valueItem.value.split(',');
+                        return splitedValue ? splitedValue : undefined;
                     }
                     else {
                         return undefined;
@@ -361,7 +362,7 @@ const CreateEntry = (props: CreateEntryType) => {
                         if(exist.type === REFERENCE_FIELD_TYPE && exist[REFERENCE_MODEL_TYPE] === ONE_TO_MANY_RELATION) {
                             data[valueItem.name] = parseValues();
                         }
-                        else {
+                        else if(valueItem.value) {
                             data[valueItem.name] = valueItem.value;
                         }
 
