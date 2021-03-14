@@ -35,6 +35,7 @@ import {
 import {Form} from "../../../../../components/common/Form";
 import {useParams} from "react-router";
 import {FileUploadType} from "../../../../../components/common/Form/AssetsAdder";
+import {DateTime} from "luxon";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type CreateEntryType = PropsFromRedux & {
@@ -53,6 +54,9 @@ const CreateEntry = (props: CreateEntryType) => {
     // update the entry with the following id
     const [entryId, setEntryId] = useState<string>('');
     const {id} = useParams<{id: string}>();
+
+    /*Add Initial date for date and time*/
+    const [dateAndTimeInit, setDateAndTimeInit] = useState<any>({});
 
     /*Add initial data for assets with thumbnail urls*/
     const [assetInit, setAssetInit] = useState<FileUploadType[]>([]);
@@ -176,6 +180,39 @@ const CreateEntry = (props: CreateEntryType) => {
                                         }
                                         break;
                                     }
+                                    case DATE_AND_TIME_FIElD_TYPE: {
+                                        const r = `${prop}-timezone`;
+                                        const timeStamp = DateTime
+                                            .fromISO(response.data[0][prop],
+                                            {zone: `${response.data[0][`${prop}-timezone`]}`}).toJSDate();
+
+                                        setDateAndTimeInit({
+                                            ...dateAndTimeInit,
+                                            ...{
+                                                [prop]: {
+                                                    timeStamp,
+                                                    timeZone: response.data[0][r]
+                                                }
+                                            }
+                                        });
+
+                                        break;
+                                    }
+                                    case DATE_FIElD_TYPE: {
+                                        const timeStamp = DateTime
+                                            .fromISO(response.data[0][prop])
+                                            .toJSDate();
+                                        
+                                        setDateAndTimeInit({
+                                            ...dateAndTimeInit,
+                                            ...{
+                                                [prop]: {
+                                                    timeStamp
+                                                }
+                                            }
+                                        });
+                                        break;
+                                    }
                                     default: {
                                         newResponse[prop] = response.data[0][prop];
                                     }
@@ -235,11 +272,18 @@ const CreateEntry = (props: CreateEntryType) => {
                     case DATE_FIElD_TYPE: {
                         inputType = ONLY_DATE_FORM_FIELD_TYPE;
                         type = ONLY_DATE_FORM_FIELD_TYPE;
+                        if(dateAndTimeInit[rule.name]) {
+                            miscData.timeStamp = dateAndTimeInit[rule.name].timeStamp;
+                        }
                         break;
                     }
                     case DATE_AND_TIME_FIElD_TYPE: {
                         inputType = DATE_FIElD_TYPE;
                         type = DATE_FIElD_TYPE;
+                        if(dateAndTimeInit[rule.name]) {
+                            miscData.timeStamp = dateAndTimeInit[rule.name].timeStamp;
+                            miscData.timeZone = dateAndTimeInit[rule.name].timeZone;
+                        }
                         break;
                     }
                     case BOOLEAN_FIElD_TYPE: {
@@ -286,7 +330,7 @@ const CreateEntry = (props: CreateEntryType) => {
             });
             setFields(fieldArray);
         }
-    }, [rules, modelData]);
+    }, [rules, modelData, dateAndTimeInit]);
 
     async function createEntry(values: any) {
         if(StoreUrl && values && values.length) {

@@ -1,6 +1,6 @@
 import { randomBytes } from 'crypto';
 import {Request, Response} from 'express';
-import mongoose from 'mongoose';
+import mongoose, {Schema} from 'mongoose';
 import {
     BOOLEAN_FIElD_TYPE,
     DATE_AND_TIME_FIElD_TYPE,
@@ -11,7 +11,7 @@ import {
     DELETED_ENTRY_STATUS, DRAFT_ENTRY_STATUS, MEDIA_FIELD_TYPE, SINGLE_ASSETS_TYPE, MULTIPLE_ASSETS_TYPE,
 } from "@ranjodhbirkaur/constants";
 import {
-    ENTRY_LANGUAGE_PROPERTY_NAME,
+    ENTRY_LANGUAGE_PROPERTY_NAME, TIMEZONE_DATE_CONSTANT,
 } from "./constants";
 import {
     APPLICATION_NAME,
@@ -19,14 +19,6 @@ import {
     okayStatus
 } from "@ranjodhbirkaur/common"
 import {getCollection} from "../Controllers/StoreController";
-
-export const RANDOM_STRING = function (minSize=10) {
-    return randomBytes(minSize).toString('hex')
-};
-
-export const RANDOM_COLLECTION_NAME = function (min=1, max=1010) {
-    return Math.floor(Math.random() * (max - min + 1) + min);
-};
 
 export function isValidRegEx(reg: string) {
     let isValid = true;
@@ -90,12 +82,25 @@ export function createModelSchema(applicationName: string, clientUserName: strin
                 }
             };
         }
-        else if(rule.type === DATE_FIElD_TYPE || rule.type === DATE_AND_TIME_FIElD_TYPE) {
+        else if(rule.type === DATE_FIElD_TYPE) {
             schemaData = {
                 ...schemaData,
                 [rule.name]: {
                     type: Date,
                     required: !!rule.required,
+                }
+            };
+        }
+        else if(rule.type === DATE_AND_TIME_FIElD_TYPE) {
+            schemaData = {
+                ...schemaData,
+                [rule.name]: {
+                    type: Date,
+                    required: !!rule.required,
+                },
+                [`${rule.name}-${TIMEZONE_DATE_CONSTANT}`]: {
+                    type: String,
+                    required: !!rule.required
                 }
             };
         }

@@ -3,20 +3,21 @@ import {CollectionModel} from "../models/Collection";
 import {
     APPLICATION_NAME,
     BadRequestError,
+    CLIENT_USER_MODEL_NAME,
     CLIENT_USER_NAME,
     errorStatus,
+    getPageAndPerPage,
     okayStatus,
-    sendSingleError,
-    CLIENT_USER_MODEL_NAME, getPageAndPerPage, paginateData
+    paginateData,
+    sendSingleError
 } from "@ranjodhbirkaur/common";
 
-import {ENTRY_LANGUAGE_PROPERTY_NAME, PER_PAGE} from "../util/constants";
+import {ENTRY_LANGUAGE_PROPERTY_NAME, PER_PAGE, TIMEZONE_DATE_CONSTANT} from "../util/constants";
 import {COLLECTION_NOT_FOUND, PARAM_SHOULD_BE_UNIQUE} from "./Messages";
 import * as mongoose from "mongoose";
 import {Model} from "mongoose";
 import {DateTime} from 'luxon';
 import {
-    RuleType,
     BOOLEAN_FIElD_TYPE,
     DATE_AND_TIME_FIElD_TYPE,
     DATE_FIElD_TYPE,
@@ -26,6 +27,11 @@ import {
     DateUsRegName,
     emailReg,
     EmailRegName,
+    ENTRY_CREATED_AT,
+    ENTRY_CREATED_BY,
+    ENTRY_DELETED_BY,
+    ENTRY_UPDATED_AT,
+    ENTRY_UPDATED_BY,
     ErrorMessagesType,
     FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN,
     FIELD_CUSTOM_ERROR_MSG_MIN_MAX,
@@ -35,6 +41,10 @@ import {
     HHTimeRegName,
     HhTimeRegName,
     INTEGER_FIElD_TYPE,
+    IsJsonString,
+    JSON_FIELD_TYPE,
+    MEDIA_FIELD_TYPE,
+    MULTIPLE_ASSETS_TYPE,
     ONE_TO_MANY_RELATION,
     ONE_TO_ONE_RELATION,
     REFERENCE_FIELD_TYPE,
@@ -42,20 +52,15 @@ import {
     REFERENCE_MODEL_NAME,
     REFERENCE_MODEL_TYPE,
     REFERENCE_PROPERTY_NAME,
+    RuleType,
     SHORT_STRING_FIElD_TYPE,
+    SINGLE_ASSETS_TYPE,
     urlReg,
     UrlRegName,
     usPhoneReg,
     UsPhoneRegName,
     usZipReg,
-    UsZipRegName,
-    ENTRY_CREATED_AT,
-    ENTRY_UPDATED_AT,
-    ENTRY_CREATED_BY,
-    ENTRY_UPDATED_BY,
-    ENTRY_DELETED_BY,
-    MEDIA_FIELD_TYPE,
-    SINGLE_ASSETS_TYPE, MULTIPLE_ASSETS_TYPE, JSON_FIELD_TYPE, IsJsonString
+    UsZipRegName
 } from "@ranjodhbirkaur/constants";
 import {createModel, getModel, sendOkayResponse, trimGetOnly} from "../util/methods";
 
@@ -597,7 +602,7 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
         }
     }
 
-    function checkForDate(rule: RuleType) {
+    function checkForDate(rule: RuleType, alsoTime = false) {
         if (typeof reqBody[rule.name] !== 'string') {
             isValid = false;
             errorMessages.push({
@@ -616,7 +621,10 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
                 });
             }
             else {
-                reqBody[rule.name] = DateTime.fromISO(reqBody[rule.name]).toJSDate();
+                if(alsoTime) {
+                    reqBody[`${rule.name}-${TIMEZONE_DATE_CONSTANT}`] = DateTime.fromISO(reqBody[rule.name], {setZone: true}).zoneName;
+                }
+                reqBody[rule.name] = DateTime.fromISO(reqBody[rule.name]).setZone('UTC').toJSDate();
             }
         }
     }
@@ -733,7 +741,7 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
                     break;
                 }
                 case DATE_AND_TIME_FIElD_TYPE: {
-                    checkForDate(rule);
+                    checkForDate(rule, true);
                     break;
                 }
                 case REFERENCE_FIELD_TYPE: {
