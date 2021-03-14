@@ -12,6 +12,7 @@ import {Avatar} from "@material-ui/core";
 import Checkbox from "@material-ui/core/Checkbox";
 import {PaginationTab} from "../../../components/common/Pagination";
 import Loader from "../../../components/common/Loader";
+import {FileUploadType} from "../../../components/common/Form/AssetsAdder";
 
 interface AssetsType {
     clientUserName: string;
@@ -30,8 +31,8 @@ interface AssetsTableType {
         getAssets: string;
         getAsset: string;
     };
-    onEntrySelectCallBack?: (str: string) => void;
-    onEntryDeSelectCallBack?: (str: string) => void;
+    onEntrySelectCallBack?: (asset: FileUploadType) => void;
+    onEntryDeSelectCallBack?: (id: string) => void;
     initialSelectedEntries?: string[];
 }
 export const AssetsTable = (prop: AssetsTableType) => {
@@ -74,14 +75,26 @@ export const AssetsTable = (prop: AssetsTableType) => {
                 const a = assetsUrls.getAsset.replace(`:${CLIENT_USER_NAME}`, clientUserName);
                 const assetUrl = `${getBaseUrl()}${a}?fileName=${i.fileName}`;
                 const isChecked = selectedEntries.includes(i._id);
+                console.log('asset', i);
                 function onChangeCheckBox() {
                     if(selectedEntries.includes(i._id)) {
                         setSelectedEntries(selectedEntries.filter(item => item !== i._id));
                         onEntryDeSelect(i._id);
+                        if(onEntryDeSelectCallBack) {
+                            onEntryDeSelectCallBack(i._id);
+                        }
                     }
                     else {
                         setSelectedEntries([...selectedEntries, i._id]);
                         onEntrySelect(i._id);
+                        if(onEntrySelectCallBack) {
+                            onEntrySelectCallBack({
+                                id: i._id,
+                                tbU: i.thumbnailUrl,
+                                name: i.fileName,
+                                type: i.type
+                            })
+                        }
                     }
                 }
                 const id = <Checkbox checked={isChecked} value={i._id} onChange={onChangeCheckBox} />

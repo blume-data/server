@@ -100,6 +100,19 @@ export const AssetsAdderComponent = (props: AssetsAdderType) => {
         }
     }, [assetInit]);
 
+    /*call back function on select an asset*/
+    function callBackOnSelect(asset: FileUploadType) {
+        setFilesIds([
+            ...filesIds,
+            asset
+        ]);
+    }
+
+    /*call back function on de select an asset*/
+    function callBackOnDeSelect(id: string) {
+        removeReference(id);
+    }
+
     return (
         <Grid className={`${className} assets-adder-editor-wrapper`}>
             <RenderHeading value={label} type={"primary"} />
@@ -158,6 +171,8 @@ export const AssetsAdderComponent = (props: AssetsAdderType) => {
                     className={'asset-selector-modal-container'}>
                     <AssetsTable
                         assetsUrls={assetsUrls}
+                        onEntrySelectCallBack={callBackOnSelect}
+                        onEntryDeSelectCallBack={callBackOnDeSelect}
                     />
                   </ModalDialog>
                 : null
