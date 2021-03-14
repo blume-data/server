@@ -141,7 +141,6 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
                 }
             });
             setRules(newRules);
-            console.log('new filters', newFilters);
             setFilters(newFilters);
     }
 
@@ -238,8 +237,6 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
             setFilters([...filters, { propertyName: '', filterValue: '', inputType: 'text' }]);
         }
     }
-
-    console.log('selecteable', disableModelChange);
 
     return (
         <Grid className={'entries-filter-wrapper-container'}>

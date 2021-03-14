@@ -623,7 +623,6 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
             else {
                 if(alsoTime) {
                     reqBody[`${rule.name}-${TIMEZONE_DATE_CONSTANT}`] = DateTime.fromISO(reqBody[rule.name], {setZone: true}).zoneName;
-                    console.log('saved !!', reqBody);
                 }
                 reqBody[rule.name] = DateTime.fromISO(reqBody[rule.name]).setZone('UTC').toJSDate();
             }

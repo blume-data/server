@@ -36,7 +36,7 @@ export const UpdateAsset = () => {
     ];
 
     function onSubmit(values: any) {
-        console.log('values', values);
+        console.log('update asset values', values);
     }
 
     return (
