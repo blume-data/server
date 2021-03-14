@@ -13,6 +13,8 @@ import Loader from "../../Loader";
 import {CommonButton} from "../../CommonButton";
 import {AssetsTable} from "../../../../modules/assets/AssetsTable";
 import ModalDialog from "../../ModalDialog";
+import {Alert} from "../../Toast";
+import {AlertType} from "../index";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type AssetsAdderType = PropsFromRedux & {
@@ -22,6 +24,7 @@ type AssetsAdderType = PropsFromRedux & {
     onBlur: (event: any) => void;
     descriptionText: string;
     label: string;
+    // avoid multiple assets if single asset type
     assetType?: string;
     // init assets data while editing assets type
     assetInit?: FileUploadType[];
@@ -39,6 +42,10 @@ export const AssetsAdderComponent = (props: AssetsAdderType) => {
     const {className, value, onChange, descriptionText, onBlur, label, assetType, assetInit, assetsUrls} = props;
     const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
     const [filesIds, setFilesIds] = useState<FileUploadType[]>([]);
+
+    // to show alert on single and multiple restriction
+    const [isAlertOpen, setIsAlertOpen] = React.useState<boolean>(false);
+    const [alert, setAlertMessage] = React.useState<AlertType>({message: ''});
 
     // to handle select assets
     const [isEntryFormOpen, setIsEntryFormOpen] = useState<boolean>(false);
@@ -100,8 +107,24 @@ export const AssetsAdderComponent = (props: AssetsAdderType) => {
         }
     }, [assetInit]);
 
+    function showAlert(alertParam: AlertType) {
+        setIsAlertOpen(true);
+        setAlertMessage({
+            message: alertParam.message,
+            severity: alertParam.severity
+        });
+    }
+
     /*call back function on select an asset*/
     function callBackOnSelect(asset: FileUploadType) {
+
+        if(assetType === SINGLE_ASSETS_TYPE && filesIds && filesIds.length > 0) {
+            showAlert({
+                message: 'Only one asset can be selected',
+                severity: "error"
+            });
+            return;
+        }
         setFilesIds([
             ...filesIds,
             asset
@@ -177,6 +200,12 @@ export const AssetsAdderComponent = (props: AssetsAdderType) => {
                   </ModalDialog>
                 : null
             }
+            <Alert
+                isAlertOpen={isAlertOpen}
+                onAlertClose={setIsAlertOpen}
+                severity={alert.severity}
+                message={alert.message}
+            />
         </Grid>
     );
 }

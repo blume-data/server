@@ -186,16 +186,12 @@ const CreateEntry = (props: CreateEntryType) => {
                                             .fromISO(response.data[0][prop],
                                             {zone: `${response.data[0][`${prop}-timezone`]}`}).toJSDate();
 
-                                        setDateAndTimeInit({
-                                            ...dateAndTimeInit,
-                                            ...{
-                                                [prop]: {
-                                                    timeStamp,
-                                                    timeZone: response.data[0][r]
-                                                }
-                                            }
-                                        });
-
+                                        const old = JSON.parse(JSON.stringify(dateAndTimeInit));
+                                        old[prop] = {
+                                            timeStamp,
+                                            timeZone: response.data[0][r]
+                                        }
+                                        setDateAndTimeInit(old);
                                         break;
                                     }
                                     case DATE_FIElD_TYPE: {
@@ -203,14 +199,11 @@ const CreateEntry = (props: CreateEntryType) => {
                                             .fromISO(response.data[0][prop])
                                             .toJSDate();
 
-                                        setDateAndTimeInit({
-                                            ...dateAndTimeInit,
-                                            ...{
-                                                [prop]: {
-                                                    timeStamp
-                                                }
-                                            }
-                                        });
+                                        const old = JSON.parse(JSON.stringify(dateAndTimeInit));
+                                        old[prop] = {
+                                            timeStamp,
+                                        }
+                                        setDateAndTimeInit(old);
                                         break;
                                     }
                                     default: {
