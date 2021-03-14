@@ -275,6 +275,7 @@ export const Form = (props: FormType) => {
                         id={id}
                         value={value}
                         className={classNames}
+                        miscData={field.miscData}
                     />
                 </Suspense>
             );
@@ -298,6 +299,7 @@ export const Form = (props: FormType) => {
                         id={id}
                         value={value}
                         className={classNames}
+                        miscData={field.miscData}
                     />
                 </Suspense>
             );

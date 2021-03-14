@@ -17,12 +17,12 @@ import {RenderHeading} from "../RenderHeading";
 interface DateFieldType extends FieldType{
     onChange: (event: string) => void;
     onBlur: (event: ChangeEvent<any>) => void;
-    timeZone?: string;
+    miscData?: any;
 }
 
 export const DateField = (props: DateFieldType) => {
     const {id, className, label, required=false, name, type,
-        onBlur, helperText, disabled=false, descriptionText='',
+        onBlur, helperText, disabled=false, descriptionText='',miscData,
         onChange, error=false, value='', placeholder=''} = props;
 
     const [timeZone, setTimeZone] = useState<string>('UCT');
@@ -56,11 +56,11 @@ export const DateField = (props: DateFieldType) => {
             const hour = timeStamp.toFormat('hh:mm:a');
             setSelectedDate(new Date(`${timeStamp.toISODate()} ${hour}`));
         }
+        else if(miscData && miscData.timeStamp) {
+            setSelectedDate(miscData.timeStamp);
+        }
         else {
             setSelectedDate(null);
-            setTimeout(() => {
-                setSelectedDate(new Date());
-            });
         }
     }, []);
 
@@ -68,9 +68,15 @@ export const DateField = (props: DateFieldType) => {
         setSelectedDate(date);
     };
 
-    const t = DateTime.fromISO(value);
-
-    console.log('selected date', props);
+    /*set initial data*/
+    useEffect(() => {
+        if(miscData && miscData.timeStamp) {
+            setSelectedDate(miscData.timeStamp);
+        }
+        if(miscData && miscData.timeZone) {
+            setTimeZone(miscData.timeZone);
+        }
+    }, [miscData]);
 
     return (
         <Grid id={id ? id : ''} className={`date-field ${className ? className : ''}`}>
