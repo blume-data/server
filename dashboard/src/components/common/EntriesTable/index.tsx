@@ -100,7 +100,12 @@ const EntriesTableComponent = (props: EntriesTableType) => {
                 ...i,
                 status: <EntryStatus title={i.status} />,
                 updatedAt: <DateCell value={updatedAt} />,
-                edit: <Link to={redirectUrl}><IconButton><EditIcon /></IconButton></Link>,
+                edit: <Link
+                        aria-disabled={!!onEntrySelect}
+                        style={{
+                            pointerEvents: !!onEntrySelect ? 'none' : 'inherit',
+                        }}
+                        to={redirectUrl}><IconButton><EditIcon /></IconButton></Link>,
                 updatedBy,
                 id
             };
@@ -283,6 +288,7 @@ const EntriesTableComponent = (props: EntriesTableType) => {
             className={'entries-table-container-wrapper'}>
             <Grid className="entries-filter-container">
                 <EntriesFilter
+                    disableModelChange={!!onEntrySelect}
                     setWhere={setWhere}
                     modelName={modelName}
                     setModelName={setModelName}
@@ -296,10 +302,14 @@ const EntriesTableComponent = (props: EntriesTableType) => {
                 selectedEntries && selectedEntries.length
                 ? <Grid container justify={'flex-end'} className="action-buttons">
                     <Grid item className="action-button">
-                        <CommonButton
-                            onClick={deleteSelectedEntries}
-                            name={'Delete Entries'}
-                        />
+                        {
+                            selectable
+                            ? null
+                            : <CommonButton
+                                    onClick={deleteSelectedEntries}
+                                    name={'Delete Entries'}
+                              />
+                        }
                     </Grid>
                  </Grid>
                 : null

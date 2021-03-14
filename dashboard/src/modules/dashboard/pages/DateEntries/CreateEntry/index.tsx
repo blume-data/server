@@ -186,31 +186,24 @@ const CreateEntry = (props: CreateEntryType) => {
                                             .fromISO(response.data[0][prop],
                                             {zone: `${response.data[0][`${prop}-timezone`]}`}).toJSDate();
 
-                                        setDateAndTimeInit({
-                                            ...dateAndTimeInit,
-                                            ...{
-                                                [prop]: {
-                                                    timeStamp,
-                                                    timeZone: response.data[0][r]
-                                                }
-                                            }
-                                        });
-
+                                        const old = JSON.parse(JSON.stringify(dateAndTimeInit));
+                                        old[prop] = {
+                                            timeStamp,
+                                            timeZone: response.data[0][r]
+                                        }
+                                        setDateAndTimeInit(old);
                                         break;
                                     }
                                     case DATE_FIElD_TYPE: {
                                         const timeStamp = DateTime
                                             .fromISO(response.data[0][prop])
                                             .toJSDate();
-                                        
-                                        setDateAndTimeInit({
-                                            ...dateAndTimeInit,
-                                            ...{
-                                                [prop]: {
-                                                    timeStamp
-                                                }
-                                            }
-                                        });
+
+                                        const old = JSON.parse(JSON.stringify(dateAndTimeInit));
+                                        old[prop] = {
+                                            timeStamp,
+                                        }
+                                        setDateAndTimeInit(old);
                                         break;
                                     }
                                     default: {
@@ -347,7 +340,8 @@ const CreateEntry = (props: CreateEntryType) => {
 
                 function parseValues() {
                     if(valueItem.value) {
-                        return valueItem.value.split(',')
+                        const splitedValue = valueItem.value.split(',');
+                        return splitedValue ? splitedValue : undefined;
                     }
                     else {
                         return undefined;
@@ -361,7 +355,7 @@ const CreateEntry = (props: CreateEntryType) => {
                         if(exist.type === REFERENCE_FIELD_TYPE && exist[REFERENCE_MODEL_TYPE] === ONE_TO_MANY_RELATION) {
                             data[valueItem.name] = parseValues();
                         }
-                        else {
+                        else if(valueItem.value) {
                             data[valueItem.name] = valueItem.value;
                         }
 

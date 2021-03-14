@@ -36,7 +36,9 @@ export const AssetsComponent = (props: PropsFromRedux) => {
                     {
                         assetsUrls
                             ? <Grid className="asset-table-container-wrapper">
-                                <AssetsTable assetsUrls={assetsUrls} />
+                                <AssetsTable
+                                    assetsUrls={assetsUrls}
+                                />
                               </Grid>
                             : null
                     }

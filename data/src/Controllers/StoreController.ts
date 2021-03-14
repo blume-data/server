@@ -255,7 +255,7 @@ async function createEntry(rules: RuleType[], req: Request, res: Response, colle
             try {
 
                 if(requestBody._id) {
-                    const i = await model.findOneAndUpdate({
+                    await model.findOneAndUpdate({
                         _id: requestBody._id
                     }, requestBody);
                     
@@ -622,6 +622,10 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
             }
             else {
                 if(alsoTime) {
+                    body = {
+                        ...body,
+                        [`${rule.name}-${TIMEZONE_DATE_CONSTANT}`]: DateTime.fromISO(reqBody[rule.name], {setZone: true}).zoneName
+                    };
                     reqBody[`${rule.name}-${TIMEZONE_DATE_CONSTANT}`] = DateTime.fromISO(reqBody[rule.name], {setZone: true}).zoneName;
                 }
                 reqBody[rule.name] = DateTime.fromISO(reqBody[rule.name]).setZone('UTC').toJSDate();
@@ -789,7 +793,7 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
                     break;
                 }
                 case JSON_FIELD_TYPE: {
-                    if(!IsJsonString(reqBody[rule.name])) {
+                    if(reqBody[rule.name] && !IsJsonString(reqBody[rule.name])) {
                         isValid = false;
                         errorMessages.push({
                             field: rule.name,

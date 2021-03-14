@@ -10,6 +10,11 @@ import {CLIENT_USER_NAME, MULTIPLE_ASSETS_TYPE, SINGLE_ASSETS_TYPE} from "@ranjo
 import {getBaseUrl} from "../../../../utils/urls";
 import {Avatar, Chip} from "@material-ui/core";
 import Loader from "../../Loader";
+import {CommonButton} from "../../CommonButton";
+import {AssetsTable} from "../../../../modules/assets/AssetsTable";
+import ModalDialog from "../../ModalDialog";
+import {Alert} from "../../Toast";
+import {AlertType} from "../index";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type AssetsAdderType = PropsFromRedux & {
@@ -19,6 +24,7 @@ type AssetsAdderType = PropsFromRedux & {
     onBlur: (event: any) => void;
     descriptionText: string;
     label: string;
+    // avoid multiple assets if single asset type
     assetType?: string;
     // init assets data while editing assets type
     assetInit?: FileUploadType[];
@@ -33,9 +39,17 @@ export interface FileUploadType {
 
 export const AssetsAdderComponent = (props: AssetsAdderType) => {
 
-    const {className, value, onChange, descriptionText, onBlur, label, assetType, assetInit} = props;
+    const {className, value, onChange, descriptionText, onBlur, label, assetType, assetInit, assetsUrls} = props;
     const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
     const [filesIds, setFilesIds] = useState<FileUploadType[]>([]);
+
+    // to show alert on single and multiple restriction
+    const [isAlertOpen, setIsAlertOpen] = React.useState<boolean>(false);
+    const [alert, setAlertMessage] = React.useState<AlertType>({message: ''});
+
+    // to handle select assets
+    const [isEntryFormOpen, setIsEntryFormOpen] = useState<boolean>(false);
+
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const url = props.assetsUrls ? props.assetsUrls.authAssets : '';
@@ -93,6 +107,35 @@ export const AssetsAdderComponent = (props: AssetsAdderType) => {
         }
     }, [assetInit]);
 
+    function showAlert(alertParam: AlertType) {
+        setIsAlertOpen(true);
+        setAlertMessage({
+            message: alertParam.message,
+            severity: alertParam.severity
+        });
+    }
+
+    /*call back function on select an asset*/
+    function callBackOnSelect(asset: FileUploadType) {
+
+        if(assetType === SINGLE_ASSETS_TYPE && filesIds && filesIds.length > 0) {
+            showAlert({
+                message: 'Only one asset can be selected',
+                severity: "error"
+            });
+            return;
+        }
+        setFilesIds([
+            ...filesIds,
+            asset
+        ]);
+    }
+
+    /*call back function on de select an asset*/
+    function callBackOnDeSelect(id: string) {
+        removeReference(id);
+    }
+
     return (
         <Grid className={`${className} assets-adder-editor-wrapper`}>
             <RenderHeading value={label} type={"primary"} />
@@ -100,17 +143,24 @@ export const AssetsAdderComponent = (props: AssetsAdderType) => {
             <Grid container justify={"flex-end"}>
                 {
                     assetType === MULTIPLE_ASSETS_TYPE || ((filesIds.length < 1) && (assetType === SINGLE_ASSETS_TYPE))
-                    ? <UploadAsset
-                            setLoading={setIsLoading}
-                            setUploadedFiles={setFilesIds}
-                            uFiles={filesIds}
-                            // verify url
-                            v_3_5_6={props.assetsUrls && props.assetsUrls.v_3_5_6}
-                            // temporary url
-                            t_s_4_6_3_t={props.assetsUrls && props.assetsUrls.t_s_4_6_3_t}
-                            authUrl={authUrl.replace(`:${CLIENT_USER_NAME}`, clientUserName || '')}
+                    ? <Grid container justify={"center"} className={'action-button-wrapper'}>
+                            <UploadAsset
+                                setLoading={setIsLoading}
+                                setUploadedFiles={setFilesIds}
+                                uFiles={filesIds}
+                                // verify url
+                                v_3_5_6={props.assetsUrls && props.assetsUrls.v_3_5_6}
+                                // temporary url
+                                t_s_4_6_3_t={props.assetsUrls && props.assetsUrls.t_s_4_6_3_t}
+                                authUrl={authUrl.replace(`:${CLIENT_USER_NAME}`, clientUserName || '')}
 
-                        />
+                            />
+                            <CommonButton
+                                onClick={() => setIsEntryFormOpen(true)}
+                                name={'Select Asset'}
+                            />
+
+                      </Grid>
                     : null
                 }
             </Grid>
@@ -133,6 +183,29 @@ export const AssetsAdderComponent = (props: AssetsAdderType) => {
                     })
                 }
             </Grid>
+
+            {/*Asset Select Modal*/}
+            {
+                assetsUrls
+                ? <ModalDialog
+                    isOpen={isEntryFormOpen}
+                    handleClose={() => setIsEntryFormOpen(false)}
+                    title={`Select Asset`}
+                    className={'asset-selector-modal-container'}>
+                    <AssetsTable
+                        assetsUrls={assetsUrls}
+                        onEntrySelectCallBack={callBackOnSelect}
+                        onEntryDeSelectCallBack={callBackOnDeSelect}
+                    />
+                  </ModalDialog>
+                : null
+            }
+            <Alert
+                isAlertOpen={isAlertOpen}
+                onAlertClose={setIsAlertOpen}
+                severity={alert.severity}
+                message={alert.message}
+            />
         </Grid>
     );
 }
