@@ -73,7 +73,12 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
     }, [props.rules]);
 
     // set where when filters change
-    useEffect(() => {
+    /*useEffect(() => {
+
+    }, [filters]);*/
+
+    /*On blur property name update the value in where*/
+    function onBlurPropertyInput() {
         const w: any = {};
         filters.forEach(f => {
             if(f && f.propertyName) {
@@ -81,7 +86,7 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
             }
         });
         setWhere(w);
-    }, [filters]);
+    }
 
     const modelOptions = models.map(model => {
         return {
@@ -207,6 +212,7 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
                         placeholder={placeholder}
                         className='filter-text-input'
                         onChange={onChange}
+                        onBlur={onBlurPropertyInput}
                     />
                 }
                 default: {
@@ -218,6 +224,7 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
                         className='filter-text-input'
                         placeholder={placeholder}
                         onChange={onChange}
+                        onBlur={onBlurPropertyInput}
                     />
                 }
             }

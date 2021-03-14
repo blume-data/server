@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {connect, ConnectedProps} from "react-redux";
 import {
     APPLICATION_NAME,
-    ENTRY_UPDATED_AT, ENTRY_UPDATED_BY, JSON_FIELD_TYPE, MEDIA_FIELD_TYPE,
+    ENTRY_UPDATED_AT, ENTRY_UPDATED_BY, JSON_FIELD_TYPE, LONG_STRING_FIELD_TYPE, MEDIA_FIELD_TYPE,
     RuleType, SINGLE_ASSETS_TYPE, STATUS
 } from "@ranjodhbirkaur/constants";
 import Grid from "@material-ui/core/Grid";
@@ -74,6 +74,7 @@ const EntriesTableComponent = (props: EntriesTableType) => {
         const newRows = response.map((i: any) => {
             const assetTypeRows = rules && rules.filter(rule => rule.type === MEDIA_FIELD_TYPE);
             const jsonTypeRows = rules && rules.filter(rule => rule.type === JSON_FIELD_TYPE);
+            const richTypeRows = rules && rules.filter(rule => rule.type === LONG_STRING_FIELD_TYPE);
             const updatedAt = DateTime.fromISO(i.updatedAt);
             const updatedBy = <UserCell value={i.updatedBy} />;
             const isChecked = selectedEntries.includes(i._id);
@@ -144,7 +145,15 @@ const EntriesTableComponent = (props: EntriesTableType) => {
                 jsonTypeRows.forEach(assetTypeRow => {
                     newRow = {
                         ...newRow,
-                        [assetTypeRow.name]: JSON.stringify(assetTypeRow)
+                        [assetTypeRow.name]: 'JSON'
+                    }
+                })
+            }
+            if(richTypeRows && richTypeRows.length) {
+                richTypeRows.forEach(assetTypeRow => {
+                    newRow = {
+                        ...newRow,
+                        [assetTypeRow.name]: 'RICH TEXT'
                     }
                 })
             }

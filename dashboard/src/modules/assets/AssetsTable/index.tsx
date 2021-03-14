@@ -75,7 +75,7 @@ export const AssetsTable = (prop: AssetsTableType) => {
                 const a = assetsUrls.getAsset.replace(`:${CLIENT_USER_NAME}`, clientUserName);
                 const assetUrl = `${getBaseUrl()}${a}?fileName=${i.fileName}`;
                 const isChecked = selectedEntries.includes(i._id);
-                console.log('asset', i);
+
                 function onChangeCheckBox() {
                     if(selectedEntries.includes(i._id)) {
                         setSelectedEntries(selectedEntries.filter(item => item !== i._id));
