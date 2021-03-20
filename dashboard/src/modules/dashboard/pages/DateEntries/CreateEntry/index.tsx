@@ -379,7 +379,6 @@ const CreateEntry = (props: CreateEntryType) => {
                 }
             });
 
-            console.log('data', data);
             let res: any;
             setModelData(data)
             if(entryId) {
