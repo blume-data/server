@@ -150,6 +150,8 @@ export const Form = (props: FormType) => {
         }
     }
 
+    console.log('form state', formState);
+
     useEffect(() => {
 
         const state = fields.map(field => {

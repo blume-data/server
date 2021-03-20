@@ -369,6 +369,9 @@ const CreateEntry = (props: CreateEntryType) => {
                                 data[valueItem.name] = valueItem.value ? valueItem : undefined;
                             }
                         }
+                        if(exist.type === JSON_FIELD_TYPE) {
+                            data[valueItem.name] = JSON.parse(valueItem.value);
+                        }
                         if(exist.type === BOOLEAN_FIElD_TYPE) {
                             data[valueItem.name] = valueItem.value === 'true';
                         }
@@ -376,6 +379,7 @@ const CreateEntry = (props: CreateEntryType) => {
                 }
             });
 
+            console.log('data', data);
             let res: any;
             setModelData(data)
             if(entryId) {
