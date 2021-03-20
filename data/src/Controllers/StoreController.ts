@@ -793,7 +793,7 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
                     break;
                 }
                 case JSON_FIELD_TYPE: {
-                    if(reqBody[rule.name] && !IsJsonString(reqBody[rule.name])) {
+                    if(reqBody[rule.name] && typeof reqBody[rule.name] !== 'object') {
                         isValid = false;
                         errorMessages.push({
                             field: rule.name,

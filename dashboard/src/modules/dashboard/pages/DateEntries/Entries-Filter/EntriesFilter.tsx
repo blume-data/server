@@ -4,6 +4,7 @@ import {RootState} from "../../../../../rootReducer";
 import {connect, ConnectedProps} from "react-redux";
 import {getModelDataAndRules} from "../../../../../utils/tools";
 import {
+    DATE_FIElD_TYPE,
     DESCRIPTION,
     DISPLAY_NAME,
     INTEGER_FIElD_TYPE,
@@ -16,6 +17,8 @@ import {CommonButton} from "../../../../../components/common/CommonButton";
 import {TextField, Tooltip} from "@material-ui/core";
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
+import {KeyboardDatePicker, MuiPickersUtilsProvider} from "@material-ui/pickers";
+import DateFnsUtils from "@date-io/date-fns";
 
 interface ModelsType {
     [DESCRIPTION]: string;
@@ -74,6 +77,20 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
 
     // set where when filters change
     useEffect(() => {
+        const newWhere: any = {};
+        filters.forEach(f => {
+            if(f && f.propertyName) {
+                newWhere[f.propertyName] = f.filterValue
+            }
+        });
+        // if there is addition of filter or deletion then fetch data
+        if(newWhere.length !== filters.length) {
+            setWhere(newWhere);
+        }
+    }, [filters]);
+
+    /*On blur property name update the value in where*/
+    function onBlurPropertyInput() {
         const w: any = {};
         filters.forEach(f => {
             if(f && f.propertyName) {
@@ -81,7 +98,7 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
             }
         });
         setWhere(w);
-    }, [filters]);
+    }
 
     const modelOptions = models.map(model => {
         return {
@@ -197,7 +214,8 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
 
         if(propertyName) {
             const placeholder = 'Type to search for entries';
-            switch (propertyName) {
+            console.log('propertyName', propertyName, inputType)
+            switch (inputType) {
                 case INTEGER_FIElD_TYPE: {
                     return <TextField
                         value={filterValue}
@@ -207,7 +225,23 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
                         placeholder={placeholder}
                         className='filter-text-input'
                         onChange={onChange}
+                        onBlur={onBlurPropertyInput}
                     />
+                }
+                case DATE_FIElD_TYPE: {
+                    return <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                                <KeyboardDatePicker
+                                    margin="normal"
+                                    id={`date-picker-dialog-${name}`}
+                                    label="Date"
+                                    format="MM/dd/yyyy"
+                                    value={filterValue ? filterValue : null}
+                                    onChange={(value) => onChange({target: {value}})}
+                                    KeyboardButtonProps={{
+                                        'aria-label': 'change date',
+                                    }}
+                                />
+                            </MuiPickersUtilsProvider>
                 }
                 default: {
                     return <TextField
@@ -218,6 +252,7 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
                         className='filter-text-input'
                         placeholder={placeholder}
                         onChange={onChange}
+                        onBlur={onBlurPropertyInput}
                     />
                 }
             }
