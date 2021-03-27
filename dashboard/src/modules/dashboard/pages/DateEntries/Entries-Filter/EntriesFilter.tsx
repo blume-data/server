@@ -32,7 +32,8 @@ type EntriesFilterComponentType = PropsFromRedux & {
     modelName: string;
     setModelName?: (name: string) => void;
     rules: RuleType[] | null;
-    setWhere: (o: object) => void;
+    onChangeWhere: (o: object) => void;
+    onChangeMatch: (o: object) => void;
     // if selectable don't show the dropdown to change the model
     disableModelChange? : boolean;
 }
@@ -45,16 +46,31 @@ interface FilterType {
 
 export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
 
-    const {applicationName, env, language, GetCollectionNamesUrl, modelName, setModelName, setWhere, disableModelChange = false } = props;
+    const {
+        applicationName,
+        env,
+        language,
+        GetCollectionNamesUrl,
+        modelName,
+        setModelName,
+        disableModelChange = false,
+        onChangeWhere,
+        onChangeMatch
+
+    } = props;
     const [models, setModels] = useState<ModelsType[]>([]);
     const [filters, setFilters] = useState<FilterType[]>([]);
     const [rules, setRules] = useState<RuleType[]>([]);
+    const [where, setWhere] = useState({});
 
     async function fetchModelRulesAndData(fetchModels = false, getOnly = `${DESCRIPTION},${NAME},${DISPLAY_NAME}`) {
         if(GetCollectionNamesUrl && applicationName) {
             const response = await getModelDataAndRules({
-                applicationName, language,
-                modelName: fetchModels ? modelName : '', env, GetCollectionNamesUrl,
+                applicationName,
+                language,
+                modelName: fetchModels ? modelName : '',
+                env,
+                GetCollectionNamesUrl,
                 getOnly
             });
             if(response && response.length) {
@@ -75,7 +91,7 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
         }
     }, [props.rules]);
 
-    // set where when filters change
+    /*// set where when filters change
     useEffect(() => {
         const newWhere: any = {};
         filters.forEach(f => {
@@ -87,7 +103,7 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
         if(newWhere.length !== filters.length) {
             setWhere(newWhere);
         }
-    }, [filters]);
+    }, [filters]);*/
 
     /*On blur property name update the value in where*/
     function onBlurPropertyInput() {
@@ -97,7 +113,7 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
                 w[f.propertyName] = f.filterValue
             }
         });
-        setWhere(w);
+        onChangeMatch(w);
     }
 
     const modelOptions = models.map(model => {

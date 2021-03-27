@@ -54,7 +54,7 @@ import {
     REFERENCE_PROPERTY_NAME,
     RuleType,
     SHORT_STRING_FIElD_TYPE,
-    SINGLE_ASSETS_TYPE,
+    SINGLE_ASSETS_TYPE, STATUS, TITLE_FIELD,
     urlReg,
     UrlRegName,
     usPhoneReg,
@@ -76,11 +76,12 @@ interface PopulateMongooseData {
     populate?: PopulateMongooseData;
 }
 
-async function fetchEntries(req: Request, res: Response, rules: RuleType[], findWhere: any, getOnlyThese: string[] | string | null, collectionName: string, limit: number, skip: number) {
+async function fetchEntries(req: Request, res: Response, rules: RuleType[], findWhere: any, getOnlyThese: string[] | string | null, collection: any) {
 
     const language = req.params.language;
     const clientUserName = req.params[CLIENT_USER_NAME];
     const applicationName = req.params[APPLICATION_NAME];
+    const collectionName = collection.name;
     let isValid = true;
     let errorMessages: ErrorMessagesType[] = [];
 
@@ -402,13 +403,11 @@ export async function getStoreRecord(req: Request, res: Response) {
 
     // get collection
     const collection = await getCollection(req);
-    const limit = ((req.query && Number(req.query.limit))  || PER_PAGE);
-    let skip: number = (req.query && Number(req.query.skip)) || 0;
 
     if (collection) {
         const rules = JSON.parse(collection.rules);
 
-        await fetchEntries(req, res, rules, findWhere, getOnlyThese, collection.name, limit, skip);
+        await fetchEntries(req, res, rules, findWhere, getOnlyThese, collection);
     }
     else {
         throw new BadRequestError(COLLECTION_NOT_FOUND);
@@ -473,7 +472,7 @@ export async function getCollection(req: Request, specificModelName?: string) {
 
     return CollectionModel.findOne(
         {clientUserName, name, applicationName},
-        ['name', CLIENT_USER_NAME, 'connectionName', APPLICATION_NAME, 'rules']
+        ['name', CLIENT_USER_NAME, 'connectionName', APPLICATION_NAME, 'rules', TITLE_FIELD]
         );
 }
 
@@ -839,6 +838,7 @@ function validateParams(req: Request, res: Response, rules: RuleType[], findWher
     let isValid = true;
     const errorMessages = [];
     let where: any = {};
+    const skip = [ENTRY_UPDATED_BY, ENTRY_UPDATED_AT, STATUS, '_id'];
     if (findWhere && typeof findWhere === 'object') {
         // Iterate where
         for(const condition in findWhere) {
@@ -850,7 +850,7 @@ function validateParams(req: Request, res: Response, rules: RuleType[], findWher
                         [condition]: findWhere[condition]
                     }
                 }
-                if (!ruleExist && condition !== '_id') {
+                if (!ruleExist && !skip.includes(condition)) {
                     isValid = false;
                     errorMessages.push({
                         field: 'where',
@@ -893,6 +893,12 @@ function validateParams(req: Request, res: Response, rules: RuleType[], findWher
                         }
                     }
                 }
+                if(skip.includes(condition) && condition !== '_id') {
+                    where = {
+                        ...where,
+                        [condition]: findWhere[condition]
+                    }
+                }
             }
         }
     }
@@ -912,7 +918,7 @@ function validateParams(req: Request, res: Response, rules: RuleType[], findWher
             if (getOnly.length) {
                 getOnly.forEach((str: string) => {
                     const exist = rules.find(rule => rule.name === str);
-                    if (!exist) {
+                    if (!exist && !skip.includes(str)) {
                         isValid = false;
                         errorMessages.push({
                             field: 'getOnly',
