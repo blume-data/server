@@ -98,7 +98,7 @@ export const SearchMenuList = (props: SearchMenuListProps) => {
     }
 
     function onBlurTextSearch() {
-        setTimeout(() => setHide(true));
+        setTimeout(() => setHide(true), 500);
     }
 
     // focus on input

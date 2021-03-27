@@ -150,15 +150,17 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
     // remove property from dropdown
     function removePropertyDropDown(index: number) {
         const newFilters = filters.filter((f,i) => i !== index);
+
         const newRules: RuleType[] = [];
-            props.rules && props.rules.forEach(f => {
-                const exist = newFilters.find(r => r.propertyName === f.name);
-                if(!exist) {
-                    newRules.push(f);
-                }
-            });
-            setRules(newRules);
-            setFilters(newFilters);
+
+        props.rules && props.rules.forEach(f => {
+            const exist = newFilters.find(r => r.propertyName === f.name);
+            if(!exist) {
+                newRules.push(f);
+            }
+        });
+        setRules(newRules);
+        setFilters(newFilters);
     }
 
     function renderFilters() {
