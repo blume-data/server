@@ -60,7 +60,8 @@ export async function createCollectionSchema(req: Request, res: Response) {
             description: reqBody.description,
             createdAt,
             createdBy: `${req.currentUser[ID]}`,
-            updatedAt: createdAt
+            updatedAt: createdAt,
+            titleField: reqBody.titleField ? reqBody.titleField : reqBody.rules[0].name
         });
 
         await newCollection.save();
@@ -127,7 +128,7 @@ export async function getCollectionNames(req: Request, res: Response) {
         language,
         env
     };
-    let get: string[] = ['rules', 'name', 'description', 'displayName', 'updatedAt', 'updatedBy'];
+    let get: string[] = ['rules', 'name', 'description', 'displayName', 'updatedAt', 'updatedBy', 'titleField'];
 
     if(name) {
         where.name = name;

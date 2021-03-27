@@ -48,6 +48,7 @@ const EntriesTableComponent = (props: EntriesTableType) => {
     const [response, setResponse] = useState<any[]>([]);
     const [page, setPage] = useState<number>(1);
     const [pageTotal, setPageTotal] = useState<number>(0);
+    const [fieldTitle, setFieldTitle] = useState<string>('');
     const perPage = 10;
 
     const {
@@ -168,7 +169,9 @@ const EntriesTableComponent = (props: EntriesTableType) => {
             setIsLoading(true);
             const resp = await fetchModelEntries({
                 applicationName, modelName: modelName, language, env,
-                GetEntriesUrl: `${GetEntriesUrl}?page=${page}`, match: where
+                GetEntriesUrl: `${GetEntriesUrl}?page=${page}`,
+                match: where,
+                getOnly: ['titleField']
             });
             if(resp && resp.data && Array.isArray(resp.data)) {
                 setResponse(resp.data);
@@ -178,7 +181,6 @@ const EntriesTableComponent = (props: EntriesTableType) => {
             }
             setIsLoading(false);
         }
-
     }
 
     function renderModelLink(name: string) {
@@ -217,6 +219,9 @@ const EntriesTableComponent = (props: EntriesTableType) => {
             });
             if(response && !response.errors && response.length) {
                 setRules(JSON.parse(response[0].rules));
+                if(response[0].fieldTitle) {
+                    setFieldTitle(response[0].fieldTitle);
+                }
 
             }
             setIsLoading(false);

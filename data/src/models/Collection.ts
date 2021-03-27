@@ -13,6 +13,7 @@ interface CollectionAttrs {
     isEnabled?: boolean;
     metaData?: string;
     setting?: string;
+    titleField: string;
 
     // created
     createdBy: string;
@@ -44,6 +45,7 @@ interface CollectionDoc extends mongoose.Document {
     isEnabled: boolean;
     metaData?: string;
     setting?: string;
+    titleField: string;
 
     createdBy: string;
     createdAt?: Date;
@@ -97,6 +99,7 @@ const Collection = new mongoose.Schema(
             type: String
         },
         setting: {type: Schema.Types.ObjectId, ref: 'SettingModel'},
+        titleField: {type: String},
 
         deletedBy : { type: Schema.Types.ObjectId, ref: 'ClientUser' },
         deletedAt : { type: Date },

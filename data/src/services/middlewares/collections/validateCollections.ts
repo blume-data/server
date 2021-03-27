@@ -260,7 +260,6 @@ export async function validateCollections(req: Request, res: Response, next: Nex
                 }
             }
 
-
             // If valid rule
             parsedRules.push(parsedRule);
         });
@@ -290,6 +289,18 @@ export async function validateCollections(req: Request, res: Response, next: Nex
                 names.push(rule.name);
             }
         });
+    }
+
+    // validate title field
+    if(reqBody.titleField) {
+        const titleFieldExist = parsedRules.find(rule => rule.name === reqBody.titleField);
+        if(!titleFieldExist) {
+            isValidBody = false;
+            inValidMessage.push({
+                message: `titleField is not present in rules`,
+                field: 'titleField'
+            });
+        }
     }
 
     if (!isValidBody) {
