@@ -12,6 +12,7 @@ import {setAuthentication, setEnv, setLanguage} from "../../../modules/authentic
 import {fetchAssetsRouteAddress, fetchDataRouteAddresses} from "../../../modules/dashboard/pages/home/actions";
 import {getItemFromLocalStorage} from "../../../utils/tools";
 import {LOCAL_STORAGE_ENV, LOCAL_STORAGE_LANGUAGE} from "../../../utils/constants";
+import {Paper} from "@material-ui/core";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type AppProps = PropsFromRedux & {
@@ -42,7 +43,9 @@ const Layout = (props: AppProps) => {
         <Grid className="appLayout">
             <NavBar />
             <Grid className="app-child-container">
-                {children}
+                <Paper elevation={3} className={'paper'}>
+                    {children}
+                </Paper>
             </Grid>
             <Footer />
         </Grid>

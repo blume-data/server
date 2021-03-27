@@ -3,7 +3,7 @@ import {connect, ConnectedProps} from "react-redux";
 import {
     APPLICATION_NAME,
     ENTRY_UPDATED_AT, ENTRY_UPDATED_BY, JSON_FIELD_TYPE, LONG_STRING_FIELD_TYPE, MEDIA_FIELD_TYPE,
-    RuleType, SINGLE_ASSETS_TYPE, STATUS
+    RuleType, SINGLE_ASSETS_TYPE, STATUS, TITLE_FIELD
 } from "@ranjodhbirkaur/constants";
 import Grid from "@material-ui/core/Grid";
 import './entries-table.scss';
@@ -44,10 +44,13 @@ const EntriesTableComponent = (props: EntriesTableType) => {
     const [rows, setRows] = useState<any[]>([]);
     const [columns, setColumns] = useState<any[]>([]);
     const [where, setWhere] = useState<any>({});
+    const [match, setMatch] = useState({});
     const [selectedEntries, setSelectedEntries] = useState<string[]>([]);
+    // store the date of the entries in response
     const [response, setResponse] = useState<any[]>([]);
     const [page, setPage] = useState<number>(1);
     const [pageTotal, setPageTotal] = useState<number>(0);
+    const [fieldTitle, setFieldTitle] = useState<string>('');
     const perPage = 10;
 
     const {
@@ -57,10 +60,6 @@ const EntriesTableComponent = (props: EntriesTableType) => {
         selectable=true,
         onEntrySelect, onEntryDeSelect
     } = props;
-
-    useEffect(() => {
-        getItems();
-    }, [GetEntriesUrl, page]);
 
     // set selected entries on initialization
     useEffect(() => {
@@ -164,11 +163,28 @@ const EntriesTableComponent = (props: EntriesTableType) => {
 
     // Fetch records in the model
     async function getItems() {
-        if(GetEntriesUrl && modelName && applicationName) {
+        if(GetEntriesUrl && modelName && applicationName && fieldTitle) {
             setIsLoading(true);
+            const getOnly = [ENTRY_UPDATED_AT, ENTRY_UPDATED_BY, STATUS, fieldTitle];
+            if(where && typeof where === 'object' && Object.keys(where).length) {
+                Object.keys(where).forEach(filter => {
+                    if(!getOnly.includes(filter)) {
+                        getOnly.push(filter);
+                    }
+                });
+            }
+            if(match && typeof match === 'object' && Object.keys(match).length) {
+                Object.keys(match).forEach(filter => {
+                    if(!getOnly.includes(filter)) {
+                        getOnly.push(filter);
+                    }
+                });
+            }
+            console.log('Where in get items', where, match);
             const resp = await fetchModelEntries({
                 applicationName, modelName: modelName, language, env,
-                GetEntriesUrl: `${GetEntriesUrl}?page=${page}`, match: where
+                GetEntriesUrl: `${GetEntriesUrl}?page=${page}`,
+                match, where, getOnly
             });
             if(resp && resp.data && Array.isArray(resp.data)) {
                 setResponse(resp.data);
@@ -178,7 +194,6 @@ const EntriesTableComponent = (props: EntriesTableType) => {
             }
             setIsLoading(false);
         }
-
     }
 
     function renderModelLink(name: string) {
@@ -189,24 +204,21 @@ const EntriesTableComponent = (props: EntriesTableType) => {
 
     // update the columns with new fetched rules
     function updateColumns() {
-        if(rules && rules.length) {
-
-            const newColumns: any[] = [
-                {name: 'Id', value: 'id'}
-            ];
-
-            rules.forEach(rule => {
-                newColumns.push({
-                    name: `${rule.displayName}`,
-                    value: rule.name
-                });
+        const newColumns: any[] = [
+            {name: 'Id', value: 'id'}
+        ];
+        // add properties from where
+        if(where && typeof where === 'object' && Object.keys(where).length) {
+            Object.keys(where).forEach(filter => {
+                newColumns.push({name: filter, value: filter});
             });
-            newColumns.push({name: 'Edit', value: 'edit'});
-            newColumns.push({name: 'Status', value: STATUS});
-            newColumns.push({name: 'Updated At', value: ENTRY_UPDATED_AT});
-            newColumns.push({name: 'Updated by', value: ENTRY_UPDATED_BY});
-            setColumns(newColumns);
         }
+        newColumns.push({name: fieldTitle, value: fieldTitle});
+        newColumns.push({name: 'Edit', value: 'edit'});
+        newColumns.push({name: 'Status', value: STATUS});
+        newColumns.push({name: 'Updated At', value: ENTRY_UPDATED_AT});
+        newColumns.push({name: 'Updated by', value: ENTRY_UPDATED_BY});
+        setColumns(newColumns);
     }
 
     // fetch the rules and data of the model
@@ -216,8 +228,10 @@ const EntriesTableComponent = (props: EntriesTableType) => {
                 GetCollectionNamesUrl, applicationName, modelName: modelName, language, env
             });
             if(response && !response.errors && response.length) {
+                if(response[0][TITLE_FIELD]) {
+                    setFieldTitle(response[0][TITLE_FIELD]);
+                }
                 setRules(JSON.parse(response[0].rules));
-
             }
             setIsLoading(false);
         }
@@ -226,7 +240,7 @@ const EntriesTableComponent = (props: EntriesTableType) => {
     // update columns when rules are fetched
     useEffect(() => {
         updateColumns();
-    }, [rules])
+    }, [fieldTitle, response])
 
     // Fetch the model data and rules when collection names url is available
     useEffect(() => {
@@ -238,21 +252,14 @@ const EntriesTableComponent = (props: EntriesTableType) => {
         if(modelName) {
             getItems();
         }
-    }, [modelName, applicationName]);
+    }, [modelName, fieldTitle, page]);
 
     // where the where filters change fetch the entries
     useEffect(() => {
-        let needsToBeSearched = false;
-        // check if there is at least one property which has some value
-        for(let p in where) {
-            if(where.hasOwnProperty(p) && where[p]) {
-                needsToBeSearched = true;
-            }
-        }
-        if(needsToBeSearched && modelName) {
+        if(modelName) {
             getItems();
         }
-    }, [where]);
+    }, [where, match]);
 
     // on all selected
     function selectAll() {
@@ -298,10 +305,11 @@ const EntriesTableComponent = (props: EntriesTableType) => {
             <Grid className="entries-filter-container">
                 <EntriesFilter
                     disableModelChange={!!onEntrySelect}
-                    setWhere={setWhere}
+                    onChangeWhere={setWhere}
                     modelName={modelName}
                     setModelName={setModelName}
                     rules={rules}
+                    onChangeMatch={setMatch}
                 />
             </Grid>
 
