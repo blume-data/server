@@ -9,7 +9,7 @@ import {
     DISPLAY_NAME,
     INTEGER_FIElD_TYPE,
     NAME,
-    RuleType
+    RuleType, SHORT_STRING_FIElD_TYPE
 } from "@ranjodhbirkaur/constants";
 import './entries-filter.scss';
 import {SearchMenuList} from "../../../../../components/common/SearchMenuList";
@@ -61,7 +61,6 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
     const [models, setModels] = useState<ModelsType[]>([]);
     const [filters, setFilters] = useState<FilterType[]>([]);
     const [rules, setRules] = useState<RuleType[]>([]);
-    const [where, setWhere] = useState({});
 
     async function fetchModelRulesAndData(fetchModels = false, getOnly = `${DESCRIPTION},${NAME},${DISPLAY_NAME}`) {
         if(GetCollectionNamesUrl && applicationName) {
@@ -107,13 +106,7 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
 
     /*On blur property name update the value in where*/
     function onBlurPropertyInput() {
-        const w: any = {};
-        filters.forEach(f => {
-            if(f && f.propertyName) {
-                w[f.propertyName] = f.filterValue
-            }
-        });
-        onChangeMatch(w);
+        changeMatchAndWhere(filters);
     }
 
     const modelOptions = models.map(model => {
@@ -177,6 +170,7 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
         });
         setRules(newRules);
         setFilters(newFilters);
+        changeMatchAndWhere(newFilters);
     }
 
     function renderFilters() {
@@ -232,7 +226,7 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
 
         if(propertyName) {
             const placeholder = 'Type to search for entries';
-            console.log('propertyName', propertyName, inputType)
+
             switch (inputType) {
                 case INTEGER_FIElD_TYPE: {
                     return <TextField
@@ -289,6 +283,26 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
         if(!hasEmptyFilter) {
             setFilters([...filters, { propertyName: '', filterValue: '', inputType: 'text' }]);
         }
+    }
+
+    /*
+    * Change match and where
+    * */
+    function changeMatchAndWhere(newFilters: FilterType[]) {
+        let where: any = {};
+        let match: any = {};
+
+        newFilters.forEach(newFilter => {
+            if(newFilter.inputType === SHORT_STRING_FIElD_TYPE) {
+                match[newFilter.propertyName] = newFilter.filterValue;
+            }
+            else {
+                where[newFilter.propertyName] = newFilter.filterValue;
+            }
+        });
+
+        onChangeMatch(match);
+        onChangeWhere(where);
     }
 
     return (
