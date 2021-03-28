@@ -1,18 +1,16 @@
 import {Request, Response} from 'express';
 import jwt from "jsonwebtoken";
-import {AUTHORIZATION_TOKEN, AUTH_TOKEN, okayStatus, USER_NAME, JWT_COOKIE_NAME} from "../../utils";
+import {AUTH_TOKEN, AUTHORIZATION_TOKEN, JWT_COOKIE_NAME, okayStatus} from "../../utils";
 import {JwtPayloadType, PayloadResponseType} from "../../interface";
 
 export function generateJwt(payload: JwtPayloadType, res: Response) {
     // Generate JWT
-    const userJwt = jwt.sign(
+    // Store it on session object
+    //res.cookie(JWT_COOKIE_NAME, userJwt, { maxAge: 99999999*999999, httpOnly: true });
+    return jwt.sign(
         payload,
         process.env.JWT_KEY!
     );
-
-    // Store it on session object
-    res.cookie(JWT_COOKIE_NAME, userJwt, { maxAge: 99999999*999999, httpOnly: true });
-    return userJwt;
 }
 
 export function sendJwtResponse(res: Response, payload: PayloadResponseType, userJwt: string) {

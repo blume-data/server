@@ -7,9 +7,12 @@ export interface ErrorMessages {
 
 export interface JwtPayloadType{
     [clientType]: string;
+    // username of the person who signed in
     [USER_NAME]: string;
     [JWT_ID]: string;
+    // id of person who signed in
     [ID]: string;
+    [SESSION_ID]: string;
 }
 
 export interface ApplicationNameType {
@@ -21,6 +24,5 @@ export interface PayloadResponseType {
     [CLIENT_USER_NAME]: string;
     [USER_NAME]: string;
     [clientType]: string;
-    [SESSION_ID]: string;
     [ID]: string;
 }
