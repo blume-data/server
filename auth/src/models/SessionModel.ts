@@ -6,7 +6,6 @@ interface SessionAttrs {
     userName: string;
     clientUserName: string;
     selectedApplicationName: string;
-    selectedLanguage: string;
     selectedEnv: string;
     createdAt: Date;
 }
@@ -21,7 +20,6 @@ interface SessionDoc extends mongoose.Document {
     userName: string;
     clientUserName: string;
     selectedApplicationName: string;
-    selectedLanguage: string;
     selectedEnv: string;
     createdAt: Date;
 }
@@ -45,9 +43,6 @@ const Session = new mongoose.Schema(
             required: true
         },
         selectedApplicationName: {
-            type: String
-        },
-        selectedLanguage: {
             type: String
         },
         selectedEnv: {

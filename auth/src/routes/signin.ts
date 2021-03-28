@@ -58,7 +58,6 @@ async function sendResponse(req: Request, res: Response, responseData: PayloadRe
     clientType: userType,
     userName: responseData[USER_NAME],
     selectedEnv: PRODUCTION_ENV,
-    selectedLanguage: EnglishLanguage,
     clientUserName: responseData[CLIENT_USER_NAME],
     selectedApplicationName: '',
     authToken: userJwt,

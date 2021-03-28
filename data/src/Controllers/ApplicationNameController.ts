@@ -10,15 +10,16 @@ import {Request, Response} from 'express';
 import {ClientUserModel} from "../authMongoConnection";
 import {APPLICATION_NAME_ALREADY_EXIST} from "./Messages";
 import {trimCharactersAndNumbers} from "@ranjodhbirkaur/constants";
+import {EventOnApplicationSpaceCreate} from "../events/OnApplicationSpaceCreate";
 
 export async function createApplicationName(req: Request, res: Response) {
     const {applicationName} = req.body;
     const lowerCaseApplicationName = trimCharactersAndNumbers(applicationName);
 
     if(req.currentUser && req.currentUser[APPLICATION_NAMES] && typeof req.currentUser[APPLICATION_NAMES]) {
+
         const applicationNames: ApplicationNameType[] = req.currentUser[APPLICATION_NAMES];
         let newApplicationName: ApplicationNameType;
-
 
         const exist = applicationNames.find((item) => {
             return item.name === lowerCaseApplicationName
@@ -36,6 +37,13 @@ export async function createApplicationName(req: Request, res: Response) {
             }, {
                 [APPLICATION_NAMES]: JSON.stringify(applicationNames)
             });
+            // emit an event to create queries model for this application name
+            const c = new EventOnApplicationSpaceCreate({
+                userId: req.currentUser[USER_NAME],
+                applicationName: '',
+                description: ''
+            });
+            await c.exec();
         }
         else {
             return sendSingleError(res, APPLICATION_NAME_ALREADY_EXIST);
