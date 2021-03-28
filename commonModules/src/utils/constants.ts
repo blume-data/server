@@ -10,7 +10,7 @@ export const freeUserType = 'free-user';// free user
 export const SupportedUserType = [adminUserType, clientUserType, freeUserType, superVisorUserType, supportUserType];
 export const SUPPORTED_CLIENT_USER_TYPE = [clientUserType, superVisorUserType, supportUserType];
 
-// used to define the type of admin a mongoose model property//
+// used to define the type of admin a mongoose model property
 export const adminType = 'adminType';
 export const clientType = 'clientType';
 
