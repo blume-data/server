@@ -20,6 +20,7 @@ export interface AuthActionType {
     env?: string;
     language?: string;
     applicationName?: string;
+    data: any;
 }
 
 
@@ -28,4 +29,5 @@ export interface AuthenticationInitialStateType {
     env: string;
     language: string;
     applicationName: string;
+    applicationsNames: any;
 }

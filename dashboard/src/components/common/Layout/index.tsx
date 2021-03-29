@@ -9,7 +9,11 @@ import {RootState} from "../../../rootReducer";
 import {fetchAuthRouteAddresses} from "./actions";
 import {checkAuthentication} from "../../../modules/authentication/pages/Auth/methods";
 import {setAuthentication, setEnv, setLanguage} from "../../../modules/authentication/pages/Auth/actions";
-import {fetchAssetsRouteAddress, fetchDataRouteAddresses} from "../../../modules/dashboard/pages/home/actions";
+import {
+    fetchApplicationNames,
+    fetchAssetsRouteAddress,
+    fetchDataRouteAddresses
+} from "../../../modules/dashboard/pages/home/actions";
 import {getItemFromLocalStorage} from "../../../utils/tools";
 import {LOCAL_STORAGE_ENV, LOCAL_STORAGE_LANGUAGE} from "../../../utils/constants";
 import {Paper} from "@material-ui/core";
@@ -27,6 +31,7 @@ const Layout = (props: AppProps) => {
         props.fetchAuthRouteAddresses();
         props.fetchDataRouteAddresses();
         props.fetchAssetsRouteAddress();
+        props.fetchApplicationNames();
         const isAuthenticated = checkAuthentication();
         setAuthentication(isAuthenticated);
         const env = getItemFromLocalStorage(LOCAL_STORAGE_ENV);
@@ -58,6 +63,7 @@ const mapState = (state: RootState) => ({
 
 const connector = connect(mapState, {
     setEnv, setLanguage, fetchAssetsRouteAddress,
+    fetchApplicationNames,
     fetchAuthRouteAddresses, setAuthentication, fetchDataRouteAddresses
 });
 export default connector(Layout);

@@ -1,10 +1,14 @@
 import {NextFunction, Request, Response} from "express";
-import {APPLICATION_NAME, ApplicationNameType, sendSingleError} from "@ranjodhbirkaur/common";
+import {APPLICATION_NAME, ID, sendSingleError} from "@ranjodhbirkaur/common";
+import {ApplicationSpaceModel} from "../models/ApplicationSpace";
 
-export const validateApplicationNameMiddleWare = (req: Request, res: Response, next: NextFunction) => {
+export const validateApplicationNameMiddleWare = async (req: Request, res: Response, next: NextFunction) => {
 
     const applicationName  = req.params && req.params[APPLICATION_NAME];
-    const applicationNames: ApplicationNameType[] = req.currentUser.applicationNames;
+
+    const applicationNames = await ApplicationSpaceModel.find({
+        clientUserId: req.currentUser[ID]
+    }, ['name'])
 
     const exist = applicationNames.find((item) => {
         return item.name === applicationName

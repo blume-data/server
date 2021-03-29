@@ -109,13 +109,7 @@ async function validateClientUserName(req: Request): Promise<{isValid: boolean; 
             isValid=false;
             pushErrors(errorMessages, CLIENT_USER_NAME_NOT_VALID, CLIENT_USER_NAME);
         }
-        if (userType === supportUserType) {
-            const applicationNames = JSON.parse(userExist[APPLICATION_NAMES]);
-            if(!applicationNames.includes(reqBody[APPLICATION_NAME])) {
-                isValid=false;
-                pushErrors(errorMessages, APPLICATION_NAME_NOT_VALID, APPLICATION_NAME);
-            }
-        }
+
     }
     return {
         isValid,

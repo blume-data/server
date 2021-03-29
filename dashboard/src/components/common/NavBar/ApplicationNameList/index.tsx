@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect} from "react";
 import {MenuList} from "../MenuList";
-import {getApplicationNamesLocalStorage, getItemFromLocalStorage} from "../../../../utils/tools";
+import {getItemFromLocalStorage} from "../../../../utils/tools";
 import {APPLICATION_NAME} from "@ranjodhbirkaur/constants";
 import {dashboardApplicationNameUrl} from "../../../../utils/urls";
 import {RootState} from "../../../../rootReducer";
@@ -12,12 +12,11 @@ import {LOCAL_STORAGE_SELECTED_APPLICATION_NAME} from "../../../../utils/constan
 type PropsFromRedux = ConnectedProps<typeof connector>;
 export const ApplicationNameListComponent = (props: PropsFromRedux) => {
 
-    const {applicationName, setApplicationName} = props;
-    const [applicationNames, setApplicationNames] = useState<string[] | null>(null);
+    const {applicationName, setApplicationName, applicationNames} = props;
     const history = useHistory();
 
     function updateApplicationNames() {
-        setApplicationNames(getApplicationNamesLocalStorage());
+
         const selectedApplicationName = getItemFromLocalStorage(LOCAL_STORAGE_SELECTED_APPLICATION_NAME);
         if(selectedApplicationName) {
             setApplicationName(selectedApplicationName);
@@ -39,7 +38,9 @@ export const ApplicationNameListComponent = (props: PropsFromRedux) => {
         <MenuList
             id={'nav-bar-application-name-menu'}
             onSelectMenuItem={onSelectApplicationName}
-            menuItems={applicationNames || ['']}
+            menuItems={applicationNames
+            && applicationNames.length
+            && applicationNames.map((item: {name: string}) => item.name)}
             menuName={applicationName}
             defaultName={'application space'}
         />
@@ -47,7 +48,8 @@ export const ApplicationNameListComponent = (props: PropsFromRedux) => {
 };
 
 const mapState = (state: RootState) => ({
-    applicationName: state.authentication.applicationName
+    applicationName: state.authentication.applicationName,
+    applicationNames: state.authentication.applicationsNames
 });
 const connector = connect(mapState, {setApplicationName});
 export const ApplicationNameList = connector(ApplicationNameListComponent);

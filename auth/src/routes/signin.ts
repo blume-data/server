@@ -93,7 +93,7 @@ router.post(
   async (req: Request, res: Response) => {
     const { email, password } = req.body;
     const userType = req.params.userType;
-    let existingUser;
+    let existingUser: any;
     let responseData: PayloadResponseType;
 
     switch (userType) {
