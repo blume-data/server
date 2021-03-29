@@ -4,13 +4,12 @@ import {
     USER_NAME,
     clientUserType,
     JWT_ID,
-    adminUserType,
+    ID,
     RANDOM_STRING,
     CLIENT_USER_NAME,
     generateJwt,
     sendJwtResponse,
     clientType,
-    freeUserType,
     LAST_NAME,
     FIRST_NAME,
     PASSWORD,
@@ -23,6 +22,8 @@ import {Request, Response} from "express";
 import {TOKEN_NOT_VALID, USER_NAME_NOT_AVAILABLE} from "../util/errorMessages";
 import {EXAMPLE_APPLICATION_NAME} from "../util/constants";
 import {MainUserModel} from "../models/MainUserModel";
+import {AuthEventInstance} from "../events";
+import {EVENT_TYPE_ON_CREATE_NEW_USER} from "../events/OnCreateNewUser";
 
 interface ReqIsUserNameAvailable extends Request{
     body: {
@@ -79,15 +80,10 @@ export const verifyEmailToken = async function (req: ReqValidateEmail, res: Resp
             const userType = userExist.clientType;
 
             if(userType === clientUserType) {
-                const applicationNames = [{
-                    name: EXAMPLE_APPLICATION_NAME,
-                    languages: [EnglishLanguage]
-                }];
                 const newUser = MainUserModel.build({
                     email: userExist[EMAIL],
                     jwtId,
                     createdAt: created_at,
-                    [APPLICATION_NAMES]: JSON.stringify(applicationNames),
                     password: userExist[PASSWORD],
                     firstName: userExist[FIRST_NAME],
                     lastName: userExist[LAST_NAME],
@@ -98,18 +94,21 @@ export const verifyEmailToken = async function (req: ReqValidateEmail, res: Resp
 
                 // Pass application names in response
                 const response: PayloadResponseType = {
-                    [SESSION_ID]: '',
                     [CLIENT_USER_NAME]: newUser[USER_NAME],
                     [clientType]: userType,
-                    [APPLICATION_NAMES]: applicationNames,
+                    [ID]: newUser[ID],
                     [USER_NAME]: newUser[USER_NAME]
                 };
 
                 const payload: JwtPayloadType = {
                     [JWT_ID]: jwtId,
+                    [ID]: userExist[ID],
                     [USER_NAME]: userExist[USER_NAME] || '',
-                    [clientType]: userExist[clientType] || ''
+                    [clientType]: userExist[clientType] || '',
+                    [SESSION_ID]: '',
                 };
+
+                AuthEventInstance.emit(EVENT_TYPE_ON_CREATE_NEW_USER, userExist[ID]);
 
                 return await sendValidateEmailResponse(req, payload, response, res);
 

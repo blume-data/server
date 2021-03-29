@@ -10,6 +10,7 @@ import {
     LOCAL_STORAGE_SELECTED_APPLICATION_NAME
 } from "../../../../utils/constants";
 import {getItemFromLocalStorage} from "../../../../utils/tools";
+import {ACTION_FETCH_APPLICATION_NAMES} from "../../../../components/common/Layout/types";
 
 const selectedApplicationName = getItemFromLocalStorage(LOCAL_STORAGE_SELECTED_APPLICATION_NAME);
 
@@ -17,7 +18,8 @@ const initialState: AuthenticationInitialStateType = {
     isAuth: false,
     env: PRODUCTION_ENV,
     language: EnglishLanguage,
-    applicationName: selectedApplicationName ? selectedApplicationName : ''
+    applicationName: selectedApplicationName ? selectedApplicationName : '',
+    applicationsNames: []
 };
 
 export function authenticationReducer(
@@ -59,6 +61,12 @@ export function authenticationReducer(
             return {
                 ...state,
                 applicationName: action.applicationName ? action.applicationName : ''
+            }
+        }
+        case ACTION_FETCH_APPLICATION_NAMES: {
+            return {
+                ...state,
+                applicationsNames: action.data.applicationNames
             }
         }
 

@@ -9,4 +9,5 @@ export interface ExistingUserType {
     password: string;
     userName: string;
     jwtId: string;
+    _id: string;
 }

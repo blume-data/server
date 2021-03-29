@@ -1,7 +1,7 @@
 import {
     APPLICATION_NAMES,
     ApplicationNameType,
-    EnglishLanguage,
+    EnglishLanguage, ID,
     okayStatus,
     sendSingleError,
     USER_NAME
@@ -9,47 +9,47 @@ import {
 import {Request, Response} from 'express';
 import {ClientUserModel} from "../authMongoConnection";
 import {APPLICATION_NAME_ALREADY_EXIST} from "./Messages";
-import {trimCharactersAndNumbers} from "@ranjodhbirkaur/constants";
+import {PRODUCTION_ENV, trimCharactersAndNumbers} from "@ranjodhbirkaur/constants";
+import {DateTime} from "luxon";
+import {ApplicationSpaceModel} from "../models/ApplicationSpace";
 
 export async function createApplicationName(req: Request, res: Response) {
-    const {applicationName} = req.body;
+    const {applicationName, description=''} = req.body;
     const lowerCaseApplicationName = trimCharactersAndNumbers(applicationName);
 
-    if(req.currentUser && req.currentUser[APPLICATION_NAMES] && typeof req.currentUser[APPLICATION_NAMES]) {
-        const applicationNames: ApplicationNameType[] = req.currentUser[APPLICATION_NAMES];
-        let newApplicationName: ApplicationNameType;
+    const alreadyExist = await ApplicationSpaceModel.findOne({
+        clientUserId: req.currentUser[ID],
+        name: lowerCaseApplicationName
+    });
 
+    if(alreadyExist) {
+        return sendSingleError(res, APPLICATION_NAME_ALREADY_EXIST);
+    }
+    else {
+        const createdAt = DateTime.local().setZone('UTC').toJSDate();
 
-        const exist = applicationNames.find((item) => {
-            return item.name === lowerCaseApplicationName
+        const newApplicationSpace = ApplicationSpaceModel.build({
+            clientUserId: req.currentUser[ID],
+            name: lowerCaseApplicationName,
+            env: [PRODUCTION_ENV],
+            updatedBy: req.currentUser[ID],
+            description,
+
+            createdAt,
+            createdBy: req.currentUser[ID],
+            updatedAt: createdAt
         });
 
-        if (!exist) {
-            newApplicationName = {
-                name: lowerCaseApplicationName,
-                languages: [EnglishLanguage]
-            };
-            applicationNames.push(newApplicationName);
-
-            await ClientUserModel.updateOne({
-                [USER_NAME]: req.currentUser[USER_NAME]
-            }, {
-                [APPLICATION_NAMES]: JSON.stringify(applicationNames)
-            });
-        }
-        else {
-            return sendSingleError(res, APPLICATION_NAME_ALREADY_EXIST);
-        }
-
-        return res.status(okayStatus).send(newApplicationName);
-
+        await newApplicationSpace.save();
+        return res.status(okayStatus).send(lowerCaseApplicationName);
     }
         
 }
 
 export async function getApplicationName(req: Request, res: Response) {
-    if(req.currentUser && req.currentUser[APPLICATION_NAMES] && typeof req.currentUser[APPLICATION_NAMES]) {
-        const applicationNames = JSON.parse(req.currentUser[APPLICATION_NAMES]);
-        return res.status(okayStatus).send({[APPLICATION_NAMES]: applicationNames});
-    }
+
+    const applicationNames = await ApplicationSpaceModel.find({
+        clientUserId: req.currentUser[ID],
+    }, ['name', 'env']);
+    return res.status(okayStatus).send({[APPLICATION_NAMES]: applicationNames});
 }
