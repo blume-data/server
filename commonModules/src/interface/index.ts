@@ -1,4 +1,4 @@
-import {APPLICATION_NAMES, CLIENT_USER_NAME, clientType, JWT_ID, SESSION_ID, USER_NAME, ID} from "../utils";
+import {CLIENT_USER_NAME, clientType, JWT_ID, SESSION_ID, USER_NAME, ID} from "../utils";
 
 export interface ErrorMessages {
     field?: string;

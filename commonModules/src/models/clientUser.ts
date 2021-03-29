@@ -7,7 +7,6 @@ interface ClientUserAttrs extends RootUserAttrs{
     password: string;
     firstName: string;
     lastName: string;
-    applicationNames: string;
 }
 
 interface ClientUserModel extends mongoose.Model<ClientUserDoc> {
@@ -17,8 +16,7 @@ interface ClientUserModel extends mongoose.Model<ClientUserDoc> {
 interface ClientUserDoc extends RootUserDoc {
     email: string;
     firstName: string;
-    lastName: string
-    applicationNames: string;
+    lastName: string;
 }
 
 const clientUserSchema = getRootUserSchema({
@@ -33,10 +31,6 @@ const clientUserSchema = getRootUserSchema({
         required: true
     },
     lastName : {
-        type: String,
-        required: true
-    },
-    applicationNames : {
         type: String,
         required: true
     }
