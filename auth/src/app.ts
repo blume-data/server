@@ -6,7 +6,9 @@ import {signupRouter} from './routes/signup';
 import {routes} from "./routes";
 import {serverApp} from "@ranjodhbirkaur/common";
 import {addressRoutes} from "./routes/addresses";
+import userAgent from 'express-useragent';
 
+serverApp.use(userAgent.express());
 serverApp.use(addressRoutes);
 serverApp.use(currentUserRouter);
 serverApp.use(signinRouter);

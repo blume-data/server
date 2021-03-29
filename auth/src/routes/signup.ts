@@ -9,8 +9,6 @@ import {
     freeUserType,
     stringLimitOptionErrorMessage,
     stringLimitOptions,
-    generateJwt,
-    sendJwtResponse,
     sendSingleError,
     superVisorUserType,
     supportUserType,
@@ -22,9 +20,6 @@ import {
     pushErrors,
     APPLICATION_NAME,
     sendErrors,
-    clientType,
-    JWT_ID,
-    JwtPayloadType, PayloadResponseType, SESSION_ID,
 } from '@ranjodhbirkaur/common';
 import {
     passwordLimitOptionErrorMessage,

@@ -1,12 +1,15 @@
 import mongoose from 'mongoose';
 
 interface SessionAttrs {
-    authToken: string;
     clientType: string;
     userName: string;
     clientUserName: string;
+    jwtId: string;
     selectedApplicationName: string;
     selectedEnv: string;
+    userAgent: any;
+    isActive: boolean;
+
     createdAt: Date;
 }
 
@@ -15,25 +18,26 @@ interface SessionModelType extends mongoose.Model<SessionDoc> {
 }
 
 interface SessionDoc extends mongoose.Document {
-    authToken: string;
     clientType: string;
     userName: string;
+    jwtId: string;
     clientUserName: string;
     selectedApplicationName: string;
     selectedEnv: string;
+    userAgent: any;
+    isActive: boolean;
+
     createdAt: Date;
 }
 
 const Session = new mongoose.Schema(
     {
-        authToken: {
-            type: String,
-            required: true
-        },
+        userAgent: {type: Object},
         clientType: {
             type: String,
             required: true
         },
+        jwtId: String,
         userName: {
             type: String,
             required: true
@@ -41,6 +45,9 @@ const Session = new mongoose.Schema(
         clientUserName: {
             type: String,
             required: true
+        },
+        isActive: {
+            type: Boolean
         },
         selectedApplicationName: {
             type: String

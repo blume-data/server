@@ -16,8 +16,7 @@ import {
   USER_NAME,
   CLIENT_USER_NAME,
   clientType,
-  APPLICATION_NAME,
-  APPLICATION_NAMES, PayloadResponseType, JwtPayloadType, PASSWORD, sendSingleError, EnglishLanguage, SESSION_ID
+  APPLICATION_NAMES, PayloadResponseType, JwtPayloadType, PASSWORD, sendSingleError, SESSION_ID, ID
 } from '@ranjodhbirkaur/common';
 import { Password } from '../services/password';
 
@@ -46,30 +45,30 @@ async function sendResponse(req: Request, res: Response, responseData: PayloadRe
     throw new BadRequestError(InvalidLoginCredentialsMessage);
   }
 
-  const payload: JwtPayloadType = {
-    [clientType]: userType,
-    [USER_NAME]: existingUser.userName,
-    [JWT_ID]: existingUser.jwtId
-  };
-
-  const userJwt = generateJwt(payload, res);
-
   const newSession = SessionModel.build({
+    jwtId: existingUser.jwtId,
     clientType: userType,
     userName: responseData[USER_NAME],
     selectedEnv: PRODUCTION_ENV,
     clientUserName: responseData[CLIENT_USER_NAME],
     selectedApplicationName: '',
-    authToken: userJwt,
     createdAt: new Date(),
+    userAgent: req.useragent,
+    isActive: true
   });
 
-  await newSession.save();
+  const payload: JwtPayloadType = {
+    [clientType]: userType,
+    [USER_NAME]: existingUser.userName,
+    [JWT_ID]: existingUser.jwtId,
+    [ID]: existingUser._id,
+    [SESSION_ID]: newSession._id || ''
+  };
 
-  responseData = {
-    ...responseData,
-    [SESSION_ID]: newSession.id || ''
-  }
+  // generate JWT and cookie
+  const userJwt = generateJwt(payload, res);
+
+  await newSession.save();
 
   return sendJwtResponse(res, responseData, userJwt);
 }
@@ -92,7 +91,7 @@ router.post(
   ],
   validateRequest,
   async (req: Request, res: Response) => {
-    const { email, password, userName } = req.body;
+    const { email, password } = req.body;
     const userType = req.params.userType;
     let existingUser;
     let responseData: PayloadResponseType;
@@ -102,13 +101,13 @@ router.post(
         existingUser = await MainUserModel.findOne({email}, [APPLICATION_NAMES, USER_NAME, PASSWORD, JWT_ID]);
         if(existingUser) {
           responseData = {
-            [SESSION_ID]: '',
+            [ID]: existingUser._id,
             [clientType]: userType,
-            [APPLICATION_NAMES]: JSON.parse(existingUser[APPLICATION_NAMES]),
             [CLIENT_USER_NAME]: existingUser[USER_NAME],
             [USER_NAME]: existingUser[USER_NAME]
         }
-        return sendResponse(req, res, responseData, existingUser, password, userType);
+        await sendResponse(req, res, responseData, existingUser, password, userType);
+        return;
         }
         break;
       }
@@ -120,9 +119,8 @@ router.post(
         if(userType === superVisorUserType || userType === supportUserType || userType === freeUserType) {
           if (existingUser) {
             responseData = {
-              [SESSION_ID]: '',
               [clientType]: userType,
-              [APPLICATION_NAMES]: JSON.parse(existingUser[APPLICATION_NAME]),
+              [ID]: existingUser[ID],
               [CLIENT_USER_NAME]: existingUser[CLIENT_USER_NAME],
               [USER_NAME]: existingUser[USER_NAME]
             }

@@ -20,6 +20,7 @@ import {Alert} from "../../../../components/common/Toast";
 import {AlertType} from "../../../../components/common/Form";
 import { TopLink } from "./TopLink";
 import React from "react";
+import {getItemFromLocalStorage} from "../../../../utils/tools";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type AuthProps = PropsFromRedux & {
@@ -109,10 +110,19 @@ const AuthComponent = (props: AuthProps) => {
             const token = values.verificationToken ? values.verificationToken : '';
             response = await doGetRequest(`${url}?token=${token}&email=${values.email}`, values, false);
         }
+        else if(step === SIGN_OUT) {
+            const AuthToken = getItemFromLocalStorage(AUTH_TOKEN);
+            if(AuthToken) {
+                response = await doPostRequest(url, values, true);
+            }
+            else {
+                response = {}
+            }
+        }
         else {
             response = await doPostRequest(url, values, false);
         }
-        if (step === SIGN_OUT && response) {
+        if (step === SIGN_OUT) {
             setAuthentication(false);
             clearAuthentication();
             timeOut(() => {

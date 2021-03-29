@@ -4,13 +4,12 @@ import {
     USER_NAME,
     clientUserType,
     JWT_ID,
-    adminUserType,
+    ID,
     RANDOM_STRING,
     CLIENT_USER_NAME,
     generateJwt,
     sendJwtResponse,
     clientType,
-    freeUserType,
     LAST_NAME,
     FIRST_NAME,
     PASSWORD,
@@ -98,17 +97,18 @@ export const verifyEmailToken = async function (req: ReqValidateEmail, res: Resp
 
                 // Pass application names in response
                 const response: PayloadResponseType = {
-                    [SESSION_ID]: '',
                     [CLIENT_USER_NAME]: newUser[USER_NAME],
                     [clientType]: userType,
-                    [APPLICATION_NAMES]: applicationNames,
+                    [ID]: newUser[ID],
                     [USER_NAME]: newUser[USER_NAME]
                 };
 
                 const payload: JwtPayloadType = {
                     [JWT_ID]: jwtId,
+                    [ID]: userExist[ID],
                     [USER_NAME]: userExist[USER_NAME] || '',
-                    [clientType]: userExist[clientType] || ''
+                    [clientType]: userExist[clientType] || '',
+                    [SESSION_ID]: '',
                 };
 
                 return await sendValidateEmailResponse(req, payload, response, res);
