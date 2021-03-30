@@ -21,6 +21,7 @@ import {AlertType} from "../../../../components/common/Form";
 import { TopLink } from "./TopLink";
 import React from "react";
 import {getItemFromLocalStorage} from "../../../../utils/tools";
+import {fetchApplicationNames} from "../../../dashboard/pages/home/actions";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type AuthProps = PropsFromRedux & {
@@ -147,6 +148,7 @@ const AuthComponent = (props: AuthProps) => {
                         setAuthentication(true);
                         timeOut(() => {
                             redirectToUrl(dashboardHomeUrl);
+                            props.fetchApplicationNames();
                         });
                     }
                     break;
@@ -242,5 +244,5 @@ const mapState = (state: RootState) => ({
     routeAddress: state.routeAddress.routes.auth
 });
 
-const connector = connect(mapState, {setAuthentication, setApplicationName});
+const connector = connect(mapState, {setAuthentication, setApplicationName, fetchApplicationNames});
 export const Auth = connector(AuthComponent);

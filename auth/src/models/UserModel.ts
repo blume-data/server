@@ -74,7 +74,8 @@ const clientUserSchema = getRootUserSchema({
     lastName : {
         type: String,
         required: true
-    }
+    },
+
 });
 
 clientUserSchema.statics.build = (attrs: ClientUserAttrs) => {
