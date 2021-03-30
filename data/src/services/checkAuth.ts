@@ -5,7 +5,7 @@ import {
     JWT_ID, USER_NAME,
     sendSingleError, Is_Enabled, CLIENT_USER_NAME, ID, verifyJwt,
 } from "@ranjodhbirkaur/common";
-import {ClientUserModel} from "../authMongoConnection";
+import {UserModel} from "../models/UserModel";
 
 /*
 * Check isEnabled jwt_id and client type
@@ -30,7 +30,7 @@ export async function checkAuth(req: Request, res: Response, next: NextFunction 
         if(payload && payload[JWT_ID] && payload[clientType] && payload[USER_NAME]) {
             switch (payload[clientType]) {
                 case clientUserType: {
-                    const userExist = await ClientUserModel.findOne({
+                    const userExist = await UserModel.findOne({
                         [USER_NAME]: payload[USER_NAME], [JWT_ID]: payload[JWT_ID], [Is_Enabled]: true
                     }, [JWT_ID, Is_Enabled, USER_NAME, ID]);
 

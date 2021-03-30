@@ -12,7 +12,7 @@ import {
     sendSingleError
 } from "@ranjodhbirkaur/common";
 
-import {ENTRY_LANGUAGE_PROPERTY_NAME, PER_PAGE, TIMEZONE_DATE_CONSTANT} from "../util/constants";
+import {ENTRY_LANGUAGE_PROPERTY_NAME, TIMEZONE_DATE_CONSTANT} from "../util/constants";
 import {COLLECTION_NOT_FOUND, PARAM_SHOULD_BE_UNIQUE} from "./Messages";
 import * as mongoose from "mongoose";
 import {Model} from "mongoose";
@@ -41,7 +41,6 @@ import {
     HHTimeRegName,
     HhTimeRegName,
     INTEGER_FIElD_TYPE,
-    IsJsonString,
     JSON_FIELD_TYPE,
     MEDIA_FIELD_TYPE,
     MULTIPLE_ASSETS_TYPE,

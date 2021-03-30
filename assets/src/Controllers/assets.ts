@@ -13,7 +13,7 @@ import {
     AssetsVerifyTempRecord, AssetsFetchAssetUrl, AssetsGetAssetsDataUrl
 } from "../utils/urls";
 import {DateTime} from "luxon";
-import {ENTRY_CREATED_BY, ENTRY_UPDATED_AT, ENTRY_UPDATED_BY, FIRST_NAME, LAST_NAME} from "@ranjodhbirkaur/constants";
+import {ENTRY_CREATED_BY, ENTRY_UPDATED_AT, FIRST_NAME, LAST_NAME} from "@ranjodhbirkaur/constants";
 
 // fetch asset url
 // on fetch redirect to the asset url
