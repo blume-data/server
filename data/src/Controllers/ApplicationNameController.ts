@@ -1,13 +1,10 @@
 import {
     APPLICATION_NAMES,
-    ApplicationNameType,
-    EnglishLanguage, ID,
+    ID,
     okayStatus,
-    sendSingleError,
-    USER_NAME
+    sendSingleError
 } from '@ranjodhbirkaur/common';
 import {Request, Response} from 'express';
-import {ClientUserModel} from "../authMongoConnection";
 import {APPLICATION_NAME_ALREADY_EXIST} from "./Messages";
 import {PRODUCTION_ENV, trimCharactersAndNumbers} from "@ranjodhbirkaur/constants";
 import {DateTime} from "luxon";

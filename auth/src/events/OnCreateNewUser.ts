@@ -1,7 +1,6 @@
 import {EventEmitter} from "events";
 import {AuthEventInstance} from "./index";
 
-
 export const EVENT_TYPE_ON_CREATE_NEW_USER = 'EVENT_TYPE_ON_CREATE_NEW_USER';
 export interface OnCreateNewUser {
     applicationName: string;
