@@ -31,8 +31,10 @@ const Layout = (props: AppProps) => {
         props.fetchAuthRouteAddresses();
         props.fetchDataRouteAddresses();
         props.fetchAssetsRouteAddress();
-        props.fetchApplicationNames();
         const isAuthenticated = checkAuthentication();
+        if(isAuthenticated) {
+            props.fetchApplicationNames();
+        }
         setAuthentication(isAuthenticated);
         const env = getItemFromLocalStorage(LOCAL_STORAGE_ENV);
         if (!env) {
