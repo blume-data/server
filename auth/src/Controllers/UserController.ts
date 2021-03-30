@@ -14,14 +14,12 @@ import {
     FIRST_NAME,
     PASSWORD,
     EMAIL,
-    APPLICATION_NAMES,
-    PayloadResponseType, JwtPayloadType, EnglishLanguage, SESSION_ID
+    PayloadResponseType, JwtPayloadType, SESSION_ID
 } from "@ranjodhbirkaur/common";
 import {ClientTempUser} from "../models/clientTempUser";
 import {Request, Response} from "express";
 import {TOKEN_NOT_VALID, USER_NAME_NOT_AVAILABLE} from "../util/errorMessages";
-import {EXAMPLE_APPLICATION_NAME} from "../util/constants";
-import {MainUserModel} from "../models/MainUserModel";
+import {UserModel as MainUserModel} from "../models/UserModel";
 import {AuthEventInstance} from "../events";
 import {EVENT_TYPE_ON_CREATE_NEW_USER} from "../events/OnCreateNewUser";
 

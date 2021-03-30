@@ -1,5 +1,5 @@
 import {Response, Request} from 'express';
-import {clientUserType, okayStatus} from "@ranjodhbirkaur/common";
+import {okayStatus} from "@ranjodhbirkaur/common";
 
 import {
     authRootUrl, register, logOut, logIn, currentUser, emailVerification, userNameValidation

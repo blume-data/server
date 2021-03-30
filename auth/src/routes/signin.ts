@@ -25,7 +25,7 @@ import {ExistingUserType, passwordLimitOptionErrorMessage, passwordLimitOptions}
 
 import {signInUrl} from "../util/urls";
 import {validateUserType} from "../middleware/userTypeCheck";
-import {MainUserModel} from "../models/MainUserModel";
+import {UserModel as MainUserModel} from "../models/UserModel";
 import {SessionModel} from "../models/SessionModel";
 import {PRODUCTION_ENV} from "@ranjodhbirkaur/constants";
 

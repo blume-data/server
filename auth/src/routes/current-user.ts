@@ -2,7 +2,7 @@ import express, {Response, Request, NextFunction} from 'express';
 import {BadRequestError, getCurrentUser, okayStatus} from '@ranjodhbirkaur/common';
 
 import {currentUserUrl} from "../util/urls";
-import {MainUserModel} from "../models/MainUserModel";
+import {UserModel as MainUserModel} from "../models/UserModel";
 
 const router = express.Router();
 
