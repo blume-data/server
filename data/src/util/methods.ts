@@ -1,6 +1,5 @@
-import { randomBytes } from 'crypto';
 import {Request, Response} from 'express';
-import mongoose, {Schema} from 'mongoose';
+import mongoose from 'mongoose';
 import {
     BOOLEAN_FIElD_TYPE,
     DATE_AND_TIME_FIElD_TYPE,
@@ -15,9 +14,10 @@ import {
 } from "./constants";
 import {
     APPLICATION_NAME,
-    CLIENT_USER_NAME, FileSchemaType,
+    CLIENT_USER_NAME,
     okayStatus
 } from "@ranjodhbirkaur/common"
+import {FileModel} from '../models/FileModels';
 import {getCollection} from "../Controllers/StoreController";
 
 export function isValidRegEx(reg: string) {
@@ -134,11 +134,6 @@ export function createModelSchema(applicationName: string, clientUserName: strin
         else if(rule.type === MEDIA_FIELD_TYPE) {
 
             const ref = 'FileModel';
-
-            // upload asset model
-            if(!mongoose.modelNames().includes(ref)) {
-                mongoose.model(ref, FileSchemaType)
-            }
 
             if(!rule.assetsType || rule.assetsType === SINGLE_ASSETS_TYPE) {
                 schemaData = {

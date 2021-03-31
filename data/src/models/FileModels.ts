@@ -84,10 +84,12 @@ const FileSchemaType = new mongoose.Schema(
     }
 );
 
-/*File.statics.build = (attrs: FileAttrs) => {
-    return new FileModel(attrs);
-};*/
 const FileModelName = 'FileModel';
-//const FileModel = mongoose.model<FileDoc, FileModelType>(FileModelName, File);
 
-export { FileModelName, FileDoc, FileModelType, FileSchemaType, FileAttrs };
+FileSchemaType.statics.build = (attrs: FileAttrs) => {
+    return new FileModel(attrs);
+};
+
+const FileModel = mongoose.model<FileDoc, FileModelType>(FileModelName, FileSchemaType);
+
+export {FileModel};
