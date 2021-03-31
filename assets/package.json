@@ -28,7 +28,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@ranjodhbirkaur/common": "^1.2.36",
+    "@ranjodhbirkaur/common": "^1.2.38",
     "@ranjodhbirkaur/constants": "^1.0.124",
     "@types/body-parser": "^1.19.0",
     "@types/cookie-session": "2.0.39",
@@ -48,7 +48,7 @@
     "jest": "^25.2.7",
     "jsonwebtoken": "^8.5.1",
     "luxon": "^1.25.0",
-    "mongoose": "^5.9.7",
+    "mongoose": "^5.12.2",
     "supertest": "^4.0.2",
     "ts-jest": "^25.3.1",
     "ts-loader": "^7.0.5",
