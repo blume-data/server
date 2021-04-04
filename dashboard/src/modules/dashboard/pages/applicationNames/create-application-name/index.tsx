@@ -7,15 +7,15 @@ import './create-application-name.scss';
 import {doPostRequest} from "../../../../../utils/baseApi";
 import {getItemFromLocalStorage} from "../../../../../utils/tools";
 import {getBaseUrl} from "../../../../../utils/urls";
-import {ApplicationNameType} from "../index";
 import {connect, ConnectedProps} from "react-redux";
 import {fetchApplicationNames} from "../../home/actions";
+import {setApplicationName} from "../../../../authentication/pages/Auth/actions";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
 interface CreateApplicationNameProps extends PropsFromRedux {
     url: string;
-    handleClose: (applicationName: ApplicationNameType) => void;
+    handleClose: (applicationName: string) => void;
 }
 
 const CreateApplicationNameComponent = (props: CreateApplicationNameProps) => {
@@ -62,12 +62,6 @@ const CreateApplicationNameComponent = (props: CreateApplicationNameProps) => {
         }, true);
 
         if(resp && !resp.errors) {
-            // const applicationNames = getItemFromLocalStorage(APPLICATION_NAMES);
-            // if(applicationNames) {
-            //     const parsedApplicationNames = JSON.parse(applicationNames);
-            //     parsedApplicationNames.push(resp);
-            //     localStorage.setItem(APPLICATION_NAMES, JSON.stringify(parsedApplicationNames));
-            // }
             await fetchApplicationNames();
             handleClose(resp);
             setResponse('')
