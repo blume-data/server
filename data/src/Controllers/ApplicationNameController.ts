@@ -97,7 +97,5 @@ export async function getApplicationName(req: Request, res: Response) {
     const applicationNames = await ApplicationSpaceModel.find({
         clientUserId: req.currentUser[ID],
     }, ['name', 'env']);
-
-    console.log('req.', req.currentUser);
     return res.status(okayStatus).send({[APPLICATION_NAMES]: applicationNames});
 }
