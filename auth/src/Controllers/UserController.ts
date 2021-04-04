@@ -20,8 +20,11 @@ import {ClientTempUser} from "../models/clientTempUser";
 import {Request, Response} from "express";
 import {TOKEN_NOT_VALID, USER_NAME_NOT_AVAILABLE} from "../util/errorMessages";
 import {UserModel as MainUserModel} from "../models/UserModel";
-import {AuthEventInstance} from "../events";
-import {EVENT_TYPE_ON_CREATE_NEW_USER} from "../events/OnCreateNewUser";
+import {DateTime} from "luxon";
+import {ApplicationSpaceModel} from "../models/ApplicationSpace";
+import {EXAMPLE_APPLICATION_NAME} from "../util/constants";
+import {PRODUCTION_ENV} from "@ranjodhbirkaur/constants";
+import {createNewSession} from "../util/tools";
 
 interface ReqIsUserNameAvailable extends Request{
     body: {
@@ -98,15 +101,20 @@ export const verifyEmailToken = async function (req: ReqValidateEmail, res: Resp
                     [USER_NAME]: newUser[USER_NAME]
                 };
 
+                // create a new session
+                const newSession = await createNewSession({
+                    req, userType, responseData: response, existingUser: {jwtId}
+                });
+
                 const payload: JwtPayloadType = {
                     [JWT_ID]: jwtId,
-                    [ID]: userExist[ID],
-                    [USER_NAME]: userExist[USER_NAME] || '',
-                    [clientType]: userExist[clientType] || '',
-                    [SESSION_ID]: '',
+                    [ID]: newUser[ID],
+                    [USER_NAME]: newUser[USER_NAME] || '',
+                    [clientType]: userType,
+                    [SESSION_ID]: newSession._id || '',
                 };
 
-                AuthEventInstance.emit(EVENT_TYPE_ON_CREATE_NEW_USER, userExist[ID]);
+                await OnCreateNewUser(newUser[ID]);
 
                 return await sendValidateEmailResponse(req, payload, response, res);
 
@@ -129,6 +137,28 @@ async function sendValidateEmailResponse(req: Request, payload: JwtPayloadType, 
     //const okDeleted = await ClientTempUser.deleteMany({email: modelProps.email});
 
     return sendJwtResponse(res, responseData, userJwt);
+}
+
+/*
+* On create new user
+* */
+export async function OnCreateNewUser(userId: string) {
+
+    const createdAt = DateTime.local().setZone('UTC').toJSDate();
+
+    const newApplicationSpace = ApplicationSpaceModel.build({
+        clientUserId: userId,
+        name: EXAMPLE_APPLICATION_NAME,
+        env: [PRODUCTION_ENV],
+        hasQueryModel: false,
+        updatedBy: userId,
+        description: 'This is an example space',
+        createdAt,
+        createdBy: userId,
+        updatedAt: createdAt
+    });
+
+    await newApplicationSpace.save();
 }
 
 

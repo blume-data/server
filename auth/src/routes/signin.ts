@@ -28,6 +28,7 @@ import {validateUserType} from "../middleware/userTypeCheck";
 import {UserModel as MainUserModel} from "../models/UserModel";
 import {SessionModel} from "../models/SessionModel";
 import {PRODUCTION_ENV} from "@ranjodhbirkaur/constants";
+import {createNewSession} from "../util/tools";
 
 const router = express.Router();
 
@@ -45,16 +46,8 @@ async function sendResponse(req: Request, res: Response, responseData: PayloadRe
     throw new BadRequestError(InvalidLoginCredentialsMessage);
   }
 
-  const newSession = SessionModel.build({
-    jwtId: existingUser.jwtId,
-    clientType: userType,
-    userName: responseData[USER_NAME],
-    selectedEnv: PRODUCTION_ENV,
-    clientUserName: responseData[CLIENT_USER_NAME],
-    selectedApplicationName: '',
-    createdAt: new Date(),
-    userAgent: req.useragent,
-    isActive: true
+  const newSession = createNewSession({
+    req, existingUser, responseData, userType
   });
 
   const payload: JwtPayloadType = {

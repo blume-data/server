@@ -6,6 +6,7 @@ interface ApplicationSpaceAttrs {
     clientUserId: string;
     description: string;
     env: string[];
+    hasQueryModel: boolean;
 
     // created
     createdBy: string;
@@ -29,6 +30,7 @@ interface ApplicationSpaceDoc extends mongoose.Document {
     clientUserId: string;
     description: string;
     env: string[];
+    hasQueryModel: boolean;
 
     // created
     createdBy: string;
@@ -45,20 +47,24 @@ interface ApplicationSpaceDoc extends mongoose.Document {
 
 const ApplicationSpaceMModel = new mongoose.Schema({
 
-        name: String,
-        description: String,
-        clientUserId : { type: Schema.Types.ObjectId, ref: 'ClientUser' },
-        env: [{type: String}],
+    name: String,
+    description: String,
+    clientUserId : { type: Schema.Types.ObjectId, ref: 'ClientUser' },
+    env: [{type: String}],
+    hasQueryModel: {
+        type: Boolean,
+        default: false
+    },
 
-        deletedBy : { type: Schema.Types.ObjectId, ref: 'ClientUser' },
-        deletedAt : { type: Date },
+    deletedBy : { type: Schema.Types.ObjectId, ref: 'ClientUser' },
+    deletedAt : { type: Date },
 
-        createdBy : { type: Schema.Types.ObjectId, ref: 'ClientUser' },
-        createdAt : { type: Date },
+    createdBy : { type: Schema.Types.ObjectId, ref: 'ClientUser' },
+    createdAt : { type: Date },
 
-        updatedBy : { type: Schema.Types.ObjectId, ref: 'ClientUser' },
-        updatedAt : { type: Date },
-    });
+    updatedBy : { type: Schema.Types.ObjectId, ref: 'ClientUser' },
+    updatedAt : { type: Date },
+});
 
 ApplicationSpaceMModel.statics.build = (attrs: ApplicationSpaceAttrs) => {
     return new ApplicationSpaceModel(attrs);
