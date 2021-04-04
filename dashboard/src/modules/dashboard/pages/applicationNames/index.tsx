@@ -15,11 +15,6 @@ import {useHistory} from "react-router";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
-export interface ApplicationNameType {
-    name: string;
-    languages: string[];
-}
-
 const ApplicationNames = (props: PropsFromRedux) => {
 
     const {ApplicationNameUrl, setApplicationName} = props;
@@ -42,10 +37,10 @@ const ApplicationNames = (props: PropsFromRedux) => {
         setIsModalOpen(false);
     }
 
-    function onCreateApplicationName(applicationName: ApplicationNameType) {
+    function onCreateApplicationName(applicationName: string) {
         closeModal();
-        const url = dashboardApplicationNameUrl.replace(`:${APPLICATION_NAME}`, applicationName.name);
-        setApplicationName(applicationName.name);
+        const url = dashboardApplicationNameUrl.replace(`:${APPLICATION_NAME}`, applicationName);
+        setApplicationName(applicationName);
         history.push(url);
     }
 
@@ -92,7 +87,8 @@ const ApplicationNames = (props: PropsFromRedux) => {
 
 const mapState = (state: RootState) => {
     return {
-        ApplicationNameUrl: state.routeAddress.routes.data?.ApplicationNameUrl
+        ApplicationNameUrl: state.routeAddress.routes.data?.ApplicationNameUrl,
+        applicationNames: state.authentication.applicationsNames
     }
 };
 

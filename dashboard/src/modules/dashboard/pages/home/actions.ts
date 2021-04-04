@@ -36,11 +36,9 @@ export const fetchApplicationNames = (): AppThunk => async (dispatch: ThunkDispa
             .replace(`:${APPLICATION_NAME}?`,'');
 
         const response = await doGetRequest(`${getBaseUrl()}${url}`, null,true);
-        console.log('Respnse', response);
-
         dispatch({
             type: ACTION_FETCH_APPLICATION_NAMES,
             data: response
-        })
+        });
     }
 }

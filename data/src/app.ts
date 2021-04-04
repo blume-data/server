@@ -4,6 +4,7 @@ import {CollectionRoutes} from "./routes/collection-routes";
 import {StoreRoutes} from "./routes/store";
 import { ApplicationNameRoutes } from "./routes/application-name-routes";
 import { SettingRoutes } from "./routes/setting-routes";
+//import './events';
 
 serverApp.use(ApplicationNameRoutes);
 serverApp.use(CollectionRoutes);

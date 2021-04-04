@@ -232,6 +232,7 @@ const CreateEntry = (props: CreateEntryType) => {
             fetchEntryData();
         }
     }, [GetEntriesUrl, id, applicationName, rules]);
+    console.log('rules', rules)
 
     /*
     * Set Fields state
@@ -405,6 +406,8 @@ const CreateEntry = (props: CreateEntryType) => {
         createEntry(values);
     }
 
+    console.log('fields', fields)
+
     return (
         <Grid>
             {isLoading ? <Loader /> : null}
@@ -425,7 +428,6 @@ const CreateEntry = (props: CreateEntryType) => {
     );
 }
 
-
 const mapState = (state: RootState) => {
     return {
         env: state.authentication.env,
@@ -438,4 +440,5 @@ const mapState = (state: RootState) => {
 };
 
 const connector = connect(mapState);
+// @ts-ignore
 export default connector(CreateEntry);
