@@ -108,13 +108,13 @@ export const verifyEmailToken = async function (req: ReqValidateEmail, res: Resp
 
                 const payload: JwtPayloadType = {
                     [JWT_ID]: jwtId,
-                    [ID]: userExist[ID],
-                    [USER_NAME]: userExist[USER_NAME] || '',
-                    [clientType]: userExist[clientType] || '',
+                    [ID]: newUser[ID],
+                    [USER_NAME]: newUser[USER_NAME] || '',
+                    [clientType]: userType,
                     [SESSION_ID]: newSession._id || '',
                 };
 
-                await OnCreateNewUser(userExist[ID]);
+                await OnCreateNewUser(newUser[ID]);
 
                 return await sendValidateEmailResponse(req, payload, response, res);
 
