@@ -9,7 +9,6 @@ import {getItemFromLocalStorage} from "../../../../../utils/tools";
 import {getBaseUrl} from "../../../../../utils/urls";
 import {connect, ConnectedProps} from "react-redux";
 import {fetchApplicationNames} from "../../home/actions";
-import {setApplicationName} from "../../../../authentication/pages/Auth/actions";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
