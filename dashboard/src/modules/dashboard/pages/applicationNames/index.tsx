@@ -92,7 +92,8 @@ const ApplicationNames = (props: PropsFromRedux) => {
 
 const mapState = (state: RootState) => {
     return {
-        ApplicationNameUrl: state.routeAddress.routes.data?.ApplicationNameUrl
+        ApplicationNameUrl: state.routeAddress.routes.data?.ApplicationNameUrl,
+        applicationNames: state.authentication.applicationsNames
     }
 };
 

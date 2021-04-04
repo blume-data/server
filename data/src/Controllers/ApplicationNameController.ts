@@ -9,9 +9,11 @@ import {APPLICATION_NAME_ALREADY_EXIST} from "./Messages";
 import {PRODUCTION_ENV, trimCharactersAndNumbers} from "@ranjodhbirkaur/constants";
 import {DateTime} from "luxon";
 import {ApplicationSpaceModel} from "../models/ApplicationSpace";
+import {EventOnEnvCreate} from "../events/OnEnvCreate";
 
 export async function createApplicationName(req: Request, res: Response) {
-    const {applicationName, description=''} = req.body;
+    const {applicationName, description='', hasQueryModel=false} = req.body;
+    const {clientUserName} = req.params;
     const lowerCaseApplicationName = trimCharactersAndNumbers(applicationName);
 
     const alreadyExist = await ApplicationSpaceModel.findOne({
@@ -24,18 +26,24 @@ export async function createApplicationName(req: Request, res: Response) {
     }
     else {
         const createdAt = DateTime.local().setZone('UTC').toJSDate();
-
         const newApplicationSpace = ApplicationSpaceModel.build({
             clientUserId: req.currentUser[ID],
             name: lowerCaseApplicationName,
             env: [PRODUCTION_ENV],
             updatedBy: req.currentUser[ID],
             description,
-
+            hasQueryModel,
             createdAt,
             createdBy: req.currentUser[ID],
             updatedAt: createdAt
         });
+        const event = new EventOnEnvCreate({
+            clientUserName,
+            applicationName,
+            env: PRODUCTION_ENV,
+            userId: req.currentUser[ID]
+        });
+        await event.exec();
 
         await newApplicationSpace.save();
         return res.status(okayStatus).send(lowerCaseApplicationName);
