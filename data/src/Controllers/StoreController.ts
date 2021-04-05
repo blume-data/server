@@ -6,7 +6,7 @@ import {
     CLIENT_USER_MODEL_NAME,
     CLIENT_USER_NAME,
     errorStatus,
-    getPageAndPerPage,
+    getPageAndPerPage, ID,
     okayStatus,
     paginateData,
     sendSingleError
@@ -478,7 +478,7 @@ export async function getCollection(req: Request, specificModelName?: string) {
 function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
 
     const reqBody: any = req.body;
-    const currentUserId = (req.currentUser && req.currentUser.id) ? req.currentUser.id : '';
+    const currentUserId = (req.currentUser && req.currentUser[ID]) ? req.currentUser[ID] : '';
     const language = req.params.language;
     const createdAt = DateTime.local().setZone('UTC').toJSDate();
     let body: any = {
