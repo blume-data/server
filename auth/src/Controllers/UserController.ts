@@ -25,6 +25,7 @@ import {ApplicationSpaceModel} from "../models/ApplicationSpace";
 import {EXAMPLE_APPLICATION_NAME} from "../util/constants";
 import {PRODUCTION_ENV} from "@ranjodhbirkaur/constants";
 import {createNewSession} from "../util/tools";
+import axios from "axios";
 
 interface ReqIsUserNameAvailable extends Request{
     body: {
@@ -114,7 +115,18 @@ export const verifyEmailToken = async function (req: ReqValidateEmail, res: Resp
                     [SESSION_ID]: newSession._id || '',
                 };
 
+                // create a new example application space
                 await OnCreateNewUser(newUser[ID]);
+                await axios.post('http://data-srv:3000/data-events', {
+                    key: process.env.JWT_KEY,
+                    type: 'OnEnvCreate',
+                    data: {
+                        clientUserName: newUser[USER_NAME],
+                        applicationName: EXAMPLE_APPLICATION_NAME,
+                        env: PRODUCTION_ENV,
+                        userId: newUser[ID]
+                    }
+                });
 
                 return await sendValidateEmailResponse(req, payload, response, res);
 
