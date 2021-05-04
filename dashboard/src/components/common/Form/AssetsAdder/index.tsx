@@ -149,9 +149,9 @@ export const AssetsAdderComponent = (props: AssetsAdderType) => {
                                 setUploadedFiles={setFilesIds}
                                 uFiles={filesIds}
                                 // verify url
-                                v_3_5_6={props.assetsUrls && props.assetsUrls.v_3_5_6}
+                                v_3_5_6={props.assetsUrls && props.assetsUrls.verifyTempRecord}
                                 // temporary url
-                                t_s_4_6_3_t={props.assetsUrls && props.assetsUrls.t_s_4_6_3_t}
+                                t_s_4_6_3_t={props.assetsUrls && props.assetsUrls.createTempRecord}
                                 authUrl={authUrl.replace(`:${CLIENT_USER_NAME}`, clientUserName || '')}
 
                             />

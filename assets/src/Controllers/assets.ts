@@ -1,7 +1,7 @@
 import {Response, Request} from 'express';
 import {
     errorStatus, okayStatus, sendSingleError,
-    getPageAndPerPage, paginateData, RANDOM_STRING
+    getPageAndPerPage, paginateData, RANDOM_STRING, ID
 } from "@ranjodhbirkaur/common";
 import {FileModel} from "../models/file-models";
 import {imagekitConfig} from "../utils/methods";
@@ -124,7 +124,7 @@ export async function createTempAssetsRecord(req: Request, res: Response) {
         fileName,
         clientUserName,
         isVerified: false,
-        createdBy: `${req.currentUser['id']}`,
+        createdBy: `${req.currentUser[ID]}`,
         createdAt
     });
     await tempRecord.save();

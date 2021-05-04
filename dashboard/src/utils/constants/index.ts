@@ -28,7 +28,7 @@ export const ASSETS_ROUTE = {
     authAssets: "/assets-api/:clientUserName/secure-assets",
     getAsset: "/assets-api/:clientUserName/get/asset",
     getAssets: "/assets-api/:clientUserName",
-    t_s_4_6_3_t: "/assets-api/:clientUserName/sdf-198-sdf-410",
-    v_3_5_6: "/assets-api/:clientUserName/sdf-wer-234-sdf",
+    createTempRecord: "/assets-api/:clientUserName/create-temp-record",
+    verifyTempRecord: "/assets-api/:clientUserName/verify-temp-record",
     verifyAssets: "/assets-api/:clientUserName/verify-url"
 }

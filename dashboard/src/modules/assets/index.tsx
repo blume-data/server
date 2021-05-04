@@ -26,8 +26,8 @@ export const AssetsComponent = (props: PropsFromRedux) => {
                 <Grid container justify={"flex-end"}>
                     <UploadAsset
                         setLoading={setIsLoading}
-                        v_3_5_6={props.assetsUrls && props.assetsUrls.v_3_5_6}
-                        t_s_4_6_3_t={props.assetsUrls && props.assetsUrls.t_s_4_6_3_t}
+                        verifyTempRecord={props.assetsUrls && props.assetsUrls.verifyTempRecord}
+                        createTempRecord={props.assetsUrls && props.assetsUrls.createTempRecord}
                         authUrl={authUrl.replace(`:${CLIENT_USER_NAME}`, clientUserName)}
                     />
                 </Grid>

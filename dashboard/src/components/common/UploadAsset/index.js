@@ -12,7 +12,7 @@ export default (props) => {
     const urlEndpoint = 'https://ik.imagekit.io/kafwriey64l/';
     const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
 
-    const {t_s_4_6_3_t, v_3_5_6} = props;
+    const {createTempRecord, verifyTempRecord} = props;
     // to get asset ids
     const {setLoading=null, setUploadedFiles=null, uFiles} = props;
 
@@ -41,8 +41,8 @@ export default (props) => {
         if(files && files.length) {
             for (const file of files) {
                 promises.push(new Promise(async (resolve) => {
-                    const r945 = t_s_4_6_3_t.replace(`:${CLIENT_USER_NAME}`, clientUserName);
-                    const r43 = v_3_5_6.replace(`:${CLIENT_USER_NAME}`, clientUserName);
+                    const r945 = createTempRecord.replace(`:${CLIENT_USER_NAME}`, clientUserName);
+                    const r43 = verifyTempRecord.replace(`:${CLIENT_USER_NAME}`, clientUserName);
                     // get temporary url
                     const t_0 = await doPostRequest(`${getBaseUrl()}${r945}`, {
                         fileName: file.name
