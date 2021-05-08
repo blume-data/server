@@ -9,7 +9,7 @@ import {
     okayStatus,
     paginateData,
     sendSingleError
-} from "@ranjodhbirkaur/common";
+} from "../../../util/common-module";
 
 import {ENTRY_LANGUAGE_PROPERTY_NAME, TIMEZONE_DATE_CONSTANT} from "../../../util/constants";
 import {COLLECTION_NOT_FOUND, PARAM_SHOULD_BE_UNIQUE} from "../../../util/Messages";

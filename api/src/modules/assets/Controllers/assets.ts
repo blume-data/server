@@ -2,7 +2,7 @@ import {Response, Request} from 'express';
 import {
     errorStatus, okayStatus, sendSingleError,
     getPageAndPerPage, paginateData, RANDOM_STRING, ID
-} from "@ranjodhbirkaur/common";
+} from "../../../util/common-module";
 import {FileModel} from "../../../db-models/file-models";
 import {imagekitConfig} from "../utils/methods";
 import {

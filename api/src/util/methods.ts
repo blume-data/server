@@ -16,8 +16,8 @@ import {
     APPLICATION_NAME,
     CLIENT_USER_NAME,
     okayStatus
-} from "@ranjodhbirkaur/common";
-import {getCollection} from "../Controllers/StoreController";
+} from "./common-module";
+import {getCollection} from "../modules/entries/Controllers/StoreController";
 
 export function isValidRegEx(reg: string) {
     let isValid = true;

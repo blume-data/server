@@ -1,7 +1,7 @@
 import {Request, Response, NextFunction} from "express";
 import {
     SupportedUserType, sendSingleError
-} from "@ranjodhbirkaur/common";
+} from "../../../util/common-module";
 
 
 export async function validateUserType(req: Request, res: Response, next: NextFunction) {

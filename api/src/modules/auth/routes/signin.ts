@@ -17,7 +17,7 @@ import {
   CLIENT_USER_NAME,
   clientType,
   APPLICATION_NAMES, PayloadResponseType, JwtPayloadType, PASSWORD, sendSingleError, SESSION_ID, ID
-} from '@ranjodhbirkaur/common';
+} from '../../../util/common-module';
 import { Password } from '../services/password';
 
 import {InValidEmailMessage, InvalidLoginCredentialsMessage} from "../util/errorMessages";

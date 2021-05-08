@@ -1,5 +1,5 @@
 import {Response, Request, NextFunction} from 'express';
-import {BadRequestError, EnglishLanguage, SpanishLanguage} from "@ranjodhbirkaur/common";
+import {BadRequestError, EnglishLanguage, SpanishLanguage} from "./common-module";
 export const SUPPORTED_LANGUAGES = [EnglishLanguage, SpanishLanguage];
 
 export function validateLanguage(req: Request, res: Response, next: NextFunction ) {

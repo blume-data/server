@@ -1,7 +1,7 @@
 import express, {Request, Response} from "express";
 import {onEnvCreate} from "../Controllers/ApplicationNameController";
 import {sendOkayResponse} from "../../../util/methods";
-import {sendSingleError} from "@ranjodhbirkaur/common";
+import {sendSingleError} from "../../../util/common-module";
 
 
 const router = express.Router();

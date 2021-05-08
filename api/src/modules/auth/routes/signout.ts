@@ -1,5 +1,5 @@
 import express, {NextFunction, Request, Response} from 'express';
-import {JwtPayloadType, okayStatus, sendSingleError, SESSION_ID, verifyJwt} from "@ranjodhbirkaur/common";
+import {JwtPayloadType, okayStatus, sendSingleError, SESSION_ID, verifyJwt} from "../../../util/common-module";
 import {signOutUrl} from "../util/urls";
 import {validateUserType} from "../middleware/userTypeCheck";
 import {SessionModel} from "../../../db-models/SessionModel";

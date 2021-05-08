@@ -1,6 +1,6 @@
 import {SessionModel} from "../../../db-models/SessionModel";
 import {Request} from 'express';
-import {CLIENT_USER_NAME, USER_NAME} from "@ranjodhbirkaur/common";
+import {CLIENT_USER_NAME, USER_NAME} from "../../../util/common-module";
 import {PRODUCTION_ENV} from "@ranjodhbirkaur/constants";
 
 interface CreateNewSession {

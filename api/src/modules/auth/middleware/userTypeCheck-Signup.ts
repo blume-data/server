@@ -4,7 +4,7 @@ import {
     freeUserType, SupportedUserType,
     ErrorMessages, adminUserType, adminType, clientUserType, CLIENT_USER_NAME, APPLICATION_NAME, ENV,
     FIRST_NAME, LAST_NAME, EMAIL, pushErrors, sendErrors, USER_NAME, PASSWORD,
-} from "@ranjodhbirkaur/common";
+} from "../../../util/common-module";
 import {ADMIN_USER_TYPE_NOT_VALID} from "../util/errorMessages";
 
 

@@ -1,5 +1,5 @@
 import {Request, Response} from 'express';
-import {BadRequestError, ID, okayStatus, sendSingleError} from "@ranjodhbirkaur/common";
+import {BadRequestError, ID, okayStatus, sendSingleError} from "../../../util/common-module";
 import {MAX_COLLECTION_LIMIT,} from "../../../util/constants";
 import {CollectionModel} from "../../../db-models/Collection";
 import {CANNOT_CREATE_COLLECTIONS_MORE_THAN_LIMIT, COLLECTION_ALREADY_EXIST} from "../../../util/Messages";

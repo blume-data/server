@@ -4,7 +4,7 @@ import {
     clientUserType,
     JWT_ID, USER_NAME,
     sendSingleError, Is_Enabled, CLIENT_USER_NAME, ID, verifyJwt,
-} from "@ranjodhbirkaur/common";
+} from "../util/common-module";
 import {UserModel} from "../db-models/UserModel";
 
 /*

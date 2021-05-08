@@ -1,5 +1,5 @@
 import {NextFunction, Request, Response} from "express";
-import {ENV_IS_NOT_SUPPORTED} from "../Controllers/Messages";
+import {ENV_IS_NOT_SUPPORTED} from "./Messages";
 import {
     CUSTOM_ONE_ENV,
     CUSTOM_Three_ENV,

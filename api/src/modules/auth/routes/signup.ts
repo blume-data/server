@@ -19,7 +19,7 @@ import {
     CLIENT_USER_NAME,
     pushErrors,
     sendErrors,
-} from '@ranjodhbirkaur/common';
+} from '../../../util/common-module';
 import {
     passwordLimitOptionErrorMessage,
     passwordLimitOptions,

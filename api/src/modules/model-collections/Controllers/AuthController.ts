@@ -1,5 +1,5 @@
 import {Response, Request} from 'express';
-import {okayStatus} from "@ranjodhbirkaur/common";
+import {okayStatus} from "../../../util/common-module";
 
 export async function SignUp(req: Request, res: Response) {
 

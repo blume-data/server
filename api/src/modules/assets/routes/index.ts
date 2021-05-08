@@ -15,7 +15,7 @@ import {
 import {checkAuth} from "../middleware/checkAuth";
 import {imagekitConfig} from "../utils/methods";
 import {body} from "express-validator";
-import {validateRequest} from "@ranjodhbirkaur/common";
+import {validateRequest} from "../../../util/common-module";
 
 const router = Router();
 

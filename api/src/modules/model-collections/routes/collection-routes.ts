@@ -1,6 +1,6 @@
 import express from 'express';
 import {body} from "express-validator";
-import {validateRequest, stringLimitOptionErrorMessage, stringLimitOptions} from "@ranjodhbirkaur/common";
+import {validateRequest, stringLimitOptionErrorMessage, stringLimitOptions} from "../../../util/common-module";
 import {CollectionUrl, GetCollectionNamesUrl} from "../../../util/urls";
 import {
     createCollectionSchema,

@@ -1,5 +1,5 @@
 import express, {Response, Request, NextFunction} from 'express';
-import {BadRequestError, getCurrentUser, okayStatus} from '@ranjodhbirkaur/common';
+import {BadRequestError, getCurrentUser, okayStatus} from '../../../util/common-module';
 
 import {currentUserUrl} from "../util/urls";
 import {UserModel as MainUserModel} from "../../../db-models/UserModel";

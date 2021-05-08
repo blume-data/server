@@ -5,7 +5,7 @@ import {
     stringLimitOptionErrorMessage,
     stringLimitOptions,
     validateRequest, sendSingleError
-} from '@ranjodhbirkaur/common';
+} from '../../../util/common-module';
 import express, {Request, Response, NextFunction} from 'express';
 import { body } from 'express-validator';
 import { createApplicationName, getApplicationName } from '../Controllers/ApplicationNameController';

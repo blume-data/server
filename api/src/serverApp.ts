@@ -10,6 +10,4 @@ serverApp.use(cors());
 serverApp.use(compression());
 serverApp.use(json());
 
-serverApp.options('*', cors());
-
 export {serverApp, Response, Request, NextFunction};

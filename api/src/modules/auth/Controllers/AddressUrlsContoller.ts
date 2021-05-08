@@ -1,5 +1,5 @@
 import {Response, Request} from 'express';
-import {okayStatus} from "@ranjodhbirkaur/common";
+import {okayStatus} from "../../../util/common-module";
 
 import {
     authRootUrl, register, logOut, logIn, currentUser, emailVerification, userNameValidation

@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import {supportUserType} from '@ranjodhbirkaur/common';
+import {supportUserType} from '../util/common-module';
 
 interface ClientTempUserAttrs {
     email: string;

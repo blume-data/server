@@ -1,5 +1,5 @@
 import {NextFunction, Request, Response} from "express";
-import {errorStatus} from "@ranjodhbirkaur/common";
+import {errorStatus} from "../../../util/common-module";
 import {PERMISSION_IS_NOT_PRESENT, PERMISSION_IS_NOT_VALID} from "../util/errorMessages";
 
 export function validateRolePermissions(req: Request, res: Response, next: NextFunction) {

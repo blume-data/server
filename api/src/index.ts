@@ -1,9 +1,9 @@
 import mongoose from 'mongoose';
-import {errorHandler, getMongoDatabaseUrl, mongoConnectOptions, NotFoundError} from "@ranjodhbirkaur/common";
+import {errorHandler, getMongoDatabaseUrl, mongoConnectOptions, NotFoundError} from "./util/common-module";
 import {serverApp} from "./serverApp";
 import {ApplicationNameRoutes} from "./modules/model-collections/routes/application-name-routes";
 import {CollectionRoutes} from "./modules/model-collections/routes/collection-routes";
-import {StoreRoutes} from "./modules/model-collections/routes/store";
+import {StoreRoutes} from "./modules/entries/Routes/store";
 import {SettingRoutes} from "./modules/model-collections/routes/setting-routes";
 import {EventRoutes} from "./modules/model-collections/routes/events";
 import {addressRoutes} from "./modules/auth/routes/addresses";

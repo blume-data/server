@@ -1,4 +1,4 @@
-import { APPLICATION_NAME, CLIENT_USER_NAME } from "@ranjodhbirkaur/common";
+import { APPLICATION_NAME, CLIENT_USER_NAME } from "./common-module";
 import {rootUrl, serviceName} from "./constants";
 
 export const dataRouteUrls = `${serviceName}/routes`;

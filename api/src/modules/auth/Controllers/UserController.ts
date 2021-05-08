@@ -15,7 +15,7 @@ import {
     PASSWORD,
     EMAIL,
     PayloadResponseType, JwtPayloadType, SESSION_ID
-} from "@ranjodhbirkaur/common";
+} from "../../../util/common-module";
 import {ClientTempUser} from "../../../db-models/clientTempUser";
 import {Request, Response} from "express";
 import {TOKEN_NOT_VALID, USER_NAME_NOT_AVAILABLE} from "../util/errorMessages";

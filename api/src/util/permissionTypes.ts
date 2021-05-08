@@ -1,5 +1,5 @@
 import {NextFunction, Request, Response} from "express";
-import {BadRequestError} from "@ranjodhbirkaur/common";
+import {BadRequestError} from "./common-module";
 
 export const GET_PERMISSION = 'GET';
 export const UPDATE_PERMISSION = 'UPDATE';

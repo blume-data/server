@@ -4,7 +4,7 @@ import {
     REQUIRED_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN,
     UNIQUE_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN
 } from "../../../util/Messages";
-import {errorStatus} from "@ranjodhbirkaur/common";
+import {errorStatus} from "../../../util/common-module";
 import {
     FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN,
     FIELD_CUSTOM_ERROR_MSG_MIN_MAX,

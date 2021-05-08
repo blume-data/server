@@ -4,7 +4,7 @@ import {createStoreRecord, deleteStoreRecord, getStoreRecord} from "../Controlle
 import {validateEnvType} from "../../../util/enviornmentTypes";
 import {checkAuth} from "../../../services/checkAuth";
 import {validateApplicationNameMiddleWare} from "../../../services/validateApplicationNameMiddleWare";
-import { sendSingleError } from "@ranjodhbirkaur/common";
+import { sendSingleError } from "../../../util/common-module";
 
 const router = express.Router();
 

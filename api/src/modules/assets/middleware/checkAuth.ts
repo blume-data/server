@@ -5,7 +5,7 @@ import {
     clientUserType,
     JWT_ID, USER_NAME, AUTHORIZATION_TOKEN,
     sendSingleError, Is_Enabled, CLIENT_USER_NAME, ID,
-} from "@ranjodhbirkaur/common";
+} from "../../../util/common-module";
 import jwt from 'jsonwebtoken';
 import {UserModel} from "../../../db-models/UserModel";
 

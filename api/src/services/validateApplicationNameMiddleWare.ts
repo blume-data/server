@@ -1,5 +1,5 @@
 import {NextFunction, Request, Response} from "express";
-import {APPLICATION_NAME, ID, sendSingleError} from "@ranjodhbirkaur/common";
+import {APPLICATION_NAME, ID, sendSingleError} from "../util/common-module";
 import {ApplicationSpaceModel} from "../db-models/ApplicationSpace";
 
 export const validateApplicationNameMiddleWare = async (req: Request, res: Response, next: NextFunction) => {

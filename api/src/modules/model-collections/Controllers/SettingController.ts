@@ -4,7 +4,7 @@ import {
     CLIENT_USER_NAME,
     okayStatus,
     sendSingleError,
-} from "@ranjodhbirkaur/common";
+} from "../../../util/common-module";
 import { CollectionModel } from '../../../db-models/Collection';
 
 export async function getSetting(req: Request, res: Response) {

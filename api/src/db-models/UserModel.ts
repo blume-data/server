@@ -1,5 +1,5 @@
 import mongoose, {SchemaDefinition} from 'mongoose';
-import {CLIENT_USER_MODEL_NAME} from "@ranjodhbirkaur/common";
+import {CLIENT_USER_MODEL_NAME} from "../util/common-module";
 
 export interface RootUserAttrs {
     userName: string;
