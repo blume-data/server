@@ -1,7 +1,7 @@
 import {Request, Response} from 'express';
 import {BadRequestError, ID, okayStatus, sendSingleError} from "@ranjodhbirkaur/common";
 import {MAX_COLLECTION_LIMIT,} from "../util/constants";
-import {CollectionModel} from "../models/Collection";
+import {CollectionModel} from "../../../db-models/Collection";
 import {CANNOT_CREATE_COLLECTIONS_MORE_THAN_LIMIT, COLLECTION_ALREADY_EXIST} from "./Messages";
 
 import {

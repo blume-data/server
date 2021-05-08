@@ -5,7 +5,7 @@ import {
     okayStatus,
     sendSingleError,
 } from "@ranjodhbirkaur/common";
-import { CollectionModel } from '../models/Collection';
+import { CollectionModel } from '../../../db-models/Collection';
 
 export async function getSetting(req: Request, res: Response) {
 

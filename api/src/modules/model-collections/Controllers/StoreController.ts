@@ -1,5 +1,4 @@
 import {Request, Response} from 'express';
-import {CollectionModel} from "../models/Collection";
 import {
     APPLICATION_NAME,
     BadRequestError,
@@ -62,6 +61,7 @@ import {
     UsZipRegName
 } from "@ranjodhbirkaur/constants";
 import {createModel, getModel, sendOkayResponse, trimGetOnly} from "../util/methods";
+import {CollectionModel} from "../../../db-models/Collection";
 
 interface PopulateData {
     name: string;

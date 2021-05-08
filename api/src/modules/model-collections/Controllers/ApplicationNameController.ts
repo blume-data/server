@@ -13,8 +13,8 @@ import {
     trimCharactersAndNumbers
 } from "@ranjodhbirkaur/constants";
 import {DateTime} from "luxon";
-import {ApplicationSpaceModel} from "../models/ApplicationSpace";
-import {CollectionModel} from "../models/Collection";
+import {ApplicationSpaceModel} from "../../../db-models/ApplicationSpace";
+import {CollectionModel} from "../../../db-models/Collection";
 
 interface OnEnvCreate {
     clientUserName: string;

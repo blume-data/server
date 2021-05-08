@@ -2,7 +2,7 @@ import express, {NextFunction, Request, Response} from 'express';
 import {JwtPayloadType, okayStatus, sendSingleError, SESSION_ID, verifyJwt} from "@ranjodhbirkaur/common";
 import {signOutUrl} from "../util/urls";
 import {validateUserType} from "../middleware/userTypeCheck";
-import {SessionModel} from "../models/SessionModel";
+import {SessionModel} from "../../../db-models/SessionModel";
 
 const router = express.Router();
 

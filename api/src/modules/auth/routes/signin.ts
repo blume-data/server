@@ -25,9 +25,8 @@ import {ExistingUserType, passwordLimitOptionErrorMessage, passwordLimitOptions}
 
 import {signInUrl} from "../util/urls";
 import {validateUserType} from "../middleware/userTypeCheck";
-import {UserModel as MainUserModel} from "../models/UserModel";
-import {SessionModel} from "../models/SessionModel";
-import {PRODUCTION_ENV} from "@ranjodhbirkaur/constants";
+import {UserModel as MainUserModel} from "../../../db-models/UserModel";
+
 import {createNewSession} from "../util/tools";
 
 const router = express.Router();

@@ -1,4 +1,4 @@
-export const AssetsBaseUrl = '/assets-api/:clientUserName';
+export const AssetsBaseUrl = '/api/assets/:clientUserName';
 export const AssetsGetAssetsUrl = `${AssetsBaseUrl}`;
 // get asset json
 export const AssetsGetAssetsDataUrl = `${AssetsBaseUrl}/asset`;

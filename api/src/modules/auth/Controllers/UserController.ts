@@ -16,12 +16,12 @@ import {
     EMAIL,
     PayloadResponseType, JwtPayloadType, SESSION_ID
 } from "@ranjodhbirkaur/common";
-import {ClientTempUser} from "../models/clientTempUser";
+import {ClientTempUser} from "../../../db-models/clientTempUser";
 import {Request, Response} from "express";
 import {TOKEN_NOT_VALID, USER_NAME_NOT_AVAILABLE} from "../util/errorMessages";
-import {UserModel as MainUserModel} from "../models/UserModel";
+import {UserModel as MainUserModel} from "../../../db-models/UserModel";
 import {DateTime} from "luxon";
-import {ApplicationSpaceModel} from "../models/ApplicationSpace";
+import {ApplicationSpaceModel} from "../../../db-models/ApplicationSpace";
 import {EXAMPLE_APPLICATION_NAME} from "../util/constants";
 import {PRODUCTION_ENV} from "@ranjodhbirkaur/constants";
 import {createNewSession} from "../util/tools";

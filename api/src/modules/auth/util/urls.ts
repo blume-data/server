@@ -2,7 +2,7 @@ import {clusterUrl} from "./constants";
 
 export const clusterCheckUser = `${clusterUrl}/check`;
 
-export const authRootUrl = `/auth-api`;
+export const authRootUrl = `/api/auth`;
 
 export const addressUrls = 'routes';
 export const getAddressUrls = (userType?: string) => {

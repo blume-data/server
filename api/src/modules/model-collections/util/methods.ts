@@ -16,8 +16,7 @@ import {
     APPLICATION_NAME,
     CLIENT_USER_NAME,
     okayStatus
-} from "@ranjodhbirkaur/common"
-import {FileModel} from '../models/FileModels';
+} from "@ranjodhbirkaur/common";
 import {getCollection} from "../Controllers/StoreController";
 
 export function isValidRegEx(reg: string) {

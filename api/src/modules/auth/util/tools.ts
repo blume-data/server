@@ -1,4 +1,4 @@
-import {SessionModel} from "../models/SessionModel";
+import {SessionModel} from "../../../db-models/SessionModel";
 import {Request} from 'express';
 import {CLIENT_USER_NAME, USER_NAME} from "@ranjodhbirkaur/common";
 import {PRODUCTION_ENV} from "@ranjodhbirkaur/constants";

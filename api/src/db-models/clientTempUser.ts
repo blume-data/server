@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-import { Password } from '../services/password';
 import {supportUserType} from '@ranjodhbirkaur/common';
 
 interface ClientTempUserAttrs {

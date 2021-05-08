@@ -24,13 +24,13 @@ import {
     passwordLimitOptionErrorMessage,
     passwordLimitOptions,
 } from "../util/constants";
-import {ClientTempUser} from "../models/clientTempUser";
+import {ClientTempUser} from "../../../db-models/clientTempUser";
 
 import {validateUserTypeSignUp} from "../middleware/userTypeCheck-Signup";
 import {CLIENT_USER_NAME_NOT_VALID, EmailInUseMessage, InValidEmailMessage, UserNameNotAvailableMessage} from "../util/errorMessages";
 import {signUpUrl} from "../util/urls";
 import {trimCharactersAndNumbers} from "@ranjodhbirkaur/constants";
-import {UserModel as MainUserModel} from "../models/UserModel";
+import {UserModel as MainUserModel} from "../../../db-models/UserModel";
 
 const
     router = express.Router();

@@ -3,8 +3,6 @@ import {rootUrl, serviceName} from "./constants";
 
 export const dataRouteUrls = `${serviceName}/routes`;
 
-export const RoleUrl = `${rootUrl}/:userName/role/:roleName?`;
-
 export const ApplicationNameUrl = `${serviceName}/:clientUserName/application-space/:applicationName?`;
 
 export const CollectionUrl = `${rootUrl}/:clientUserName/:applicationName/models`;

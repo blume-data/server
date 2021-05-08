@@ -3,7 +3,7 @@ import {
     errorStatus, okayStatus, sendSingleError,
     getPageAndPerPage, paginateData, RANDOM_STRING, ID
 } from "@ranjodhbirkaur/common";
-import {FileModel} from "../models/file-models";
+import {FileModel} from "../../../db-models/file-models";
 import {imagekitConfig} from "../utils/methods";
 import {
     AssetsGetAssetsUrl,

@@ -7,7 +7,7 @@ import {
     sendSingleError, Is_Enabled, CLIENT_USER_NAME, ID,
 } from "@ranjodhbirkaur/common";
 import jwt from 'jsonwebtoken';
-import {UserModel} from "../models/UserModel";
+import {UserModel} from "../../../db-models/UserModel";
 
 /*
 * Check isEnabled jwt_id and client type
