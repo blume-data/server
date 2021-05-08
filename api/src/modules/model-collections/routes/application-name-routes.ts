@@ -9,8 +9,8 @@ import {
 import express, {Request, Response, NextFunction} from 'express';
 import { body } from 'express-validator';
 import { createApplicationName, getApplicationName } from '../Controllers/ApplicationNameController';
-import { ApplicationNameUrl } from '../util/urls';
-import {checkAuth} from "../services/checkAuth";
+import { ApplicationNameUrl } from '../../../util/urls';
+import {checkAuth} from "../../../services/checkAuth";
 
 const router = express.Router();
 

@@ -1,6 +1,6 @@
 import express, {Request, Response} from "express";
 import {onEnvCreate} from "../Controllers/ApplicationNameController";
-import {sendOkayResponse} from "../util/methods";
+import {sendOkayResponse} from "../../../util/methods";
 import {sendSingleError} from "@ranjodhbirkaur/common";
 
 

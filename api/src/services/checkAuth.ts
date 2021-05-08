@@ -5,7 +5,7 @@ import {
     JWT_ID, USER_NAME,
     sendSingleError, Is_Enabled, CLIENT_USER_NAME, ID, verifyJwt,
 } from "@ranjodhbirkaur/common";
-import {UserModel} from "../../../db-models/UserModel";
+import {UserModel} from "../db-models/UserModel";
 
 /*
 * Check isEnabled jwt_id and client type

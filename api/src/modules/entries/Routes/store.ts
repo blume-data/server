@@ -1,9 +1,9 @@
 import express, { NextFunction, Request, Response } from "express";
-import {GetEntriesUrl, StoreReferenceUrl, StoreUrl} from "../util/urls";
+import {GetEntriesUrl, StoreReferenceUrl, StoreUrl} from "../../../util/urls";
 import {createStoreRecord, deleteStoreRecord, getStoreRecord} from "../Controllers/StoreController";
-import {validateEnvType} from "../util/enviornmentTypes";
-import {checkAuth} from "../services/checkAuth";
-import {validateApplicationNameMiddleWare} from "../services/validateApplicationNameMiddleWare";
+import {validateEnvType} from "../../../util/enviornmentTypes";
+import {checkAuth} from "../../../services/checkAuth";
+import {validateApplicationNameMiddleWare} from "../../../services/validateApplicationNameMiddleWare";
 import { sendSingleError } from "@ranjodhbirkaur/common";
 
 const router = express.Router();

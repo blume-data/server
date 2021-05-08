@@ -5,7 +5,7 @@ import {
     sendSingleError
 } from '@ranjodhbirkaur/common';
 import {Request, Response} from 'express';
-import {APPLICATION_NAME_ALREADY_EXIST} from "./Messages";
+import {APPLICATION_NAME_ALREADY_EXIST} from "../../../util/Messages";
 import {
     JSON_FIELD_TYPE,
     PRODUCTION_ENV,

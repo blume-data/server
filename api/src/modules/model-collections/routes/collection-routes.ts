@@ -1,16 +1,16 @@
 import express from 'express';
 import {body} from "express-validator";
 import {validateRequest, stringLimitOptionErrorMessage, stringLimitOptions} from "@ranjodhbirkaur/common";
-import {CollectionUrl, GetCollectionNamesUrl} from "../util/urls";
+import {CollectionUrl, GetCollectionNamesUrl} from "../../../util/urls";
 import {
     createCollectionSchema,
     deleteCollectionSchema,
     getCollectionNames,
 } from "../Controllers/CollectionController";
-import {validateCollections} from "../services/middlewares/collections/validateCollections";
-import {checkAuth} from "../services/checkAuth";
-import {validateEnvType} from "../util/enviornmentTypes";
-import {validateApplicationNameMiddleWare} from "../services/validateApplicationNameMiddleWare";
+import {validateCollections} from "../../../services/middlewares/collections/validateCollections";
+import {checkAuth} from "../../../services/checkAuth";
+import {validateEnvType} from "../../../util/enviornmentTypes";
+import {validateApplicationNameMiddleWare} from "../../../services/validateApplicationNameMiddleWare";
 
 const router = express.Router();
 

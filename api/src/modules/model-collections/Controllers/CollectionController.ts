@@ -1,15 +1,15 @@
 import {Request, Response} from 'express';
 import {BadRequestError, ID, okayStatus, sendSingleError} from "@ranjodhbirkaur/common";
-import {MAX_COLLECTION_LIMIT,} from "../util/constants";
+import {MAX_COLLECTION_LIMIT,} from "../../../util/constants";
 import {CollectionModel} from "../../../db-models/Collection";
-import {CANNOT_CREATE_COLLECTIONS_MORE_THAN_LIMIT, COLLECTION_ALREADY_EXIST} from "./Messages";
+import {CANNOT_CREATE_COLLECTIONS_MORE_THAN_LIMIT, COLLECTION_ALREADY_EXIST} from "../../../util/Messages";
 
 import {
     ENTRY_UPDATED_AT,
     ENTRY_UPDATED_BY,
     trimCharactersAndNumbers
 } from "@ranjodhbirkaur/constants";
-import {createModel, createModelSchema, createStoreModelName, getModel} from "../util/methods";
+import {createModel, createModelSchema, createStoreModelName, getModel} from "../../../util/methods";
 import {DateTime} from "luxon";
 import mongoose from "mongoose";
 

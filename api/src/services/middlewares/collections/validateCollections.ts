@@ -3,7 +3,7 @@ import {
     INVALID_RULES_MESSAGE,
     REQUIRED_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN,
     UNIQUE_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN
-} from "../../../Controllers/Messages";
+} from "../../../util/Messages";
 import {errorStatus} from "@ranjodhbirkaur/common";
 import {
     FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN,

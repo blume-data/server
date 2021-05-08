@@ -11,8 +11,8 @@ import {
     sendSingleError
 } from "@ranjodhbirkaur/common";
 
-import {ENTRY_LANGUAGE_PROPERTY_NAME, TIMEZONE_DATE_CONSTANT} from "../util/constants";
-import {COLLECTION_NOT_FOUND, PARAM_SHOULD_BE_UNIQUE} from "./Messages";
+import {ENTRY_LANGUAGE_PROPERTY_NAME, TIMEZONE_DATE_CONSTANT} from "../../../util/constants";
+import {COLLECTION_NOT_FOUND, PARAM_SHOULD_BE_UNIQUE} from "../../../util/Messages";
 import * as mongoose from "mongoose";
 import {Model} from "mongoose";
 import {DateTime} from 'luxon';
@@ -60,7 +60,7 @@ import {
     usZipReg,
     UsZipRegName
 } from "@ranjodhbirkaur/constants";
-import {createModel, getModel, sendOkayResponse, trimGetOnly} from "../util/methods";
+import {createModel, getModel, sendOkayResponse, trimGetOnly} from "../../../util/methods";
 import {CollectionModel} from "../../../db-models/Collection";
 
 interface PopulateData {
