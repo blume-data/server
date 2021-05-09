@@ -267,7 +267,7 @@ async function createEntry(rules: RuleType[], req: Request, res: Response, colle
                     };
                 }
                 else {
-                    const item = new CustomCollectionModel({
+                    const item = CustomCollectionModel.build({
                         ...body,
                         name: collection.name,
                         applicationName,
@@ -275,11 +275,9 @@ async function createEntry(rules: RuleType[], req: Request, res: Response, colle
                         env,
                         data: JSON.stringify(body.data),
                         _id_: `${uuidv4()}`
-
-                    });
+                    })
                     const response = await item.save();
-                    console.log('response', response)
-                    return item;
+                    return {_id_: response._id_};
                 }
             }
             catch (e) {
@@ -349,8 +347,8 @@ export async function createStoreRecord(req: Request, res: Response) {
                     let entryId = (req.body && req.body.id) || '';
                     if(req.body && !req.body.id) {
                         const entry: any = await createEntry(rules, req, res, collection);
-                        if(entry && entry.id) {
-                            entryId = entry.id;
+                        if(entry && entry._id_) {
+                            entryId = entry._id_;
                         }
                         else {
                             // validation failed
@@ -395,9 +393,10 @@ export async function createStoreRecord(req: Request, res: Response) {
         }
         else {
             const entry: any = await createEntry(rules, req, res, collection);
-            if(entry && entry.id) {
+            console.log('entry is created', entry)
+            if(entry && entry._id_) {
                 sendOkayResponse(res, {
-                    id: entry.id
+                    id: entry._id_
                 });
             }
         }
