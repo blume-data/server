@@ -90,30 +90,34 @@ import {getNameFields, getPropertyFields} from "./fields";
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type CreateDataModelType = PropsFromRedux;
 
+interface FieldData {
+    fieldName?: string;
+    fieldDescription?: string;
+    fieldMax?: string | number;
+    fieldMin?: string | number;
+    fieldMatchPattern?: string;
+    fieldMatchCustomPattern?: string;
+    fieldProhibitPattern?: string;
+    fieldMinMaxCustomErrorMessage?: string;
+    fieldMatchPatternCustomError?: string;
+    fieldProhibitPatternCustomError?: string;
+    fieldOnlySpecifiedValues?: string;
+    fieldDefaultValue?: string;
+    fieldDisplayName?: string;
+    fieldIsRequired?: string;
+    fieldIsUnique?: string;
+    fieldIsIndexable?: string;
+    fieldAssetsType?: string;
+    fieldType?: string;
+}
+
 const CreateDataModel = (props: CreateDataModelType) => {
 
     const [modelNames, setModelNames] = useState<{label: string; value: string}[]>([]);
     const [settingFieldName, setSettingFieldName] = useState<boolean>(false);
     const [addingField, setAddingField] = useState<boolean>(false);
 
-    const [fieldName, setFieldName] = useState<string>('');
-    const [fieldDescription, setFieldDescription] = useState<string>('');
-    const [fieldMax, setFieldMax] = useState<number | string>('');
-    const [fieldMin, setFieldMin] = useState<number | string>('');
-    const [fieldMatchPattern, setFieldMatchPattern] = useState<string>('');
-    const [fieldMatchCustomPattern, setFieldMatchCustomPattern] = useState<string>('');
-    const [fieldProhibitPattern, setFieldProhibitPattern] = useState<string>('');
-    const [fieldMinMaxCustomErrorMessage, setFieldMinMaxCustomErrorMessage] = useState<string>('');
-    const [fieldMatchPatternCustomError, setFieldMatchPatternCustomError] = useState<string>('');
-    const [fieldProhibitPatternCustomError, setFieldProhibitPatternCustomError] = useState<string>('');
-    const [fieldOnlySpecifiedValues, setFieldOnlySpecifiedValues] = useState<string>('');
-    const [fieldDefaultValue, setFieldDefaultValue] = useState<string>('');
-    const [fieldDisplayName, setFieldDisplayName] = useState<string>('');
-    const [fieldIsRequired, setFieldIsRequired] = useState<string>('');
-    const [fieldIsUnique, setFieldIsUnique] = useState<string>('');
-    const [fieldIsIndexable, setFieldIsIndexable] = useState<string>('');
-    const [fieldAssetsType, setFieldAssetsType] = useState<string>(SINGLE_ASSETS_TYPE);
-    const [fieldType, setFieldType] = useState<string>('');
+    const [fieldData, setFieldData] = useState<FieldData>({});
 
     const [fieldEditMode, setFieldEditMode] = useState<boolean>(false);
 
@@ -138,6 +142,14 @@ const CreateDataModel = (props: CreateDataModelType) => {
     const {
         env, CollectionUrl, applicationName, GetCollectionNamesUrl, language,
     } = props;
+
+    const {
+        fieldName='', fieldIsIndexable='', fieldDisplayName='', fieldMatchPattern='', fieldMatchCustomPattern='',
+        fieldProhibitPattern='', fieldMax='', fieldMinMaxCustomErrorMessage='', fieldMin='',
+        fieldAssetsType='', fieldType='', fieldDefaultValue='', fieldDescription='',
+        fieldIsRequired='', fieldIsUnique='', fieldMatchPatternCustomError='', fieldProhibitPatternCustomError='',
+        fieldOnlySpecifiedValues=''
+    } = fieldData;
 
     const history = useHistory();
 
@@ -564,7 +576,10 @@ const CreateDataModel = (props: CreateDataModelType) => {
     function fieldItem(name: string, description: string, Icon: JSX.Element, value: string) {
 
         function onClick() {
-            setFieldType(value);
+            setFieldData({
+                ...fieldData,
+                fieldType: value
+            });
             setAddingField(false);
             setSettingFieldName(true);
         }
@@ -653,42 +668,79 @@ const CreateDataModel = (props: CreateDataModelType) => {
 
         function onClickEdit(property: RuleType) {
 
-            setFieldType(property.type);
             setTimeout(() => {
 
                 setSettingFieldName(true);
                 setAddingField(false);
                 setFieldEditMode(true);
-                setFieldDisplayName(property.displayName);
-                setFieldName(property.name);
-                setFieldDescription(property.description);
-                setFieldIsRequired(property.required ? 'true' : 'false');
-                setFieldIsUnique(property.unique ? 'true' : 'false');
-                setFieldIsIndexable(property.indexable ? 'true' : 'false');
-                if(property.type === BOOLEAN_FIElD_TYPE) {
-                    setFieldDefaultValue(property.default === 'true' ? 'true' : 'false');
-                }
-                else {
-                    setFieldDefaultValue(property.default || '');
-                }
-
-                if(property.type === MEDIA_FIELD_TYPE) {
-                    setFieldAssetsType(property.assetsType || '');
-                }
-
-                if(property.type === SHORT_STRING_FIElD_TYPE || property.type === INTEGER_FIElD_TYPE) {
-                    setFieldMax(property.max || '');
-                    setFieldMin(property.min || '');
-                    setFieldMinMaxCustomErrorMessage(property[FIELD_CUSTOM_ERROR_MSG_MIN_MAX] || '');
-                    setFieldOnlySpecifiedValues(property.onlyAllowedValues || '')
-                }
-                if(property.type === SHORT_STRING_FIElD_TYPE) {
-                    setFieldMatchPattern(property.matchSpecificPattern || '');
-                    setFieldMatchCustomPattern(property.matchSpecificPattern || '');
-                    setFieldProhibitPattern(property.prohibitSpecificPattern || '');
-                    setFieldMatchPatternCustomError(property[FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN] || '');
-                    setFieldProhibitPatternCustomError(property[FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN] || '');
-                }
+                setFieldData({
+                    ...fieldData,
+                    fieldType: property.type,
+                    fieldDisplayName: property.displayName,
+                    fieldName: property.name,
+                    fieldDescription: property.description,
+                    fieldIsRequired: property.required ? 'true' : 'false',
+                    fieldIsUnique: property.unique ? 'true' : 'false',
+                    fieldIsIndexable: property.indexable ? 'true' : 'false',
+                    fieldDefaultValue: (() => {
+                        if(property.type === BOOLEAN_FIElD_TYPE) {
+                            return property.default === 'true' ? 'true' : 'false'
+                        }
+                        else {
+                            return property.default || '';
+                        }
+                    })(),
+                    fieldAssetsType: (() => {
+                        if(property.type === MEDIA_FIELD_TYPE) {
+                            return property.assetsType || '';
+                        }
+                    })(),
+                    fieldMax: (() => {
+                        if(property.type === SHORT_STRING_FIElD_TYPE || property.type === INTEGER_FIElD_TYPE) {
+                            return property.max || '';
+                        }
+                    })(),
+                    fieldMin: (() => {
+                        if(property.type === SHORT_STRING_FIElD_TYPE || property.type === INTEGER_FIElD_TYPE) {
+                            return property.min || '';
+                        }
+                    })(),
+                    fieldMinMaxCustomErrorMessage: (() => {
+                        if(property.type === SHORT_STRING_FIElD_TYPE || property.type === INTEGER_FIElD_TYPE) {
+                            return property[FIELD_CUSTOM_ERROR_MSG_MIN_MAX] || '';
+                        }
+                    })(),
+                    fieldOnlySpecifiedValues: (() => {
+                        if(property.type === SHORT_STRING_FIElD_TYPE || property.type === INTEGER_FIElD_TYPE) {
+                            return property.onlyAllowedValues || '';
+                        }
+                    })(),
+                    fieldMatchPattern: (() => {
+                        if(property.type === SHORT_STRING_FIElD_TYPE) {
+                            return property.matchSpecificPattern || '';
+                        }
+                    })(),
+                    fieldMatchCustomPattern: (() => {
+                        if(property.type === SHORT_STRING_FIElD_TYPE) {
+                            return property.matchCustomSpecificPattern || '';
+                        }
+                    })(),
+                    fieldProhibitPattern: (() => {
+                        if(property.type === SHORT_STRING_FIElD_TYPE) {
+                            return property.prohibitSpecificPattern || '';
+                        }
+                    })(),
+                    fieldMatchPatternCustomError: (() => {
+                        if(property.type === SHORT_STRING_FIElD_TYPE) {
+                            return property[FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN] || '';
+                        }
+                    })(),
+                    fieldProhibitPatternCustomError: (() => {
+                        if(property.type === SHORT_STRING_FIElD_TYPE) {
+                            return property[FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN] || '';
+                        }
+                    })(),
+                });
             });
 
         }
@@ -720,25 +772,9 @@ const CreateDataModel = (props: CreateDataModelType) => {
 
     /*Close the form of fields properties*/
     function closeAddFieldForm() {
-        setFieldName('');
-        setFieldDescription('');
-        setFieldDisplayName('');
+        setFieldData({});
         setFieldEditMode(false);
         setSettingFieldName(false);
-        setFieldMatchPattern('');
-        setFieldMax('');
-        setFieldMin('');
-        setFieldIsUnique('');
-        setFieldIsIndexable('');
-        setFieldIsRequired('');
-        setFieldDefaultValue('');
-        setFieldOnlySpecifiedValues('');
-        setFieldProhibitPatternCustomError('');
-        setFieldMatchPatternCustomError('');
-        setFieldMinMaxCustomErrorMessage('');
-        setFieldProhibitPattern('');
-        setFieldMatchCustomPattern('');
-        setFieldAssetsType('');
     }
 
     function renderAddFieldsAndSaveModelButtonGroup() {
