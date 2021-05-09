@@ -3,13 +3,14 @@ import {
     APPLICATION_NAME,
     BadRequestError,
     CLIENT_USER_MODEL_NAME,
-    CLIENT_USER_NAME, COMPARABLE, DATEABLE,
+    CLIENT_USER_NAME, COMPARABLE, DATEABLE, ENV,
     errorStatus, generateArray,
     getPageAndPerPage, ID,
     okayStatus,
     paginateData, SEARCHABLE,
     sendSingleError
 } from "../../../util/common-module";
+import { v4 as uuidv4 } from 'uuid';
 
 import {ENTRY_LANGUAGE_PROPERTY_NAME, TIMEZONE_DATE_CONSTANT} from "../../../util/constants";
 import {COLLECTION_NOT_FOUND, PARAM_SHOULD_BE_UNIQUE} from "../../../util/Messages";
@@ -62,7 +63,7 @@ import {
 } from "@ranjodhbirkaur/constants";
 import {createModel, getModel, sendOkayResponse, trimGetOnly} from "../../../util/methods";
 import {CollectionModel} from "../../../db-models/Collection";
-import { v4 as uuidv4 } from 'uuid';
+import { CustomCollectionModel } from '../../../db-models/CustomCollections';
 interface PopulateData {
     name: string;
     getOnly?: string[];
@@ -237,6 +238,7 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
 async function createEntry(rules: RuleType[], req: Request, res: Response, collection: {name: string, clientUserName: string, applicationName: string}) {
     const clientUserName = req.params[CLIENT_USER_NAME];
     const applicationName = req.params[APPLICATION_NAME];
+    const env = req.params[ENV];
 
     const requestBody = req && req.body;
     const body = checkBodyAndRules(rules, req, res);
@@ -265,8 +267,18 @@ async function createEntry(rules: RuleType[], req: Request, res: Response, colle
                     };
                 }
                 else {
-                    const item = new model(body);
-                    await item.save();
+                    const item = new CustomCollectionModel({
+                        ...body,
+                        name: collection.name,
+                        applicationName,
+                        clientUserName,
+                        env,
+                        data: JSON.stringify(body.data),
+                        _id_: `${uuidv4()}`
+
+                    });
+                    const response = await item.save();
+                    console.log('response', response)
                     return item;
                 }
             }
@@ -336,7 +348,7 @@ export async function createStoreRecord(req: Request, res: Response) {
                 if(propertyName && exist) {
                     let entryId = (req.body && req.body.id) || '';
                     if(req.body && !req.body.id) {
-                        const entry = await createEntry(rules, req, res, collection);
+                        const entry: any = await createEntry(rules, req, res, collection);
                         if(entry && entry.id) {
                             entryId = entry.id;
                         }
@@ -382,7 +394,7 @@ export async function createStoreRecord(req: Request, res: Response) {
             }
         }
         else {
-            const entry = await createEntry(rules, req, res, collection);
+            const entry: any = await createEntry(rules, req, res, collection);
             if(entry && entry.id) {
                 sendOkayResponse(res, {
                     id: entry.id
@@ -491,7 +503,8 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
         [ENTRY_UPDATED_AT]: createdAt,
         [ENTRY_CREATED_BY]: currentUserId,
         [ENTRY_UPDATED_BY]: currentUserId,
-        [ENTRY_LANGUAGE_PROPERTY_NAME]: language
+        [ENTRY_LANGUAGE_PROPERTY_NAME]: language,
+        data: {}
     };
     let isValid = true;
     const errorMessages: ErrorMessagesType[] = [];
@@ -808,48 +821,46 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
             }
         }
         if (isValid) {
-            switch (rule.type) {
-                case SHORT_STRING_FIElD_TYPE: {
-                    const index = searchable.shift();
-                    body = {
-                        ...body,
-                        [`${SEARCHABLE}${index}`]: reqBody[rule.name]
-                    }
-                    break;
-                }
-                case INTEGER_FIElD_TYPE: {
-                    const index = comparable.shift();
-                    body = {
-                        ...body,
-                        [`${COMPARABLE}${index}`]: reqBody[rule.name]
-                    }
-                    break;
-                }
-                case DATE_FIElD_TYPE: {
-                    const index = dateable.shift();
-                    body = {
-                        ...body,
-                        [`${DATEABLE}${index}`]: reqBody[rule.name]
-                    }
-                    break;
-                }
-                case DATE_AND_TIME_FIElD_TYPE: {
-                    const index = dateable.shift();
-                    body = {
-                        ...body,
-                        [`${DATEABLE}${index}`]: reqBody[rule.name]
-                    }
-                    break;
-                }
-                default: {
-                    body = {
-                        ...body,
-                        data: {
-                            ...body.data,
-                            [rule.name] : reqBody[rule.name]
+            if(rule.indexable && rule.indexNumber) {
+                switch (rule.type) {
+                    case SHORT_STRING_FIElD_TYPE: {
+                        body = {
+                            ...body,
+                            [`${SEARCHABLE}${rule.indexNumber}`]: reqBody[rule.name]
                         }
-                    };
+                        break;
+                    }
+                    case INTEGER_FIElD_TYPE: {
+                        body = {
+                            ...body,
+                            [`${COMPARABLE}${rule.indexNumber}`]: reqBody[rule.name]
+                        }
+                        break;
+                    }
+                    case DATE_FIElD_TYPE: {
+                        body = {
+                            ...body,
+                            [`${DATEABLE}${rule.indexNumber}`]: reqBody[rule.name]
+                        }
+                        break;
+                    }
+                    case DATE_AND_TIME_FIElD_TYPE: {
+                        body = {
+                            ...body,
+                            [`${DATEABLE}${rule.indexNumber}`]: reqBody[rule.name]
+                        }
+                        break;
+                    }
                 }
+            }
+            else {
+                body = {
+                    ...body,
+                    data: {
+                        ...body.data,
+                        [rule.name] : reqBody[rule.name]
+                    }
+                };
             }
 
             if (!reqBody[rule.name] && rule.default) {

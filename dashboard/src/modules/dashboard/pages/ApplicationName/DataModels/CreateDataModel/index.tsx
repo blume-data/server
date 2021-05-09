@@ -111,6 +111,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
     const [fieldDisplayName, setFieldDisplayName] = useState<string>('');
     const [fieldIsRequired, setFieldIsRequired] = useState<string>('');
     const [fieldIsUnique, setFieldIsUnique] = useState<string>('');
+    const [fieldIsIndexable, setFieldIsIndexable] = useState<string>('');
     const [fieldAssetsType, setFieldAssetsType] = useState<string>(SINGLE_ASSETS_TYPE);
     const [fieldType, setFieldType] = useState<string>('');
 
@@ -613,7 +614,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
             hello.push({
                 required: false,
                 placeholder: 'Is unique',
-                value: fieldIsUnique,
+                value: fieldIsIndexable,
                 className: 'is-unique-check-box',
                 name: 'indexable',
                 label: 'Is main',
@@ -668,6 +669,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
             let propertyMin = 0;
             let propertyMinMaxCustomErrorMessage = '';
             let propertyIsUnique = '';
+            let propertyIsIndexable = '';
 
             let propertyMatchPattern = '';
             let propertyMatchPatternError = '';
@@ -751,6 +753,10 @@ const CreateDataModel = (props: CreateDataModelType) => {
                         propertyMinMaxCustomErrorMessage = v;
                         break;
                     }
+                    case 'indexable': {
+                        propertyIsIndexable = v;
+                        break;
+                    }
                     case IS_FIELD_UNIQUE: {
                         propertyIsUnique = v;
                         break;
@@ -818,7 +824,8 @@ const CreateDataModel = (props: CreateDataModelType) => {
                         referenceModelName: propertyReferenceModelName ? propertyReferenceModelName : undefined,
                         referenceModelType: propertyReferenceModelType ? propertyReferenceModelType : undefined,
 
-                        assetsType: propertyMediaType ? propertyMediaType : undefined
+                        assetsType: propertyMediaType ? propertyMediaType : undefined,
+                        indexable: !!propertyIsIndexable
                     };
 
                     const tempProperties = JSON.parse(JSON.stringify(properties ? properties : []));

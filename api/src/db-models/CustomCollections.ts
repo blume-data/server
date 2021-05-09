@@ -1,123 +1,124 @@
 import mongoose, {Schema} from 'mongoose';
 
-interface CustomCollectionAttrs {
-
-    clientUserName : string;
-    applicationName: string;
-    env: string;
-
-    data: string;
-    identity: string;
-
-    // Can have six maximum comparable number fields
-    comparable1?: string;
-    comparable2?: string;
-    comparable3?: string;
-    comparable4?: string;
-    comparable5?: string;
-    comparable6?: string;
-    comparable7?: string;
-    comparable8?: string;
-    comparable9?: string;
-    comparable10?: string;
-
-    // Can have six maximum searchable text fields
-    searchable1?: string;
-    searchable2?: string;
-    searchable3?: string;
-    searchable4?: string;
-    searchable5?: string;
-    searchable6?: string;
-    searchable7?: string;
-    searchable8?: string;
-    searchable9?: string;
-    searchable10?: string;
-
-    // Can have six maximum date fields
-    date1?: Date;
-    date2?: Date;
-    date3?: Date;
-    date4?: Date;
-    date5?: Date;
-    date6?: Date;
-    date7?: Date;
-    date8?: Date;
-    date9?: Date;
-    date10?: Date;
-
-    // created
-    createdBy: string;
-    createdAt?: Date;
-
-    // deleted
-    deletedBy?: string;
-    deletedAt?: Date;
-
-    // updated
-    updatedBy: string;
-    updatedAt?: Date;
-}
-
-interface CustomCollectionModel extends mongoose.Model<CustomCollectionDoc> {
-    build(attrs: CustomCollectionAttrs): CustomCollectionDoc;
-}
-
-interface CustomCollectionDoc extends mongoose.Document {
-    clientUserName : string;
-    applicationName: string;
-    env: string;
-
-    data: string;
-    identity: string;
-
-    // Can have six maximum comparable number fields
-    comparable1?: string;
-    comparable2?: string;
-    comparable3?: string;
-    comparable4?: string;
-    comparable5?: string;
-    comparable6?: string;
-    comparable7?: string;
-    comparable8?: string;
-    comparable9?: string;
-    comparable10?: string;
-
-    // Can have six maximum searchable text fields
-    searchable1?: string;
-    searchable2?: string;
-    searchable3?: string;
-    searchable4?: string;
-    searchable5?: string;
-    searchable6?: string;
-    searchable7?: string;
-    searchable8?: string;
-    searchable9?: string;
-    searchable10?: string;
-
-    // Can have six maximum date fields
-    date1?: Date;
-    date2?: Date;
-    date3?: Date;
-    date4?: Date;
-    date5?: Date;
-    date6?: Date;
-    date7?: Date;
-    date8?: Date;
-    date9?: Date;
-    date10?: Date;
-
-    createdBy: string;
-    createdAt?: Date;
-
-    deletedBy?: string;
-    deletedAt?: Date;
-
-    updatedBy: string;
-    updatedAt: Date;
-}
+// interface CustomCollectionAttrs {
+//
+//     clientUserName : string;
+//     applicationName: string;
+//     env: string;
+//
+//     data: string;
+//     identity: string;
+//
+//     // Can have six maximum comparable number fields
+//     comparable1?: string;
+//     comparable2?: string;
+//     comparable3?: string;
+//     comparable4?: string;
+//     comparable5?: string;
+//     comparable6?: string;
+//     comparable7?: string;
+//     comparable8?: string;
+//     comparable9?: string;
+//     comparable10?: string;
+//
+//     // Can have six maximum searchable text fields
+//     searchable1?: string;
+//     searchable2?: string;
+//     searchable3?: string;
+//     searchable4?: string;
+//     searchable5?: string;
+//     searchable6?: string;
+//     searchable7?: string;
+//     searchable8?: string;
+//     searchable9?: string;
+//     searchable10?: string;
+//
+//     // Can have six maximum date fields
+//     date1?: Date;
+//     date2?: Date;
+//     date3?: Date;
+//     date4?: Date;
+//     date5?: Date;
+//     date6?: Date;
+//     date7?: Date;
+//     date8?: Date;
+//     date9?: Date;
+//     date10?: Date;
+//
+//     // created
+//     createdBy: string;
+//     createdAt?: Date;
+//
+//     // deleted
+//     deletedBy?: string;
+//     deletedAt?: Date;
+//
+//     // updated
+//     updatedBy: string;
+//     updatedAt?: Date;
+// }
+//
+// interface CustomCollectionModel extends mongoose.Model<CustomCollectionDoc> {
+//     build(attrs: CustomCollectionAttrs): CustomCollectionDoc;
+// }
+//
+// interface CustomCollectionDoc extends mongoose.Document {
+//     clientUserName : string;
+//     applicationName: string;
+//     env: string;
+//
+//     data: string;
+//     identity: string;
+//
+//     // Can have six maximum comparable number fields
+//     comparable1?: string;
+//     comparable2?: string;
+//     comparable3?: string;
+//     comparable4?: string;
+//     comparable5?: string;
+//     comparable6?: string;
+//     comparable7?: string;
+//     comparable8?: string;
+//     comparable9?: string;
+//     comparable10?: string;
+//
+//     // Can have six maximum searchable text fields
+//     searchable1?: string;
+//     searchable2?: string;
+//     searchable3?: string;
+//     searchable4?: string;
+//     searchable5?: string;
+//     searchable6?: string;
+//     searchable7?: string;
+//     searchable8?: string;
+//     searchable9?: string;
+//     searchable10?: string;
+//
+//     // Can have six maximum date fields
+//     date1?: Date;
+//     date2?: Date;
+//     date3?: Date;
+//     date4?: Date;
+//     date5?: Date;
+//     date6?: Date;
+//     date7?: Date;
+//     date8?: Date;
+//     date9?: Date;
+//     date10?: Date;
+//
+//     createdBy: string;
+//     createdAt?: Date;
+//
+//     deletedBy?: string;
+//     deletedAt?: Date;
+//
+//     updatedBy: string;
+//     updatedAt: Date;
+// }
 
 const CustomCollection = new mongoose.Schema(
     {
+        name: String,
         clientUserName: {
             type: String,
             required: true
@@ -134,7 +135,7 @@ const CustomCollection = new mongoose.Schema(
             type: String,
             required: true
         },
-        identity: {
+        _id_: {
             type: String,
             required: true
         },
@@ -183,10 +184,10 @@ const CustomCollection = new mongoose.Schema(
     }
 );
 
-CustomCollection.statics.build = (attrs: CustomCollectionAttrs) => {
-    return new CustomCollectionModel(attrs);
-};
+// CustomCollection.statics.build = (attrs: CustomCollectionAttrs) => {
+//     return new CustomCollectionModel(attrs);
+// };
 
-const CustomCollectionModel = mongoose.model<CustomCollectionDoc, CustomCollectionModel>('CustomCollectionModel', CustomCollection);
+const CustomCollectionModel = mongoose.model('CustomCollectionModel', CustomCollection);
 
 export { CustomCollectionModel };

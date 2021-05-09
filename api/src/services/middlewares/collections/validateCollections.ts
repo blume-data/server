@@ -277,6 +277,7 @@ export async function validateCollections(req: Request, res: Response, next: Nex
                     case SHORT_STRING_FIElD_TYPE: {
                         if(searchableCount < MAX_NUMBER_FIELD_TYPES) {
                             parsedRule.indexNumber = searchableCount + 1;
+                            parsedRule.indexable = true;
                             searchableCount++;
                         }
                         else {
@@ -291,6 +292,7 @@ export async function validateCollections(req: Request, res: Response, next: Nex
                     case INTEGER_FIElD_TYPE: {
                         if(comparableCount < MAX_NUMBER_FIELD_TYPES) {
                             parsedRule.indexNumber = comparableCount + 1;
+                            parsedRule.indexable = true;
                             comparableCount++;
                         }
                         else {
@@ -305,6 +307,7 @@ export async function validateCollections(req: Request, res: Response, next: Nex
                     case DATE_AND_TIME_FIElD_TYPE: {
                         if(dateableCount < MAX_NUMBER_FIELD_TYPES) {
                             parsedRule.indexNumber = dateableCount + 1;
+                            parsedRule.indexable = true;
                             dateableCount++;
                         }
                         else {
@@ -319,6 +322,7 @@ export async function validateCollections(req: Request, res: Response, next: Nex
                     case DATE_FIElD_TYPE: {
                         if(dateableCount < MAX_NUMBER_FIELD_TYPES) {
                             parsedRule.indexNumber = dateableCount + 1;
+                            parsedRule.indexable = true;
                             dateableCount++;
                         }
                         else {
