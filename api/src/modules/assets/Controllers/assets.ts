@@ -1,9 +1,9 @@
 import {Response, Request} from 'express';
 import {
     errorStatus, okayStatus, sendSingleError,
-    getPageAndPerPage, paginateData, RANDOM_STRING, ID
+    getPageAndPerPage, paginateData, ID
 } from "../../../util/common-module";
-import {FileModel} from "../../../db-models/file-models";
+import {FileModel} from "../../../db-models/FileModels";
 import {imagekitConfig} from "../utils/methods";
 import {
     AssetsGetAssetsUrl,
