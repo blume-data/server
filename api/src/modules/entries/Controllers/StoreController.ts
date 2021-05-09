@@ -244,7 +244,6 @@ async function createEntry(rules: RuleType[], req: Request, res: Response, colle
     const body = checkBodyAndRules(rules, req, res);
     if(body) {
 
-        console.log('body', body);
         const model: any = createModel({
             rules,
             name: collection.name,
@@ -393,7 +392,6 @@ export async function createStoreRecord(req: Request, res: Response) {
         }
         else {
             const entry: any = await createEntry(rules, req, res, collection);
-            console.log('entry is created', entry)
             if(entry && entry._id_) {
                 sendOkayResponse(res, {
                     id: entry._id_
