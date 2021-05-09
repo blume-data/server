@@ -72,7 +72,6 @@ export async function createApplicationName(req: Request, res: Response) {
             env: [PRODUCTION_ENV],
             updatedBy: req.currentUser[ID],
             description,
-            hasQueryModel,
             createdAt,
             createdBy: req.currentUser[ID],
             updatedAt: createdAt

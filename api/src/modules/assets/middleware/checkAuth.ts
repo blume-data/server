@@ -4,7 +4,7 @@ import {
     clientType,
     clientUserType,
     JWT_ID, USER_NAME, AUTHORIZATION_TOKEN,
-    sendSingleError, Is_Enabled, CLIENT_USER_NAME, ID,
+    sendSingleError, Is_Enabled, CLIENT_USER_NAME, ID, JWT_KEY,
 } from "../../../util/common-module";
 import jwt from 'jsonwebtoken';
 import {UserModel} from "../../../db-models/UserModel";
@@ -29,13 +29,13 @@ export async function checkAuth(req: Request, res: Response, next: NextFunction 
             // verify token
             payload = jwt.verify(
                 headers[AUTHORIZATION_TOKEN],
-                process.env.JWT_KEY!
+                JWT_KEY
             );
         }
         else if(req.session && req.session.jwt) {
             payload = jwt.verify(
                 req.session.jwt,
-                process.env.JWT_KEY!
+                JWT_KEY
             )
         }
         else {

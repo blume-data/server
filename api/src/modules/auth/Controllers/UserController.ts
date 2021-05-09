@@ -14,7 +14,7 @@ import {
     FIRST_NAME,
     PASSWORD,
     EMAIL,
-    PayloadResponseType, JwtPayloadType, SESSION_ID
+    PayloadResponseType, JwtPayloadType, SESSION_ID, JWT_KEY
 } from "../../../util/common-module";
 import {ClientTempUser} from "../../../db-models/clientTempUser";
 import {Request, Response} from "express";
@@ -118,7 +118,7 @@ export const verifyEmailToken = async function (req: ReqValidateEmail, res: Resp
                 // create a new example application space
                 await OnCreateNewUser(newUser[ID]);
                 await axios.post('http://data-srv:3000/data-events', {
-                    key: process.env.JWT_KEY,
+                    key: JWT_KEY,
                     type: 'OnEnvCreate',
                     data: {
                         clientUserName: newUser[USER_NAME],
@@ -162,7 +162,6 @@ export async function OnCreateNewUser(userId: string) {
         clientUserId: userId,
         name: EXAMPLE_APPLICATION_NAME,
         env: [PRODUCTION_ENV],
-        hasQueryModel: false,
         updatedBy: userId,
         description: 'This is an example space',
         createdAt,

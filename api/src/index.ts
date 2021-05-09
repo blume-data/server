@@ -16,9 +16,6 @@ import userAgent from 'express-useragent';
 import {assetsRoutes} from "./modules/assets/routes";
 
 const start = async () => {
-  if (!process.env.JWT_KEY) {
-    throw new Error('JWT_KEY must be defined');
-  }
 
   const MONGO_URL = getMongoDatabaseUrl();
   try {
@@ -53,7 +50,7 @@ const start = async () => {
 
   serverApp.use(errorHandler);
 
-  serverApp.listen(3000, () => {
+  serverApp.listen(4000, () => {
     console.log('Data Service: Server is Listening!');
   });
 };

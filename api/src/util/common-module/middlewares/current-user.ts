@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import {JWT_COOKIE_NAME} from "../utils";
+import {JWT_COOKIE_NAME, JWT_KEY} from "../utils";
 
 interface UserPayload {
   id: string;
@@ -28,7 +28,7 @@ export const getCurrentUser = (
   try {
     const payload = jwt.verify(
       req.cookies[JWT_COOKIE_NAME],
-      process.env.JWT_KEY!
+      JWT_KEY
     ) as UserPayload;
     req.currentUser = payload;
   } catch (err) {}

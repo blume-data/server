@@ -1,5 +1,5 @@
 import {BrowserRouter} from "react-router-dom";
-import {applyMiddleware, createStore} from "redux";
+import {applyMiddleware, createStore, compose} from "redux";
 import thunk from "redux-thunk";
 import {RouterComponent} from './Router';
 import {rootReducer, RouteAddressStateType} from './rootReducer';
@@ -13,6 +13,7 @@ declare global {
         INITIAL_STATE: {
             routeAddress: RouteAddressStateType
         };
+        __REDUX_DEVTOOLS_EXTENSION_COMPOSE__: any;
     }
 }
 let routeAddress: RouteAddressStateType;
@@ -21,11 +22,14 @@ if (window.INITIAL_STATE && window.INITIAL_STATE.routeAddress) {
     routeAddress = window.INITIAL_STATE.routeAddress;
 }
 
+/* eslint-disable no-underscore-dangle */
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store = createStore(
     rootReducer,
     window.INITIAL_STATE,
-    applyMiddleware(thunk)
+    composeEnhancers(applyMiddleware(thunk)),
 );
+/* eslint-enable */
 
 
 ReactDOM.render(

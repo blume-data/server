@@ -1,7 +1,7 @@
 import express, {Request, Response} from "express";
 import {onEnvCreate} from "../Controllers/ApplicationNameController";
 import {sendOkayResponse} from "../../../util/methods";
-import {sendSingleError} from "../../../util/common-module";
+import {JWT_KEY, sendSingleError} from "../../../util/common-module";
 
 
 const router = express.Router();
@@ -11,7 +11,7 @@ router.post('/data-events', async (req: Request, res: Response) => {
     console.log('got event', req.body)
     if(reqBody
         && reqBody.key
-        && reqBody.key === process.env.JWT_KEY
+        && reqBody.key === JWT_KEY
         && reqBody.type) {
         switch (reqBody.type) {
             case 'OnEnvCreate': {

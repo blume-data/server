@@ -6,7 +6,6 @@ interface ApplicationSpaceAttrs {
     clientUserId: string;
     description: string;
     env: string[];
-    hasQueryModel: boolean;
 
     // created
     createdBy: string;
@@ -30,7 +29,6 @@ interface ApplicationSpaceDoc extends mongoose.Document {
     clientUserId: string;
     description: string;
     env: string[];
-    hasQueryModel: boolean;
 
     // created
     createdBy: string;
@@ -51,10 +49,6 @@ const ApplicationSpaceMModel = new mongoose.Schema({
         description: String,
         clientUserId : { type: Schema.Types.ObjectId, ref: 'ClientUser' },
         env: [{type: String}],
-        hasQueryModel: {
-            type: Boolean,
-            default: false
-        },
 
         deletedBy : { type: Schema.Types.ObjectId, ref: 'ClientUser' },
         deletedAt : { type: Date },

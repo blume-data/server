@@ -15,15 +15,6 @@ spec:
       containers:
         - name: api
           image: taranjeetsingh/api
-          env:
-            - name: MONGO_URI
-              value: 'mongodb+srv://all:all@cluster0.a6c0l.mongodb.net/ranjodh?retryWrites=true&w=majority'
-              #value: 'mongodb://data-mongo-srv:27017/data'
-            - name: JWT_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: jwt-secret
-                  key: JWT_KEY
 ---
 apiVersion: v1
 kind: Service
@@ -35,6 +26,6 @@ spec:
   ports:
     - name: api
       protocol: TCP
-      port: 3000
-      targetPort: 3000
+      port: 4000
+      targetPort: 4000
 

@@ -30,3 +30,5 @@ export const mongoConnectOptions = {
     useCreateIndex: true,
     useFindAndModify: false
 };
+
+export const JWT_KEY = 'hello singh ji you are so good';

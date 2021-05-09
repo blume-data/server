@@ -1,15 +1,13 @@
 import {Request, Response} from 'express';
 import jwt from "jsonwebtoken";
-import {AUTH_TOKEN, AUTHORIZATION_TOKEN, JWT_COOKIE_NAME, okayStatus} from "../../utils";
+import {AUTH_TOKEN, AUTHORIZATION_TOKEN, JWT_COOKIE_NAME, JWT_KEY, okayStatus} from "../../utils";
 import {JwtPayloadType, PayloadResponseType} from "../../interface";
 
 export function generateJwt(payload: JwtPayloadType, res: Response) {
-    // Generate JWT
-    // Store it on session object
-    //res.cookie(JWT_COOKIE_NAME, userJwt, { maxAge: 99999999*999999, httpOnly: true });
+
     return jwt.sign(
         payload,
-        process.env.JWT_KEY!
+        JWT_KEY
     );
 }
 
@@ -24,14 +22,14 @@ export function verifyJwt(req: Request) {
         if(headers[AUTHORIZATION_TOKEN]) {
             payload = jwt.verify(
                 headers[AUTHORIZATION_TOKEN],
-                process.env.JWT_KEY!
+                JWT_KEY!
             );
 
         }
         else if(req.cookies && req.cookies[JWT_COOKIE_NAME]) {
             payload = jwt.verify(
                 req.cookies[JWT_COOKIE_NAME],
-                process.env.JWT_KEY!
+                JWT_KEY!
             )
         }
         return payload;
