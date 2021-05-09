@@ -32,3 +32,4 @@ export const mongoConnectOptions = {
 };
 
 export const JWT_KEY = 'hello singh ji you are so good';
+export const MAX_NUMBER_FIELD_TYPES = 10;

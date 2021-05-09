@@ -45,3 +45,11 @@ export async function paginateData(data: PaginateDataType) {
         data: items
     }
 }
+
+export function generateArray(size: number) {
+    const arr: number[] = [];
+    for(let i=1; i<=20; i++) {
+        arr.push(i);
+    }
+    return arr;
+}

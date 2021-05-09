@@ -4,7 +4,7 @@ import {
     REQUIRED_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN,
     UNIQUE_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN
 } from "../../../util/Messages";
-import {errorStatus} from "../../../util/common-module";
+import {errorStatus, MAX_NUMBER_FIELD_TYPES} from "../../../util/common-module";
 import {
     FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN,
     FIELD_CUSTOM_ERROR_MSG_MIN_MAX,
@@ -19,7 +19,12 @@ import {
     SHORT_STRING_FIElD_TYPE,
     shortenString,
     SUPPORTED_FIELDS_TYPE,
-    RuleType, FIELD_CUSTOM_ERROR_MSG_MATCH_CUSTOM_PATTERN, MEDIA_FIELD_TYPE, SINGLE_ASSETS_TYPE, MULTIPLE_ASSETS_TYPE
+    RuleType,
+    FIELD_CUSTOM_ERROR_MSG_MATCH_CUSTOM_PATTERN,
+    MEDIA_FIELD_TYPE,
+    SINGLE_ASSETS_TYPE,
+    MULTIPLE_ASSETS_TYPE,
+    DATE_AND_TIME_FIElD_TYPE, DATE_FIElD_TYPE
 } from "@ranjodhbirkaur/constants";
 import {isValidRegEx} from "../../../util/methods";
 
@@ -39,6 +44,11 @@ export async function validateCollections(req: Request, res: Response, next: Nex
     let inValidMessage = [];
     const reqMethod = req.method;
     const parsedRules: RuleType[] = [];
+
+    // counters
+    let searchableCount = 0;
+    let comparableCount = 0;
+    let dateableCount = 0;
 
     // Validate Rules
     if (reqBody.rules && typeof reqBody.rules === 'object' && reqBody.rules.length) {
@@ -256,6 +266,69 @@ export async function validateCollections(req: Request, res: Response, next: Nex
                     }
                     else {
                         parsedRule.assetsType = rule.assetsType;
+                    }
+                }
+            }
+
+
+            if(rule.indexable) {
+                // set the comparable searchable or dateable index number
+                switch (rule.type) {
+                    case SHORT_STRING_FIElD_TYPE: {
+                        if(searchableCount < MAX_NUMBER_FIELD_TYPES) {
+                            parsedRule.indexNumber = searchableCount + 1;
+                            searchableCount++;
+                        }
+                        else {
+                            isValidBody = false;
+                            inValidMessage.push({
+                                message: `Cannot add more than ${MAX_NUMBER_FIELD_TYPES} searchable fields`,
+                                field: 'rules'
+                            });
+                        }
+                        break;
+                    }
+                    case INTEGER_FIElD_TYPE: {
+                        if(comparableCount < MAX_NUMBER_FIELD_TYPES) {
+                            parsedRule.indexNumber = comparableCount + 1;
+                            comparableCount++;
+                        }
+                        else {
+                            isValidBody = false;
+                            inValidMessage.push({
+                                message: `Cannot add more than ${MAX_NUMBER_FIELD_TYPES} comparable number fields`,
+                                field: 'rules'
+                            });
+                        }
+                        break;
+                    }
+                    case DATE_AND_TIME_FIElD_TYPE: {
+                        if(dateableCount < MAX_NUMBER_FIELD_TYPES) {
+                            parsedRule.indexNumber = dateableCount + 1;
+                            dateableCount++;
+                        }
+                        else {
+                            isValidBody = false;
+                            inValidMessage.push({
+                                message: `Cannot add more than ${MAX_NUMBER_FIELD_TYPES} dateable fields`,
+                                field: 'rules'
+                            });
+                        }
+                        break;
+                    }
+                    case DATE_FIElD_TYPE: {
+                        if(dateableCount < MAX_NUMBER_FIELD_TYPES) {
+                            parsedRule.indexNumber = dateableCount + 1;
+                            dateableCount++;
+                        }
+                        else {
+                            isValidBody = false;
+                            inValidMessage.push({
+                                message: `Cannot add more than ${MAX_NUMBER_FIELD_TYPES} dateable fields`,
+                                field: 'rules'
+                            });
+                        }
+
                     }
                 }
             }

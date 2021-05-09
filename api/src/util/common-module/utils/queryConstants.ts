@@ -15,3 +15,8 @@ export const Is_Enabled = 'isEnabled';
 // array of application names of the client user
 export const APPLICATION_NAMES = 'applicationNames';
 export const SESSION_ID = 'sessionId';
+
+// Custom Collection
+export const COMPARABLE = 'comparable';
+export const SEARCHABLE = 'searchable';
+export const DATEABLE = 'date';

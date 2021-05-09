@@ -605,6 +605,24 @@ const CreateDataModel = (props: CreateDataModelType) => {
             })
         }
 
+        // make it searchable comparable or dateable
+        if(fieldType === SHORT_STRING_FIElD_TYPE
+            || fieldType === INTEGER_FIElD_TYPE
+            || fieldType === DATE_FIElD_TYPE
+            || fieldType === DATE_AND_TIME_FIElD_TYPE) {
+            hello.push({
+                required: false,
+                placeholder: 'Is unique',
+                value: fieldIsUnique,
+                className: 'is-unique-check-box',
+                name: 'indexable',
+                label: 'Is main',
+                inputType: CHECKBOX,
+                descriptionText: 'this is a main field',
+                groupName: FIELD_NAME_GROUP
+            });
+        }
+
         return hello;
     };
 

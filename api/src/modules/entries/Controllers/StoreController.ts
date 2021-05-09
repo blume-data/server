@@ -3,11 +3,11 @@ import {
     APPLICATION_NAME,
     BadRequestError,
     CLIENT_USER_MODEL_NAME,
-    CLIENT_USER_NAME,
-    errorStatus,
+    CLIENT_USER_NAME, COMPARABLE, DATEABLE,
+    errorStatus, generateArray,
     getPageAndPerPage, ID,
     okayStatus,
-    paginateData,
+    paginateData, SEARCHABLE,
     sendSingleError
 } from "../../../util/common-module";
 
@@ -62,7 +62,7 @@ import {
 } from "@ranjodhbirkaur/constants";
 import {createModel, getModel, sendOkayResponse, trimGetOnly} from "../../../util/methods";
 import {CollectionModel} from "../../../db-models/Collection";
-
+import { v4 as uuidv4 } from 'uuid';
 interface PopulateData {
     name: string;
     getOnly?: string[];
@@ -242,6 +242,7 @@ async function createEntry(rules: RuleType[], req: Request, res: Response, colle
     const body = checkBodyAndRules(rules, req, res);
     if(body) {
 
+        console.log('body', body);
         const model: any = createModel({
             rules,
             name: collection.name,
@@ -476,6 +477,10 @@ export async function getCollection(req: Request, specificModelName?: string) {
 }
 
 function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
+
+    let comparable = generateArray(10);
+    let searchable = generateArray(10);
+    let dateable = generateArray(10);
 
     const reqBody: any = req.body;
     const currentUserId = (req.currentUser && req.currentUser[ID]) ? req.currentUser[ID] : '';
@@ -803,17 +808,60 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
             }
         }
         if (isValid) {
-            body = {
-                ...body,
-                [rule.name] : reqBody[rule.name]
-            };
+            switch (rule.type) {
+                case SHORT_STRING_FIElD_TYPE: {
+                    const index = searchable.shift();
+                    body = {
+                        ...body,
+                        [`${SEARCHABLE}${index}`]: reqBody[rule.name]
+                    }
+                    break;
+                }
+                case INTEGER_FIElD_TYPE: {
+                    const index = comparable.shift();
+                    body = {
+                        ...body,
+                        [`${COMPARABLE}${index}`]: reqBody[rule.name]
+                    }
+                    break;
+                }
+                case DATE_FIElD_TYPE: {
+                    const index = dateable.shift();
+                    body = {
+                        ...body,
+                        [`${DATEABLE}${index}`]: reqBody[rule.name]
+                    }
+                    break;
+                }
+                case DATE_AND_TIME_FIElD_TYPE: {
+                    const index = dateable.shift();
+                    body = {
+                        ...body,
+                        [`${DATEABLE}${index}`]: reqBody[rule.name]
+                    }
+                    break;
+                }
+                default: {
+                    body = {
+                        ...body,
+                        data: {
+                            ...body.data,
+                            [rule.name] : reqBody[rule.name]
+                        }
+                    };
+                }
+            }
+
             if (!reqBody[rule.name] && rule.default) {
                 const defaultValue = rule.type === BOOLEAN_FIElD_TYPE
                     ? rule.default === 'true'
                     : rule.default
                 body = {
                     ...body,
-                    [rule.name] : defaultValue
+                    data: {
+                        ...body.data,
+                        [rule.name] : defaultValue,
+                    }
                 };
             }
             // if there is _id in req body add it in boy
