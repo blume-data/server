@@ -3,11 +3,11 @@ import {
     APPLICATION_NAME,
     BadRequestError,
     CLIENT_USER_MODEL_NAME,
-    CLIENT_USER_NAME, COMPARABLE, DATEABLE, ENV,
+    CLIENT_USER_NAME, ENTRY_ID, ENV,
     errorStatus, generateArray,
     getPageAndPerPage, ID,
     okayStatus,
-    paginateData, SEARCHABLE,
+    paginateData,
     sendSingleError
 } from "../../../util/common-module";
 import { v4 as uuidv4 } from 'uuid';
@@ -244,6 +244,8 @@ async function createEntry(rules: RuleType[], req: Request, res: Response, colle
     const body = checkBodyAndRules(rules, req, res);
     if(body) {
 
+        console.log('body', body);
+
         const model: any = createModel({
             rules,
             name: collection.name,
@@ -266,7 +268,7 @@ async function createEntry(rules: RuleType[], req: Request, res: Response, colle
                     };
                 }
                 else {
-                    const item = CustomCollectionModel.build({
+                    const item = new CustomCollectionModel({
                         ...body,
                         name: collection.name,
                         applicationName,
@@ -275,7 +277,7 @@ async function createEntry(rules: RuleType[], req: Request, res: Response, colle
                         data: JSON.stringify(body.data),
                         _id_: `${uuidv4()}`
                     })
-                    const response = await item.save();
+                    const response: any = await item.save();
                     return {_id_: response._id_};
                 }
             }
@@ -486,10 +488,6 @@ export async function getCollection(req: Request, specificModelName?: string) {
 }
 
 function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
-
-    let comparable = generateArray(10);
-    let searchable = generateArray(10);
-    let dateable = generateArray(10);
 
     const reqBody: any = req.body;
     const currentUserId = (req.currentUser && req.currentUser[ID]) ? req.currentUser[ID] : '';
@@ -819,35 +817,9 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
         }
         if (isValid) {
             if(rule.indexable && rule.indexNumber) {
-                switch (rule.type) {
-                    case SHORT_STRING_FIElD_TYPE: {
-                        body = {
-                            ...body,
-                            [`${SEARCHABLE}${rule.indexNumber}`]: reqBody[rule.name]
-                        }
-                        break;
-                    }
-                    case INTEGER_FIElD_TYPE: {
-                        body = {
-                            ...body,
-                            [`${COMPARABLE}${rule.indexNumber}`]: reqBody[rule.name]
-                        }
-                        break;
-                    }
-                    case DATE_FIElD_TYPE: {
-                        body = {
-                            ...body,
-                            [`${DATEABLE}${rule.indexNumber}`]: reqBody[rule.name]
-                        }
-                        break;
-                    }
-                    case DATE_AND_TIME_FIElD_TYPE: {
-                        body = {
-                            ...body,
-                            [`${DATEABLE}${rule.indexNumber}`]: reqBody[rule.name]
-                        }
-                        break;
-                    }
+                body = {
+                    ...body,
+                    [`${rule.type}${rule.indexNumber}`]: reqBody[rule.name]
                 }
             }
             else {
@@ -900,9 +872,18 @@ function validateParams(req: Request, res: Response, rules: RuleType[], findWher
             if (findWhere.hasOwnProperty(condition)) {
                 const ruleExist = rules.find(rule => rule.name === condition);
                 if(ruleExist) {
-                    where = {
-                        ...where,
-                        [condition]: findWhere[condition]
+                    if(ruleExist.indexable && ruleExist.indexNumber) {
+                        where = {
+                            ...where,
+                            [`${ruleExist.type}${ruleExist.indexNumber}`]: findWhere[condition]
+                        }
+                    }
+                    else {
+                        // TODO check later
+                        where = {
+                            ...where,
+                            [condition]: findWhere[condition]
+                        }
                     }
                 }
                 if (!ruleExist && !skip.includes(condition)) {
@@ -944,7 +925,7 @@ function validateParams(req: Request, res: Response, rules: RuleType[], findWher
                     else {
                         where = {
                             ...where,
-                            [condition]: findWhere[condition]
+                            [ENTRY_ID]: findWhere[condition]
                         }
                     }
                 }
