@@ -106,7 +106,6 @@ interface FieldData {
     fieldDisplayName?: string;
     fieldIsRequired?: string;
     fieldIsUnique?: string;
-    fieldIsIndexable?: string;
     fieldAssetsType?: string;
     fieldType?: string;
 }
@@ -144,7 +143,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
     } = props;
 
     const {
-        fieldName='', fieldIsIndexable='', fieldDisplayName='', fieldMatchPattern='', fieldMatchCustomPattern='',
+        fieldName='', fieldDisplayName='', fieldMatchPattern='', fieldMatchCustomPattern='',
         fieldProhibitPattern='', fieldMax='', fieldMinMaxCustomErrorMessage='', fieldMin='',
         fieldAssetsType='', fieldType='', fieldDefaultValue='', fieldDescription='',
         fieldIsRequired='', fieldIsUnique='', fieldMatchPatternCustomError='', fieldProhibitPatternCustomError='',
@@ -234,7 +233,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
 
     const propertyNameFields = getPropertyFields({
         modelNames,
-        fieldAssetsType, fieldName, fieldDisplayName, fieldType, fieldIsIndexable, fieldDescription,
+        fieldAssetsType, fieldName, fieldDisplayName, fieldType, fieldDescription,
         fieldDefaultValue, fieldEditMode, fieldMax, fieldMin, fieldIsRequired, fieldIsUnique,
         fieldMatchCustomPattern, fieldMatchPattern, fieldMatchPatternCustomError, fieldProhibitPattern,
         fieldMinMaxCustomErrorMessage, fieldProhibitPatternCustomError, fieldOnlySpecifiedValues,
@@ -438,7 +437,6 @@ const CreateDataModel = (props: CreateDataModelType) => {
                         referenceModelType: propertyReferenceModelType ? propertyReferenceModelType : undefined,
 
                         assetsType: propertyMediaType ? propertyMediaType : undefined,
-                        indexable: !!propertyIsIndexable
                     };
 
                     const tempProperties = JSON.parse(JSON.stringify(properties ? properties : []));
@@ -681,7 +679,6 @@ const CreateDataModel = (props: CreateDataModelType) => {
                     fieldDescription: property.description,
                     fieldIsRequired: property.required ? 'true' : 'false',
                     fieldIsUnique: property.unique ? 'true' : 'false',
-                    fieldIsIndexable: property.indexable ? 'true' : 'false',
                     fieldDefaultValue: (() => {
                         if(property.type === BOOLEAN_FIElD_TYPE) {
                             return property.default === 'true' ? 'true' : 'false'

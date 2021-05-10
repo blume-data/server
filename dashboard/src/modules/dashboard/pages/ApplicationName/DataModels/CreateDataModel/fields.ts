@@ -58,7 +58,7 @@ import {
     FIELD_PROHIBIT_SPECIFIC_PATTERN_GROUP,
     FIELD_REFERENCE_MODEL_GROUP,
     FIELD_REFERENCE_MODEL_NAME,
-    FIELD_REFERENCE_MODEL_TYPE, INDEXABLE,
+    FIELD_REFERENCE_MODEL_TYPE,
     MAX_VALUE,
     MIN_VALUE
 } from "./constants";
@@ -136,7 +136,6 @@ interface GetPropertyNameFields {
     fieldOnlySpecifiedValues: string;
     modelNames: OptionsType[];
     fieldAssetsType: string;
-    fieldIsIndexable: string;
 }
 export function getPropertyFields(props: GetPropertyNameFields) {
 
@@ -461,25 +460,6 @@ export function getPropertyFields(props: GetPropertyNameFields) {
                 descriptionText: 'Select type of media storage'
             })
         }
-
-        // make it searchable comparable or dateable
-        if(fieldType === SHORT_STRING_FIElD_TYPE
-            || fieldType === INTEGER_FIElD_TYPE
-            || fieldType === DATE_FIElD_TYPE
-            || fieldType === DATE_AND_TIME_FIElD_TYPE) {
-            hello.push({
-                required: false,
-                placeholder: 'Is Main',
-                value: props.fieldIsIndexable,
-                className: 'is-unique-check-box',
-                name: INDEXABLE,
-                label: 'Is main',
-                inputType: CHECKBOX,
-                descriptionText: 'this is a main field',
-                groupName: FIELD_NAME_GROUP
-            });
-        }
-
         return hello;
     };
     return propertyNameFields;

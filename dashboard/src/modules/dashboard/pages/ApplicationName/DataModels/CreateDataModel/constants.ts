@@ -14,7 +14,6 @@ export const FIELD_REFERENCE_MODEL_NAME = 'referenceModelName';
 export const FIELD_REFERENCE_MODEL_TYPE = 'referenceModelType';
 // type of assets field
 export const FIELD_ASSET_TYPE = 'assetsType';
-export const INDEXABLE = 'indexable';
 
 /*Field Group Names*/
 export const FIELD_LIMIT_CHARACTER_COUNT_GROUP = 'Limit character count';
