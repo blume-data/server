@@ -24,31 +24,7 @@ interface OnEnvCreate {
 }
 
 export async function onEnvCreate(data: OnEnvCreate) {
-
-    const {clientUserName, applicationName, env, userId} = data;
-    const createdAt = DateTime.local().setZone('UTC').toJSDate();
-
-    const newCollection = CollectionModel.build({
-        clientUserName,
-        isPublic: false,
-        applicationName,
-        rules: JSON.stringify([
-            {name: 'title', displayName: 'Title', description: 'Title of query', type: SHORT_STRING_FIElD_TYPE, required: true, unique: true},
-            {name: 'description', displayName: 'Description', description: 'Description of query', type: SHORT_STRING_FIElD_TYPE},
-            {name: 'data', displayName: 'Data', description: 'Data of query', type: JSON_FIELD_TYPE, required: true}
-        ]),
-        name: 'applicationQueries',
-        displayName: 'Application queries',
-        env,
-        updatedBy: userId,
-        description: 'this model consist of queries',
-        createdAt,
-        createdBy: userId,
-        updatedAt: createdAt,
-        titleField: 'title'
-    });
-
-    await newCollection.save();
+    console.log('On event ENV create');
 }
 
 export async function createApplicationName(req: Request, res: Response) {
