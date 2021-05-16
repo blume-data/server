@@ -1,3 +1,4 @@
+import React from "react";
 import App from "./components/App";
 import RouteNotFound from "./components/RouteNotFound";
 import {Auth, AUTH_ROOT, SIGN_IN} from "./modules/authentication/pages/Auth";
@@ -17,7 +18,7 @@ import {
     dashboardDataEntriesUrl,
     dashboardCreateDataEntryUrl,
     dashboardCreateDataModelsUrl,
-    assetsUrl, APP_ROOT_URL
+    assetsUrl, APP_ROOT_URL, dashboardEnvUrl
 } from "./utils/urls";
 import {Assets} from "./modules/assets";
 import Layout from "./components/common/Layout";
@@ -29,7 +30,7 @@ import DataModels from "./modules/dashboard/pages/ApplicationName/DataModels";
 import ApplicationName from "./modules/dashboard/pages/ApplicationName";
 import ApplicationNames from "./modules/dashboard/pages/applicationNames";
 import {DataEntries} from './modules/dashboard/pages/DateEntries';
-import React from "react";
+import Envs from "./modules/dashboard/pages/Envs";
 
 function PrivateRoute(Component: any) {
     return () => {
@@ -53,6 +54,8 @@ export const RouterComponent = () => {
                     <Route exact path={dashboardHomeUrl} component={PrivateRoute(Home)}/>
                     <Route exact path={dashboardApplicationNamesUrl} component={PrivateRoute(ApplicationNames)}/>
                     <Route exact path={dashboardApplicationNameUrl} component={PrivateRoute(ApplicationName)}/>
+
+                    <Route exact path={dashboardEnvUrl} component={PrivateRoute(Envs)} />
 
                     <Route exact path={dashboardDataModelsUrl} component={PrivateRoute(DataModels)}/>
                     <Route exact path={dashboardCreateDataModelsUrl} component={PrivateRoute(CreateDataModel)}/>

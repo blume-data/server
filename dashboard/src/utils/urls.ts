@@ -10,6 +10,8 @@ export const dashboardHomeUrl = `${APP_ROOT_URL}dashboard/home`;
 export const dashboardApplicationNamesUrl = `${APP_ROOT_URL}dashboard/application-space`;
 export const dashboardApplicationNameUrl = `${APP_ROOT_URL}dashboard/:applicationName/application-space`;
 
+export const dashboardEnvUrl = `${APP_ROOT_URL}dashboard/:applicationName/env/:envName?`;
+
 export const dashboardDataModelsUrl = `${APP_ROOT_URL}dashboard/:applicationName/models`;
 export const dashboardCreateDataModelsUrl = `${APP_ROOT_URL}dashboard/:applicationName/model`;
 

@@ -24,7 +24,6 @@ interface BasicTableMIUIProps {
         onClick?: any;
     }[];
     rows: any;
-    tableName: string;
     onSelectAll?: () => void;
     isAllSelected?: boolean;
 }
@@ -32,7 +31,7 @@ interface BasicTableMIUIProps {
 export default function BasicTableMIUI(props: BasicTableMIUIProps) {
     const classes = useStyles();
 
-    const {tableName, columns, rows, onSelectAll, isAllSelected=false} = props;
+    const {columns, rows, onSelectAll, isAllSelected=false} = props;
 
     function renderRow(row: any, index: number) {
 

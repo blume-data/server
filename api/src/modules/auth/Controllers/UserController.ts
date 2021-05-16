@@ -117,16 +117,6 @@ export const verifyEmailToken = async function (req: ReqValidateEmail, res: Resp
 
                 // create a new example application space
                 await OnCreateNewUser(newUser[ID]);
-                await axios.post('http://data-srv:3000/data-events', {
-                    key: JWT_KEY,
-                    type: 'OnEnvCreate',
-                    data: {
-                        clientUserName: newUser[USER_NAME],
-                        applicationName: EXAMPLE_APPLICATION_NAME,
-                        env: PRODUCTION_ENV,
-                        userId: newUser[ID]
-                    }
-                });
 
                 return await sendValidateEmailResponse(req, payload, response, res);
 

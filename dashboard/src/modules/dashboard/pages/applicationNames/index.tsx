@@ -1,8 +1,7 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {Grid} from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import ModalDialog from "../../../../components/common/ModalDialog";
-import {getApplicationNamesLocalStorage} from "../../../../utils/tools";
 import {APPLICATION_NAME} from "@ranjodhbirkaur/constants";
 import {CreateApplicationName} from "./create-application-name";
 import {RootState} from "../../../../rootReducer";
@@ -17,23 +16,12 @@ type PropsFromRedux = ConnectedProps<typeof connector>;
 
 const ApplicationNames = (props: PropsFromRedux) => {
 
-    const {ApplicationNameUrl, setApplicationName} = props;
-    const [applicationNames, setApplicationNames] = useState<string[] | null>(null);
+    const {ApplicationNameUrl, setApplicationName, applicationNames} = props;
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
     const history = useHistory();
 
-    function updateApplicationNames() {
-        setApplicationNames(getApplicationNamesLocalStorage());
-    }
-
-    // fetch the data routes
-    useEffect(() => {
-        updateApplicationNames();
-    },[]);
-
     function closeModal() {
-        updateApplicationNames();
         setIsModalOpen(false);
     }
 
@@ -55,10 +43,10 @@ const ApplicationNames = (props: PropsFromRedux) => {
                 {applicationNames && applicationNames.map((applicationName, index) => {
                     return (
                         <Link key={index}
-                              onClick={() => onClickLink(applicationName)}
-                              to={dashboardApplicationNameUrl.replace(`:${APPLICATION_NAME}`, applicationName)}>
+                              onClick={() => onClickLink(applicationName.name)}
+                              to={dashboardApplicationNameUrl.replace(`:${APPLICATION_NAME}`, applicationName.name)}>
                             <Grid className="application-space-list-item" item >
-                                {applicationName}
+                                {applicationName.name}
                             </Grid>
                         </Link>
                     );
