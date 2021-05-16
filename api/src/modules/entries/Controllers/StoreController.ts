@@ -816,12 +816,13 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
             }
         }
         if (isValid) {
-            if(rule.indexable && rule.indexNumber) {
+            if(rule.indexNumber !== undefined) {
                 body = {
                     ...body,
                     [`${rule.type}${rule.indexNumber}`]: reqBody[rule.name]
                 }
             }
+            // irrevelant
             else {
                 body = {
                     ...body,
@@ -872,7 +873,7 @@ function validateParams(req: Request, res: Response, rules: RuleType[], findWher
             if (findWhere.hasOwnProperty(condition)) {
                 const ruleExist = rules.find(rule => rule.name === condition);
                 if(ruleExist) {
-                    if(ruleExist.indexable && ruleExist.indexNumber) {
+                    if(ruleExist.indexNumber) {
                         where = {
                             ...where,
                             [`${ruleExist.type}${ruleExist.indexNumber}`]: findWhere[condition]

@@ -414,6 +414,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                         required: propertyIsRequired === 'true',
                         type: fieldType,
                         description: propertyDescription,
+                        indexNumber: 1,
                         [IS_FIELD_UNIQUE]: propertyIsUnique === 'true',
 
                         default: propertyDefaultValue ? propertyDefaultValue : undefined,
@@ -777,7 +778,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
     function renderAddFieldsAndSaveModelButtonGroup() {
         if(contentModelDisplayName) {
             return (
-                <ButtonGroup className={'modal-action-buttons'}>
+                <Grid container justify={"flex-end"} className={'modal-action-buttons'}>
                     <CommonButton
                         name={'Add Fields'}
                         onClick={onClickAddFields}
@@ -789,14 +790,14 @@ const CreateDataModel = (props: CreateDataModelType) => {
                         properties && properties.length
                             ? <CommonButton
                                 name={'Save Model'}
-                                //title={'Save Model'}
+                                className={'save-model'}
                                 onClick={onClickSaveDataModel}
                                 color={"primary"}
                                 variant={"contained"}
                                />
                             : null
                     }
-                </ButtonGroup>
+                </Grid>
             );
         }
         return null;

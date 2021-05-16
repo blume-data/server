@@ -79,6 +79,9 @@
       .modal-action-buttons {
         float: right;
         margin-top: 20px;
+        .save-model {
+          margin-left: 10px;
+        }
       }
 
       .set-fields-property-container {

@@ -69,6 +69,7 @@ export async function validateCollections(req: Request, res: Response, next: Nex
                 displayName: `${rule.displayName}`,
                 unique: Boolean(rule.unique),
                 required: Boolean(rule.required),
+                indexNumber: 1,
             };
 
             // check if name is there
@@ -282,7 +283,6 @@ export async function validateCollections(req: Request, res: Response, next: Nex
                 case SHORT_STRING_FIElD_TYPE: {
                     if(shortStringCount < MAX_NUMBER_FIELD_TYPES) {
                         parsedRule.indexNumber = shortStringCount + 1;
-                        parsedRule.indexable = true;
                         shortStringCount++;
                     }
                     else {
@@ -297,7 +297,6 @@ export async function validateCollections(req: Request, res: Response, next: Nex
                 case INTEGER_FIElD_TYPE: {
                     if(integerCount < MAX_NUMBER_FIELD_TYPES) {
                         parsedRule.indexNumber = integerCount + 1;
-                        parsedRule.indexable = true;
                         integerCount++;
                     }
                     else {
@@ -312,7 +311,6 @@ export async function validateCollections(req: Request, res: Response, next: Nex
                 case DATE_AND_TIME_FIElD_TYPE: {
                     if(dateAndTimeCount < MAX_NUMBER_FIELD_TYPES) {
                         parsedRule.indexNumber = dateAndTimeCount + 1;
-                        parsedRule.indexable = true;
                         dateAndTimeCount++;
                     }
                     else {
@@ -327,7 +325,6 @@ export async function validateCollections(req: Request, res: Response, next: Nex
                 case DATE_FIElD_TYPE: {
                     if(dateCount < MAX_NUMBER_FIELD_TYPES) {
                         parsedRule.indexNumber = dateCount + 1;
-                        parsedRule.indexable = true;
                         dateCount++;
                     }
                     else {
@@ -342,7 +339,6 @@ export async function validateCollections(req: Request, res: Response, next: Nex
                 case BOOLEAN_FIElD_TYPE: {
                     if(booleanCount < MAX_NUMBER_FIELD_TYPES) {
                         parsedRule.indexNumber = booleanCount + 1;
-                        parsedRule.indexable = true;
                         booleanCount++;
                     }
                     else {
@@ -357,7 +353,6 @@ export async function validateCollections(req: Request, res: Response, next: Nex
                 case JSON_FIELD_TYPE: {
                     if(jsonCount < MAX_NUMBER_FIELD_TYPES) {
                         parsedRule.indexNumber = jsonCount + 1;
-                        parsedRule.indexable = true;
                         jsonCount++;
                     }
                     else {
@@ -372,7 +367,6 @@ export async function validateCollections(req: Request, res: Response, next: Nex
                 case REFERENCE_FIELD_TYPE: {
                     if(referenceCount < MAX_NUMBER_FIELD_TYPES) {
                         parsedRule.indexNumber = referenceCount + 1;
-                        parsedRule.indexable = true;
                         referenceCount++;
                     }
                     else {
@@ -387,7 +381,6 @@ export async function validateCollections(req: Request, res: Response, next: Nex
                 case LONG_STRING_FIELD_TYPE: {
                     if(longStringCount < MAX_NUMBER_FIELD_TYPES) {
                         parsedRule.indexNumber = longStringCount + 1;
-                        parsedRule.indexable = true;
                         longStringCount++;
                     }
                     else {
@@ -402,7 +395,6 @@ export async function validateCollections(req: Request, res: Response, next: Nex
                 case MEDIA_FIELD_TYPE: {
                     if(mediaCount < MAX_NUMBER_FIELD_TYPES) {
                         parsedRule.indexNumber = mediaCount + 1;
-                        parsedRule.indexable = true;
                         mediaCount++;
                     }
                     else {
@@ -417,7 +409,6 @@ export async function validateCollections(req: Request, res: Response, next: Nex
                 case LOCATION_FIELD_TYPE: {
                     if(locationCount < MAX_NUMBER_FIELD_TYPES) {
                         parsedRule.indexNumber = locationCount + 1;
-                        parsedRule.indexable = true;
                         locationCount++;
                     }
                     else {
