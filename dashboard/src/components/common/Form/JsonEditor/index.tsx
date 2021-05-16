@@ -7,7 +7,7 @@ import {FieldType} from "../interface";
 import {DescriptionText} from "../DescriptionText";
 import {IsJsonString} from "@ranjodhbirkaur/constants";
 
-interface JsonEditorProps extends FieldType{
+interface JsonEditorProps extends FieldType {
     onChange: (event: ChangeEvent<any>) => void;
     onBlur: (event: ChangeEvent<any>) => void;
 }
