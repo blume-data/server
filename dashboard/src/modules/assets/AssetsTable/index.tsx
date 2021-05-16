@@ -124,10 +124,10 @@ export const AssetsTable = (prop: AssetsTableType) => {
             const resp = await doGetRequest(`${getBaseUrl()}${url}?page=${page}&perPage=${perPage}`, null, true);
             if(resp && resp.data && resp.data.length) {
                 setResponse(resp.data);
-                setIsLoading(false);
             }
-            if(resp && resp.total) {
+            if(resp && resp.total !== undefined) {
                 setPageTotal(resp.total);
+                setIsLoading(false);
             }
         }
 

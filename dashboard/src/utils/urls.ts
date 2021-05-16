@@ -4,17 +4,6 @@ export function getBaseUrl() {
     return ROOT_URL;
 }
 
-export function getAssetsRoutes() {
-    return `${getBaseUrl()}/assets-api/routes`;
-}
-
-export function getAuthRoutes() {
-    return `${getBaseUrl()}/auth-api/routes/`;
-}
-
-export function getDataRoutes() {
-    return `${getBaseUrl()}/data-api/routes/`;
-}
 export const APP_ROOT_URL = '/';
 export const dashboardHomeUrl = `${APP_ROOT_URL}dashboard/home`;
 

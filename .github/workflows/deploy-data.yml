@@ -1,11 +1,11 @@
-name: deploy-data
+name: deploy-api
 
 on:
   push:
     branches:
       - master
     paths: 
-      - 'data/**'
+      - 'api/**'
 
 jobs:
   build:
@@ -13,15 +13,15 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: AUTH INTO DOCKER
-      run: cd data && docker build -t taranjeetsingh/data .
+      run: cd api && docker build -t taranjeetsingh/api .
     - run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
       env:
         DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
     - name: PUSH TO DOCKER HUB
-      run: docker push taranjeetsingh/data
+      run: docker push taranjeetsingh/api
     - uses: digitalocean/action-doctl@v2
       with:
         token: ${{ secrets.DIGITAL_OCEAN_ACCESS_TOKEN }}
     - run: doctl kubernetes cluster kubeconfig save ranjod
-    - run: kubectl rollout restart deployment data-depl
+    - run: kubectl rollout restart deployment api-depl

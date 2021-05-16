@@ -9,37 +9,11 @@ build:
   local:
     push: false
   artifacts:
-    - image: taranjeetsingh/auth
-      context: auth
+    - image: taranjeetsingh/api
+      context: api
       docker:
         dockerfile: Dockerfile.local
       sync:
         manual:
           - src: 'src/**/*.ts'
             dest: .
-    - image: taranjeetsingh/data
-      context: data
-      docker:
-        dockerfile: Dockerfile.local
-      sync:
-        manual:
-          - src: 'src/**/*.ts'
-            dest: .
-    - image: taranjeetsingh/assets
-      context: assets
-      docker:
-        dockerfile: Dockerfile.local
-      sync:
-        manual:
-          - src: 'src/**/*.ts'
-            dest: .
-
-
-#    - image: taranjeetsingh/dashboard
-#      context: dashboard
-#      docker:
-#        dockerfile: Dockerfile
-#      sync:
-#        manual:
-#          - src: 'src/**/*.{ts,tsx,js}'
-#            dest: .

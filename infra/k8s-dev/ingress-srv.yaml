@@ -11,19 +11,7 @@ spec:
     - host: dev.ranjod.com
       http:
         paths:
-          - path: /auth-api/?(.*)
+          - path: /api/?(.*)
             backend:
-              serviceName: auth-srv
-              servicePort: 3000
-          - path: /data-api/?(.*)
-            backend:
-              serviceName: data-srv
-              servicePort: 3000
-          - path: /assets-api/?(.*)
-            backend:
-              serviceName: assets-srv
-              servicePort: 3000
-          - path: /?(.*)
-            backend:
-              serviceName: client-srv
-              servicePort: 8080
+              serviceName: api-srv
+              servicePort: 4000

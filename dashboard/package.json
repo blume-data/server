@@ -8,7 +8,7 @@
     "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "^4.0.0-alpha.56",
     "@material-ui/pickers": "^3.2.10",
-    "@ranjodhbirkaur/constants": "^1.0.130",
+    "@ranjodhbirkaur/constants": "^1.0.135",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
@@ -36,7 +36,8 @@
     "web-vitals": "^1.0.1"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start:dev": "react-scripts start",
+    "start:local": "REACT_APP_ENV=test yarn start:dev",
     "build": "react-scripts build",
     "build:prod": "GENERATE_SOURCEMAP=false && npm run build",
     "test": "react-scripts test",
