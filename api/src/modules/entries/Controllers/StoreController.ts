@@ -4,11 +4,11 @@ import {
     BadRequestError,
     CLIENT_USER_MODEL_NAME,
     CLIENT_USER_NAME, ENTRY_ID, ENV,
-    errorStatus, generateArray,
+    errorStatus,
     getPageAndPerPage, ID,
     okayStatus,
     paginateData,
-    sendSingleError
+    sendSingleError, SKIP_PROPERTIES_IN_ENTRIES
 } from "../../../util/common-module";
 import { v4 as uuidv4 } from 'uuid';
 
@@ -76,7 +76,7 @@ interface PopulateMongooseData {
     populate?: PopulateMongooseData;
 }
 
-async function fetchEntries(req: Request, res: Response, rules: RuleType[], findWhere: any, getOnlyThese: string[] | string | null, collection: any) {
+async function fetchEntries(req: Request, res: Response, rules: RuleType[], findWhere: any, getOnlyThese: string[] | null, collection: any) {
 
     const language = req.params.language;
     const clientUserName = req.params[CLIENT_USER_NAME];
@@ -189,17 +189,20 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
         // skip language property name
         const getOnly = trimGetOnly(params.getOnly);
 
-        const model: any = createModel({
+
+        /*const model: any = createModel({
             rules,
             clientUserName,
             applicationName,
             name: collectionName
-        });
+        });*/
 
         const {page, perPage} = getPageAndPerPage(req);
 
         if(isValid) {
-            const query =  model
+            console.log('where', where);
+            console.log('get only', getOnly);
+            const query =  CustomCollectionModel
                 .find(where, getOnly)
                 .skip(Number(page) * Number(perPage))
                 .limit(Number(perPage));
@@ -217,7 +220,7 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
             query.exec(async (err: any, items: any) => {
                 if(isValid) {
                     const data = await paginateData({
-                        Model: model, where, items, req
+                        Model: CustomCollectionModel, where, items, req, rules
                     });
                     return res.status(okayStatus).send(data);
                 }
@@ -862,29 +865,20 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
 }
 
 // Validate Params for where and getOnly
-function validateParams(req: Request, res: Response, rules: RuleType[], findWhere: any, getOnly: string[] | string | null) {
+function validateParams(req: Request, res: Response, rules: RuleType[], findWhere: any, getOnly: string[] | null) {
     let isValid = true;
     const errorMessages = [];
     let where: any = {};
-    const skip = [ENTRY_UPDATED_BY, ENTRY_UPDATED_AT, STATUS, '_id'];
+    const skip = SKIP_PROPERTIES_IN_ENTRIES;
     if (findWhere && typeof findWhere === 'object') {
         // Iterate where
         for(const condition in findWhere) {
             if (findWhere.hasOwnProperty(condition)) {
                 const ruleExist = rules.find(rule => rule.name === condition);
                 if(ruleExist) {
-                    if(ruleExist.indexNumber) {
-                        where = {
-                            ...where,
-                            [`${ruleExist.type}${ruleExist.indexNumber}`]: findWhere[condition]
-                        }
-                    }
-                    else {
-                        // TODO check later
-                        where = {
-                            ...where,
-                            [condition]: findWhere[condition]
-                        }
+                    where = {
+                        ...where,
+                        [`${ruleExist.type}${ruleExist.indexNumber}`]: findWhere[condition]
                     }
                 }
                 if (!ruleExist && !skip.includes(condition)) {
@@ -939,42 +933,34 @@ function validateParams(req: Request, res: Response, rules: RuleType[], findWher
             }
         }
     }
-    if (getOnly && (Array.isArray(getOnly) || typeof getOnly === 'string')) {
-        if (typeof getOnly === 'string') {
-            const exist = rules.find(rule => rule.name === getOnly);
-            if (!exist) {
-                isValid = false;
-                errorMessages.push({
-                    field: 'getOnly',
-                    message: getOnly+' does not exist in schema'
-                });
-            }
+    if (getOnly && Array.isArray(getOnly)) {
+        // if the type is object|Array
+        if (getOnly.length) {
+            getOnly.forEach((str: string) => {
+                const exist = rules.find(rule => rule.name === str);
+                if (!exist && !skip.includes(str)) {
+                    isValid = false;
+                    errorMessages.push({
+                        field: 'getOnly',
+                        message: `${str} does not exist in schema`
+                    })
+                }
+                else if(exist && getOnly) {
+                    getOnly.push(`${exist.type}${exist.indexNumber}`);
+                }
+            });
         }
         else {
-            // if the type is object|Array
-            if (getOnly.length) {
-                getOnly.forEach((str: string) => {
-                    const exist = rules.find(rule => rule.name === str);
-                    if (!exist && !skip.includes(str)) {
-                        isValid = false;
-                        errorMessages.push({
-                            field: 'getOnly',
-                            message: `${str} does not exist in schema`
-                        })
-                    }
-                });
-            }
-            else {
-                getOnly = null;
-            }
+            getOnly = null;
         }
+
     }
     else {
         if (getOnly) {
             isValid = false;
             errorMessages.push({
                 field: 'getOnly',
-                message: 'getOnly should be an array of params or a string of param'
+                message: 'getOnly should be an array of params'
             });
         }
         // getOnly does not exist

@@ -1,3 +1,5 @@
+import {ENTRY_UPDATED_AT, ENTRY_UPDATED_BY, STATUS} from "@ranjodhbirkaur/constants";
+
 export const CLIENT_USER_NAME = 'clientUserName';
 export const APPLICATION_NAME = 'applicationName';
 export const ENV = 'env';
@@ -16,3 +18,6 @@ export const Is_Enabled = 'isEnabled';
 // array of application names of the client user
 export const APPLICATION_NAMES = 'applicationNames';
 export const SESSION_ID = 'sessionId';
+
+// properties outside in custom model
+export const SKIP_PROPERTIES_IN_ENTRIES = [ENTRY_UPDATED_BY, ENTRY_UPDATED_AT, STATUS, '_id'];

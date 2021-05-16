@@ -1,5 +1,7 @@
 import { randomBytes } from 'crypto';
 import {Request} from 'express';
+import {RuleType} from "@ranjodhbirkaur/constants";
+import {ID, SKIP_PROPERTIES_IN_ENTRIES} from "../utils";
 
 export const RANDOM_STRING = function (minSize=4) {
     return randomBytes(minSize).toString('hex')
@@ -22,7 +24,8 @@ interface PaginateDataType {
     Model: any,
     req: Request,
     where: any,
-    items: any[]
+    items: any[],
+    rules?: RuleType[]
 }
 export function getPageAndPerPage(req: Request): {page: Number, perPage: Number} {
     let {page=1, perPage=10} = req.query;
@@ -35,7 +38,38 @@ export function getPageAndPerPage(req: Request): {page: Number, perPage: Number}
 }
 
 export async function paginateData(data: PaginateDataType) {
-    const {Model, req, where, items} = data;
+    const {Model, req, where, rules} = data;
+    let {items} = data;
+    if(rules && rules.length) {
+        let ruleMap: any = {};
+        items = items.map(item => {
+            let newItem: any = {};
+            for(const property in item._doc) {
+                if(Object.prototype.hasOwnProperty.call(item._doc, property)) {
+                    if(!SKIP_PROPERTIES_IN_ENTRIES.includes(property)) {
+                        if(ruleMap[property]) {
+                            newItem[ruleMap[property]] = item._doc[property];
+                        }
+                        else {
+                            const ruleExist = rules.find(rule => {
+                                if(`${rule.type}${rule.indexNumber}` === property) {
+                                    return rule;
+                                }
+                            });
+                            if(ruleExist) {
+                                ruleMap[property] = ruleExist.name;
+                                newItem[`${ruleExist.name}`] = item._doc[property];
+                            }
+                        }
+                    }
+                    else {
+                        newItem[property] = item._doc[property];
+                    }
+                }
+            }
+            return newItem;
+        });
+    }
     const {page} = getPageAndPerPage(req);
     const count = await Model.countDocuments(where);
     return {
@@ -44,12 +78,4 @@ export async function paginateData(data: PaginateDataType) {
         pageSize: (items && items.length) ? items.length : 0,
         data: items
     }
-}
-
-export function generateArray(size: number) {
-    const arr: number[] = [];
-    for(let i=1; i<=20; i++) {
-        arr.push(i);
-    }
-    return arr;
 }

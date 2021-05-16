@@ -35,6 +35,8 @@ function generateSchema() {
             required: true
         },
 
+        status: String,
+
         deletedBy : { type: Schema.Types.ObjectId, ref: 'ClientUser' },
         deletedAt : { type: Date },
 
