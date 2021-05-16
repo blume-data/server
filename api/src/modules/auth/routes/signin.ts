@@ -34,6 +34,7 @@ const router = express.Router();
 async function sendResponse(req: Request, res: Response, responseData: PayloadResponseType, existingUser: ExistingUserType, password: string, userType: string) {
 
   if (!existingUser) {
+    
     throw new BadRequestError(InvalidLoginCredentialsMessage);
   }
 

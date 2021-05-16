@@ -26,6 +26,7 @@ interface BasicTableMIUIProps {
     rows: any;
     onSelectAll?: () => void;
     isAllSelected?: boolean;
+    tableName: string;
 }
 
 export default function BasicTableMIUI(props: BasicTableMIUIProps) {
