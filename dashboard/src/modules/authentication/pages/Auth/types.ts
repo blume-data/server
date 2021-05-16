@@ -23,11 +23,14 @@ export interface AuthActionType {
     data: any;
 }
 
-
+interface ApplicationNamesRedux {
+    name: string;
+    env: string[];
+}
 export interface AuthenticationInitialStateType {
     isAuth: boolean;
     env: string;
     language: string;
     applicationName: string;
-    applicationsNames: any;
+    applicationsNames: ApplicationNamesRedux[];
 }

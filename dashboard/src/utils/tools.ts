@@ -26,16 +26,6 @@ export function getItemFromLocalStorage(key: string) {
     }
 }
 
-export function getApplicationNamesLocalStorage() {
-    const s = getItemFromLocalStorage(APPLICATION_NAMES);
-    if(s) {
-        return JSON.parse(s).map((item: {name: string}) => item.name);
-    }
-    else {
-        return ['']
-    }
-}
-
 export function getUrlSearchParams(param: string) {
     const urlParams = new URLSearchParams(window.location.search);
     return urlParams.get(param);

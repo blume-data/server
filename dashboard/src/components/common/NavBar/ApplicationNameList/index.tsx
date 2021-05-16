@@ -38,9 +38,7 @@ export const ApplicationNameListComponent = (props: PropsFromRedux) => {
         <MenuList
             id={'nav-bar-application-name-menu'}
             onSelectMenuItem={onSelectApplicationName}
-            menuItems={applicationNames
-            && applicationNames.length
-            && applicationNames.map((item: {name: string}) => item.name)}
+            menuItems={applicationNames.map((item: {name: string}) => item.name)}
             menuName={applicationName}
             defaultName={'application space'}
         />
