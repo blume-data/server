@@ -7,7 +7,6 @@ export const PERMISSIONS = 'permissions';
 export const LANGUAGE = 'language';
 export const ROLE = 'role';
 export const ID = '_id';
-export const ENTRY_ID = '_id_';
 export const JWT_ID = 'jwtId';
 export const FIRST_NAME = 'firstName';
 export const LAST_NAME = 'lastName';
