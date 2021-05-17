@@ -41,7 +41,7 @@
     "start:stage": "REACT_APP_ENV=development yarn start:dev",
     "start:local": "REACT_APP_ENV=test yarn start:dev",
     "build": "react-scripts build",
-    "build:prod": "REACT_APP_ENV=production GENERATE_SOURCEMAP=false && npm run build",
+    "build:prod": "npm run build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "start:server": "node server/index.js",
