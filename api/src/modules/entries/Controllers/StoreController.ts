@@ -194,7 +194,7 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
         if(isValid) {
             console.log('where', where);
             console.log('get only', getOnly);
-            const query =  CustomCollectionModel
+            const query = CustomCollectionModel
                 .find(where, getOnly)
                 .skip(Number(page) * Number(perPage))
                 .limit(Number(perPage));
