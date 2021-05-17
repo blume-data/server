@@ -30,10 +30,6 @@ function generateSchema() {
             type: String,
             required: true
         },
-        _id_: {
-            type: String,
-            required: true
-        },
 
         status: String,
 

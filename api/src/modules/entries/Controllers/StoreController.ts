@@ -3,7 +3,7 @@ import {
     APPLICATION_NAME,
     BadRequestError,
     CLIENT_USER_MODEL_NAME,
-    CLIENT_USER_NAME, ENTRY_ID, ENV,
+    CLIENT_USER_NAME, ENV,
     errorStatus,
     getPageAndPerPage, ID,
     okayStatus,
@@ -59,7 +59,7 @@ import {
     usPhoneReg,
     UsPhoneRegName,
     usZipReg,
-    UsZipRegName
+    UsZipRegName, PUBLISHED_ENTRY_STATUS
 } from "@ranjodhbirkaur/constants";
 import {createModel, getModel, sendOkayResponse, trimGetOnly} from "../../../util/methods";
 import {CollectionModel} from "../../../db-models/Collection";
@@ -85,7 +85,7 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
     let isValid = true;
     let errorMessages: ErrorMessagesType[] = [];
 
-    const params = validateParams(req, res, rules, findWhere, getOnlyThese);
+    const params = validateParams(req, res, rules, findWhere, getOnlyThese, collectionName);
 
     async function recursivePopulation(res: Response, populate: PopulateData[], mongoosePopulate: PopulateMongooseData, modelName: string, query?: any) {
         if(populate && populate.length) {
@@ -189,14 +189,6 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
         // skip language property name
         const getOnly = trimGetOnly(params.getOnly);
 
-
-        /*const model: any = createModel({
-            rules,
-            clientUserName,
-            applicationName,
-            name: collectionName
-        });*/
-
         const {page, perPage} = getPageAndPerPage(req);
 
         if(isValid) {
@@ -277,11 +269,11 @@ async function createEntry(rules: RuleType[], req: Request, res: Response, colle
                         applicationName,
                         clientUserName,
                         env,
+                        status: PUBLISHED_ENTRY_STATUS,
                         data: JSON.stringify(body.data),
-                        _id_: `${uuidv4()}`
                     })
                     const response: any = await item.save();
-                    return {_id_: response._id_};
+                    return {_id: response._id};
                 }
             }
             catch (e) {
@@ -351,8 +343,8 @@ export async function createStoreRecord(req: Request, res: Response) {
                     let entryId = (req.body && req.body.id) || '';
                     if(req.body && !req.body.id) {
                         const entry: any = await createEntry(rules, req, res, collection);
-                        if(entry && entry._id_) {
-                            entryId = entry._id_;
+                        if(entry && entry._id) {
+                            entryId = entry._id;
                         }
                         else {
                             // validation failed
@@ -397,9 +389,9 @@ export async function createStoreRecord(req: Request, res: Response) {
         }
         else {
             const entry: any = await createEntry(rules, req, res, collection);
-            if(entry && entry._id_) {
+            if(entry && entry._id) {
                 sendOkayResponse(res, {
-                    id: entry._id_
+                    [ID]: entry._id
                 });
             }
         }
@@ -447,7 +439,7 @@ export async function deleteStoreRecord(req: Request, res: Response) {
 
     if(collection) {
         const rules = JSON.parse(collection.rules);
-        const params = validateParams(req, res, rules, findWhere, []);
+        const params = validateParams(req, res, rules, findWhere, [], collection.name);
         const model: any = createModel({
             rules,
             clientUserName,
@@ -865,10 +857,19 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
 }
 
 // Validate Params for where and getOnly
-function validateParams(req: Request, res: Response, rules: RuleType[], findWhere: any, getOnly: string[] | null) {
+function validateParams(req: Request, res: Response, rules: RuleType[], findWhere: any, getOnly: string[] | null, collectionName: string) {
     let isValid = true;
+    const language = req.params.language;
+    const clientUserName = req.params[CLIENT_USER_NAME];
+    const applicationName = req.params[APPLICATION_NAME];
+    const env = req.params[ENV];
     const errorMessages = [];
-    let where: any = {};
+    let where: any = {
+        name: collectionName,
+        clientUserName,
+        applicationName,
+        env
+    };
     const skip = SKIP_PROPERTIES_IN_ENTRIES;
     if (findWhere && typeof findWhere === 'object') {
         // Iterate where
@@ -920,7 +921,7 @@ function validateParams(req: Request, res: Response, rules: RuleType[], findWher
                     else {
                         where = {
                             ...where,
-                            [ENTRY_ID]: findWhere[condition]
+                            [ID]: findWhere[condition]
                         }
                     }
                 }

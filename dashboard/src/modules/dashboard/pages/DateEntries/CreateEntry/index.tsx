@@ -10,6 +10,7 @@ import {
     DATE_AND_TIME_FIElD_TYPE,
     DATE_FIElD_TYPE,
     ErrorMessagesType,
+    ID,
     INTEGER_FIElD_TYPE,
     JSON_FIELD_TYPE,
     LONG_STRING_FIELD_TYPE, MEDIA_FIELD_TYPE, MULTIPLE_ASSETS_TYPE, ONE_TO_MANY_RELATION,
@@ -389,8 +390,8 @@ const CreateEntry = (props: CreateEntryType) => {
             else {
                 res = await doPostRequest(`${getBaseUrl()}${url}`, data, true);
             }
-            if(createEntryCallBack && res && res.id) {
-                createEntryCallBack(res.id);
+            if(createEntryCallBack && res && res[ID]) {
+                createEntryCallBack(res[ID]);
             }
             
             else if(res && res.id && !entryId) {

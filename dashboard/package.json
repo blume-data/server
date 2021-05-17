@@ -37,6 +37,7 @@
   },
   "scripts": {
     "start:dev": "react-scripts start",
+    "start:stage":"REACT_APP_ENV=development yarn start:dev",
     "start:local": "REACT_APP_ENV=test yarn start:dev",
     "build": "react-scripts build",
     "build:prod": "GENERATE_SOURCEMAP=false && npm run build",
