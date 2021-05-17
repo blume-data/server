@@ -4,11 +4,11 @@ export const ROOT_URL = (() => {
         case 'development': {
             return 'https://dev.ranjod.com';
         }
-        case 'production': {
-            return 'https://api.ranjod.com'
-        }
         case 'test': {
             return 'http://localhost:4000'
+        }
+        default: {
+            return 'https://api.ranjod.com';
         }
     }
 })();
