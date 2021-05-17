@@ -5,7 +5,7 @@ export const ROOT_URL = (() => {
             return 'https://dev.ranjod.com';
         }
         case 'production': {
-            return 'https://ranjod.com'
+            return 'https://api.ranjod.com'
         }
         case 'test': {
             return 'http://localhost:4000'
