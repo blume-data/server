@@ -3,7 +3,7 @@ import {
     APPLICATION_NAME,
     BadRequestError,
     CLIENT_USER_MODEL_NAME,
-    CLIENT_USER_NAME, ENTRY_ID, ENV,
+    CLIENT_USER_NAME, ENV,
     errorStatus,
     getPageAndPerPage, ID,
     okayStatus,
