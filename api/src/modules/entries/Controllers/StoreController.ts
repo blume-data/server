@@ -840,7 +840,7 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
                     }
                 };
             }
-            // if there is _id in req body add it in boy
+            // if there is _id in req body add it in body
             if(reqBody._id) {
                 body._id = reqBody._id;
             }
@@ -977,7 +977,7 @@ function validateParams(req: Request, res: Response, rules: RuleType[], findWher
                     const reg = { "$regex": req.body.match[condition], "$options": "i" };
                     where = {
                         ...where,
-                        [condition]: ruleExist.type === SHORT_STRING_FIElD_TYPE ? reg : req.body.match[condition]
+                        [`${ruleExist.type}${ruleExist.indexNumber}`]: ruleExist.type === SHORT_STRING_FIElD_TYPE ? reg : req.body.match[condition]
                     }
                 }
                 else {
@@ -1003,6 +1003,7 @@ function validateParams(req: Request, res: Response, rules: RuleType[], findWher
 }
 
 // validate unique params
+// TODO
 async function validateUniqueParam(model: Model<any>, rules: RuleType[], reqBody: any) {
     let errorMessage: string | null = null;
     let field: string = '';

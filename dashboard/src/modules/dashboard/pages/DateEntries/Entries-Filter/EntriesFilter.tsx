@@ -90,23 +90,16 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
         }
     }, [props.rules]);
 
-    /*// set where when filters change
-    useEffect(() => {
-        const newWhere: any = {};
-        filters.forEach(f => {
-            if(f && f.propertyName) {
-                newWhere[f.propertyName] = f.filterValue
-            }
-        });
-        // if there is addition of filter or deletion then fetch data
-        if(newWhere.length !== filters.length) {
-            setWhere(newWhere);
-        }
-    }, [filters]);*/
-
     /*On blur property name update the value in where*/
-    function onBlurPropertyInput() {
-        changeMatchAndWhere(filters);
+    function onBlurPropertyInput(e: any) {
+        if(e) {
+            if(e.key === 'Enter') {
+                changeMatchAndWhere(filters);
+            }
+        }
+        else {
+            changeMatchAndWhere(filters);
+        }
     }
 
     const modelOptions = models.map(model => {
@@ -237,6 +230,7 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
                         placeholder={placeholder}
                         className='filter-text-input'
                         onChange={onChange}
+                        onKeyDown={onBlurPropertyInput}
                         onBlur={onBlurPropertyInput}
                     />
                 }
@@ -264,6 +258,7 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
                         className='filter-text-input'
                         placeholder={placeholder}
                         onChange={onChange}
+                        onKeyDown={onBlurPropertyInput}
                         onBlur={onBlurPropertyInput}
                     />
                 }
