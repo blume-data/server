@@ -151,7 +151,11 @@ export async function OnCreateNewUser(userId: string, userName: string) {
     const newApplicationSpace = ApplicationSpaceModel.build({
         clientUserName: userName,
         name: EXAMPLE_APPLICATION_NAME,
-        env: [PRODUCTION_ENV],
+        env: [{
+            name: PRODUCTION_ENV,
+            description: 'this is production env',
+            order: 1
+        }],
         updatedBy: userId,
         description: 'This is an example space',
         createdAt,

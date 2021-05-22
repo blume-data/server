@@ -10,6 +10,7 @@ export async function CreateEnv(req: Request, res: Response) {
     const clientUserName = req.params.clientUserName;
     const applicationName = req.params.applicationName;
     const name = req.body.name;
+    const description = req.body.description || '';
 
     const ApplicationNameEntry = await ApplicationSpaceModel.findOne({
         clientUserName,
@@ -22,7 +23,9 @@ export async function CreateEnv(req: Request, res: Response) {
             return sendSingleError(res, 'Env already exist', 'name');
         }
         else {
-            ApplicationNameEntry.env.push(trimCharactersAndNumbers(name));
+            ApplicationNameEntry.env.push({
+                name: trimCharactersAndNumbers(name), description, order: ApplicationNameEntry.env.length + 1
+            });
             // update the applicationSpace
             await ApplicationSpaceModel.findOneAndUpdate({
                 clientUserName, name: applicationName
