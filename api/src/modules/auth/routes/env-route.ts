@@ -11,7 +11,7 @@ const router = Router();
 
 router.post(EnvUrl, checkAuth,
 
-    body('env')
+    body('name')
     .trim()
     .isLength(stringLimitOptions)
     .withMessage(stringLimitOptionErrorMessage(ENV)),
