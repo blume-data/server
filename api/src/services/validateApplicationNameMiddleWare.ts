@@ -5,9 +5,10 @@ import {ApplicationSpaceModel} from "../db-models/ApplicationSpace";
 export const validateApplicationNameMiddleWare = async (req: Request, res: Response, next: NextFunction) => {
 
     const applicationName  = req.params && req.params[APPLICATION_NAME];
+    const clientUserName = req.params.clientUserName;
 
     const applicationNames = await ApplicationSpaceModel.find({
-        clientUserId: req.currentUser[ID]
+        clientUserName
     }, ['name'])
 
     const exist = applicationNames.find((item) => {

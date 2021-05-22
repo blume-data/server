@@ -3,7 +3,7 @@ import mongoose, {Schema} from 'mongoose';
 interface ApplicationSpaceAttrs {
 
     name: string;
-    clientUserId: string;
+    clientUserName: string;
     description: string;
     env: string[];
 
@@ -26,7 +26,7 @@ interface ApplicationSpace extends mongoose.Model<ApplicationSpaceDoc> {
 
 interface ApplicationSpaceDoc extends mongoose.Document {
     name: string;
-    clientUserId: string;
+    clientUserName: string;
     description: string;
     env: string[];
 
@@ -47,7 +47,7 @@ const ApplicationSpaceMModel = new mongoose.Schema({
 
         name: String,
         description: String,
-        clientUserId : { type: Schema.Types.ObjectId, ref: 'ClientUser' },
+        clientUserName : String,
         env: [{type: String}],
 
         deletedBy : { type: Schema.Types.ObjectId, ref: 'ClientUser' },

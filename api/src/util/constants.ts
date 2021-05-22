@@ -1,5 +1,3 @@
-export const stringLimitOptions = { min: 1, max: 40 };
-export const stringLimitOptionErrorMessage = (field: string) => field+' must be present';
 const ENV = '/:env';
 export const serviceName = '/api/data';
 export const rootUrl = `${serviceName}${ENV}`;
