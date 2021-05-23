@@ -16,7 +16,7 @@ const selectedApplicationName = getItemFromLocalStorage(LOCAL_STORAGE_SELECTED_A
 
 const initialState: AuthenticationInitialStateType = {
     isAuth: false,
-    env: PRODUCTION_ENV,
+    env: getItemFromLocalStorage(LOCAL_STORAGE_ENV) || PRODUCTION_ENV,
     language: EnglishLanguage,
     applicationName: selectedApplicationName ? selectedApplicationName : '',
     applicationsNames: []

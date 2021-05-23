@@ -1,9 +1,9 @@
-import React from "react";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ApartmentIcon from '@material-ui/icons/Apartment';
 import ListItemText from "@material-ui/core/ListItemText";
+import AdjustIcon from '@material-ui/icons/Adjust';
 import Divider from "@material-ui/core/Divider";
 import { Link } from "react-router-dom";
 import {
@@ -22,12 +22,14 @@ import {connect, ConnectedProps} from "react-redux";
 import {RootState} from "../../../../rootReducer";
 import NoteIcon from '@material-ui/icons/Note';
 import WidgetsIcon from '@material-ui/icons/Widgets';
-import { APPLICATION_NAME } from "@ranjodhbirkaur/constants";
+import {APPLICATION_NAME} from "@ranjodhbirkaur/constants";
+import {setEnv} from '../../../../modules/authentication/pages/Auth/actions';
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
 const LeftDrawerListComponent = (props: PropsFromRedux) => {
-    const {applicationName} = props;
+
+    const {applicationName, applicationNames, selectedEnv} = props;
 
     const dataModelsUrl = `${dashboardDataModelsUrl
         .replace(':applicationName',applicationName)
@@ -39,6 +41,16 @@ const LeftDrawerListComponent = (props: PropsFromRedux) => {
     }`;
 
     const EnvUrl = `${dashboardEnvUrl.replace(`:${APPLICATION_NAME}`, applicationName)}`;
+
+    const envs = applicationNames.find(name => {
+        if(name.name === applicationName) {
+            return true;
+        }
+    });
+
+    function onSelectEnv(name: string) {
+        props.setEnv(name);
+    }
 
     return (
         <Grid className={'left-drawer-list'}>
@@ -61,8 +73,12 @@ const LeftDrawerListComponent = (props: PropsFromRedux) => {
                     ? <div>
                         <ListItem button>
                             <Link className={'link-item-link'} to={EnvUrl}>
-                                <ListItemIcon><LanguageIcon /></ListItemIcon>
-                                <ListItemText primary={'Env'} />
+                                <ListItemIcon><AdjustIcon /></ListItemIcon>
+                                <ListItemText
+                                    title={`selected Env: ${selectedEnv}`}
+                                    className='env-title'
+                                    primary={`Env (${selectedEnv})`}
+                                  />
                             </Link>
                         </ListItem>
                         <ListItem button>
@@ -99,7 +115,9 @@ const LeftDrawerListComponent = (props: PropsFromRedux) => {
 }
 
 const mapState = (state: RootState) => ({
-    applicationName: state.authentication.applicationName
+    applicationName: state.authentication.applicationName,
+    applicationNames: state.authentication.applicationsNames,
+    selectedEnv: state.authentication.env
 });
-const connector = connect(mapState);
+const connector = connect(mapState, {setEnv});
 export const LeftDrawerList = connector(LeftDrawerListComponent);
