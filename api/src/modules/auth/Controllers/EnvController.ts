@@ -17,8 +17,11 @@ export async function CreateEnv(req: Request, res: Response) {
         name: applicationName
     }, ['env']);
 
+    
+
     if(ApplicationNameEntry && ApplicationNameEntry.env && Array.isArray(ApplicationNameEntry.env)) {
-        const exist = ApplicationNameEntry.env.find(item => item === name);
+        
+        const exist = ApplicationNameEntry.env.find(item => item.name === trimCharactersAndNumbers(name));
         if(exist) {
             return sendSingleError(res, 'Env already exist', 'name');
         }
@@ -35,8 +38,5 @@ export async function CreateEnv(req: Request, res: Response) {
         }
 
     }
-    console.log('Application', ApplicationNameEntry)
-
     sendOkayResponse(res, {status: 'done'});
-   
 }

@@ -49,13 +49,19 @@ const Envs = (props: PropsFromRedux) => {
 
     async function onCreateEnvHandler(values: any) {
         console.log('values', values);
-        setIsModalOpen(false);
+        
 
         const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
 
         const url = envUrl?.replace(`:${CLIENT_USER_NAME}`, clientUserName || '').replace(`:${APPLICATION_NAME}`, applicationName);
 
         const resp = await doPostRequest(url || '', values, true);
+        if(resp && resp.errors) {
+            setResponse(resp.errors);
+        }
+        else {
+            setIsModalOpen(false);
+        }
         console.log('resp', resp);
 
 
