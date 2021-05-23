@@ -22,6 +22,7 @@ interface BasicTableMIUIProps {
         value: string;
         linkUrl?: boolean;
         onClick?: any;
+        align?: 'left' | 'center' | 'right'
     }[];
     rows: any;
     onSelectAll?: () => void;
@@ -30,6 +31,7 @@ interface BasicTableMIUIProps {
 }
 
 export default function BasicTableMIUI(props: BasicTableMIUIProps) {
+
     const classes = useStyles();
 
     const {columns, rows, onSelectAll, isAllSelected=false} = props;
@@ -43,7 +45,9 @@ export default function BasicTableMIUI(props: BasicTableMIUIProps) {
                     return (
                         <TableCell
                             key={index}
-                            component={index === 0 ? "th" : undefined} scope={index === 0 ? "row" : undefined}  align={index === 0 ? undefined : "left"}>
+                            component={index === 0 ? "th" : undefined} 
+                            scope={index === 0 ? "row" : undefined}  
+                            align={index === 0 ? 'left' : tableRow.align || "left"}>
                             {
                                 tableRow.linkUrl
                                 ? <Link to={row['linkUrl']}>{row[tableRow.value]}</Link>
@@ -67,12 +71,16 @@ export default function BasicTableMIUI(props: BasicTableMIUIProps) {
                         {
                             columns.map((tableRow, index) => {
                                 if(index === 0 && onSelectAll) {
-                                    return <TableCell key={index} align={"left"}>
+                                    return <TableCell key={index} align={tableRow.align || 'left'}>
                                         <Checkbox checked={isAllSelected} onClick={onSelectAll} />
                                     </TableCell>
                                 }
                                 return (
-                                    <TableCell align={index === 0 ? 'left' : "left"} key={index}>{tableRow.name}</TableCell>
+                                    <TableCell
+                                        align={index === 0 ? 'left' : tableRow.align || 'left'} 
+                                        key={index}>
+                                            {tableRow.name}
+                                    </TableCell>
                                 );
                             })
                         }

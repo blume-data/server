@@ -1,6 +1,7 @@
-import { Grid } from '@material-ui/core';
+import { Grid, IconButton } from '@material-ui/core';
+import EditIcon from '@material-ui/icons/Edit';
 import { APPLICATION_NAME, CLIENT_USER_NAME, ErrorMessagesType } from '@ranjodhbirkaur/constants';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import {connect, ConnectedProps} from "react-redux";
 import BasicTableMIUI from '../../../../components/common/BasicTableMIUI';
 import { CommonButton } from '../../../../components/common/CommonButton';
@@ -44,7 +45,6 @@ const Envs = (props: PropsFromRedux) => {
         }
     ];
 
-
     async function onCreateEnvHandler(values: any) {
         
         const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
@@ -62,23 +62,29 @@ const Envs = (props: PropsFromRedux) => {
         
     }
 
-    
     const env = applicationNames.find(item => item.name === applicationName);
-    
 
+    const rows = env?.env.map((item: any) => {
+        item.edit = <IconButton>
+        <EditIcon />
+    </IconButton>;
+        return item;
+    });
+    
     if(env)
     return (
-        <Grid>
+        <Grid className='env-container'>
             <CommonButton
                 name='Create Env'
                 onClick={() => setIsModalOpen(true)}
              />
             <BasicTableMIUI 
                 tableName='Envs'
-                rows={env.env}
+                rows={rows || []}
                 columns={[
                     {name: "Name", value: "name"},
-                    {name: 'Description', value: 'description'}
+                    {name: 'Description', value: 'description'},
+                    {name: 'Edit', value: 'edit', align: 'center'}
                 ]}
              />
 

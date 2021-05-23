@@ -214,7 +214,7 @@ const EntriesTableComponent = (props: EntriesTableType) => {
             });
         }
         newColumns.push({name: fieldTitle, value: fieldTitle});
-        newColumns.push({name: 'Edit', value: 'edit'});
+        newColumns.push({name: 'Edit', value: 'edit', align: 'center'});
         newColumns.push({name: 'Status', value: STATUS});
         newColumns.push({name: 'Updated At', value: ENTRY_UPDATED_AT});
         newColumns.push({name: 'Updated by', value: ENTRY_UPDATED_BY});

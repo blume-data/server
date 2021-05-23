@@ -7,7 +7,6 @@ import {Provider} from "react-redux";
 import ReactDOM from "react-dom";
 import React from "react";
 import reportWebVitals from './reportWebVitals';
-import {register} from './serviceWorker';
 
 declare global {
     interface Window {
@@ -44,5 +43,3 @@ ReactDOM.render(
     document.getElementById('root')
 );
 reportWebVitals();
-// register service worker
-register();

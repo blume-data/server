@@ -103,13 +103,13 @@ const DataModels = (props: PropsFromRedux) => {
         getCollectionNames();
     }, [applicationName, env, language, GetCollectionNamesUrl]);
 
-    const tableRows = [
+    const tableRows: any = [
         {name: 'Id', value: 'id'},
         {name: 'Name', value: 'displayName', linkUrl: true},
         {name: 'Description', value: 'description'},
         {name: 'Updated by', value: 'updatedBy'},
         {name: 'Updated At', value: 'updatedAt'},
-        {name: 'EDIT', value: 'edit', onClick: true},
+        {name: 'EDIT', value: 'edit', onClick: true, align: 'center'},
         {name: 'Delete', value: 'delete', onClick: true}
     ]
 
