@@ -1,6 +1,6 @@
 import { Grid } from '@material-ui/core';
 import { APPLICATION_NAME, CLIENT_USER_NAME, ErrorMessagesType } from '@ranjodhbirkaur/constants';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {connect, ConnectedProps} from "react-redux";
 import BasicTableMIUI from '../../../../components/common/BasicTableMIUI';
 import { CommonButton } from '../../../../components/common/CommonButton';
@@ -10,7 +10,6 @@ import ModalDialog from '../../../../components/common/ModalDialog';
 import {RootState} from "../../../../rootReducer";
 import { doPostRequest } from '../../../../utils/baseApi';
 import { getItemFromLocalStorage } from '../../../../utils/tools';
-import ApplicationName from '../ApplicationName';
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 const Envs = (props: PropsFromRedux) => {
@@ -45,12 +44,9 @@ const Envs = (props: PropsFromRedux) => {
         }
     ];
 
-    console.log('env url', envUrl);
 
     async function onCreateEnvHandler(values: any) {
-        console.log('values', values);
         
-
         const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
 
         const url = envUrl?.replace(`:${CLIENT_USER_NAME}`, clientUserName || '').replace(`:${APPLICATION_NAME}`, applicationName);
@@ -62,14 +58,13 @@ const Envs = (props: PropsFromRedux) => {
         else {
             setIsModalOpen(false);
         }
-        console.log('resp', resp);
 
-
+        
     }
 
-    console.log('Application Name', applicationNames, applicationName);
+    
     const env = applicationNames.find(item => item.name === applicationName);
-    console.log('env', env)
+    
 
     if(env)
     return (
