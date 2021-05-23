@@ -6,6 +6,7 @@
         color: $white;
     }
     .selected:hover {
-        color: $blue;
+        color: $white;
+        background: $blue;
     }
 }

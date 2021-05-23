@@ -26,6 +26,7 @@ import {EXAMPLE_APPLICATION_NAME} from "../util/constants";
 import {PRODUCTION_ENV} from "@ranjodhbirkaur/constants";
 import {createNewSession} from "../util/tools";
 import axios from "axios";
+import { newApplicationSpace } from "../../model-collections/Controllers/ApplicationNameController";
 
 interface ReqIsUserNameAvailable extends Request{
     body: {
@@ -148,22 +149,12 @@ export async function OnCreateNewUser(userId: string, userName: string) {
 
     const createdAt = DateTime.local().setZone('UTC').toJSDate();
 
-    const newApplicationSpace = ApplicationSpaceModel.build({
+    await newApplicationSpace({
         clientUserName: userName,
-        name: EXAMPLE_APPLICATION_NAME,
-        env: [{
-            name: PRODUCTION_ENV,
-            description: 'this is production env',
-            order: 1
-        }],
-        updatedBy: userId,
+        applicationName: EXAMPLE_APPLICATION_NAME,
+        userId,
         description: 'This is an example space',
-        createdAt,
-        createdBy: userId,
-        updatedAt: createdAt
     });
-
-    await newApplicationSpace.save();
 }
 
 
