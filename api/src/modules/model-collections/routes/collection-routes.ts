@@ -9,7 +9,6 @@ import {
 } from "../Controllers/CollectionController";
 import {validateCollections} from "../../../services/middlewares/collections/validateCollections";
 import {checkAuth} from "../../../services/checkAuth";
-import {validateEnvType} from "../../../util/enviornmentTypes";
 import {validateApplicationNameMiddleWare} from "../../../services/validateApplicationNameMiddleWare";
 
 const router = express.Router();
@@ -32,7 +31,7 @@ router.post(CollectionUrl, [
             .isLength({ max: 100 })
             .withMessage('description must be between 1 and 100 characters')
     ],
-    validateRequest, validateEnvType, checkAuth,
+    validateRequest, checkAuth,
     validateApplicationNameMiddleWare, validateCollections, createCollectionSchema
 );
 
@@ -41,12 +40,12 @@ router.put(CollectionUrl, [
             .notEmpty()
             .withMessage('id is required')
     ],
-    validateRequest, validateEnvType, checkAuth,
+    validateRequest, checkAuth,
     validateApplicationNameMiddleWare, validateCollections, createCollectionSchema
 );
 
 /*get all the models of the application space*/
-router.get(GetCollectionNamesUrl, validateEnvType, checkAuth, validateApplicationNameMiddleWare, getCollectionNames);
+router.get(GetCollectionNamesUrl, checkAuth, validateApplicationNameMiddleWare, getCollectionNames);
 
 
 // Delete Item Schema
@@ -56,6 +55,6 @@ router.delete(CollectionUrl, [
             .isLength(stringLimitOptions)
             .withMessage(stringLimitOptionErrorMessage('name'))
     ],
-    validateRequest, validateEnvType, checkAuth, deleteCollectionSchema);
+    validateRequest, checkAuth, deleteCollectionSchema);
 
 export { router as CollectionRoutes };
