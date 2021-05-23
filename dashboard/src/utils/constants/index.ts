@@ -1,17 +1,23 @@
+import { APPLICATION_NAME, CLIENT_USER_NAME } from "@ranjodhbirkaur/constants";
+import { getBaseUrl } from "../urls";
+
 export const env = process.env.NODE_ENV;
 
 export const LOCAL_STORAGE_ENV = 'LOCAL_STORAGE_ENV';
 export const LOCAL_STORAGE_LANGUAGE = 'LOCAL_STORAGE_LANGUAGE';
 export const LOCAL_STORAGE_SELECTED_APPLICATION_NAME = 'LOCAL_STORAGE_SELECTED_APPLICATION_NAME';
 
+const AUTH_ROOT_URL = '/api/auth'
+
 export const AUTH_ROUTES = {
-    authRootUrl: "/api/auth",
+    authRootUrl: AUTH_ROOT_URL,
     currentUser: "current-user",
     emailVerification: "email-verification",
     logIn: "log-in",
     logOut: "sign-out",
     register: "sign-up",
     userNameValidation: "username-validation",
+    envUrl: `${getBaseUrl()}${AUTH_ROOT_URL}/:${CLIENT_USER_NAME}/:${APPLICATION_NAME}/env`
 }
 
 export const DATA_ROUTES = {
