@@ -73,9 +73,9 @@ export const NavBarComponent = (props: PropsFromRedux) => {
 
     const list = (anchor: Anchor) => (
         <div
-            className={clsx(classes.list, {
+            className={`${clsx(classes.list, {
                 [classes.fullList]: anchor === 'top' || anchor === 'bottom',
-            })}
+            })} responsive-big-left-drawer`}
             role="presentation"
             onClick={toggleDrawer(anchor, false)}
             onKeyDown={toggleDrawer(anchor, false)}
