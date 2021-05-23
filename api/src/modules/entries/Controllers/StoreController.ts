@@ -78,7 +78,6 @@ interface PopulateMongooseData {
 
 async function fetchEntries(req: Request, res: Response, rules: RuleType[], findWhere: any, getOnlyThese: string[] | null, collection: any) {
 
-    const language = req.params.language;
     const clientUserName = req.params[CLIENT_USER_NAME];
     const applicationName = req.params[APPLICATION_NAME];
     const collectionName = collection.name;
@@ -417,7 +416,7 @@ export async function getStoreRecord(req: Request, res: Response) {
 }
 
 // create reference
-export async function createStoreReferenceRecord(req: Request, res: Response) {
+export async function createStoreReferenceRecord() {
 
 }
 
@@ -426,7 +425,6 @@ export async function createStoreReferenceRecord(req: Request, res: Response) {
 // Delete Record
 export async function deleteStoreRecord(req: Request, res: Response) {
 
-    const reqBody = req.body;
     const clientUserName = req.params[CLIENT_USER_NAME];
     const applicationName = req.params[APPLICATION_NAME];
     // get collection
@@ -855,7 +853,6 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
 // Validate Params for where and getOnly
 function validateParams(req: Request, res: Response, rules: RuleType[], findWhere: any, getOnly: string[] | null, collectionName: string) {
     let isValid = true;
-    const language = req.params.language;
     const clientUserName = req.params[CLIENT_USER_NAME];
     const applicationName = req.params[APPLICATION_NAME];
     const env = req.params[ENV];
