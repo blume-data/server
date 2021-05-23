@@ -57,9 +57,11 @@ export function authenticationReducer(
             const applicationName = action.applicationName ? action.applicationName : '';
             if(applicationName || applicationName === '') {
                 localStorage.setItem(LOCAL_STORAGE_SELECTED_APPLICATION_NAME, applicationName);
+                localStorage.setItem(LOCAL_STORAGE_ENV, PRODUCTION_ENV);
             }
             return {
                 ...state,
+                env: PRODUCTION_ENV,
                 applicationName: action.applicationName ? action.applicationName : ''
             }
         }

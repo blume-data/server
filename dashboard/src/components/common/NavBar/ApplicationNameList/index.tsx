@@ -1,13 +1,14 @@
 import React, {useEffect} from "react";
 import {MenuList} from "../MenuList";
 import {getItemFromLocalStorage} from "../../../../utils/tools";
-import {APPLICATION_NAME} from "@ranjodhbirkaur/constants";
+import {APPLICATION_NAME, PRODUCTION_ENV} from "@ranjodhbirkaur/constants";
 import {dashboardApplicationNameUrl} from "../../../../utils/urls";
 import {RootState} from "../../../../rootReducer";
 import {connect, ConnectedProps} from "react-redux";
-import {setApplicationName} from "../../../../modules/authentication/pages/Auth/actions";
+import {setApplicationName, setEnv} from "../../../../modules/authentication/pages/Auth/actions";
 import {useHistory} from "react-router";
 import {LOCAL_STORAGE_SELECTED_APPLICATION_NAME} from "../../../../utils/constants";
+import { fetchApplicationNames } from "../../../../modules/dashboard/pages/home/actions";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 export const ApplicationNameListComponent = (props: PropsFromRedux) => {
@@ -27,6 +28,7 @@ export const ApplicationNameListComponent = (props: PropsFromRedux) => {
         setApplicationName(name);
         const applicationNameUrl = dashboardApplicationNameUrl.replace(`:${APPLICATION_NAME}`, name);
         history.push(applicationNameUrl);
+        props.fetchApplicationNames();
     }
 
     // fetch the data routes
@@ -51,5 +53,5 @@ const mapState = (state: RootState) => ({
     applicationName: state.authentication.applicationName,
     applicationNames: state.authentication.applicationsNames
 });
-const connector = connect(mapState, {setApplicationName});
+const connector = connect(mapState, {setApplicationName, fetchApplicationNames});
 export const ApplicationNameList = connector(ApplicationNameListComponent);
