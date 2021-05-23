@@ -8,7 +8,7 @@ const router = express.Router();
 
 router.post('/data-events', async (req: Request, res: Response) => {
     const reqBody = req.body;
-    console.log('got event', req.body)
+    
     if(reqBody
         && reqBody.key
         && reqBody.key === JWT_KEY

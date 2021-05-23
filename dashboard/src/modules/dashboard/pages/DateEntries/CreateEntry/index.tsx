@@ -233,8 +233,7 @@ const CreateEntry = (props: CreateEntryType) => {
             fetchEntryData();
         }
     }, [GetEntriesUrl, id, applicationName, rules]);
-    console.log('rules', rules)
-
+    
     /*
     * Set Fields state
     * */
@@ -406,8 +405,6 @@ const CreateEntry = (props: CreateEntryType) => {
     function onsubmit(values: any) {
         createEntry(values);
     }
-
-    console.log('fields', fields)
 
     return (
         <Grid>

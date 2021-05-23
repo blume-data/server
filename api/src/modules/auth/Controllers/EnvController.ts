@@ -5,7 +5,6 @@ import { sendSingleError } from '../../../util/common-module';
 import { sendOkayResponse } from '../../../util/methods';
 
 export async function CreateEnv(req: Request, res: Response) {
-    console.log('any', req.currentUser);
 
     const clientUserName = req.params.clientUserName;
     const applicationName = req.params.applicationName;
