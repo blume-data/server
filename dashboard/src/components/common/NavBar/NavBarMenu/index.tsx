@@ -1,4 +1,4 @@
-import React, {Fragment} from "react";
+import {Fragment} from "react";
 import {Grid} from "@material-ui/core";
 import {ApplicationNameList} from "../ApplicationNameList";
 import {Link} from "react-router-dom";
@@ -32,6 +32,7 @@ const NavBarMenuComponent = (props: PropsFromRedux) => {
             {
                 applicationName
                 ? <Fragment>
+                    
                     <Link className={'nav-bar-menu-link-item'} to={dataModelsUrl}>
                         <CommonButton
                             startIcon={<WidgetsIcon color={"primary"} />}

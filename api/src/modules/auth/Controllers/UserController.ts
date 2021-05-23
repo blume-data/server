@@ -116,7 +116,7 @@ export const verifyEmailToken = async function (req: ReqValidateEmail, res: Resp
                 };
 
                 // create a new example application space
-                await OnCreateNewUser(newUser[ID]);
+                await OnCreateNewUser(newUser[ID], newUser.userName);
 
                 return await sendValidateEmailResponse(req, payload, response, res);
 
@@ -144,14 +144,18 @@ async function sendValidateEmailResponse(req: Request, payload: JwtPayloadType, 
 /*
 * On create new user
 * */
-export async function OnCreateNewUser(userId: string) {
+export async function OnCreateNewUser(userId: string, userName: string) {
 
     const createdAt = DateTime.local().setZone('UTC').toJSDate();
 
     const newApplicationSpace = ApplicationSpaceModel.build({
-        clientUserId: userId,
+        clientUserName: userName,
         name: EXAMPLE_APPLICATION_NAME,
-        env: [PRODUCTION_ENV],
+        env: [{
+            name: PRODUCTION_ENV,
+            description: 'this is production env',
+            order: 1
+        }],
         updatedBy: userId,
         description: 'This is an example space',
         createdAt,

@@ -68,3 +68,5 @@ export const roleUrl = (userName?: string) => {
     }
     return `${authRootUrl}/${userName}/${roleRoute}`
 };
+
+export const EnvUrl = `${authRootUrl}/:clientUserName/:applicationName/env`;

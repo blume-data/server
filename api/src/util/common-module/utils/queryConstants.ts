@@ -2,7 +2,6 @@ import {ENTRY_UPDATED_AT, ENTRY_UPDATED_BY, STATUS} from "@ranjodhbirkaur/consta
 
 export const CLIENT_USER_NAME = 'clientUserName';
 export const APPLICATION_NAME = 'applicationName';
-export const ENV = 'env';
 export const PERMISSIONS = 'permissions';
 export const LANGUAGE = 'language';
 export const ROLE = 'role';

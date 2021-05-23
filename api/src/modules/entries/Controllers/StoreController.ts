@@ -3,7 +3,7 @@ import {
     APPLICATION_NAME,
     BadRequestError,
     CLIENT_USER_MODEL_NAME,
-    CLIENT_USER_NAME, ENV,
+    CLIENT_USER_NAME,
     errorStatus,
     getPageAndPerPage, ID,
     okayStatus,
@@ -59,7 +59,7 @@ import {
     usPhoneReg,
     UsPhoneRegName,
     usZipReg,
-    UsZipRegName, PUBLISHED_ENTRY_STATUS
+    UsZipRegName, PUBLISHED_ENTRY_STATUS, ENV
 } from "@ranjodhbirkaur/constants";
 import {createModel, getModel, sendOkayResponse, trimGetOnly} from "../../../util/methods";
 import {CollectionModel} from "../../../db-models/Collection";

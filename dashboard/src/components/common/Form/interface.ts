@@ -23,6 +23,7 @@ export interface FormType {
     response: string | ErrorMessagesType[];
     clearOnSubmit?: boolean;
     showClearButton?: boolean;
+    getValuesAsObject?: boolean;
 }
 
 export interface OptionsType {

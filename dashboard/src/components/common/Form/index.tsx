@@ -512,7 +512,17 @@ export const Form = (props: FormType) => {
                     });
                 }
             });
-            const res = await onSubmit(values);
+
+            if(props.getValuesAsObject) {
+                const formValues: any = {};
+                values.forEach(value => {
+                    formValues[value.name] = value.value
+                });
+                const res = await onSubmit(formValues);
+            }
+            else {
+                const res = await onSubmit(values);
+            }
             if(clearOnSubmit) {
                 clearForm();
             }

@@ -25,8 +25,15 @@ export interface AuthActionType {
 
 interface ApplicationNamesRedux {
     name: string;
-    env: string[];
+    env: EnvsRedux[];
 }
+
+interface EnvsRedux {
+    name: string;
+    description: string;
+    order: number;
+}
+
 export interface AuthenticationInitialStateType {
     isAuth: boolean;
     env: string;

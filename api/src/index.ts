@@ -14,6 +14,7 @@ import {signupRouter} from "./modules/auth/routes/signup";
 import {routes} from "./modules/auth/routes";
 import userAgent from 'express-useragent';
 import {assetsRoutes} from "./modules/assets/routes";
+import { EnvRouter } from './modules/auth/routes/env-route';
 
 const start = async () => {
 
@@ -40,6 +41,7 @@ const start = async () => {
   serverApp.use(signoutRouter);
   serverApp.use(signupRouter);
   serverApp.use(routes);
+  serverApp.use(EnvRouter);
 
   // Asset Module
   serverApp.use(assetsRoutes);

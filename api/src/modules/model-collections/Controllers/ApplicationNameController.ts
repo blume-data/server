@@ -43,9 +43,13 @@ export async function createApplicationName(req: Request, res: Response) {
     else {
         const createdAt = DateTime.local().setZone('UTC').toJSDate();
         const newApplicationSpace = ApplicationSpaceModel.build({
-            clientUserId: req.currentUser[ID],
+            clientUserName,
             name: lowerCaseApplicationName,
-            env: [PRODUCTION_ENV],
+            env: [{
+                name: PRODUCTION_ENV,
+                description: 'production enviornment',
+                order: 1
+            }],
             updatedBy: req.currentUser[ID],
             description,
             createdAt,
@@ -69,8 +73,12 @@ export async function createApplicationName(req: Request, res: Response) {
 
 export async function getApplicationName(req: Request, res: Response) {
 
+    console.log('okay')
+
+    const clientUserName = req.params.clientUserName;
+
     const applicationNames = await ApplicationSpaceModel.find({
-        clientUserId: req.currentUser[ID],
+        clientUserName: clientUserName,
     }, ['name', 'env']);
     return res.status(okayStatus).send({[APPLICATION_NAMES]: applicationNames});
 }

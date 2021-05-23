@@ -1,11 +1,17 @@
 import mongoose, {Schema} from 'mongoose';
 
+interface EnvType {
+    name: string;
+    description: string;
+    order: number;
+}
+
 interface ApplicationSpaceAttrs {
 
     name: string;
-    clientUserId: string;
+    clientUserName: string;
     description: string;
-    env: string[];
+    env: EnvType[];
 
     // created
     createdBy: string;
@@ -26,9 +32,9 @@ interface ApplicationSpace extends mongoose.Model<ApplicationSpaceDoc> {
 
 interface ApplicationSpaceDoc extends mongoose.Document {
     name: string;
-    clientUserId: string;
+    clientUserName: string;
     description: string;
-    env: string[];
+    env: EnvType[];
 
     // created
     createdBy: string;
@@ -47,8 +53,12 @@ const ApplicationSpaceMModel = new mongoose.Schema({
 
         name: String,
         description: String,
-        clientUserId : { type: Schema.Types.ObjectId, ref: 'ClientUser' },
-        env: [{type: String}],
+        clientUserName : String,
+        env: [{
+            name: {type: String},
+            description: {type: String},
+            order: {type: Number}
+        }],
 
         deletedBy : { type: Schema.Types.ObjectId, ref: 'ClientUser' },
         deletedAt : { type: Date },
