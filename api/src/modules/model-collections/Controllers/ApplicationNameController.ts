@@ -45,7 +45,11 @@ export async function createApplicationName(req: Request, res: Response) {
         const newApplicationSpace = ApplicationSpaceModel.build({
             clientUserName,
             name: lowerCaseApplicationName,
-            env: [PRODUCTION_ENV],
+            env: [{
+                name: PRODUCTION_ENV,
+                description: 'production enviornment',
+                order: 1
+            }],
             updatedBy: req.currentUser[ID],
             description,
             createdAt,
@@ -68,6 +72,8 @@ export async function createApplicationName(req: Request, res: Response) {
 }
 
 export async function getApplicationName(req: Request, res: Response) {
+
+    console.log('okay')
 
     const clientUserName = req.params.clientUserName;
 
