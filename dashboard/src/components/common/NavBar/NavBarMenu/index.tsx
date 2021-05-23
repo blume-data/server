@@ -6,11 +6,12 @@ import './nav-bar-menu.scss';
 import {connect, ConnectedProps} from "react-redux";
 import {RootState} from "../../../../rootReducer";
 import {setApplicationName} from "../../../../modules/authentication/pages/Auth/actions";
-import {assetsUrl, dashboardDataEntriesUrl, dashboardDataModelsUrl} from "../../../../utils/urls";
+import {assetsUrl, dashboardDataEntriesUrl, dashboardDataModelsUrl, dashboardEnvUrl} from "../../../../utils/urls";
 import {CommonButton} from "../../CommonButton";
 import WidgetsIcon from "@material-ui/icons/Widgets";
 import NoteIcon from "@material-ui/icons/Note";
 import PhotoAlbumIcon from "@material-ui/icons/PhotoAlbum";
+import { APPLICATION_NAME } from "@ranjodhbirkaur/constants";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 const NavBarMenuComponent = (props: PropsFromRedux) => {
@@ -20,6 +21,8 @@ const NavBarMenuComponent = (props: PropsFromRedux) => {
     const dataModelsUrl = `${dashboardDataModelsUrl
         .replace(':applicationName',applicationName)
     }`;
+
+    const EnvUrl = `${dashboardEnvUrl.replace(`:${APPLICATION_NAME}`, applicationName)}`;
 
     const dataEntriesUrl = `${dashboardDataEntriesUrl
         .replace(':applicationName',applicationName)
@@ -32,6 +35,13 @@ const NavBarMenuComponent = (props: PropsFromRedux) => {
             {
                 applicationName
                 ? <Fragment>
+                    <Link className={'nav-bar-menu-link-item'} to={EnvUrl}>
+                        <CommonButton
+                            startIcon={<WidgetsIcon color={"primary"} />}
+                            name={'Envs'}
+                            variant={'outlined'}
+                            />
+                    </Link>
                     <Link className={'nav-bar-menu-link-item'} to={dataModelsUrl}>
                         <CommonButton
                             startIcon={<WidgetsIcon color={"primary"} />}

@@ -1,17 +1,34 @@
+import { Grid } from '@material-ui/core';
 import React from 'react';
 import {connect, ConnectedProps} from "react-redux";
+import BasicTableMIUI from '../../../../components/common/BasicTableMIUI';
 import {RootState} from "../../../../rootReducer";
+import ApplicationName from '../ApplicationName';
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 const Envs = (props: PropsFromRedux) => {
 
-    const {applicationNames} = props;
+    const {applicationNames, applicationName} = props;
 
-    console.log('Application Name', applicationNames);
+    console.log('Application Name', applicationNames, applicationName);
+    const env = applicationNames.find(item => item.name === applicationName);
+    console.log('env', env)
 
+    if(env)
     return (
-        <h1>hello</h1>
+        <Grid>
+            <BasicTableMIUI 
+                tableName='Envs'
+                rows={env.env}
+                columns={[
+                    {name: "Name", value: "name"},
+                    {name: 'Description', value: 'description'}
+                ]}
+             />
+            
+        </Grid>
     );
+    return null;
 }
 
 const mapState = (state: RootState) => {
