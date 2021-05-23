@@ -73,8 +73,6 @@ export async function createApplicationName(req: Request, res: Response) {
 
 export async function getApplicationName(req: Request, res: Response) {
 
-    console.log('okay')
-
     const clientUserName = req.params.clientUserName;
 
     const applicationNames = await ApplicationSpaceModel.find({

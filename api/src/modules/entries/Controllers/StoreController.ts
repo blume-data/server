@@ -192,8 +192,6 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
         const {page, perPage} = getPageAndPerPage(req);
 
         if(isValid) {
-            console.log('where', where);
-            console.log('get only', getOnly);
             const query = CustomCollectionModel
                 .find(where, getOnly)
                 .skip(Number(page) * Number(perPage))
@@ -238,8 +236,6 @@ async function createEntry(rules: RuleType[], req: Request, res: Response, colle
     const requestBody = req && req.body;
     const body = checkBodyAndRules(rules, req, res);
     if(body) {
-
-        console.log('body', body);
 
         const model: any = createModel({
             rules,

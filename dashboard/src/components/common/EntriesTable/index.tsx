@@ -180,7 +180,7 @@ const EntriesTableComponent = (props: EntriesTableType) => {
                     }
                 });
             }
-            console.log('Where in get items', where, match);
+            
             const resp = await fetchModelEntries({
                 applicationName, modelName: modelName, language, env,
                 GetEntriesUrl: `${GetEntriesUrl}?page=${page}`,
@@ -298,8 +298,6 @@ const EntriesTableComponent = (props: EntriesTableType) => {
             getItems();
         }
     }
-
-    console.log('rows and columns', rows, columns);
 
     return (
         <Grid
