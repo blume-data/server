@@ -10,7 +10,7 @@ import { Form } from '../../../../components/common/Form';
 import { ConfigField, TEXT } from '../../../../components/common/Form/interface';
 import ModalDialog from '../../../../components/common/ModalDialog';
 import {RootState} from "../../../../rootReducer";
-import { doPostRequest } from '../../../../utils/baseApi';
+import { doPostRequest, doPutRequest } from '../../../../utils/baseApi';
 import { getItemFromLocalStorage } from '../../../../utils/tools';
 import {setEnv} from '../../../../modules/authentication/pages/Auth/actions';
 import {fetchApplicationNames} from '../../pages/home/actions';
@@ -61,7 +61,17 @@ const Envs = (props: PropsFromRedux) => {
 
         const url = envUrl?.replace(`:${CLIENT_USER_NAME}`, clientUserName || '').replace(`:${APPLICATION_NAME}`, applicationName);
 
-        const resp = await doPostRequest(url || '', values, true);
+        let resp: any;
+
+        if(envData._id) {
+            resp = await doPutRequest(url || '', {
+                ...values,
+                _id: envData._id
+            }, true);
+        }
+        else {
+            resp = await doPostRequest(url || '', values, true);
+        }
         if(resp && resp.errors) {
             setResponse(resp.errors);
         }
