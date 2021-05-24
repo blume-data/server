@@ -11,42 +11,54 @@ export async function CreateEnv(req: Request, res: Response) {
     const applicationName = req.params.applicationName;
     const name = req.body.name;
     const description = req.body.description || '';
+    const id = req.body._id;
 
-    const ApplicationNameEntry: any = await ApplicationSpaceModel.findOne({
-        clientUserName,
-        name: applicationName
-    }, ['env']).populate('env');
 
-    
-
-    if(ApplicationNameEntry && ApplicationNameEntry.env && Array.isArray(ApplicationNameEntry.env)) {
-        
-        const exist = ApplicationNameEntry.env.find((item: any) => item.name === trimCharactersAndNumbers(name));
-        if(exist) {
-            return sendSingleError(res, 'Env already exist', 'name');
+    const exist = await EnvModel.findOne({name: trimCharactersAndNumbers(name), clientUserName, applicationName}, '_id');
+    if(exist) {
+        console.log('exist', exist)
+        return sendSingleError(res, 'Env with same name already exist', 'name');
+    }
+    else {
+        if(id) {
+            // update env
+            await EnvModel.findOneAndUpdate({
+                _id: id
+            }, {name: trimCharactersAndNumbers(name),description});
         }
         else {
-            // create a new env
+            const ApplicationNameEntry: any = await ApplicationSpaceModel.findOne({
+                clientUserName,
+                name: applicationName
+            }, ['env']).populate('env');
+            
+            if(ApplicationNameEntry && ApplicationNameEntry.env) {
+            // create an env
             const newEnv = EnvModel.build({
                 name: trimCharactersAndNumbers(name),
                 description,
+                clientUserName, 
+                applicationName,
                 order: ApplicationNameEntry.env.length + 1,
                 isPublic: true,
-                supportedDomains: [''],
+                supportedDomains: ['*'],
                 createdBy: req.currentUser[ID],
                 updatedBy: req.currentUser[ID],
             });
+    
             await newEnv.save();
-            ApplicationNameEntry.env.push(newEnv[ID]);
             
-            // update the applicationSpace
             await ApplicationSpaceModel.findOneAndUpdate({
-                clientUserName, name: applicationName
+                clientUserName,
+                name: applicationName
             }, {
-                env: ApplicationNameEntry.env
+                $push: { env: newEnv._id }
             });
+    
+            }
         }
-
+        sendOkayResponse(res, {status: 'done'});
     }
-    sendOkayResponse(res, {status: 'done'});
+
+    
 }

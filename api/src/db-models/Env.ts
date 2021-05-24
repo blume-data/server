@@ -6,6 +6,10 @@ interface EnvAttrs {
     order: number;
     isPublic: boolean;
     supportedDomains: string[];
+
+    applicationName: string;
+    clientUserName: string;
+
     createdAt?: Date;
     createdBy: string;
     updatedBy: string;
@@ -23,6 +27,10 @@ interface EnvDoc extends mongoose.Document {
     order: number;
     isPublic: boolean;
     supportedDomains: string[];
+
+    applicationName: string;
+    clientUserName: string;
+
     createdAt?: Date;
     createdBy: string;
     updatedBy: string;
@@ -44,6 +52,9 @@ const SchemaInstance = new mongoose.Schema(
                 type: String
             }
         },
+
+        applicationName: String,
+        clientUserName: String,
 
         updatedBy : { type: Schema.Types.ObjectId, ref: 'ClientUser' },
         updatedAt : { type: Date },

@@ -1,7 +1,7 @@
 import { Grid, IconButton } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 import LinkIcon from '@material-ui/icons/Link';
-import { APPLICATION_NAME, CLIENT_USER_NAME, ErrorMessagesType } from '@ranjodhbirkaur/constants';
+import { APPLICATION_NAME, CLIENT_USER_NAME, ErrorMessagesType, ID } from '@ranjodhbirkaur/constants';
 import { useState } from 'react';
 import {connect, ConnectedProps} from "react-redux";
 import BasicTableMIUI from '../../../../components/common/BasicTableMIUI';
@@ -16,12 +16,18 @@ import {setEnv} from '../../../../modules/authentication/pages/Auth/actions';
 import {fetchApplicationNames} from '../../pages/home/actions';
 import './style.scss';
 
+interface EnvType {
+    name: string;
+    description: string;
+    _id?: string;
+}
+
 type PropsFromRedux = ConnectedProps<typeof connector>;
 const Envs = (props: PropsFromRedux) => {
 
     const {applicationNames, applicationName, envUrl, selectedEnv, setEnv, fetchApplicationNames} = props;
     const [isModelOpen, setIsModalOpen] = useState<boolean>(false);
-    const [envData, setEnvData] = useState<{name: string, description: string, order: number}>({name: '', description: '', order: 1});
+    const [envData, setEnvData] = useState<EnvType>({name: '', description: ''});
     const [response, setResponse] = useState<string | ErrorMessagesType[]>('');
 
     const fields: ConfigField[] = [
@@ -71,12 +77,20 @@ const Envs = (props: PropsFromRedux) => {
         function onSelect() {
             setEnv(item.name);
         }
-        item.edit = <IconButton>
+        function onClickEdit() {
+            setEnvData({
+                name: item.name,
+                description: item.description,
+                _id: item[ID]
+            });
+            setIsModalOpen(true);
+        }
+        item.edit = <IconButton onClick={onClickEdit}>
             <EditIcon />
         </IconButton>;
         item.select = <IconButton 
-        onClick={onSelect}
-        className={selectedEnv === item.name ? 'selected' : ''}>
+            onClick={onSelect}
+            className={selectedEnv === item.name ? 'selected' : ''}>
             <LinkIcon />
         </IconButton>
         return item;
