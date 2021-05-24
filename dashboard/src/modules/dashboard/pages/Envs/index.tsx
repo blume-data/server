@@ -27,7 +27,7 @@ const Envs = (props: PropsFromRedux) => {
 
     const {applicationNames, applicationName, envUrl, selectedEnv, setEnv, fetchApplicationNames} = props;
     const [isModelOpen, setIsModalOpen] = useState<boolean>(false);
-    const [envData, setEnvData] = useState<EnvType>({name: '', description: ''});
+    const [envData, setEnvData] = useState<EnvType | null>(null);
     const [response, setResponse] = useState<string | ErrorMessagesType[]>('');
 
     const fields: ConfigField[] = [
@@ -35,7 +35,7 @@ const Envs = (props: PropsFromRedux) => {
             name: 'name',
             required: true,
             placeholder: 'Name',
-            value: envData.name,
+            value: envData ? envData.name : '',
             className: 'create-content-model-name',
             type: 'text',
             label: 'Name',
@@ -46,7 +46,7 @@ const Envs = (props: PropsFromRedux) => {
             name: 'description',
             required: false,
             placeholder: 'Description',
-            value: envData.description,
+            value: envData ? envData.description : '',
             className: 'create-content-model-name',
             type: 'text',
             label: 'Description',
@@ -63,7 +63,7 @@ const Envs = (props: PropsFromRedux) => {
 
         let resp: any;
 
-        if(envData._id) {
+        if(envData && envData._id) {
             resp = await doPutRequest(url || '', {
                 ...values,
                 _id: envData._id
@@ -71,6 +71,7 @@ const Envs = (props: PropsFromRedux) => {
         }
         else {
             resp = await doPostRequest(url || '', values, true);
+            setEnvData(null);
         }
         if(resp && resp.errors) {
             setResponse(resp.errors);
@@ -91,7 +92,7 @@ const Envs = (props: PropsFromRedux) => {
             setEnvData({
                 name: item.name,
                 description: item.description,
-                _id: item[ID]
+                _id: item._id
             });
             setIsModalOpen(true);
         }
