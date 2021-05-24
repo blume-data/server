@@ -18,7 +18,7 @@ import {
     dashboardDataEntriesUrl,
     dashboardCreateDataEntryUrl,
     dashboardCreateDataModelsUrl,
-    assetsUrl, APP_ROOT_URL, dashboardEnvUrl
+    assetsUrl, APP_ROOT_URL, dashboardEnvUrl, dashbaordUserUrl
 } from "./utils/urls";
 import {Assets} from "./modules/assets";
 import Layout from "./components/common/Layout";
@@ -31,6 +31,7 @@ import ApplicationName from "./modules/dashboard/pages/ApplicationName";
 import ApplicationNames from "./modules/dashboard/pages/applicationNames";
 import {DataEntries} from './modules/dashboard/pages/DateEntries';
 import Envs from "./modules/dashboard/pages/Envs";
+import { Users } from "./modules/dashboard/pages/Users";
 
 function PrivateRoute(Component: any) {
     return () => {
@@ -56,6 +57,8 @@ export const RouterComponent = () => {
                     <Route exact path={dashboardApplicationNameUrl} component={PrivateRoute(ApplicationName)}/>
 
                     <Route exact path={dashboardEnvUrl} component={PrivateRoute(Envs)} />
+
+                    <Route exact path={dashbaordUserUrl} component={PrivateRoute(Users)} />
 
                     <Route exact path={dashboardDataModelsUrl} component={PrivateRoute(DataModels)}/>
                     <Route exact path={dashboardCreateDataModelsUrl} component={PrivateRoute(CreateDataModel)}/>

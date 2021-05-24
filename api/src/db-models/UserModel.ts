@@ -1,5 +1,5 @@
 import mongoose, {SchemaDefinition} from 'mongoose';
-import {CLIENT_USER_MODEL_NAME} from "../util/common-module";
+import {clientUserType, CLIENT_USER_MODEL_NAME} from "../util/common-module";
 
 export interface RootUserAttrs {
     userName: string;
@@ -13,6 +13,7 @@ interface ClientUserAttrs extends RootUserAttrs{
     password: string;
     firstName: string;
     lastName: string;
+    type?: string;
 }
 
 export interface RootUserDoc extends mongoose.Document {
@@ -26,6 +27,7 @@ interface ClientUserDoc extends RootUserDoc {
     email: string;
     firstName: string;
     lastName: string;
+    type?: string;
 }
 
 export function getRootUserSchema(properties: SchemaDefinition) {
@@ -51,6 +53,10 @@ export function getRootUserSchema(properties: SchemaDefinition) {
             createdAt: {
                 type: String,
                 default: new Date()
+            },
+            type: {
+                type: String,
+                default: clientUserType
             }
         }
     );
