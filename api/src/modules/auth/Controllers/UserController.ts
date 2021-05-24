@@ -147,8 +147,6 @@ async function sendValidateEmailResponse(req: Request, payload: JwtPayloadType, 
 * */
 export async function OnCreateNewUser(userId: string, userName: string) {
 
-    const createdAt = DateTime.local().setZone('UTC').toJSDate();
-
     await newApplicationSpace({
         clientUserName: userName,
         applicationName: EXAMPLE_APPLICATION_NAME,

@@ -25,6 +25,6 @@ router.get(emailVerificationUrl(), [
         .withMessage(stringLimitOptionErrorMessage('token')),
     query('email').isEmail().withMessage(InValidEmailMessage)
     ],
-    validateRequest, validateUserType,  verifyEmailToken);
+    validateRequest, validateUserType, verifyEmailToken);
 
 export { router as routes };

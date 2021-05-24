@@ -21,6 +21,7 @@ interface NewApplicationSpace {
     description: string;
     clientUserName: string;
 }
+
 export async function newApplicationSpace(params: NewApplicationSpace) {
 
     const {applicationName, res, userId, description, clientUserName} = params;
@@ -41,6 +42,8 @@ export async function newApplicationSpace(params: NewApplicationSpace) {
         //create a new production env for this
         const newEnv = EnvModel.build({
             name: PRODUCTION_ENV,
+            applicationName,
+            clientUserName,
             description,
             order: 1,
             updatedBy: userId,
