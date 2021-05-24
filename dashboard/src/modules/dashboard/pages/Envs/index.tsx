@@ -13,12 +13,13 @@ import {RootState} from "../../../../rootReducer";
 import { doPostRequest } from '../../../../utils/baseApi';
 import { getItemFromLocalStorage } from '../../../../utils/tools';
 import {setEnv} from '../../../../modules/authentication/pages/Auth/actions';
+import {fetchApplicationNames} from '../../pages/home/actions';
 import './style.scss';
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 const Envs = (props: PropsFromRedux) => {
 
-    const {applicationNames, applicationName, envUrl, selectedEnv, setEnv} = props;
+    const {applicationNames, applicationName, envUrl, selectedEnv, setEnv, fetchApplicationNames} = props;
     const [isModelOpen, setIsModalOpen] = useState<boolean>(false);
     const [envData, setEnvData] = useState<{name: string, description: string, order: number}>({name: '', description: '', order: 1});
     const [response, setResponse] = useState<string | ErrorMessagesType[]>('');
@@ -60,6 +61,7 @@ const Envs = (props: PropsFromRedux) => {
         }
         else {
             setIsModalOpen(false);
+            fetchApplicationNames();
         }        
     }
 
@@ -130,5 +132,5 @@ const mapState = (state: RootState) => {
     }
 };
 
-const connector = connect(mapState, {setEnv});
+const connector = connect(mapState, {setEnv, fetchApplicationNames});
 export default connector(Envs);
