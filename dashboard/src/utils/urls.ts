@@ -12,6 +12,8 @@ export const dashboardApplicationNameUrl = `${APP_ROOT_URL}dashboard/:applicatio
 
 export const dashboardEnvUrl = `${APP_ROOT_URL}dashboard/:applicationName/env`;
 
+export const dashbaordUserUrl = `${APP_ROOT_URL}dashboard/:applicationName/:env/users`;
+
 export const dashboardDataModelsUrl = `${APP_ROOT_URL}dashboard/:applicationName/models`;
 export const dashboardCreateDataModelsUrl = `${APP_ROOT_URL}dashboard/:applicationName/model`;
 

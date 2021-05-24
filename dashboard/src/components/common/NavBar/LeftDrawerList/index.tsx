@@ -8,6 +8,7 @@ import Divider from "@material-ui/core/Divider";
 import { Link } from "react-router-dom";
 import {
     assetsUrl,
+    dashbaordUserUrl,
     dashboardApplicationNamesUrl, dashboardDataEntriesUrl,
     dashboardDataModelsUrl,
     dashboardEnvUrl,
@@ -22,8 +23,9 @@ import {connect, ConnectedProps} from "react-redux";
 import {RootState} from "../../../../rootReducer";
 import NoteIcon from '@material-ui/icons/Note';
 import WidgetsIcon from '@material-ui/icons/Widgets';
-import {APPLICATION_NAME} from "@ranjodhbirkaur/constants";
+import {APPLICATION_NAME, ENV} from "@ranjodhbirkaur/constants";
 import {setEnv} from '../../../../modules/authentication/pages/Auth/actions';
+import { PersonAdd } from "@material-ui/icons";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
@@ -41,6 +43,11 @@ const LeftDrawerListComponent = (props: PropsFromRedux) => {
     }`;
 
     const EnvUrl = `${dashboardEnvUrl.replace(`:${APPLICATION_NAME}`, applicationName)}`;
+
+    const UserUrl = `${dashbaordUserUrl
+        .replace(`:${APPLICATION_NAME}`, applicationName)
+        .replace(`:${ENV}`, selectedEnv)
+}`
 
     const envs = applicationNames.find(name => {
         if(name.name === applicationName) {
@@ -65,7 +72,7 @@ const LeftDrawerListComponent = (props: PropsFromRedux) => {
                 <ListItem button>
                     <Link className={'link-item-link'} to={dashboardApplicationNamesUrl}>
                         <ListItemIcon><ApartmentIcon /></ListItemIcon>
-                        <ListItemText primary={'Application Space'} />
+                        <ListItemText primary={<div>Application space: <b>{applicationName}</b></div>} />
                     </Link>
                 </ListItem>
                 {
@@ -77,7 +84,7 @@ const LeftDrawerListComponent = (props: PropsFromRedux) => {
                                 <ListItemText
                                     title={`selected Env: ${selectedEnv}`}
                                     className='env-title'
-                                    primary={`Env (${selectedEnv})`}
+                                    primary={<div>Env: <b>{selectedEnv}</b></div>}
                                   />
                             </Link>
                         </ListItem>
@@ -103,6 +110,12 @@ const LeftDrawerListComponent = (props: PropsFromRedux) => {
                             <Link className={'link-item-link'} to={assetsUrl}>
                                 <ListItemIcon><PhotoAlbumIcon /></ListItemIcon>
                                 <ListItemText primary={'Assets'} />
+                            </Link>
+                        </ListItem>
+                        <ListItem button>
+                            <Link className={'link-item-link'} to={UserUrl}>
+                                <ListItemIcon><PersonAdd /></ListItemIcon>
+                                <ListItemText primary={'Users'} />
                             </Link>
                         </ListItem>
                       </div>

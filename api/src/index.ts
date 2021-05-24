@@ -5,15 +5,9 @@ import {ApplicationNameRoutes} from "./modules/model-collections/routes/applicat
 import {CollectionRoutes} from "./modules/model-collections/routes/collection-routes";
 import {StoreRoutes} from "./modules/entries/Routes/store";
 import {SettingRoutes} from "./modules/model-collections/routes/setting-routes";
-import {addressRoutes} from "./modules/auth/routes/addresses";
-import {currentUserRouter} from "./modules/auth/routes/current-user";
-import {signinRouter} from "./modules/auth/routes/signin";
-import {signoutRouter} from "./modules/auth/routes/signout";
-import {signupRouter} from "./modules/auth/routes/signup";
-import {routes} from "./modules/auth/routes";
 import userAgent from 'express-useragent';
 import {assetsRoutes} from "./modules/assets/routes";
-import { EnvRouter } from './modules/auth/routes/env-route';
+import {EnvRouter, currentUserRouter, addressRoutes, signinRouter, signoutRouter, signupRouter, validationRoutes} from './modules/auth/routes';
 
 const start = async () => {
 
@@ -38,7 +32,7 @@ const start = async () => {
   serverApp.use(signinRouter);
   serverApp.use(signoutRouter);
   serverApp.use(signupRouter);
-  serverApp.use(routes);
+  serverApp.use(validationRoutes);
   serverApp.use(EnvRouter);
 
   // Asset Module
