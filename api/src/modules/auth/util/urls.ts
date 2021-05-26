@@ -1,3 +1,4 @@
+import { APPLICATION_NAME, CLIENT_USER_NAME } from "@ranjodhbirkaur/constants";
 import {clusterUrl} from "./constants";
 
 export const clusterCheckUser = `${clusterUrl}/check`;
@@ -5,12 +6,14 @@ export const clusterCheckUser = `${clusterUrl}/check`;
 export const authRootUrl = `/api/auth`;
 
 export const addressUrls = 'routes';
+
 export const getAddressUrls = (userType?: string) => {
     if (!userType) {
         return `${authRootUrl}/${addressUrls}`
     }
     return `${authRootUrl}/${addressUrls}`
 };
+
 export const addressUrlsUrl = `${authRootUrl}/${addressUrls}`;
 
 export const register = 'sign-up';
@@ -69,4 +72,6 @@ export const roleUrl = (userName?: string) => {
     return `${authRootUrl}/${userName}/${roleRoute}`
 };
 
-export const EnvUrl = `${authRootUrl}/:clientUserName/:applicationName/env`;
+export const EnvUrl = `${authRootUrl}/:${CLIENT_USER_NAME}/:${APPLICATION_NAME}/env`;
+
+export const CreateOtherUsers = `${authRootUrl}/:userType/:${CLIENT_USER_NAME}/create-user`;

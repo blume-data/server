@@ -8,6 +8,7 @@ import {SettingRoutes} from "./modules/model-collections/routes/setting-routes";
 import userAgent from 'express-useragent';
 import {assetsRoutes} from "./modules/assets/routes";
 import {EnvRouter, currentUserRouter, addressRoutes, signinRouter, signoutRouter, signupRouter, validationRoutes} from './modules/auth/routes';
+import { createOtherUsersRouter } from './modules/auth/routes/create-other-users-route';
 
 const start = async () => {
 
@@ -34,6 +35,7 @@ const start = async () => {
   serverApp.use(signupRouter);
   serverApp.use(validationRoutes);
   serverApp.use(EnvRouter);
+  serverApp.use(createOtherUsersRouter);
 
   // Asset Module
   serverApp.use(assetsRoutes);
