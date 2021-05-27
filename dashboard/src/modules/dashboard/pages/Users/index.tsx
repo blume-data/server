@@ -1,14 +1,15 @@
 import { Grid } from "@material-ui/core";
 import { APPLICATION_NAME, CLIENT_USER_NAME, ENV, SupportedUserType } from "@ranjodhbirkaur/constants";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { connect, ConnectedProps } from "react-redux"
+import { couldStartTrivia } from "typescript";
 import { AccordianCommon } from "../../../../components/common/AccordianCommon";
 import { CommonButton } from "../../../../components/common/CommonButton";
 import { Form } from "../../../../components/common/Form";
 import { ConfigField, DROPDOWN, TEXT } from "../../../../components/common/Form/interface";
 import { RenderHeading } from "../../../../components/common/RenderHeading";
 import { RootState } from "../../../../rootReducer";
-import { doPostRequest } from "../../../../utils/baseApi";
+import { doGetRequest, doPostRequest } from "../../../../utils/baseApi";
 import { getItemFromLocalStorage } from "../../../../utils/tools";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
@@ -16,8 +17,33 @@ export const UsersComponent = (props: PropsFromRedux) => {
 
     const {userGroupUrl, applicationName, env} = props;
 
+    const [userGroups, setUserGroups] = useState<any>(null);
+
     const [showCreateUserForm, setShowCreateUserForm] = useState<boolean>(false);
     const [showCreateGroupForm, setShowCreateGroupForm] = useState<boolean>(false);
+    const [urls, setUrls] = useState<{user: string; group: string}>({user: '', group: ''})
+
+    function setSomeUrls() {
+        const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
+        //debugger
+            if(userGroupUrl && clientUserName) {
+                const url = userGroupUrl
+                .replace(`:${CLIENT_USER_NAME}`, clientUserName)
+                .replace(`:${APPLICATION_NAME}`, applicationName)
+                .replace(`:${ENV}`, env);
+                setUrls({
+                    ...urls,
+                    group: url
+                });
+            }
+    }
+
+    // set some url
+    useEffect(() => {
+        if(applicationName && env) {
+            setSomeUrls();
+        }
+    }, [applicationName, env, userGroupUrl])
 
     const userModelfields: ConfigField[] = [
         {
@@ -77,8 +103,18 @@ export const UsersComponent = (props: PropsFromRedux) => {
         },
     ];
 
-    function onSubmit(values: any) {
-        console.log('values', values);
+    // fetch user groups
+    useEffect(() => {
+        if(urls.group) {
+            fetchUserGroups();
+        }
+    }, [urls])
+
+    async function fetchUserGroups() {
+
+        const response = await doGetRequest(urls.group, {}, true);
+        setUserGroups(response);
+        
     }
 
     function component(type: 'user'|'group') {
@@ -94,17 +130,7 @@ export const UsersComponent = (props: PropsFromRedux) => {
         }
 
         async function onSubmit(values: any) {
-            const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
-            if(userGroupUrl && clientUserName) {
-                const url = userGroupUrl
-                .replace(`:${CLIENT_USER_NAME}`, clientUserName)
-                .replace(`:${APPLICATION_NAME}`, applicationName)
-                .replace(`:${ENV}`, env);
-
-                const response = await doPostRequest(url, values, true);
-                console.log('Response ', response);
-            }
-            
+            const response = await doPostRequest(urls.group, values, true);
 
         }
 

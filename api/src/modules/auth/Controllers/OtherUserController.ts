@@ -78,3 +78,15 @@ export async function CreateUserGroup(req: Request, res: Response) {
     return sendOkayResponse(res, newUserGroup);
     
 }
+
+export async function FetchUserGroup(req: Request, res: Response) {
+
+    const {applicationName, clientUserName, env} = req.params;
+
+    const userGroups = await UserGroupModel.find({
+        clientUserName, applicationName, env
+    });
+
+    return sendOkayResponse(res, userGroups);
+    
+}
