@@ -1,6 +1,9 @@
 import { Grid } from "@material-ui/core";
 import { SupportedUserType } from "@ranjodhbirkaur/constants";
+import React from "react";
 import { connect } from "react-redux"
+import { AccordianCommon } from "../../../../components/common/AccordianCommon";
+import { CommonButton } from "../../../../components/common/CommonButton";
 import { Form } from "../../../../components/common/Form";
 import { ConfigField, DROPDOWN, TEXT } from "../../../../components/common/Form/interface";
 import { RenderHeading } from "../../../../components/common/RenderHeading";
@@ -8,7 +11,7 @@ import { RootState } from "../../../../rootReducer";
 
 export const UsersComponent = () => {
 
-    const fields: ConfigField[] = [
+    const userModelfields: ConfigField[] = [
         {
             name: 'userName',
             required: true,
@@ -49,11 +52,34 @@ export const UsersComponent = () => {
         console.log('values', values);
     }
 
+    function userModel() {
+        return (
+            <Grid container justify="space-between">
+                <Grid item>
+                    <RenderHeading
+                        value="user model"
+                    />
+                </Grid>
+                <Grid>
+                    <CommonButton
+                        name='user group'
+                     />
+                </Grid>
+                
+            </Grid>
+        );
+    }
+
     return (
         <Grid>
-            <RenderHeading
-                value='User component'
-             />
+            <AccordianCommon 
+                name={'User model'}
+                children={<h1>Uswer Model</h1>}
+            />
+            <AccordianCommon
+                name={'User group'}
+                children={userModel()}
+            />
 
 
             <Form 
@@ -61,7 +87,7 @@ export const UsersComponent = () => {
                 response={''}
                 className=''
                 onSubmit={onSubmit}
-                fields={fields}
+                fields={userModelfields}
             />
 
         </Grid>
