@@ -1,4 +1,5 @@
-import {adminType, APPLICATION_NAME, CLIENT_USER_NAME, clientType} from "../../../util/common-module";
+import { adminType, clientType } from "@ranjodhbirkaur/constants";
+import {APPLICATION_NAME, CLIENT_USER_NAME} from "../../../util/common-module";
 
 export const EmailInUseMessage = 'An account with this Email address already exist';
 export const UserNameNotAvailableMessage = 'Username is not available';

@@ -1,6 +1,6 @@
+import { SupportedUserType } from "@ranjodhbirkaur/constants";
 import {Request, Response, NextFunction} from "express";
-import {
-    SupportedUserType, sendSingleError
+import {sendSingleError
 } from "../../../util/common-module";
 
 

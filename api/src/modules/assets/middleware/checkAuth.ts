@@ -1,13 +1,12 @@
 import {Request, Response, NextFunction} from 'express';
 import {
     APPLICATION_NAMES,
-    clientType,
-    clientUserType,
-    JWT_ID, USER_NAME, AUTHORIZATION_TOKEN,
+    JWT_ID, 
     sendSingleError, Is_Enabled, CLIENT_USER_NAME, ID, JWT_KEY,
 } from "../../../util/common-module";
 import jwt from 'jsonwebtoken';
 import {UserModel} from "../../../db-models/UserModel";
+import {USER_NAME, AUTHORIZATION_TOKEN,clientType,clientUserType,} from '@ranjodhbirkaur/constants'
 
 /*
 * Check isEnabled jwt_id and client type

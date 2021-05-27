@@ -1,4 +1,4 @@
-import {CLIENT_USER_NAME, clientType, JWT_ID, SESSION_ID, USER_NAME, ID} from "../utils";
+import {CLIENT_USER_NAME, JWT_ID, SESSION_ID, ID} from "../utils";
 
 export interface ErrorMessages {
     field?: string;
@@ -6,9 +6,9 @@ export interface ErrorMessages {
 }
 
 export interface JwtPayloadType{
-    [clientType]: string;
+    clientType: string;
     // username of the person who signed in
-    [USER_NAME]: string;
+    userName: string;
     [JWT_ID]: string;
     // id of person who signed in
     [ID]: string;
@@ -22,7 +22,7 @@ export interface ApplicationNameType {
 
 export interface PayloadResponseType {
     [CLIENT_USER_NAME]: string;
-    [USER_NAME]: string;
-    [clientType]: string;
+    userName: string;
+    clientType: string;
     [ID]: string;
 }

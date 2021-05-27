@@ -1,32 +1,25 @@
 import {
     BadRequestError,
     okayStatus,
-    USER_NAME,
-    clientUserType,
     JWT_ID,
     ID,
     RANDOM_STRING,
     CLIENT_USER_NAME,
     generateJwt,
     sendJwtResponse,
-    clientType,
     LAST_NAME,
     FIRST_NAME,
     PASSWORD,
     EMAIL,
-    PayloadResponseType, JwtPayloadType, SESSION_ID, JWT_KEY
-} from "../../../util/common-module";
+    PayloadResponseType, JwtPayloadType, SESSION_ID} from "../../../util/common-module";
 import {ClientTempUser} from "../../../db-models/clientTempUser";
 import {Request, Response} from "express";
 import {TOKEN_NOT_VALID, USER_NAME_NOT_AVAILABLE} from "../util/errorMessages";
 import {UserModel as MainUserModel} from "../../../db-models/UserModel";
-import {DateTime} from "luxon";
-import {ApplicationSpaceModel} from "../../../db-models/ApplicationSpace";
 import {EXAMPLE_APPLICATION_NAME} from "../util/constants";
-import {PRODUCTION_ENV} from "@ranjodhbirkaur/constants";
 import {createNewSession} from "../util/tools";
-import axios from "axios";
 import { newApplicationSpace } from "../../model-collections/Controllers/ApplicationNameController";
+import { clientUserType, USER_NAME, clientType } from "@ranjodhbirkaur/constants";
 
 interface ReqIsUserNameAvailable extends Request{
     body: {

@@ -5,19 +5,17 @@ import {
   BadRequestError,
   generateJwt,
   sendJwtResponse,
-  clientUserType,
-  adminUserType,
-  freeUserType,
-  superVisorUserType,
-  supportUserType,
+  
   stringLimitOptionErrorMessage,
   stringLimitOptions,
   JWT_ID,
-  USER_NAME,
   CLIENT_USER_NAME,
-  clientType,
   APPLICATION_NAMES, PayloadResponseType, JwtPayloadType, PASSWORD, sendSingleError, SESSION_ID, ID
 } from '../../../util/common-module';
+import {clientUserType,
+  freeUserType,
+  superVisorUserType,
+  supportUserType, USER_NAME, clientType} from '@ranjodhbirkaur/constants';
 import { Password } from '../services/password';
 
 import {InValidEmailMessage, InvalidLoginCredentialsMessage} from "../util/errorMessages";
@@ -102,9 +100,6 @@ router.post(
         await sendResponse(req, res, responseData, existingUser, password, userType);
         return;
         }
-        break;
-      }
-      case adminUserType: {
         break;
       }
       

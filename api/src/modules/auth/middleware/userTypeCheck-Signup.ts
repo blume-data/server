@@ -1,10 +1,9 @@
-import { ENV } from "@ranjodhbirkaur/constants";
+import { clientUserType, ENV, freeUserType, superVisorUserType, SupportedUserType, supportUserType, USER_NAME } from "@ranjodhbirkaur/constants";
 import {Request, Response, NextFunction} from "express";
 import {
-    BadRequestError, supportUserType, superVisorUserType, sendSingleError,
-    freeUserType, SupportedUserType,
-    ErrorMessages, adminUserType, adminType, clientUserType, CLIENT_USER_NAME, APPLICATION_NAME,
-    FIRST_NAME, LAST_NAME, EMAIL, pushErrors, sendErrors, USER_NAME, PASSWORD,
+    BadRequestError, sendSingleError,
+    ErrorMessages, CLIENT_USER_NAME, APPLICATION_NAME,
+    FIRST_NAME, LAST_NAME, EMAIL, pushErrors, sendErrors, PASSWORD,
 } from "../../../util/common-module";
 import {ADMIN_USER_TYPE_NOT_VALID} from "../util/errorMessages";
 
@@ -45,17 +44,7 @@ export async function validateUserTypeSignUp(req: Request, res: Response, next: 
                     }
                     break;
                 }
-                // TODO
-                // Take a look at admin type sign-up
-                case adminUserType: {
-                    if(!reqBody[adminType]
-                        || typeof reqBody[adminType] !== 'string'
-                        || ![adminUserType, supportUserType, superVisorUserType].includes(reqBody[adminType])) {
-
-                        return sendSingleError(res, ADMIN_USER_TYPE_NOT_VALID, adminType);
-                    }
-                    break;
-                }
+                
                 default: {
                     // requires user to be authenticated
                     if ((userType === freeUserType || userType === supportUserType || userType === superVisorUserType)) {
