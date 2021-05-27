@@ -6,7 +6,6 @@ import {
   generateJwt,
   sendJwtResponse,
   clientUserType,
-  adminUserType,
   freeUserType,
   superVisorUserType,
   supportUserType,
@@ -102,9 +101,6 @@ router.post(
         await sendResponse(req, res, responseData, existingUser, password, userType);
         return;
         }
-        break;
-      }
-      case adminUserType: {
         break;
       }
       

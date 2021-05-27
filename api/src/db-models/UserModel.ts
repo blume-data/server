@@ -1,39 +1,52 @@
-import mongoose, {SchemaDefinition} from 'mongoose';
+import { DateTime } from 'luxon';
+import mongoose from 'mongoose';
 import {clientUserType, CLIENT_USER_MODEL_NAME} from "../util/common-module";
+interface ClientUserAttrs {
+    email?: string;
+    password: string;
+    firstName?: string;
+    lastName?: string;
+    type?: string;
 
-export interface RootUserAttrs {
+    clientUserName?: string;
+    applicationName?: string;
+
     userName: string;
     jwtId: string;
-    password: string;
     isEnabled?: boolean;
     createdAt?: string;
+    details?: any;
 }
-interface ClientUserAttrs extends RootUserAttrs{
-    email: string;
-    password: string;
-    firstName: string;
-    lastName: string;
+interface ClientUserDoc extends mongoose.Document {
+    email?: string;
+    firstName?: string;
+    lastName?: string;
     type?: string;
-}
 
-export interface RootUserDoc extends mongoose.Document {
+    clientUserName?: string;
+    applicationName?: string;
+
     userName: string;
     jwtId: string;
     password: string;
     isEnabled?: boolean;
     createdAt: string;
-}
-interface ClientUserDoc extends RootUserDoc {
-    email: string;
-    firstName: string;
-    lastName: string;
-    type?: string;
+    details?: any;
 }
 
-export function getRootUserSchema(properties: SchemaDefinition) {
+function getRootUserSchema() {
     return new mongoose.Schema(
         {
-            ...properties,
+            email: {
+                type: String,
+                lowercase:true
+            },
+            firstName : {
+                type: String
+            },
+            lastName : {
+                type: String
+            },
             userName: {
                 type: String,
                 required: true
@@ -52,12 +65,15 @@ export function getRootUserSchema(properties: SchemaDefinition) {
             },
             createdAt: {
                 type: String,
-                default: new Date()
+                default: DateTime.local().setZone('UTC').toJSDate()
             },
             type: {
                 type: String,
                 default: clientUserType
-            }
+            },
+            details: Object,
+            clientUserName: String,
+            applicationName: String,
         }
     );
 }
@@ -66,28 +82,10 @@ interface ClientUserModel extends mongoose.Model<ClientUserDoc> {
     build(attrs: ClientUserAttrs): ClientUserDoc;
 }
 
-const clientUserSchema = getRootUserSchema({
-    email: {
-        type: String,
-        required: true,
-        unique:true,
-        lowercase:true
-    },
-    firstName : {
-        type: String,
-        required: true
-    },
-    lastName : {
-        type: String,
-        required: true
-    }
-});
+const clientUserSchema = getRootUserSchema();
 
 clientUserSchema.statics.build = (attrs: ClientUserAttrs) => {
     return new UserModel(attrs);
 };
 
 export const UserModel = mongoose.model<ClientUserDoc, ClientUserModel>(CLIENT_USER_MODEL_NAME, clientUserSchema);
-
-
-

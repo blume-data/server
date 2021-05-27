@@ -4,7 +4,6 @@ import {
     validateRequest,
     okayStatus,
     RANDOM_STRING,
-    adminUserType,
     clientUserType,
     freeUserType,
     stringLimitOptionErrorMessage,
@@ -77,10 +76,6 @@ router.post(
             case superVisorUserType: {
                 return await saveUser(req, res, superVisorUserType);
             }
-            case adminUserType: {
-                // needs to be looked again
-                return await saveUser(req, res, adminUserType);
-            }
         }
   }
 );
@@ -124,7 +119,7 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
     const { email, password, firstName, lastName, userName, clientUserName, applicationName } = req.body;
     const [adminType] = req.body;
 
-    if(type !== clientUserType && type !== adminUserType) {
+    if(type !== clientUserType) {
         const resp = await validateClientUserName(req);
         if(!resp.isValid) {
             return sendErrors(res, resp.errorMessages);
@@ -136,10 +131,6 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
     switch (type) {
         case clientUserType: {
             existingUser = await MainUserModel.findOne({email});
-            break;
-        }
-        case adminUserType: {
-            //existingUser = await AdminUser.findOne({email});
             break;
         }
         default: {
@@ -159,10 +150,6 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
     switch (type) {
         case clientUserType: {
             existingUser = await MainUserModel.findOne({userName});
-            break;
-        }
-        case adminUserType: {
-            //existingUser = await AdminUser.findOne({userName});
             break;
         }
         default: {
