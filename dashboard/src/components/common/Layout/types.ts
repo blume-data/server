@@ -52,6 +52,7 @@ interface AuthRoutesType {
     emailVerification: string;
     userNameValidation: string;
     envUrl: string;
+    userGroupUrl: string;
 }
 
 export interface RouteAddressesInitialStateType {

@@ -1,4 +1,4 @@
-import { APPLICATION_NAME, CLIENT_USER_NAME } from "@ranjodhbirkaur/constants";
+import { APPLICATION_NAME, CLIENT_USER_NAME, ENV } from "@ranjodhbirkaur/constants";
 import { getBaseUrl } from "../urls";
 
 export const env = process.env.NODE_ENV;
@@ -17,7 +17,9 @@ export const AUTH_ROUTES = {
     logOut: "sign-out",
     register: "sign-up",
     userNameValidation: "username-validation",
-    envUrl: `${getBaseUrl()}${AUTH_ROOT_URL}/:${CLIENT_USER_NAME}/:${APPLICATION_NAME}/env`
+    envUrl: `${getBaseUrl()}${AUTH_ROOT_URL}/:${CLIENT_USER_NAME}/:${APPLICATION_NAME}/env`,
+    userGroupUrl: `${getBaseUrl()}${AUTH_ROOT_URL}/:${CLIENT_USER_NAME}/:${APPLICATION_NAME}/:${ENV}/create-user-group`
+
 }
 
 export const DATA_ROUTES = {
