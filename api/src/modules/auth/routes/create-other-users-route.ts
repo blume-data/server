@@ -1,8 +1,8 @@
-import { ENV, PASSWORD } from "@ranjodhbirkaur/constants";
+import { ENV, PASSWORD, USER_NAME } from "@ranjodhbirkaur/constants";
 import {Router} from "express";
 import { body } from "express-validator";
 import { checkAuth } from "../../../services/checkAuth";
-import { stringLimitOptionErrorMessage, stringLimitOptions, USER_NAME, validateRequest } from "../../../util/common-module";
+import { stringLimitOptionErrorMessage, stringLimitOptions, validateRequest } from "../../../util/common-module";
 import { CreateUpdateOtherUser } from "../Controllers/OtherUserController";
 import {CreateOtherUsers} from "../util/urls";
 

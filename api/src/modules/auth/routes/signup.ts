@@ -4,15 +4,10 @@ import {
     validateRequest,
     okayStatus,
     RANDOM_STRING,
-    clientUserType,
-    freeUserType,
     stringLimitOptionErrorMessage,
     stringLimitOptions,
     sendSingleError,
-    superVisorUserType,
-    supportUserType,
     EMAIL,
-    USER_NAME,
     ErrorMessages,
     APPLICATION_NAMES,
     CLIENT_USER_NAME,
@@ -28,7 +23,7 @@ import {ClientTempUser} from "../../../db-models/clientTempUser";
 import {validateUserTypeSignUp} from "../middleware/userTypeCheck-Signup";
 import {CLIENT_USER_NAME_NOT_VALID, EmailInUseMessage, InValidEmailMessage, UserNameNotAvailableMessage} from "../util/errorMessages";
 import {signUpUrl} from "../util/urls";
-import {trimCharactersAndNumbers} from "@ranjodhbirkaur/constants";
+import {clientUserType, freeUserType, superVisorUserType, supportUserType, trimCharactersAndNumbers, USER_NAME} from "@ranjodhbirkaur/constants";
 import {UserModel as MainUserModel} from "../../../db-models/UserModel";
 
 const

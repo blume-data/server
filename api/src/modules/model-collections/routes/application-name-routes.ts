@@ -1,6 +1,4 @@
 import {
-    clientType,
-    clientUserType,
     APPLICATION_NAME,
     stringLimitOptionErrorMessage,
     stringLimitOptions,
@@ -11,6 +9,7 @@ import { body } from 'express-validator';
 import { createApplicationName, getApplicationName } from '../Controllers/ApplicationNameController';
 import { ApplicationNameUrl } from '../../../util/urls';
 import {checkAuth} from "../../../services/checkAuth";
+import {clientType, clientUserType} from '@ranjodhbirkaur/constants';
 
 const router = express.Router();
 

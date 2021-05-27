@@ -1,10 +1,9 @@
-import { ENV } from "@ranjodhbirkaur/constants";
+import { clientUserType, ENV, freeUserType, superVisorUserType, SupportedUserType, supportUserType, USER_NAME } from "@ranjodhbirkaur/constants";
 import {Request, Response, NextFunction} from "express";
 import {
-    BadRequestError, supportUserType, superVisorUserType, sendSingleError,
-    freeUserType, SupportedUserType,
-    ErrorMessages, adminType, clientUserType, CLIENT_USER_NAME, APPLICATION_NAME,
-    FIRST_NAME, LAST_NAME, EMAIL, pushErrors, sendErrors, USER_NAME, PASSWORD,
+    BadRequestError, sendSingleError,
+    ErrorMessages, CLIENT_USER_NAME, APPLICATION_NAME,
+    FIRST_NAME, LAST_NAME, EMAIL, pushErrors, sendErrors, PASSWORD,
 } from "../../../util/common-module";
 import {ADMIN_USER_TYPE_NOT_VALID} from "../util/errorMessages";
 

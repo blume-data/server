@@ -1,6 +1,7 @@
+import { clientUserType, SupportedUserType } from "@ranjodhbirkaur/constants";
 import { Request, Response } from "express";
 import { UserModel } from "../../../db-models/UserModel";
-import { clientUserType, RANDOM_STRING, sendSingleError, SupportedUserType } from "../../../util/common-module";
+import { RANDOM_STRING, sendSingleError } from "../../../util/common-module";
 import { sendOkayResponse } from "../../../util/methods";
 
 export async function CreateUpdateOtherUser(req: Request, res: Response) {

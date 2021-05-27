@@ -1,6 +1,7 @@
+import { clientUserType } from '@ranjodhbirkaur/constants';
 import { DateTime } from 'luxon';
 import mongoose from 'mongoose';
-import {clientUserType, CLIENT_USER_MODEL_NAME} from "../util/common-module";
+import {CLIENT_USER_MODEL_NAME} from "../util/common-module";
 interface ClientUserAttrs {
     email?: string;
     password: string;
