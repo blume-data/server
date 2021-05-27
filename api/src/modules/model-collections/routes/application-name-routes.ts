@@ -34,4 +34,4 @@ router.post(ApplicationNameUrl, checkAuth, AuthClientUser, [
 
 router.get(ApplicationNameUrl, checkAuth, getApplicationName);
 
-export { router as ApplicationNameRoutes };
+export { router as ApplicationNameRouter };

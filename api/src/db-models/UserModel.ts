@@ -1,6 +1,6 @@
 import { clientUserType } from '@ranjodhbirkaur/constants';
 import { DateTime } from 'luxon';
-import mongoose from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 import {CLIENT_USER_MODEL_NAME} from "../util/common-module";
 interface ClientUserAttrs {
     email?: string;
@@ -8,9 +8,11 @@ interface ClientUserAttrs {
     firstName?: string;
     lastName?: string;
     type?: string;
+    userGroup?: string;
 
     clientUserName?: string;
     applicationName?: string;
+    env?: string;
 
     userName: string;
     jwtId: string;
@@ -23,9 +25,11 @@ interface ClientUserDoc extends mongoose.Document {
     firstName?: string;
     lastName?: string;
     type?: string;
+    userGroup?: string;
 
     clientUserName?: string;
     applicationName?: string;
+    env?: string;
 
     userName: string;
     jwtId: string;
@@ -75,6 +79,8 @@ function getRootUserSchema() {
             details: Object,
             clientUserName: String,
             applicationName: String,
+            env: String,
+            userGroup: { type: Schema.Types.ObjectId, ref: 'UserGroupModel' },
         }
     );
 }
