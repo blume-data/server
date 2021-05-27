@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import {errorHandler, getMongoDatabaseUrl, mongoConnectOptions, NotFoundError} from "./util/common-module";
 import {serverApp} from "./serverApp";
-import {ApplicationNameRoutes} from "./modules/model-collections/routes/application-name-routes";
+import {ApplicationNameRouter} from "./modules/model-collections/routes/application-name-routes";
 import {CollectionRoutes} from "./modules/model-collections/routes/collection-routes";
 import {StoreRoutes} from "./modules/entries/Routes/store";
 import {SettingRoutes} from "./modules/model-collections/routes/setting-routes";
@@ -21,7 +21,7 @@ const start = async () => {
   }
 
   // data module
-  serverApp.use(ApplicationNameRoutes);
+  serverApp.use(ApplicationNameRouter);
   serverApp.use(CollectionRoutes);
   serverApp.use(StoreRoutes);
   serverApp.use(SettingRoutes);

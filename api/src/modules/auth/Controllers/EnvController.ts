@@ -24,7 +24,7 @@ export async function CreateEnv(req: Request, res: Response) {
             // update env
             await EnvModel.findOneAndUpdate({
                 _id: id
-            }, {name: trimCharactersAndNumbers(name),description});
+            }, { description });
         }
         else {
             const ApplicationNameEntry: any = await ApplicationSpaceModel.findOne({

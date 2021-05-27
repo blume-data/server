@@ -32,16 +32,16 @@ interface UserGroupDoc extends mongoose.Document {
     updatedBy: string;
 }
 
-const Session = new mongoose.Schema(
+const UserGroupSchema = new mongoose.Schema(
     {
-        applicationName: String,
+        
         env: String,
-        jwtId: String,
         name: {
             type: String,
             required: true
         },
         clientUserName: String,
+        applicationName: String,
         description: String,
 
         updatedAt : { type: Date },
@@ -51,10 +51,10 @@ const Session = new mongoose.Schema(
     }
 );
 
-Session.statics.build = (attrs: UserGroupAttrs) => {
+UserGroupSchema.statics.build = (attrs: UserGroupAttrs) => {
     return new UserGroupModel(attrs);
 };
 
-const UserGroupModel = mongoose.model<UserGroupDoc, UserGroupModelType>('UserGroupModel', Session);
+const UserGroupModel = mongoose.model<UserGroupDoc, UserGroupModelType>('UserGroupModel', UserGroupSchema);
 
 export { UserGroupModel };

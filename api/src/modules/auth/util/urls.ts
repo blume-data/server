@@ -1,4 +1,4 @@
-import { APPLICATION_NAME, CLIENT_USER_NAME } from "@ranjodhbirkaur/constants";
+import { APPLICATION_NAME, CLIENT_USER_NAME, ENV } from "@ranjodhbirkaur/constants";
 import {clusterUrl} from "./constants";
 
 export const clusterCheckUser = `${clusterUrl}/check`;
@@ -74,4 +74,5 @@ export const roleUrl = (userName?: string) => {
 
 export const EnvUrl = `${authRootUrl}/:${CLIENT_USER_NAME}/:${APPLICATION_NAME}/env`;
 
-export const CreateOtherUsers = `${authRootUrl}/:userType/:${CLIENT_USER_NAME}/create-user`;
+export const CreateOtherUsersUrl = `${authRootUrl}/:userType/:${CLIENT_USER_NAME}/:${APPLICATION_NAME}/:${ENV}/create-user`;
+export const CreateUserGroupUrl = `${authRootUrl}/:userType/:${CLIENT_USER_NAME}/:${APPLICATION_NAME}/:${ENV}/create-user-group`;

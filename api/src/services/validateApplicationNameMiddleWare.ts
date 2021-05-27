@@ -6,16 +6,23 @@ export const validateApplicationNameMiddleWare = async (req: Request, res: Respo
 
     const applicationName  = req.params && req.params[APPLICATION_NAME];
     const clientUserName = req.params.clientUserName;
+    const env = req.params.env;
 
-    const applicationNames = await ApplicationSpaceModel.find({
-        clientUserName
-    }, ['name'])
+    const applicationNames = await ApplicationSpaceModel.findOne({
+        clientUserName,
+        name: applicationName
+    }, ['name', 'env']).populate('env', 'name');
 
-    const exist = applicationNames.find((item) => {
-        return item.name === applicationName
-    });
+    console.log('env', env, applicationNames);
 
-    if (exist) {
+    if(env && applicationNames) {
+        const exist = applicationNames.env.find((item: any) => item.name === env);
+        if(!exist) {
+            return sendSingleError(res, 'env is not valid');
+        }
+    }
+
+    if (applicationNames) {
         next();
     }
     else {
