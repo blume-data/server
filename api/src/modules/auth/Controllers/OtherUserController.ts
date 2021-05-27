@@ -1,4 +1,4 @@
-import { clientUserType, ID, SupportedUserType } from "@ranjodhbirkaur/constants";
+import { clientUserType, ID, SupportedUserType, trimCharactersAndNumbers } from "@ranjodhbirkaur/constants";
 import { Request, Response } from "express";
 import { DateTime } from "luxon";
 import { UserGroupModel } from "../../../db-models/UserGroup";
@@ -54,7 +54,7 @@ export async function CreateUserGroup(req: Request, res: Response) {
 
     // check if already exist
     const exist = await UserGroupModel.findOne({
-        name, clientUserName, applicationName, env
+        name: trimCharactersAndNumbers(name), clientUserName, applicationName, env
     }, [ID]);
 
     if(exist) {
@@ -63,7 +63,7 @@ export async function CreateUserGroup(req: Request, res: Response) {
 
     const newUserGroup = UserGroupModel.build({
         env,
-        name, 
+        name: trimCharactersAndNumbers(name), 
         description,
         clientUserName,
         applicationName,

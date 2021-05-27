@@ -1,21 +1,29 @@
 import { Grid } from "@material-ui/core";
-import { SupportedUserType } from "@ranjodhbirkaur/constants";
-import React from "react";
-import { connect } from "react-redux"
+import { APPLICATION_NAME, CLIENT_USER_NAME, ENV, SupportedUserType } from "@ranjodhbirkaur/constants";
+import React, { useState } from "react";
+import { connect, ConnectedProps } from "react-redux"
 import { AccordianCommon } from "../../../../components/common/AccordianCommon";
 import { CommonButton } from "../../../../components/common/CommonButton";
 import { Form } from "../../../../components/common/Form";
 import { ConfigField, DROPDOWN, TEXT } from "../../../../components/common/Form/interface";
 import { RenderHeading } from "../../../../components/common/RenderHeading";
 import { RootState } from "../../../../rootReducer";
+import { doPostRequest } from "../../../../utils/baseApi";
+import { getItemFromLocalStorage } from "../../../../utils/tools";
 
-export const UsersComponent = () => {
+type PropsFromRedux = ConnectedProps<typeof connector>;
+export const UsersComponent = (props: PropsFromRedux) => {
+
+    const {userGroupUrl, applicationName, env} = props;
+
+    const [showCreateUserForm, setShowCreateUserForm] = useState<boolean>(false);
+    const [showCreateGroupForm, setShowCreateGroupForm] = useState<boolean>(false);
 
     const userModelfields: ConfigField[] = [
         {
             name: 'userName',
             required: true,
-            placeholder: 'Username',
+            placeholder: 'Set a unique username of the user',
             label: 'Username',
             className: '',
             value: '',
@@ -24,7 +32,7 @@ export const UsersComponent = () => {
         {
             name: 'password',
             required: true,
-            placeholder: 'Password',
+            placeholder: 'Set a password for the user',
             label: 'Password',
             className: '',
             value: '',
@@ -33,8 +41,8 @@ export const UsersComponent = () => {
         {
             name: 'type',
             required: true,
-            placeholder: 'User type',
-            label: 'User type',
+            placeholder: 'Select the User type of user',
+            label: 'Select the User type of user',
             className: '',
             value: '',
             inputType: DROPDOWN,
@@ -48,24 +56,88 @@ export const UsersComponent = () => {
         
     ];
 
+    const userGroupfields: ConfigField[] = [
+        {
+            name: 'name',
+            required: true,
+            placeholder: 'User group name',
+            label: 'User group name',
+            className: '',
+            value: '',
+            inputType: TEXT
+        },
+        {
+            name: 'description',
+            required: true,
+            placeholder: 'Description',
+            label: 'Description',
+            className: '',
+            value: '',
+            inputType: TEXT
+        },
+    ];
+
     function onSubmit(values: any) {
         console.log('values', values);
     }
 
-    function userModel() {
+    function component(type: 'user'|'group') {
+
+        function onClick() {
+            if(type === 'user') {
+                return () => setShowCreateUserForm(!showCreateUserForm);
+            }
+            else {
+                return () => setShowCreateGroupForm(!showCreateGroupForm);
+            }
+
+        }
+
+        async function onSubmit(values: any) {
+            const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
+            if(userGroupUrl && clientUserName) {
+                const url = userGroupUrl
+                .replace(`:${CLIENT_USER_NAME}`, clientUserName)
+                .replace(`:${APPLICATION_NAME}`, applicationName)
+                .replace(`:${ENV}`, env);
+
+                const response = await doPostRequest(url, values, true);
+                console.log('Response ', response);
+            }
+            
+
+        }
+
         return (
-            <Grid container justify="space-between">
+            <Grid container>
+                <Grid container justify="space-between">
                 <Grid item>
                     <RenderHeading
                         value="user model"
+                        className='user-model-heading'
                     />
                 </Grid>
-                <Grid>
+                <Grid item>
                     <CommonButton
-                        name='user group'
+                        onClick={onClick}
+                        name={`create ${type}`}
                      />
                 </Grid>
-                
+                </Grid> 
+                {
+                    (!(type === 'user' ? showCreateUserForm : showCreateGroupForm))
+                    ? <Form 
+                    getValuesAsObject={true}
+                    response={''}
+                    className=''
+                    onSubmit={onSubmit}
+                    fields={type === "user" ? userModelfields : userGroupfields}
+                /> : null
+                }
+                <Grid className='entries-table'>
+                    EntriesTable
+
+                </Grid>
             </Grid>
         );
     }
@@ -74,31 +146,23 @@ export const UsersComponent = () => {
         <Grid>
             <AccordianCommon 
                 name={'User model'}
-                children={<h1>Uswer Model</h1>}
+                children={component('user')}
             />
             <AccordianCommon
                 name={'User group'}
-                children={userModel()}
+                children={component('group')}
             />
-
-
-            <Form 
-                getValuesAsObject={true}
-                response={''}
-                className=''
-                onSubmit={onSubmit}
-                fields={userModelfields}
-            />
-
         </Grid>
     )
 }
 
 function mapStateToProps(state: RootState) {
     return {
-        applicationName: state.authentication.applicationName
+        applicationName: state.authentication.applicationName,
+        userGroupUrl: state.routeAddress.routes.auth?.userGroupUrl,
+        env: state.authentication.env
     }
 
 }
-
-export const Users = connect(mapStateToProps)(UsersComponent);
+const connector = connect(mapStateToProps)
+export const Users = connector(UsersComponent);
