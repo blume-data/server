@@ -19,8 +19,18 @@ export const UsersComponent = (props: PropsFromRedux) => {
 
     const [userGroups, setUserGroups] = useState<any>(null);
 
-    const [showCreateUserForm, setShowCreateUserForm] = useState<boolean>(false);
-    const [showCreateGroupForm, setShowCreateGroupForm] = useState<boolean>(false);
+    const [userFormData, setUserFormData] = useState<{
+        show?: boolean;
+        data?: any;
+        response?: any;
+    } | null>(null);
+
+    const [groupFormData, setGroupFormData] = useState<{
+        show?: boolean;
+        data?: any;
+        response?: any;
+    } | null>(null);
+
     const [urls, setUrls] = useState<{user: string; group: string}>({user: '', group: ''})
 
     function setSomeUrls() {
@@ -79,6 +89,21 @@ export const UsersComponent = (props: PropsFromRedux) => {
                 }
             })
         },
+        {
+            name: 'userGroup',
+            required: true,
+            placeholder: 'Select the User group of user',
+            label: 'Select the User group of user',
+            className: '',
+            value: '',
+            inputType: DROPDOWN,
+            options: userGroups.map((userGroup: any) => {
+                return {
+                    label: userGroup.name,
+                    value: userGroup.name
+                }
+            })
+        },
         
     ];
 
@@ -119,19 +144,31 @@ export const UsersComponent = (props: PropsFromRedux) => {
 
     function component(type: 'user'|'group') {
 
+        console.log('type', type)
+
         function onClick() {
             if(type === 'user') {
-                return () => setShowCreateUserForm(!showCreateUserForm);
+                
+                setUserFormData({
+                    ...userFormData,
+                    show: !userFormData?.show
+                });
             }
             else {
-                return () => setShowCreateGroupForm(!showCreateGroupForm);
+                setGroupFormData({
+                    ...groupFormData,
+                    show: !groupFormData?.show
+                });
             }
 
         }
 
         async function onSubmit(values: any) {
             const response = await doPostRequest(urls.group, values, true);
-
+            setGroupFormData({
+                ...groupFormData,
+                response
+            });
         }
 
         return (
@@ -151,13 +188,23 @@ export const UsersComponent = (props: PropsFromRedux) => {
                 </Grid>
                 </Grid> 
                 {
-                    (!(type === 'user' ? showCreateUserForm : showCreateGroupForm))
+                    type === 'user' && !!userFormData?.show
                     ? <Form 
                     getValuesAsObject={true}
-                    response={''}
+                    response={userFormData.response}
                     className=''
                     onSubmit={onSubmit}
-                    fields={type === "user" ? userModelfields : userGroupfields}
+                    fields={userModelfields}
+                /> : null
+                }
+                {
+                    type === "group" && !!groupFormData?.show
+                    ? <Form 
+                    getValuesAsObject={true}
+                    response={groupFormData.response}
+                    className=''
+                    onSubmit={onSubmit}
+                    fields={userGroupfields}
                 /> : null
                 }
                 <Grid className='entries-table'>

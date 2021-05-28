@@ -216,6 +216,11 @@ export function trimGetOnly(params?: string[] | string | null): string {
 }
 
 // send on id on create record
-export function sendOkayResponse(res: Response, data: object) {
+export function sendOkayResponse(res: Response, data?: object) {
+    if(!data) {
+        data = {
+            status: 'okay'
+        }
+    }
     return res.status(okayStatus).send(data);
 }

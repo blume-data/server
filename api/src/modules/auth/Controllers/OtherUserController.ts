@@ -1,4 +1,4 @@
-import { clientUserType, ID, SupportedUserType, trimCharactersAndNumbers } from "@ranjodhbirkaur/constants";
+import { clientUserType, DESCRIPTION, ID, SupportedUserType, trimCharactersAndNumbers } from "@ranjodhbirkaur/constants";
 import { Request, Response } from "express";
 import { DateTime } from "luxon";
 import { UserGroupModel } from "../../../db-models/UserGroup";
@@ -85,8 +85,8 @@ export async function FetchUserGroup(req: Request, res: Response) {
 
     const userGroups = await UserGroupModel.find({
         clientUserName, applicationName, env
-    });
+    }, ['name', DESCRIPTION]);
 
-    return sendOkayResponse(res, userGroups);
+    return sendOkayResponse(res,userGroups);
     
 }
