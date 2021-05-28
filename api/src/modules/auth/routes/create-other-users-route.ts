@@ -4,7 +4,7 @@ import { body } from "express-validator";
 import { checkAuth } from "../../../services/checkAuth";
 import { validateApplicationNameMiddleWare } from "../../../services/validateApplicationNameMiddleWare";
 import { stringLimitOptionErrorMessage, stringLimitOptions, validateRequest } from "../../../util/common-module";
-import { CreateUpdateOtherUser, CreateUserGroup, FetchUserGroup } from "../Controllers/OtherUserController";
+import { CreateUpdateOtherUser, CreateUserGroup, FetchUserGroup, FetchUsers } from "../Controllers/OtherUserController";
 import {CreateOtherUsersUrl, CreateUserGroupUrl} from "../util/urls";
 
 const router = Router();
@@ -56,5 +56,7 @@ router.post(CreateUserGroupUrl,
     CreateUserGroup);
 
 router.get(CreateUserGroupUrl, FetchUserGroup);
+
+router.get(CreateOtherUsersUrl, FetchUsers);
 
 export {router as createOtherUsersRouter};

@@ -1,4 +1,4 @@
-import { clientUserType, DESCRIPTION, ID, SupportedUserType, trimCharactersAndNumbers } from "@ranjodhbirkaur/constants";
+import { clientUserType, DESCRIPTION, ID, SupportedUserType, trimCharactersAndNumbers, USER_NAME } from "@ranjodhbirkaur/constants";
 import { Request, Response } from "express";
 import { DateTime } from "luxon";
 import { UserGroupModel } from "../../../db-models/UserGroup";
@@ -22,7 +22,7 @@ export async function CreateUpdateOtherUser(req: Request, res: Response) {
     }
 
     // check if the userGroup exist
-    const userGroupExist = await userGroup.findOne({[ID]: userGroup}, '_id');
+    const userGroupExist = await UserGroupModel.findById(userGroup, '_id');
     if(!userGroupExist) {
         return sendSingleError(res, 'userGroup does not exist', 'userGroup');
     }
@@ -42,7 +42,7 @@ export async function CreateUpdateOtherUser(req: Request, res: Response) {
 
     await newUser.save();
 
-    sendOkayResponse(res, {okay: newUser});
+    sendOkayResponse(res);
 }
 
 export async function CreateUserGroup(req: Request, res: Response) {
@@ -75,7 +75,7 @@ export async function CreateUserGroup(req: Request, res: Response) {
 
     await newUserGroup.save();
 
-    return sendOkayResponse(res, newUserGroup);
+    return sendOkayResponse(res);
     
 }
 
@@ -88,5 +88,16 @@ export async function FetchUserGroup(req: Request, res: Response) {
     }, ['name', DESCRIPTION]);
 
     return sendOkayResponse(res,userGroups);
+    
+}
+
+export async function FetchUsers(req: Request, res: Response) {
+    const {applicationName, clientUserName, env} = req.params;
+
+    const users = await UserModel.find({
+        clientUserName, applicationName, env
+    }, ['name', USER_NAME, 'type', 'userGroup']);
+
+    return sendOkayResponse(res, users);
     
 }
