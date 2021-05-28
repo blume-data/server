@@ -17,7 +17,7 @@ export const UsersComponent = (props: PropsFromRedux) => {
 
     const {userGroupUrl, applicationName, env} = props;
 
-    const [userGroups, setUserGroups] = useState<any>(null);
+    const [userGroups, setUserGroups] = useState<{name: string, description: string}[] | null>(null);
 
     const [userFormData, setUserFormData] = useState<{
         show?: boolean;
@@ -97,12 +97,12 @@ export const UsersComponent = (props: PropsFromRedux) => {
             className: '',
             value: '',
             inputType: DROPDOWN,
-            options: userGroups.map((userGroup: any) => {
+            options: userGroups && userGroups.length ? userGroups.map((userGroup: any) => {
                 return {
                     label: userGroup.name,
                     value: userGroup.name
                 }
-            })
+            }) : []
         },
         
     ];
