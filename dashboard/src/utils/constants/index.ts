@@ -18,7 +18,8 @@ export const AUTH_ROUTES = {
     register: "sign-up",
     userNameValidation: "username-validation",
     envUrl: `${getBaseUrl()}${AUTH_ROOT_URL}/:${CLIENT_USER_NAME}/:${APPLICATION_NAME}/env`,
-    userGroupUrl: `${getBaseUrl()}${AUTH_ROOT_URL}/:${CLIENT_USER_NAME}/:${APPLICATION_NAME}/:${ENV}/create-user-group`
+    userGroupUrl: `${getBaseUrl()}${AUTH_ROOT_URL}/:${CLIENT_USER_NAME}/:${APPLICATION_NAME}/:${ENV}/create-user-group`,
+    otherUserUrl: `${getBaseUrl()}${AUTH_ROOT_URL}/:${CLIENT_USER_NAME}/:${APPLICATION_NAME}/:${ENV}/create-user`
 
 }
 

@@ -1,5 +1,5 @@
 import { Grid } from "@material-ui/core";
-import { APPLICATION_NAME, CLIENT_USER_NAME, ENV, SupportedUserType } from "@ranjodhbirkaur/constants";
+import { APPLICATION_NAME, CLIENT_USER_NAME, ENV, ID, SupportedUserType } from "@ranjodhbirkaur/constants";
 import React, { useEffect, useState } from "react";
 import { connect, ConnectedProps } from "react-redux"
 import { couldStartTrivia } from "typescript";
@@ -15,7 +15,7 @@ import { getItemFromLocalStorage } from "../../../../utils/tools";
 type PropsFromRedux = ConnectedProps<typeof connector>;
 export const UsersComponent = (props: PropsFromRedux) => {
 
-    const {userGroupUrl, applicationName, env} = props;
+    const {userGroupUrl, applicationName, env, otherUserUrl} = props;
 
     const [userGroups, setUserGroups] = useState<{name: string, description: string}[] | null>(null);
 
@@ -35,15 +35,19 @@ export const UsersComponent = (props: PropsFromRedux) => {
 
     function setSomeUrls() {
         const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
-        //debugger
-            if(userGroupUrl && clientUserName) {
+            if(userGroupUrl && clientUserName && otherUserUrl) {
                 const url = userGroupUrl
+                .replace(`:${CLIENT_USER_NAME}`, clientUserName)
+                .replace(`:${APPLICATION_NAME}`, applicationName)
+                .replace(`:${ENV}`, env);
+                const url2 = otherUserUrl
                 .replace(`:${CLIENT_USER_NAME}`, clientUserName)
                 .replace(`:${APPLICATION_NAME}`, applicationName)
                 .replace(`:${ENV}`, env);
                 setUrls({
                     ...urls,
-                    group: url
+                    group: url,
+                    user: url2
                 });
             }
     }
@@ -100,7 +104,7 @@ export const UsersComponent = (props: PropsFromRedux) => {
             options: userGroups && userGroups.length ? userGroups.map((userGroup: any) => {
                 return {
                     label: userGroup.name,
-                    value: userGroup.name
+                    value: userGroup._id
                 }
             }) : []
         },
@@ -163,10 +167,18 @@ export const UsersComponent = (props: PropsFromRedux) => {
 
         }
 
-        async function onSubmit(values: any) {
+        async function onSubmitGroup(values: any) {
             const response = await doPostRequest(urls.group, values, true);
             setGroupFormData({
                 ...groupFormData,
+                response
+            });
+        }
+
+        async function onSubmitUser(values: any) {
+            const response = await doPostRequest(urls.user, values, true);
+            setGroupFormData({
+                ...userFormData,
                 response
             });
         }
@@ -193,7 +205,7 @@ export const UsersComponent = (props: PropsFromRedux) => {
                     getValuesAsObject={true}
                     response={userFormData.response}
                     className=''
-                    onSubmit={onSubmit}
+                    onSubmit={onSubmitUser}
                     fields={userModelfields}
                 /> : null
                 }
@@ -203,7 +215,7 @@ export const UsersComponent = (props: PropsFromRedux) => {
                     getValuesAsObject={true}
                     response={groupFormData.response}
                     className=''
-                    onSubmit={onSubmit}
+                    onSubmit={onSubmitGroup}
                     fields={userGroupfields}
                 /> : null
                 }
@@ -233,7 +245,8 @@ function mapStateToProps(state: RootState) {
     return {
         applicationName: state.authentication.applicationName,
         userGroupUrl: state.routeAddress.routes.auth?.userGroupUrl,
-        env: state.authentication.env
+        env: state.authentication.env,
+        otherUserUrl: state.routeAddress.routes.auth?.otherUserUrl
     }
 
 }

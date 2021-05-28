@@ -53,6 +53,7 @@ interface AuthRoutesType {
     userNameValidation: string;
     envUrl: string;
     userGroupUrl: string;
+    otherUserUrl: string;
 }
 
 export interface RouteAddressesInitialStateType {

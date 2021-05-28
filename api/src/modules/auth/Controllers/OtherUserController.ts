@@ -22,7 +22,7 @@ export async function CreateUpdateOtherUser(req: Request, res: Response) {
     }
 
     // check if the userGroup exist
-    const userGroupExist = await userGroup.findOne({[ID]: userGroup}, '_id');
+    const userGroupExist = await UserGroupModel.findById(userGroup, '_id');
     if(!userGroupExist) {
         return sendSingleError(res, 'userGroup does not exist', 'userGroup');
     }
@@ -42,7 +42,7 @@ export async function CreateUpdateOtherUser(req: Request, res: Response) {
 
     await newUser.save();
 
-    sendOkayResponse(res, {okay: newUser});
+    sendOkayResponse(res);
 }
 
 export async function CreateUserGroup(req: Request, res: Response) {
@@ -75,7 +75,7 @@ export async function CreateUserGroup(req: Request, res: Response) {
 
     await newUserGroup.save();
 
-    return sendOkayResponse(res, newUserGroup);
+    return sendOkayResponse(res);
     
 }
 
