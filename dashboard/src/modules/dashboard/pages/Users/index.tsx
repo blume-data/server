@@ -3,6 +3,7 @@ import { APPLICATION_NAME, CLIENT_USER_NAME, ENV, SupportedUserType } from "@ran
 import React, { useEffect, useState } from "react";
 import { connect, ConnectedProps } from "react-redux"
 import { AccordianCommon } from "../../../../components/common/AccordianCommon";
+import BasicTableMIUI from "../../../../components/common/BasicTableMIUI";
 import { CommonButton } from "../../../../components/common/CommonButton";
 import { Form } from "../../../../components/common/Form";
 import { ConfigField, DROPDOWN, TEXT } from "../../../../components/common/Form/interface";
@@ -23,6 +24,7 @@ export const UsersComponent = (props: PropsFromRedux) => {
     const {userGroupUrl, applicationName, env, otherUserUrl} = props;
 
     const [userGroups, setUserGroups] = useState<{name: string, description: string}[] | null>(null);
+    const [users, setUsers] = useState<null>(null);
 
     const [userFormData, setUserFormData] = useState<{
         data?: any;
@@ -141,19 +143,21 @@ export const UsersComponent = (props: PropsFromRedux) => {
     useEffect(() => {
         if(urls.group) {
             fetchUserGroups();
+            fetchUsers()
         }
     }, [urls])
 
     async function fetchUserGroups() {
-
         const response = await doGetRequest(urls.group, {}, true);
         setUserGroups(response);
-        
+    }
+
+    async function fetchUsers() {
+        const response = await doGetRequest(urls.user, {}, true);
+        setUsers(response);
     }
 
     function component(type: 'user'|'group') {
-
-        console.log('type', type)
 
         function onClick() {
 
@@ -163,6 +167,18 @@ export const UsersComponent = (props: PropsFromRedux) => {
                 type
             });
         }
+
+        const columnsForGroups: any = [
+            {name: "Name", value: "name"},
+            {name: 'Description', value: 'description'},
+            {name: 'Edit', value: 'edit', align: 'center'}
+        ];
+
+        const columnsForUsers: any = [
+            {name: "Username", value: "userName"},
+            {name: 'Type', value: 'type'},
+            {name: 'Edit', value: 'edit', align: 'center'}
+        ];
 
         return (
             <Grid container>
@@ -182,7 +198,11 @@ export const UsersComponent = (props: PropsFromRedux) => {
                 </Grid> 
                 
                 <Grid className='entries-table'>
-                    EntriesTable
+                    <BasicTableMIUI
+                        tableName="user groups"
+                        rows={type === 'group' ? userGroups || [] : users || []}
+                        columns={type === 'group' ? columnsForGroups : columnsForUsers}
+                    />
                 </Grid>
             </Grid>
         );
@@ -190,12 +210,26 @@ export const UsersComponent = (props: PropsFromRedux) => {
 
     function getForm(type: 'user' | 'group') {
 
+        function closeModal() {
+
+            if(type === 'user') fetchUsers();
+            else fetchUserGroups();
+
+            setModalData({
+                title:'',
+                type,
+                hide: true
+            });
+        }
+
         async function onSubmitGroup(values: any) {
             const response = await doPostRequest(urls.group, values, true);
             setGroupFormData({
                 ...groupFormData,
                 response
             });
+            closeModal();
+            
         }
 
         async function onSubmitUser(values: any) {
@@ -204,6 +238,7 @@ export const UsersComponent = (props: PropsFromRedux) => {
                 ...userFormData,
                 response
             });
+            closeModal();
         }
 
         return (

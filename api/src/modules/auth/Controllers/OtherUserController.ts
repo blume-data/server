@@ -96,7 +96,10 @@ export async function FetchUsers(req: Request, res: Response) {
 
     const users = await UserModel.find({
         clientUserName, applicationName, env
-    }, ['name', USER_NAME, 'type', 'userGroup']);
+    }, 
+    ['name', USER_NAME, 'type', 'userGroup'])
+    .populate('userGroup', 'name')
+    ;
 
     return sendOkayResponse(res, users);
     
