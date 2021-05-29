@@ -80,7 +80,7 @@ function getRootUserSchema() {
             clientUserName: String,
             applicationName: String,
             env: String,
-            userGroup: { type: Schema.Types.ObjectId, ref: 'UserGroupModel' },
+            userGroup: [{ type: Schema.Types.ObjectId, ref: 'UserGroupModel' }],
         }
     );
 }
