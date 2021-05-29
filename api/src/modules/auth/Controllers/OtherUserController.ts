@@ -1,4 +1,4 @@
-import { clientUserType, DESCRIPTION, ID, SupportedUserType, trimCharactersAndNumbers, USER_NAME } from "@ranjodhbirkaur/constants";
+import { clientUserType, DESCRIPTION, ID, PASSWORD, SupportedUserType, trimCharactersAndNumbers, USER_NAME } from "@ranjodhbirkaur/constants";
 import { Request, Response } from "express";
 import { DateTime } from "luxon";
 import { UserGroupModel } from "../../../db-models/UserGroup";
@@ -8,24 +8,34 @@ import { sendOkayResponse } from "../../../util/methods";
 
 export async function CreateUpdateOtherUser(req: Request, res: Response) {
 
-    const {type, userName, password, details, email, userGroup} = req.body;
+    const {type, userName, password, details, email, userGroup, _id} = req.body;
     const {clientUserName, applicationName, env} = req.params;
 
     // check userType
     if(type && (!SupportedUserType.includes(type) || type === clientUserType)) {
         return sendSingleError(res, 'type is not valid', 'type');
     }
+
+    if(_id) {
+        // update the user
+        await UserModel.findByIdAndUpdate(_id, {
+            type, password, details, email, userGroup
+        });
+
+        return sendOkayResponse(res);
+    }
+
     // check if user is not used already
     const exist = await UserModel.findOne({userName}, '_id');
     if(exist) {
         return sendSingleError(res, 'userName is not available', 'userName');
     }
 
-    // check if the userGroup exist
-    const userGroupExist = await UserGroupModel.findById(userGroup, '_id');
-    if(!userGroupExist) {
-        return sendSingleError(res, 'userGroup does not exist', 'userGroup');
-    }
+    // // check if the userGroup exist
+    // const userGroupExist = await UserGroupModel.findById(userGroup, '_id');
+    // if(!userGroupExist) {
+    //     return sendSingleError(res, 'userGroup does not exist', 'userGroup');
+    // }
 
     const newUser = UserModel.build({
         userName,
@@ -47,8 +57,16 @@ export async function CreateUpdateOtherUser(req: Request, res: Response) {
 
 export async function CreateUserGroup(req: Request, res: Response) {
 
-    const {name, description} = req.body;
+    const {name, description, _id} = req.body;
     const {applicationName, clientUserName, env} = req.params;
+
+    if(_id) {
+        // update the userGroup
+        await UserGroupModel.findByIdAndUpdate(_id, {
+            name, description
+        });
+        return sendOkayResponse(res);
+    }
 
     const date = DateTime.local().setZone('UTC').toJSDate();
 
@@ -96,7 +114,10 @@ export async function FetchUsers(req: Request, res: Response) {
 
     const users = await UserModel.find({
         clientUserName, applicationName, env
-    }, ['name', USER_NAME, 'type', 'userGroup']);
+    }, 
+    ['name', USER_NAME, 'type', 'userGroup', PASSWORD])
+    .populate('userGroup', 'name')
+    ;
 
     return sendOkayResponse(res, users);
     

@@ -74,5 +74,5 @@ export const roleUrl = (userName?: string) => {
 
 export const EnvUrl = `${authRootUrl}/:${CLIENT_USER_NAME}/:${APPLICATION_NAME}/env`;
 
-export const CreateOtherUsersUrl = `${authRootUrl}/:${CLIENT_USER_NAME}/:${APPLICATION_NAME}/:${ENV}/create-user`;
-export const CreateUserGroupUrl = `${authRootUrl}/:${CLIENT_USER_NAME}/:${APPLICATION_NAME}/:${ENV}/create-user-group`;
+export const CreateOtherUsersUrl = `${authRootUrl}/:${CLIENT_USER_NAME}/:${APPLICATION_NAME}/:${ENV}/user`;
+export const CreateUserGroupUrl = `${authRootUrl}/:${CLIENT_USER_NAME}/:${APPLICATION_NAME}/:${ENV}/user-group`;

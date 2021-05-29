@@ -1,16 +1,18 @@
-import { Grid } from "@material-ui/core";
+import { Grid, IconButton } from "@material-ui/core";
 import { APPLICATION_NAME, CLIENT_USER_NAME, ENV, SupportedUserType } from "@ranjodhbirkaur/constants";
 import React, { useEffect, useState } from "react";
 import { connect, ConnectedProps } from "react-redux"
 import { AccordianCommon } from "../../../../components/common/AccordianCommon";
+import BasicTableMIUI from "../../../../components/common/BasicTableMIUI";
 import { CommonButton } from "../../../../components/common/CommonButton";
 import { Form } from "../../../../components/common/Form";
 import { ConfigField, DROPDOWN, TEXT } from "../../../../components/common/Form/interface";
 import ModalDialog from "../../../../components/common/ModalDialog";
 import { RenderHeading } from "../../../../components/common/RenderHeading";
 import { RootState } from "../../../../rootReducer";
-import { doGetRequest, doPostRequest } from "../../../../utils/baseApi";
+import { doGetRequest, doPostRequest, doPutRequest } from "../../../../utils/baseApi";
 import { getItemFromLocalStorage } from "../../../../utils/tools";
+import EditIcon from '@material-ui/icons/Edit';
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 interface ModalDataType {
@@ -22,7 +24,8 @@ export const UsersComponent = (props: PropsFromRedux) => {
 
     const {userGroupUrl, applicationName, env, otherUserUrl} = props;
 
-    const [userGroups, setUserGroups] = useState<{name: string, description: string}[] | null>(null);
+    const [userGroups, setUserGroups] = useState<{name: string, description: string}[]>([]);
+    const [users, setUsers] = useState<{userName: string, type: string, password: string, userGroup: string}[]>([]);
 
     const [userFormData, setUserFormData] = useState<{
         data?: any;
@@ -71,7 +74,7 @@ export const UsersComponent = (props: PropsFromRedux) => {
             placeholder: 'Set a unique username of the user',
             label: 'Username',
             className: '',
-            value: '',
+            value: userFormData?.data?.userName,
             inputType: TEXT
         },
         {
@@ -80,7 +83,7 @@ export const UsersComponent = (props: PropsFromRedux) => {
             placeholder: 'Set a password for the user',
             label: 'Password',
             className: '',
-            value: '',
+            value: userFormData?.data?.password,
             inputType: TEXT
         },
         {
@@ -89,7 +92,7 @@ export const UsersComponent = (props: PropsFromRedux) => {
             placeholder: 'Select the User type of user',
             label: 'Select the User type of user',
             className: '',
-            value: '',
+            value: userFormData?.data?.type,
             inputType: DROPDOWN,
             options: SupportedUserType.map((userType: any) => {
                 return {
@@ -104,7 +107,7 @@ export const UsersComponent = (props: PropsFromRedux) => {
             placeholder: 'Select the User group of user',
             label: 'Select the User group of user',
             className: '',
-            value: '',
+            value: userFormData?.data?.userGroup,
             inputType: DROPDOWN,
             options: userGroups && userGroups.length ? userGroups.map((userGroup: any) => {
                 return {
@@ -123,7 +126,7 @@ export const UsersComponent = (props: PropsFromRedux) => {
             placeholder: 'User group name',
             label: 'User group name',
             className: '',
-            value: '',
+            value: groupFormData?.data?.name,
             inputType: TEXT
         },
         {
@@ -132,7 +135,7 @@ export const UsersComponent = (props: PropsFromRedux) => {
             placeholder: 'Description',
             label: 'Description',
             className: '',
-            value: '',
+            value: groupFormData?.data?.description,
             inputType: TEXT
         },
     ];
@@ -141,19 +144,21 @@ export const UsersComponent = (props: PropsFromRedux) => {
     useEffect(() => {
         if(urls.group) {
             fetchUserGroups();
+            fetchUsers()
         }
     }, [urls])
 
     async function fetchUserGroups() {
-
         const response = await doGetRequest(urls.group, {}, true);
         setUserGroups(response);
-        
+    }
+
+    async function fetchUsers() {
+        const response = await doGetRequest(urls.user, {}, true);
+        setUsers(response);
     }
 
     function component(type: 'user'|'group') {
-
-        console.log('type', type)
 
         function onClick() {
 
@@ -163,6 +168,64 @@ export const UsersComponent = (props: PropsFromRedux) => {
                 type
             });
         }
+
+        function onClickEdit(data: any) {
+            console.log('on click edit');
+            if(type === 'user') {
+                setUserFormData({
+                    ...userFormData,
+                    data: {
+                        ...data,
+                        userGroup: data.userGroup._id
+                    }
+                });
+            }
+            else {
+                setGroupFormData({
+                    ...groupFormData,
+                    data
+                });
+            }
+            setModalData({
+                hide: false,
+                title: `Update ${type}`,
+                type
+            });
+        }
+
+        const columnsForGroups: any = [
+            {name: "Name", value: "name"},
+            {name: 'Description', value: 'description'},
+            {name: 'Edit', value: 'edit', align: 'center'}
+        ];
+
+        const columnsForUsers: any = [
+            {name: "Username", value: "userName"},
+            {name: 'Type', value: 'type'},
+            {name: 'Edit', value: 'edit', align: 'center'}
+        ];
+
+        const rowForUsers = users.map((user: any) => {
+            return {
+                ...user,
+                edit: <IconButton onClick={() => onClickEdit(user)}>
+                        <EditIcon />
+                    </IconButton>
+
+            }
+        });
+
+        const rowForGroups = userGroups.map((user: any) => {
+            return {
+                ...user,
+                edit: <IconButton onClick={() => onClickEdit(user)}>
+                        <EditIcon />
+                    </IconButton>
+
+            }
+        });
+
+        console.log('user', userFormData);
 
         return (
             <Grid container>
@@ -181,8 +244,12 @@ export const UsersComponent = (props: PropsFromRedux) => {
                 </Grid>
                 </Grid> 
                 
-                <Grid className='entries-table'>
-                    EntriesTable
+                <Grid className='entries-table' container>
+                    <BasicTableMIUI
+                        tableName="user groups"
+                        rows={type === 'group' ? rowForGroups : rowForUsers}
+                        columns={type === 'group' ? columnsForGroups : columnsForUsers}
+                    />
                 </Grid>
             </Grid>
         );
@@ -190,20 +257,63 @@ export const UsersComponent = (props: PropsFromRedux) => {
 
     function getForm(type: 'user' | 'group') {
 
+        function closeModal() {
+
+            if(type === 'user') fetchUsers();
+            else fetchUserGroups();
+
+            setModalData({title:'', type, hide: true});
+        }
+
         async function onSubmitGroup(values: any) {
-            const response = await doPostRequest(urls.group, values, true);
-            setGroupFormData({
-                ...groupFormData,
-                response
-            });
+            let response;
+            if(groupFormData && groupFormData.data._id) {
+                response = await doPutRequest(urls.group, {
+                    ...values,
+                    _id: groupFormData.data._id
+                }, true);
+            } 
+            else {
+                response = await doPostRequest(urls.group, values, true);
+            }
+            if(response && response.errors) {
+                setGroupFormData({
+                    ...groupFormData,
+                    response: response.errors
+                });
+            }
+            else {
+                closeModal();
+                setGroupFormData({
+                    data: undefined
+                });
+                
+            }
         }
 
         async function onSubmitUser(values: any) {
-            const response = await doPostRequest(urls.user, values, true);
-            setGroupFormData({
-                ...userFormData,
-                response
-            });
+            let response;
+            if(userFormData && userFormData.data._id) {
+                response = await doPutRequest(urls.user, {
+                    ...values,
+                    _id: userFormData.data._id
+                }, true);
+            }
+            else {
+                response = await doPostRequest(urls.user, values, true);
+            }
+            if(response && response.errors) {
+                setUserFormData({
+                    ...userFormData,
+                    response: response.errors
+                });
+            }
+            else {
+                setUserFormData({
+                    data: undefined
+                });
+                closeModal();
+            }
         }
 
         return (

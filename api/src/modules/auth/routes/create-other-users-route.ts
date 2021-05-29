@@ -59,4 +59,7 @@ router.get(CreateUserGroupUrl, FetchUserGroup);
 
 router.get(CreateOtherUsersUrl, FetchUsers);
 
+router.put(CreateOtherUsersUrl, CreateUpdateOtherUser);
+router.put(CreateUserGroupUrl, CreateUserGroup);
+
 export {router as createOtherUsersRouter};
