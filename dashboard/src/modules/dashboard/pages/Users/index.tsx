@@ -1,18 +1,23 @@
 import { Grid } from "@material-ui/core";
-import { APPLICATION_NAME, CLIENT_USER_NAME, ENV, ID, SupportedUserType } from "@ranjodhbirkaur/constants";
+import { APPLICATION_NAME, CLIENT_USER_NAME, ENV, SupportedUserType } from "@ranjodhbirkaur/constants";
 import React, { useEffect, useState } from "react";
 import { connect, ConnectedProps } from "react-redux"
-import { couldStartTrivia } from "typescript";
 import { AccordianCommon } from "../../../../components/common/AccordianCommon";
 import { CommonButton } from "../../../../components/common/CommonButton";
 import { Form } from "../../../../components/common/Form";
 import { ConfigField, DROPDOWN, TEXT } from "../../../../components/common/Form/interface";
+import ModalDialog from "../../../../components/common/ModalDialog";
 import { RenderHeading } from "../../../../components/common/RenderHeading";
 import { RootState } from "../../../../rootReducer";
 import { doGetRequest, doPostRequest } from "../../../../utils/baseApi";
 import { getItemFromLocalStorage } from "../../../../utils/tools";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
+interface ModalDataType {
+    hide: boolean;
+    title: string;
+    type: 'user' | 'group'
+}
 export const UsersComponent = (props: PropsFromRedux) => {
 
     const {userGroupUrl, applicationName, env, otherUserUrl} = props;
@@ -20,7 +25,6 @@ export const UsersComponent = (props: PropsFromRedux) => {
     const [userGroups, setUserGroups] = useState<{name: string, description: string}[] | null>(null);
 
     const [userFormData, setUserFormData] = useState<{
-        show?: boolean;
         data?: any;
         response?: any;
     } | null>(null);
@@ -31,7 +35,8 @@ export const UsersComponent = (props: PropsFromRedux) => {
         response?: any;
     } | null>(null);
 
-    const [urls, setUrls] = useState<{user: string; group: string}>({user: '', group: ''})
+    const [urls, setUrls] = useState<{user: string; group: string}>({user: '', group: ''});
+    const [modalData, setModalData] = useState<ModalDataType | null>(null);
 
     function setSomeUrls() {
         const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
@@ -151,35 +156,11 @@ export const UsersComponent = (props: PropsFromRedux) => {
         console.log('type', type)
 
         function onClick() {
-            if(type === 'user') {
-                
-                setUserFormData({
-                    ...userFormData,
-                    show: !userFormData?.show
-                });
-            }
-            else {
-                setGroupFormData({
-                    ...groupFormData,
-                    show: !groupFormData?.show
-                });
-            }
 
-        }
-
-        async function onSubmitGroup(values: any) {
-            const response = await doPostRequest(urls.group, values, true);
-            setGroupFormData({
-                ...groupFormData,
-                response
-            });
-        }
-
-        async function onSubmitUser(values: any) {
-            const response = await doPostRequest(urls.user, values, true);
-            setGroupFormData({
-                ...userFormData,
-                response
+            setModalData({
+                hide: false,
+                title: `Create ${type}`,
+                type
             });
         }
 
@@ -199,32 +180,50 @@ export const UsersComponent = (props: PropsFromRedux) => {
                      />
                 </Grid>
                 </Grid> 
-                {
-                    type === 'user' && !!userFormData?.show
-                    ? <Form 
-                    getValuesAsObject={true}
-                    response={userFormData.response}
-                    className=''
-                    onSubmit={onSubmitUser}
-                    fields={userModelfields}
-                /> : null
-                }
-                {
-                    type === "group" && !!groupFormData?.show
-                    ? <Form 
-                    getValuesAsObject={true}
-                    response={groupFormData.response}
-                    className=''
-                    onSubmit={onSubmitGroup}
-                    fields={userGroupfields}
-                /> : null
-                }
+                
                 <Grid className='entries-table'>
                     EntriesTable
-
                 </Grid>
             </Grid>
         );
+    }
+
+    function getForm(type: 'user' | 'group') {
+
+        async function onSubmitGroup(values: any) {
+            const response = await doPostRequest(urls.group, values, true);
+            setGroupFormData({
+                ...groupFormData,
+                response
+            });
+        }
+
+        async function onSubmitUser(values: any) {
+            const response = await doPostRequest(urls.user, values, true);
+            setGroupFormData({
+                ...userFormData,
+                response
+            });
+        }
+
+        return (
+            <Form 
+            getValuesAsObject={true}
+            response={type === 'user' ? userFormData?.response : groupFormData?.response}
+            className=''
+            onSubmit={type === 'user' ? onSubmitUser : onSubmitGroup}
+            fields={type === 'user' ? userModelfields : userGroupfields}
+        />
+        );
+
+    }
+
+    function handleModalClose() {
+        setModalData({
+            hide: true,
+            title: '',
+            type: 'user'
+        });
     }
 
     return (
@@ -237,6 +236,15 @@ export const UsersComponent = (props: PropsFromRedux) => {
                 name={'User group'}
                 children={component('group')}
             />
+
+            <ModalDialog
+                title={modalData?.title || 'Save'}
+                isOpen={modalData?.hide === false}
+                handleClose={handleModalClose}
+                children={modalData?.type === 'user' ? getForm('user') : getForm('group')}
+            />          
+
+
         </Grid>
     )
 }
