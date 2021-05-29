@@ -74,7 +74,7 @@ export const UsersComponent = (props: PropsFromRedux) => {
             placeholder: 'Set a unique username of the user',
             label: 'Username',
             className: '',
-            value: userFormData?.data.userName,
+            value: userFormData?.data?.userName,
             inputType: TEXT
         },
         {
@@ -83,7 +83,7 @@ export const UsersComponent = (props: PropsFromRedux) => {
             placeholder: 'Set a password for the user',
             label: 'Password',
             className: '',
-            value: userFormData?.data.password,
+            value: userFormData?.data?.password,
             inputType: TEXT
         },
         {
@@ -92,7 +92,7 @@ export const UsersComponent = (props: PropsFromRedux) => {
             placeholder: 'Select the User type of user',
             label: 'Select the User type of user',
             className: '',
-            value: userFormData?.data.type,
+            value: userFormData?.data?.type,
             inputType: DROPDOWN,
             options: SupportedUserType.map((userType: any) => {
                 return {
@@ -107,7 +107,7 @@ export const UsersComponent = (props: PropsFromRedux) => {
             placeholder: 'Select the User group of user',
             label: 'Select the User group of user',
             className: '',
-            value: userFormData?.data.userGroup,
+            value: userFormData?.data?.userGroup,
             inputType: DROPDOWN,
             options: userGroups && userGroups.length ? userGroups.map((userGroup: any) => {
                 return {
@@ -126,7 +126,7 @@ export const UsersComponent = (props: PropsFromRedux) => {
             placeholder: 'User group name',
             label: 'User group name',
             className: '',
-            value: groupFormData?.data.name,
+            value: groupFormData?.data?.name,
             inputType: TEXT
         },
         {
@@ -135,7 +135,7 @@ export const UsersComponent = (props: PropsFromRedux) => {
             placeholder: 'Description',
             label: 'Description',
             className: '',
-            value: groupFormData?.data.description,
+            value: groupFormData?.data?.description,
             inputType: TEXT
         },
     ];
@@ -283,10 +283,11 @@ export const UsersComponent = (props: PropsFromRedux) => {
                 });
             }
             else {
+                closeModal();
                 setGroupFormData({
                     data: undefined
                 });
-                closeModal();
+                
             }
         }
 
