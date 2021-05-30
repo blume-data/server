@@ -86,6 +86,7 @@ import {
     FIELD_REFERENCE_MODEL_NAME
 } from "./constants";
 import {getNameFields, getPropertyFields} from "./fields";
+import { ModelSetting, ModelSettingType } from "./ModelSetting";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type CreateDataModelType = PropsFromRedux;
@@ -138,6 +139,8 @@ const CreateDataModel = (props: CreateDataModelType) => {
     const [confirmDialogOpen, setConfirmDialogOpen] = useState<boolean>(false);
     const [deleteEntryName, setDeleteEntryName] = useState<string>('');
 
+    const [modelSetting, setModelSetting] = useState<ModelSettingType | null>(null);
+
     const {
         env, CollectionUrl, applicationName, GetCollectionNamesUrl, language,
     } = props;
@@ -179,6 +182,15 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 setContentModelDisplayName(response[0].displayName);
                 setContentModelDescription(response[0].description);
                 setContentModelId(response[0]._id);
+
+                if(response[0].setting) {
+                    setModelSetting({
+                        isPublic: response[0].isPublic,
+                        restrictedUserGroups: response[0].restrictedUserGroups,
+                        permittedUserGroups: response[0].permittedUserGroups
+                    });
+                }
+
             }
             setIsLoading(false);
         }
@@ -810,6 +822,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 isLoading ? <Loader /> :  null
             }
 
+            <Grid item className='left-container'>
             <RenderHeading
                 className={'main-heading'}
                 type={"main"}
@@ -916,6 +929,17 @@ const CreateDataModel = (props: CreateDataModelType) => {
                             : null
                     }
                 </Grid>
+            </Grid>
+            </Grid>
+            <Grid item className='right-container'>
+            <RenderHeading
+                className={'main-heading'}
+                type={"main"}
+                value={`Settings`}
+            />
+                <ModelSetting 
+                    data={modelSetting}
+                />
             </Grid>
             <AlertDialog
                 onClose={() => {

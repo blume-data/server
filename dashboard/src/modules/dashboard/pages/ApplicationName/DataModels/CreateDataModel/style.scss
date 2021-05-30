@@ -2,135 +2,145 @@
 
 .create-data-model-container {
   margin-top: 10px;
-  .main-heading {
-    padding-left: 10px;
-    padding-bottom: 10px;
-  }
-  .create-model-container {
-    padding-top: 10px;
-    justify-content: space-between;
-    .create-content-model {
+  .left-container {
+    @include desktops {
+      width: 80%;
+    }
+    @include mobileAndTablet {
       width: 100%;
-      .fields-container {
-        padding-top: 10px;
-        padding-left: 10px;
-        .field-heading-container {
-          margin-top: 19px;
-        }
-        .cancel-button {
-          margin-top: 13px;
-          margin-right: 10px;
-          margin-bottom: 20px;
-        }
-        .fields-grid {
-          .numbers {
-            display: flex;
+    }
+    .main-heading {
+      padding-left: 10px;
+      padding-bottom: 10px;
+    }
+    .create-model-container {
+      padding-top: 10px;
+      justify-content: space-between;
+      .create-content-model {
+        width: 100%;
+        .fields-container {
+          padding-top: 10px;
+          padding-left: 10px;
+          .field-heading-container {
+            margin-top: 19px;
           }
-          .paper-field-item {
+          .cancel-button {
+            margin-top: 13px;
             margin-right: 10px;
-            margin-bottom: 10px;
+            margin-bottom: 20px;
           }
-          .field-item {
-            height: 100%;
-            button {
+          .fields-grid {
+            .numbers {
+              display: flex;
+            }
+            .paper-field-item {
+              margin-right: 10px;
+              margin-bottom: 10px;
+            }
+            .field-item {
               height: 100%;
-              width: 125px;
-              span {
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-              }
-              padding: 10px;
-              svg {
-                margin: 0 auto;
-                padding: 5px;
-              }
-              h2 {
-                text-align: center;
-                padding: 5px;
-                font-weight: 700;
-                font-size: 14px;
-              }
-              p{
-                text-transform: lowercase;
-                padding: 5px;
-                font-size: 12px;
+              button {
+                height: 100%;
+                width: 125px;
+                span {
+                  display: flex;
+                  flex-direction: column;
+                  justify-content: center;
+                }
+                padding: 10px;
+                svg {
+                  margin: 0 auto;
+                  padding: 5px;
+                }
+                h2 {
+                  text-align: center;
+                  padding: 5px;
+                  font-weight: 700;
+                  font-size: 14px;
+                }
+                p{
+                  text-transform: lowercase;
+                  padding: 5px;
+                  font-size: 12px;
+                }
               }
             }
           }
         }
+  
+        .property-section-container {
+  
+          .property-item {
+            margin: 0 20px;
+            h2 {
+              @include trim(1);
+            }
+          }
+          .no-fields-added {
+            padding: 10px 0;
+            padding-left: 10px;
+          }
+  
+        }
+  
+        .modal-action-buttons {
+          float: right;
+          margin-top: 20px;
+          .save-model {
+            margin-left: 10px;
+          }
+        }
+  
+        .set-fields-property-container {
+          margin-top: 10px;
+          padding: 20px 0;
+          .cancel-button-container {
+            display: flex;
+            justify-content: flex-end;
+            button {
+              margin-right: 10px;
+            }
+          }
+  
+        }
+        .add-name-heading {
+          padding: 10px;
+        }
       }
-
-      .property-section-container {
-
-        .property-item {
-          margin: 0 20px;
-          h2 {
+    }
+    .model-name-container {
+      width: 100%;
+      .name-section-container {
+        width: 100%;
+        padding-left: 10px;
+        .text-container {
+          padding: 10px 0;
+          .model-display-name, .model-description {
+            text-transform: capitalize;
+            max-width: 500px;
+            @include mobiles {
+              width: 100%;
+              max-width: 250px;
+            }
             @include trim(1);
           }
-        }
-        .no-fields-added {
-          padding: 10px 0;
-          padding-left: 10px;
-        }
-
-      }
-
-      .modal-action-buttons {
-        float: right;
-        margin-top: 20px;
-        .save-model {
-          margin-left: 10px;
-        }
-      }
-
-      .set-fields-property-container {
-        margin-top: 10px;
-        padding: 20px 0;
-        .cancel-button-container {
-          display: flex;
-          justify-content: flex-end;
-          button {
-            margin-right: 10px;
+          .model-display-name {
+            margin: 1em 0;
+          }
+          .model-description {
+            font-weight: $font-weight-normal;
           }
         }
-
-      }
-      .add-name-heading {
-        padding: 10px;
+        .edit-button {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+        }
+  
       }
     }
   }
-  .model-name-container {
-    padding: 10px;
-    width: 100%;
-
-    .name-section-container {
-      width: 100%;;
-      .text-container {
-        padding: 10px 0;
-        .model-display-name, .model-description {
-          text-transform: capitalize;
-          max-width: 500px;
-          @include mobiles {
-            width: 100%;
-            max-width: 250px;
-          }
-          @include trim(1);
-        }
-        .model-display-name {
-          margin: 1em 0;
-        }
-        .model-description {
-          font-weight: $font-weight-normal;
-        }
-      }
-      .edit-button {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-      }
-
-    }
+  .right-container {
+    
   }
 }

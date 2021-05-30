@@ -12,7 +12,6 @@ import {
 import {createModel, createModelSchema, createStoreModelName, getModel} from "../../../util/methods";
 import {DateTime} from "luxon";
 import mongoose from "mongoose";
-import { SettingModel } from '../../../db-models/ModelSetting';
 
 export async function createCollectionSchema(req: Request, res: Response) {
 
@@ -140,7 +139,14 @@ export async function getCollectionNames(req: Request, res: Response) {
     }
 
     const collections = await CollectionModel.find(where, get)
-    .populate(ENTRY_UPDATED_BY, 'firstName lastName');
+        .populate({
+            path: 'setting',
+            populate: [
+                { path: 'permittedUserGroups', select: 'name' }, 
+                {path: 'restrictedUserGroups', select: 'name'}
+            ]
+        })
+        .populate(ENTRY_UPDATED_BY, 'firstName lastName');
 
     res.status(okayStatus).send(collections);
 }
