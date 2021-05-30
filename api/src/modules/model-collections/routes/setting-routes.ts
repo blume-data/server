@@ -1,5 +1,5 @@
 import express from "express";
-import { getSetting } from "../Controllers/SettingController";
+import { getSetting, makeSetting } from "../Controllers/SettingController";
 import { checkAuth } from "../../../services/checkAuth";
 import { validateApplicationNameMiddleWare } from "../../../services/validateApplicationNameMiddleWare";
 import { SettingUrl } from "../../../util/urls";
@@ -12,5 +12,7 @@ router.get(
     validateApplicationNameMiddleWare,
     getSetting
 );
+
+router.post(SettingUrl, checkAuth, validateApplicationNameMiddleWare, makeSetting);
 
 export { router as SettingRoutes };

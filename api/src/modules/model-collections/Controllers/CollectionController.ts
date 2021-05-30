@@ -21,6 +21,7 @@ export async function createCollectionSchema(req: Request, res: Response) {
     const reqMethod = req.method;
 
     const reqBody = req.body;
+    const {setting=''} = reqBody;
 
     if(reqMethod === 'POST') {
         /*If in create mode*/
@@ -60,7 +61,8 @@ export async function createCollectionSchema(req: Request, res: Response) {
             createdAt,
             createdBy: `${req.currentUser[ID]}`,
             updatedAt: createdAt,
-            titleField: reqBody.titleField ? reqBody.titleField : reqBody.rules[0].name
+            titleField: reqBody.titleField ? reqBody.titleField : reqBody.rules[0].name,
+            setting
         });
 
         await newCollection.save();
@@ -136,15 +138,15 @@ export async function getCollectionNames(req: Request, res: Response) {
         get = getOnly.split(',')
     }
 
-    const query = CollectionModel.find(where, get);
-    if(getOnly && getOnly.includes(ENTRY_UPDATED_BY)){
-        query.populate(ENTRY_UPDATED_BY, 'firstName lastName');
-    }
-    else if(!getOnly) {
-        query.populate(ENTRY_UPDATED_BY, 'firstName lastName');
-    }
-
-    const collections = await query;
+    const collections = await CollectionModel.find(where, get)
+        .populate({
+            path: 'setting',
+            populate: [
+                { path: 'permittedUserGroups', select: 'name' }, 
+                {path: 'restrictedUserGroups', select: 'name'}
+            ]
+        })
+        .populate(ENTRY_UPDATED_BY, 'firstName lastName');
 
     res.status(okayStatus).send(collections);
 }

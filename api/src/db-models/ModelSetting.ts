@@ -4,6 +4,8 @@ interface SettingModelAttrs {
 
     isPublic: boolean;
     supportedDomains: string[];
+    restrictedUserGroups?: string[];
+    permittedUserGroups?: string[];
     // updated
     updatedBy: string;
     updatedAt?: Date;
@@ -17,6 +19,8 @@ interface SettingDoc extends mongoose.Document {
 
     isPublic: boolean;
     supportedDomains: string[];
+    restrictedUserGroups?: string[];
+    permittedUserGroups?: string[];
 
     updatedBy: string;
     updatedAt: Date;
@@ -33,6 +37,8 @@ const Setting = new mongoose.Schema(
                 type: String
             }
         },
+        restrictedUserGroups: [{ type: Schema.Types.ObjectId, ref: 'UserGroupModel' }],
+        permittedUserGroups: [{ type: Schema.Types.ObjectId, ref: 'UserGroupModel' }],
 
         updatedBy : { type: Schema.Types.ObjectId, ref: 'ClientUser' },
         updatedAt : { type: Date },

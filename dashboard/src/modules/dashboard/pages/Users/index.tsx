@@ -303,21 +303,22 @@ export const UsersComponent = (props: PropsFromRedux) => {
                 });
             }
             else {
+                closeModal();
                 setUserFormData({
                     data: undefined
                 });
-                closeModal();
+                
             }
         }
 
         return (
             <Form 
-            getValuesAsObject={true}
-            response={type === 'user' ? userFormData?.response : groupFormData?.response}
-            className=''
-            onSubmit={type === 'user' ? onSubmitUser : onSubmitGroup}
-            fields={type === 'user' ? userModelfields : userGroupfields}
-        />
+                getValuesAsObject={true}
+                response={type === 'user' ? userFormData?.response : groupFormData?.response}
+                className=''
+                onSubmit={type === 'user' ? onSubmitUser : onSubmitGroup}
+                fields={type === 'user' ? userModelfields : userGroupfields}
+            />
         );
 
     }
