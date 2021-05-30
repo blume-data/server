@@ -24,12 +24,7 @@ router.post(CreateOtherUsersUrl,
     body('type')
     .trim()
     .isLength(stringLimitOptions)
-    .withMessage(stringLimitOptionErrorMessage('type')),
-
-    body('userGroup')
-    .trim()
-    .isLength(stringLimitOptions)
-    .withMessage(stringLimitOptionErrorMessage('userGroup')),
+    .withMessage(stringLimitOptionErrorMessage('type'))
 ],
 
      validateRequest,

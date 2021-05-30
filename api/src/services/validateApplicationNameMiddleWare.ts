@@ -13,8 +13,6 @@ export const validateApplicationNameMiddleWare = async (req: Request, res: Respo
         name: applicationName
     }, ['name', 'env']).populate('env', 'name');
 
-    console.log('env', env, applicationNames);
-
     if(env && applicationNames) {
         const exist = applicationNames.env.find((item: any) => item.name === env);
         if(!exist) {

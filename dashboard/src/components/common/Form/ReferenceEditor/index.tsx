@@ -107,7 +107,6 @@ export const ReferenceEditor = (props: ReferenceEditorType) => {
                                     <Link 
                                         className='ref-link'
                                         target='_blank'
-                                        //onClick={onClickChip}
                                         to={redirectUrl}>
                                         <Chip
                                             className={'chip'}
