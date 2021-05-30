@@ -15,4 +15,4 @@ export const GetEntriesUrl = `${StoreUrl}/get-entries`;
 export const StoreReferenceUrl = `${rootUrl}/:language/:clientUserName/:applicationName/entry/:modelName`;
 
 // same setting for all languages
-export const SettingUrl = `${rootUrl}/:${CLIENT_USER_NAME}/:${APPLICATION_NAME}/setting/:modelName`;
+export const SettingUrl = `${rootUrl}/:${CLIENT_USER_NAME}/:${APPLICATION_NAME}/setting`;

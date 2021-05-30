@@ -99,6 +99,7 @@ const Collection = new mongoose.Schema(
             type: String
         },
         setting: {type: Schema.Types.ObjectId, ref: 'SettingModel'},
+        
         titleField: {type: String},
 
         deletedBy : { type: Schema.Types.ObjectId, ref: 'ClientUser' },
