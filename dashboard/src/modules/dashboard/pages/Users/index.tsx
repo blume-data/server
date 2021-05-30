@@ -13,6 +13,7 @@ import { RootState } from "../../../../rootReducer";
 import { doGetRequest, doPostRequest, doPutRequest } from "../../../../utils/baseApi";
 import { getItemFromLocalStorage } from "../../../../utils/tools";
 import EditIcon from '@material-ui/icons/Edit';
+import './style.scss';
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 interface ModalDataType {
@@ -107,7 +108,8 @@ export const UsersComponent = (props: PropsFromRedux) => {
             placeholder: 'Select the User group of user',
             label: 'Select the User group of user',
             className: '',
-            value: userFormData?.data?.userGroup,
+            value: userFormData?.data?.userGroup || [],
+            multiple: true,
             inputType: DROPDOWN,
             options: userGroups && userGroups.length ? userGroups.map((userGroup: any) => {
                 return {
@@ -131,7 +133,7 @@ export const UsersComponent = (props: PropsFromRedux) => {
         },
         {
             name: 'description',
-            required: true,
+            required: false,
             placeholder: 'Description',
             label: 'Description',
             className: '',
@@ -176,7 +178,7 @@ export const UsersComponent = (props: PropsFromRedux) => {
                     ...userFormData,
                     data: {
                         ...data,
-                        userGroup: data.userGroup._id
+                        userGroup: data.userGroup.map((grp: {_id: string}) => grp._id)
                     }
                 });
             }
@@ -225,23 +227,15 @@ export const UsersComponent = (props: PropsFromRedux) => {
             }
         });
 
-        console.log('user', userFormData);
-
         return (
-            <Grid container>
-                <Grid container justify="space-between">
-                <Grid item>
-                    <RenderHeading
-                        value="user model"
-                        className='user-model-heading'
-                    />
-                </Grid>
-                <Grid item>
-                    <CommonButton
-                        onClick={onClick}
-                        name={`create ${type}`}
-                     />
-                </Grid>
+            <Grid container direction='column'>
+                <Grid container justify="flex-end" className='accordian-top'>
+                    <Grid item>
+                        <CommonButton
+                            onClick={onClick}
+                            name={`create ${type}`}
+                        />
+                    </Grid>
                 </Grid> 
                 
                 <Grid className='entries-table' container>
@@ -267,7 +261,7 @@ export const UsersComponent = (props: PropsFromRedux) => {
 
         async function onSubmitGroup(values: any) {
             let response;
-            if(groupFormData && groupFormData.data._id) {
+            if(groupFormData && groupFormData.data && groupFormData.data._id) {
                 response = await doPutRequest(urls.group, {
                     ...values,
                     _id: groupFormData.data._id
@@ -293,7 +287,7 @@ export const UsersComponent = (props: PropsFromRedux) => {
 
         async function onSubmitUser(values: any) {
             let response;
-            if(userFormData && userFormData.data._id) {
+            if(userFormData && userFormData.data && userFormData.data._id) {
                 response = await doPutRequest(urls.user, {
                     ...values,
                     _id: userFormData.data._id
@@ -337,7 +331,7 @@ export const UsersComponent = (props: PropsFromRedux) => {
     }
 
     return (
-        <Grid>
+        <Grid container direction='column' className='users-and-group-container'> 
             <AccordianCommon 
                 name={'User model'}
                 children={component('user')}

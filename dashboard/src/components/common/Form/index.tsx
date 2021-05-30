@@ -233,7 +233,9 @@ export const Form = (props: FormType) => {
     }
 
     function renderFields(field: ConfigField, index: number, groupId?: string) {
-        const {inputType, options, groupName='', id, className, name, placeholder, required, type='text', label, disabled=false, descriptionText=''} = field;
+        const {inputType, options, groupName='', multiple=false,
+        id, className, name, placeholder, required, type='text', 
+        label, disabled=false, descriptionText=''} = field;
 
         /*If group Id: Field is not grouped*/
         if(groupId && groupName !== groupId) {
@@ -331,7 +333,7 @@ export const Form = (props: FormType) => {
                     descriptionText={descriptionText}
                     disabled={disabled}
                     onBlur={onBlur}
-                    value={value}
+                    value={multiple ? (Array.isArray(value) ? value : []) : value}
                     options={options && options.length ? options : []}
                     onChange={onChange}
                     placeholder={placeholder}
@@ -340,6 +342,7 @@ export const Form = (props: FormType) => {
                     name={name}
                     label={label}
                     error={error}
+                    multiple={multiple}
                     helperText={helperText}
                     key={index}
                     className={classNames}

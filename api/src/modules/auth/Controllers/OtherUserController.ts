@@ -8,7 +8,7 @@ import { sendOkayResponse } from "../../../util/methods";
 
 export async function CreateUpdateOtherUser(req: Request, res: Response) {
 
-    const {type, userName, password, details, email, userGroup, _id} = req.body;
+    const {type, userName, password, details, email, userGroup=[], _id} = req.body;
     const {clientUserName, applicationName, env} = req.params;
 
     // check userType
@@ -30,12 +30,6 @@ export async function CreateUpdateOtherUser(req: Request, res: Response) {
     if(exist) {
         return sendSingleError(res, 'userName is not available', 'userName');
     }
-
-    // // check if the userGroup exist
-    // const userGroupExist = await UserGroupModel.findById(userGroup, '_id');
-    // if(!userGroupExist) {
-    //     return sendSingleError(res, 'userGroup does not exist', 'userGroup');
-    // }
 
     const newUser = UserModel.build({
         userName,

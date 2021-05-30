@@ -16,7 +16,6 @@ export async function CreateEnv(req: Request, res: Response) {
 
     const exist = await EnvModel.findOne({name: trimCharactersAndNumbers(name), clientUserName, applicationName}, '_id');
     if(exist) {
-        console.log('exist', exist)
         return sendSingleError(res, 'Env with same name already exist', 'name');
     }
     else {
@@ -59,6 +58,4 @@ export async function CreateEnv(req: Request, res: Response) {
         }
         sendOkayResponse(res, {status: 'done'});
     }
-
-    
 }

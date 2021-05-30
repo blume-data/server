@@ -14,13 +14,16 @@ interface DropDownType extends FieldType{
     index: number;
     onChange: (event: ChangeEvent<any>) => void;
     onBlur: (event: ChangeEvent<any>) => void;
+    multiple?: boolean;
+    value: any;
 }
 export const DropDown = (props: DropDownType) => {
 
-    const {options, id, className, name, onChange, onBlur, label,
+    const {options, id, className, name, onChange, onBlur, label, multiple=false,
         error=false, helperText, disabled=false, descriptionText = '',
         placeholder='', required=false, value, index} = props;
     const randomId = `${name.split(' ').join('-')}-${index}-drop-down-input-label`;
+    
     return (
         <Grid key={index} className={`${className} app-drop-down`} id={id ? id : ''}>
             <FormControl className={'app-drop-down-form-control'} error={error} disabled={disabled}>
@@ -34,10 +37,11 @@ export const DropDown = (props: DropDownType) => {
                     value={value}
                     required={required}
                     onChange={onChange}
+                    multiple={multiple}
                 >
-                    <MenuItem className={'app-drop-down-menu-item'} value="">
+                    {multiple ? null : <MenuItem className={'app-drop-down-menu-item'} value="">
                         None
-                    </MenuItem>
+                    </MenuItem>}
                     {
                         options &&
                         options.map((option, index) => <MenuItem
