@@ -112,9 +112,10 @@ export const UsersComponent = (props: PropsFromRedux) => {
             multiple: true,
             inputType: DROPDOWN,
             options: userGroups && userGroups.length ? userGroups.map((userGroup: any) => {
+                console.log('user group', userGroup)
                 return {
                     label: userGroup.name,
-                    value: userGroup._id
+                    value: userGroup.id
                 }
             }) : []
         },
@@ -178,7 +179,7 @@ export const UsersComponent = (props: PropsFromRedux) => {
                     ...userFormData,
                     data: {
                         ...data,
-                        userGroup: data.userGroup.map((grp: {_id: string}) => grp._id)
+                        userGroup: data.userGroup.map((grp: {id: string}) => grp.id)
                     }
                 });
             }
@@ -261,10 +262,10 @@ export const UsersComponent = (props: PropsFromRedux) => {
 
         async function onSubmitGroup(values: any) {
             let response;
-            if(groupFormData && groupFormData.data && groupFormData.data._id) {
+            if(groupFormData && groupFormData.data && groupFormData.data.id) {
                 response = await doPutRequest(urls.group, {
                     ...values,
-                    _id: groupFormData.data._id
+                    id: groupFormData.data.id
                 }, true);
             } 
             else {
@@ -294,7 +295,12 @@ export const UsersComponent = (props: PropsFromRedux) => {
                 }, true);
             }
             else {
-                response = await doPostRequest(urls.user, values, true);
+
+                response = await doPostRequest(urls.user, {
+                    ...values,
+                    userGroups: values.userGroup,
+                    userGroup: undefined
+                }, true);
             }
             if(response && response.errors) {
                 setUserFormData({

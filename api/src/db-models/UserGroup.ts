@@ -7,6 +7,7 @@ interface UserGroupAttrs {
     env: string;
     name: string;
     description: string;
+    id: string;
 
     createdAt: Date;
     createdBy: string;
@@ -25,6 +26,7 @@ interface UserGroupDoc extends mongoose.Document {
     env: string;
     name: string;
     description: string;
+    id: string;
     
     createdAt: Date;
     createdBy: string;
@@ -43,7 +45,7 @@ const UserGroupSchema = new mongoose.Schema(
         clientUserName: String,
         applicationName: String,
         description: String,
-
+        id: String,
         updatedAt : { type: Date },
         updatedBy : { type: Schema.Types.ObjectId, ref: 'ClientUser' },
         createdAt : { type: Date },
@@ -55,6 +57,6 @@ UserGroupSchema.statics.build = (attrs: UserGroupAttrs) => {
     return new UserGroupModel(attrs);
 };
 
-const UserGroupModel = mongoose.model<UserGroupDoc, UserGroupModelType>('UserGroupModel', UserGroupSchema);
+const UserGroupModel = mongoose.model<UserGroupDoc, UserGroupModelType>('UserGroupModel', UserGroupSchema, 'usergroupmodel');
 
 export { UserGroupModel };
