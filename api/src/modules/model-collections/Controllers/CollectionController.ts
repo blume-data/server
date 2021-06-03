@@ -130,26 +130,21 @@ export async function getCollectionNames(req: Request, res: Response) {
         env
     };
     let get: string[] = ['rules', 'name', 'description', 'displayName', 'updatedAt', 'updatedBy', 'titleField'];
-    let fetchSettings = false;
-
+    
     if(req.query.get && getOnly) {
         get = getOnly.split(',');
-        fetchSettings = !!get.find(i => i === 'setting');
-        if(fetchSettings) {
-            get.push('settingId');
-        }
     }
     if(name) {
         where.name = name;
+        get.push('settingId');
     }
     
     const query = CollectionModel.find(where, get)
         .populate(ENTRY_UPDATED_BY, 'firstName lastName');
 
-    if(fetchSettings) {
+    if(name) {
         query.populate({
             path: 'setting',
-            //select: 'restrictedUserGroupIds permittedUserGroupIds',
             populate: [
                 {path: 'permittedUserGroups', select: 'name' }, 
                 {path: 'restrictedUserGroups', select: 'name'}
