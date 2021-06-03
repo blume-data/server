@@ -57,6 +57,6 @@ UserGroupSchema.statics.build = (attrs: UserGroupAttrs) => {
     return new UserGroupModel(attrs);
 };
 
-const UserGroupModel = mongoose.model<UserGroupDoc, UserGroupModelType>('UserGroupModel', UserGroupSchema, 'usergroupmodel');
+const UserGroupModel = mongoose.model<UserGroupDoc, UserGroupModelType>('UserGroupModel', UserGroupSchema);
 
 export { UserGroupModel };

@@ -1,5 +1,5 @@
 import { Grid, IconButton } from "@material-ui/core";
-import { APPLICATION_NAME, CLIENT_USER_NAME, ENV, SupportedUserType } from "@ranjodhbirkaur/constants";
+import { APPLICATION_NAME, CLIENT_USER_NAME, ENV, freeUserType, SupportedUserType } from "@ranjodhbirkaur/constants";
 import React, { useEffect, useState } from "react";
 import { connect, ConnectedProps } from "react-redux"
 import { AccordianCommon } from "../../../../components/common/AccordianCommon";
@@ -112,14 +112,12 @@ export const UsersComponent = (props: PropsFromRedux) => {
             multiple: true,
             inputType: DROPDOWN,
             options: userGroups && userGroups.length ? userGroups.map((userGroup: any) => {
-                console.log('user group', userGroup)
                 return {
                     label: userGroup.name,
                     value: userGroup.id
                 }
             }) : []
-        },
-        
+        }  
     ];
 
     const userGroupfields: ConfigField[] = [
@@ -179,7 +177,7 @@ export const UsersComponent = (props: PropsFromRedux) => {
                     ...userFormData,
                     data: {
                         ...data,
-                        userGroup: data.userGroup.map((grp: {id: string}) => grp.id)
+                        userGroup: data.userGroups.map((grp: {id: string}) => grp.id)
                     }
                 });
             }
@@ -257,7 +255,7 @@ export const UsersComponent = (props: PropsFromRedux) => {
             if(type === 'user') fetchUsers();
             else fetchUserGroups();
 
-            setModalData({title:'', type, hide: true});
+            handleModalClose();
         }
 
         async function onSubmitGroup(values: any) {
@@ -282,16 +280,15 @@ export const UsersComponent = (props: PropsFromRedux) => {
                 setGroupFormData({
                     data: undefined
                 });
-                
             }
         }
 
         async function onSubmitUser(values: any) {
             let response;
-            if(userFormData && userFormData.data && userFormData.data._id) {
+            if(userFormData && userFormData.data && userFormData.data.id) {
                 response = await doPutRequest(urls.user, {
                     ...values,
-                    _id: userFormData.data._id
+                    id: userFormData.data.id
                 }, true);
             }
             else {
@@ -310,10 +307,6 @@ export const UsersComponent = (props: PropsFromRedux) => {
             }
             else {
                 closeModal();
-                setUserFormData({
-                    data: undefined
-                });
-                
             }
         }
 
@@ -330,11 +323,9 @@ export const UsersComponent = (props: PropsFromRedux) => {
     }
 
     function handleModalClose() {
-        setModalData({
-            hide: true,
-            title: '',
-            type: 'user'
-        });
+        setModalData(null);
+        setUserFormData(null);
+        setGroupFormData(null);
     }
 
     return (

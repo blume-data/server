@@ -1,5 +1,5 @@
 import {Request, Response} from 'express';
-import mongoose from 'mongoose';
+import mongoose, { Document } from 'mongoose';
 import {
     BOOLEAN_FIElD_TYPE,
     DATE_AND_TIME_FIElD_TYPE,
@@ -223,4 +223,58 @@ export function sendOkayResponse(res: Response, data?: object) {
         }
     }
     return res.status(okayStatus).send(data);
+}
+
+// send a flat object without _id and other things
+export function flatObject(document: Document | Document[], useLessItems = {}, properties?: string[]) {
+
+    if(Array.isArray(document)) {
+        return document.map(item => {
+
+            const newObject = item.toObject();
+
+            let newItem: any = {
+                ...newObject,
+                ...useLessItems,
+                _id: undefined
+            }
+            if(properties && properties.length) {
+                properties.forEach(property => {
+                    newItem = {
+                        ...newItem,
+                        [property]: newItem[property].map((e: any) => {
+                            return {
+                                ...e,
+                                _id: undefined
+                            }
+                        })
+                    }
+                })
+            }
+
+            return newItem;
+        });
+    }
+
+    const flatty = document.toObject();
+    let ff: any = {
+        ...flatty,
+        ...useLessItems,
+        _id: undefined
+    }
+    if(properties) {
+        properties.forEach(property => {
+            ff = {
+                ...ff,
+                [property]: ff[property].map((e: any) => {
+                    return {
+                        ...e,
+                        _id: undefined
+                    }
+                })
+            }
+
+        })
+    }
+    return ff;
 }

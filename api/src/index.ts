@@ -27,7 +27,6 @@ const start = async () => {
   serverApp.use(SettingRoutes);
 
   // Auth Module
-  serverApp.use(userAgent.express());
   serverApp.use(addressRoutes);
   serverApp.use(currentUserRouter);
   serverApp.use(signinRouter);
@@ -39,6 +38,9 @@ const start = async () => {
 
   // Asset Module
   serverApp.use(assetsRoutes);
+
+  // user agent
+  serverApp.use(userAgent.express());
 
   serverApp.all('*', async () => {
     throw new NotFoundError();
