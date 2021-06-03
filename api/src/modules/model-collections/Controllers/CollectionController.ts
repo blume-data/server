@@ -9,7 +9,7 @@ import {
     ENTRY_UPDATED_BY,
     trimCharactersAndNumbers
 } from "@ranjodhbirkaur/constants";
-import {createModel, createModelSchema, createStoreModelName, getModel} from "../../../util/methods";
+import {createModel, createModelSchema, createStoreModelName, flatObject, getModel} from "../../../util/methods";
 import {DateTime} from "luxon";
 import mongoose from "mongoose";
 
@@ -62,7 +62,7 @@ export async function createCollectionSchema(req: Request, res: Response) {
             createdBy: `${req.currentUser[ID]}`,
             updatedAt: createdAt,
             titleField: reqBody.titleField ? reqBody.titleField : reqBody.rules[0].name,
-            setting
+            settingId: setting
         });
 
         await newCollection.save();
@@ -130,27 +130,36 @@ export async function getCollectionNames(req: Request, res: Response) {
         env
     };
     let get: string[] = ['rules', 'name', 'description', 'displayName', 'updatedAt', 'updatedBy', 'titleField'];
+    let fetchSettings = false;
 
     if(req.query.get && getOnly) {
-        get = getOnly.split(',')
+        get = getOnly.split(',');
+        fetchSettings = !!get.find(i => i === 'setting');
+        if(fetchSettings) {
+            get.push('settingId');
+        }
     }
     if(name) {
         where.name = name;
     }
+    
     const query = CollectionModel.find(where, get)
         .populate(ENTRY_UPDATED_BY, 'firstName lastName');
 
-    if(name) {
+    if(fetchSettings) {
         query.populate({
             path: 'setting',
+            //select: 'restrictedUserGroupIds permittedUserGroupIds',
             populate: [
-                { path: 'permittedUserGroups', select: 'name' }, 
+                {path: 'permittedUserGroups', select: 'name' }, 
                 {path: 'restrictedUserGroups', select: 'name'}
             ]
         });
     }
+    
     const collections = await query;
-    res.status(okayStatus).send(collections);
+    const flatty = flatObject(collections, {settingId: undefined}, [{name : 'setting', items: ['permittedUserGroups', 'restrictedUserGroups']}]);
+    res.status(okayStatus).send(flatty);
 }
 
 export async function deleteCollectionSchema(req: Request, res: Response) {

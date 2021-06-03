@@ -18,6 +18,7 @@ import {
     okayStatus
 } from "./common-module";
 import {getCollection} from "../modules/entries/Controllers/StoreController";
+import _ from 'lodash';
 
 export function isValidRegEx(reg: string) {
     let isValid = true;
@@ -226,7 +227,63 @@ export function sendOkayResponse(res: Response, data?: object) {
 }
 
 // send a flat object without _id and other things
-export function flatObject(document: Document | Document[], useLessItems = {}, properties?: string[]) {
+export function flatObject(document: Document | Document[], useLessItems = {}, properties?: {name: string, items?: string[]}[]) {
+
+    function flattenChildren(item: any, items?: string[]) {
+
+        if(typeof item !== 'object') {
+            return item;
+        }
+
+        if(!Array.isArray(item)) {
+            let newff: any = {
+                ...item,
+                _id: undefined
+            };
+            if(items) {
+                newff = _.pick(newff, items);
+                for(let p in newff) {
+                    newff = {
+                        ...newff,
+                        [p]: flattenChildren(newff[p])
+                    }
+                }
+            }
+            return newff;
+        }
+        else {
+            let u: any = [];
+            if(items) {
+                u = item.map((e: any) => {
+                    let y: any = {};
+                    for(let p in e) {
+                        y = {
+                            ...e,
+                            [p]: flattenChildren(e[p])
+                        }
+                    }
+                    return _.pick(y, items);
+                });
+            }
+            else {
+                u = item.map((e: any) => {
+                    let y: any = {};
+                    for(let p in e) {
+                        y = {
+                            ...e,
+                            [p]: flattenChildren(e[p])
+                        }
+                    }
+                    return {
+                        ...y,
+                        _id: undefined
+                    };
+                });
+            } 
+            return u;
+
+        }
+    }
 
     if(Array.isArray(document)) {
         return document.map(item => {
@@ -242,12 +299,7 @@ export function flatObject(document: Document | Document[], useLessItems = {}, p
                 properties.forEach(property => {
                     newItem = {
                         ...newItem,
-                        [property]: newItem[property].map((e: any) => {
-                            return {
-                                ...e,
-                                _id: undefined
-                            }
-                        })
+                        [property.name]: flattenChildren(newItem[property.name], property.items)
                     }
                 })
             }
@@ -266,12 +318,7 @@ export function flatObject(document: Document | Document[], useLessItems = {}, p
         properties.forEach(property => {
             ff = {
                 ...ff,
-                [property]: ff[property].map((e: any) => {
-                    return {
-                        ...e,
-                        _id: undefined
-                    }
-                })
+                [property.name]: flattenChildren(ff, property.items)
             }
 
         })

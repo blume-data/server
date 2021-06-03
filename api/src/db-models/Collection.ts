@@ -12,7 +12,7 @@ interface CollectionAttrs {
     isPublic: boolean;
     isEnabled?: boolean;
     metaData?: string;
-    setting?: string;
+    settingId?: string;
     titleField: string;
 
     // created
@@ -44,7 +44,7 @@ interface CollectionDoc extends mongoose.Document {
     isPublic: boolean;
     isEnabled: boolean;
     metaData?: string;
-    setting?: string;
+    settingId?: string;
     titleField: string;
 
     createdBy: string;
@@ -98,7 +98,7 @@ const Collection = new mongoose.Schema(
         metaData : {
             type: String
         },
-        setting: {type: Schema.Types.ObjectId, ref: 'SettingModel'},
+        settingId: String,
         
         titleField: {type: String},
 
@@ -110,8 +110,19 @@ const Collection = new mongoose.Schema(
 
         updatedBy : { type: Schema.Types.ObjectId, ref: 'ClientUser' },
         updatedAt : { type: Date },
+    },
+    { 
+        toJSON: { virtuals: true },
+        toObject: { virtuals: true }
     }
 );
+
+Collection.virtual('setting', {
+    ref: 'SettingModel', // The model to use
+    localField: 'settingId', // Find people where `localField`
+    foreignField: 'id', // is equal to `foreignField`
+    justOne: true,
+  });
 
 Collection.statics.build = (attrs: CollectionAttrs) => {
     return new CollectionModel(attrs);
