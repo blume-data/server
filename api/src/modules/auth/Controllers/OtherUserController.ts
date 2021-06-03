@@ -4,11 +4,12 @@ import { DateTime } from "luxon";
 import { UserGroupModel } from "../../../db-models/UserGroup";
 import { UserModel } from "../../../db-models/UserModel";
 import { RANDOM_STRING, sendSingleError } from "../../../util/common-module";
-import { sendOkayResponse } from "../../../util/methods";
+import { flatObject, sendOkayResponse } from "../../../util/methods";
+import { v4 as uuidv4 } from 'uuid';
 
 export async function CreateUpdateOtherUser(req: Request, res: Response) {
 
-    const {type, userName, password, details, email, userGroup=[], _id} = req.body;
+    const {type, userName, password, details, email, userGroups=[], id} = req.body;
     const {clientUserName, applicationName, env} = req.params;
 
     // check userType
@@ -16,11 +17,16 @@ export async function CreateUpdateOtherUser(req: Request, res: Response) {
         return sendSingleError(res, 'type is not valid', 'type');
     }
 
-    if(_id) {
+    if(id) {
         // update the user
-        await UserModel.findByIdAndUpdate(_id, {
-            type, password, details, email, userGroup
-        });
+        try {
+            await UserModel.findOneAndUpdate({id, clientUserName, applicationName, env}, {
+                type, password, details, email, userGroupIds: userGroups
+            });
+        } catch (error) {
+            return sendSingleError(res, 'userGroups ids are not valid', 'userGroups')
+            
+        }
 
         return sendOkayResponse(res);
     }
@@ -39,7 +45,7 @@ export async function CreateUpdateOtherUser(req: Request, res: Response) {
         env,
         clientUserName, applicationName,
         email,
-        userGroup,
+        userGroupIds: userGroups,
         isEnabled: true,
         jwtId: RANDOM_STRING(10)
     });
@@ -51,13 +57,13 @@ export async function CreateUpdateOtherUser(req: Request, res: Response) {
 
 export async function CreateUserGroup(req: Request, res: Response) {
 
-    const {name, description, _id} = req.body;
+    const {name, description, id} = req.body;
     const {applicationName, clientUserName, env} = req.params;
 
-    if(_id) {
+    if(id) {
         // update the userGroup
-        await UserGroupModel.findByIdAndUpdate(_id, {
-            name, description
+        await UserGroupModel.findOneAndUpdate({id, clientUserName, applicationName, env}, {
+            name: trimCharactersAndNumbers(name), description
         });
         return sendOkayResponse(res);
     }
@@ -73,6 +79,7 @@ export async function CreateUserGroup(req: Request, res: Response) {
         return sendSingleError(res, 'user group with same name already exist', 'name');
     }
 
+    const uid = uuidv4();
     const newUserGroup = UserGroupModel.build({
         env,
         name: trimCharactersAndNumbers(name), 
@@ -81,6 +88,7 @@ export async function CreateUserGroup(req: Request, res: Response) {
         applicationName,
         createdAt: date,
         updatedAt: date,
+        id: uid,
         createdBy: req.currentUser[ID],
         updatedBy: req.currentUser[ID]
     });
@@ -97,22 +105,23 @@ export async function FetchUserGroup(req: Request, res: Response) {
 
     const userGroups = await UserGroupModel.find({
         clientUserName, applicationName, env
-    }, ['name', DESCRIPTION]);
+    }, ['name', DESCRIPTION, 'id']);
 
-    return sendOkayResponse(res,userGroups);
+    return sendOkayResponse(res, flatObject(userGroups));
     
 }
 
 export async function FetchUsers(req: Request, res: Response) {
     const {applicationName, clientUserName, env} = req.params;
 
-    const users = await UserModel.find({
-        clientUserName, applicationName, env
-    }, 
-    ['name', USER_NAME, 'type', 'userGroup', PASSWORD])
-    .populate('userGroup', 'name')
-    ;
+    const users = await UserModel.find({clientUserName, applicationName, env}, 
+        ['name', USER_NAME, 'type', PASSWORD, 'userGroupIds']
+    )
+    .populate('userGroups', 'name description');
 
-    return sendOkayResponse(res, users);
-    
+    const flatUsers = flatObject(users, {
+        userGroupIds: undefined
+    }, ['userGroups']);
+
+    return sendOkayResponse(res, flatUsers);    
 }

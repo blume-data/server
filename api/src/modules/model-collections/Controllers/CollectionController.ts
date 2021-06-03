@@ -131,23 +131,25 @@ export async function getCollectionNames(req: Request, res: Response) {
     };
     let get: string[] = ['rules', 'name', 'description', 'displayName', 'updatedAt', 'updatedBy', 'titleField'];
 
-    if(name) {
-        where.name = name;
-    }
     if(req.query.get && getOnly) {
         get = getOnly.split(',')
     }
+    if(name) {
+        where.name = name;
+    }
+    const query = CollectionModel.find(where, get)
+        .populate(ENTRY_UPDATED_BY, 'firstName lastName');
 
-    const collections = await CollectionModel.find(where, get)
-        .populate({
+    if(name) {
+        query.populate({
             path: 'setting',
             populate: [
                 { path: 'permittedUserGroups', select: 'name' }, 
                 {path: 'restrictedUserGroups', select: 'name'}
             ]
-        })
-        .populate(ENTRY_UPDATED_BY, 'firstName lastName');
-
+        });
+    }
+    const collections = await query;
     res.status(okayStatus).send(collections);
 }
 

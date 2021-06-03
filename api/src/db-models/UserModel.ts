@@ -8,7 +8,7 @@ interface ClientUserAttrs {
     firstName?: string;
     lastName?: string;
     type?: string;
-    userGroup?: string;
+    userGroupIds?: string[];
 
     clientUserName?: string;
     applicationName?: string;
@@ -25,7 +25,7 @@ interface ClientUserDoc extends mongoose.Document {
     firstName?: string;
     lastName?: string;
     type?: string;
-    userGroup?: string;
+    userGroupIds?: string[];
 
     clientUserName?: string;
     applicationName?: string;
@@ -80,16 +80,30 @@ function getRootUserSchema() {
             clientUserName: String,
             applicationName: String,
             env: String,
-            userGroup: [{ type: Schema.Types.ObjectId, ref: 'UserGroupModel' }],
+            userGroupIds: [String],
+        }, 
+        { 
+            toJSON: { virtuals: true },
+            toObject: { virtuals: true }
         }
     );
 }
+
+
 
 interface ClientUserModel extends mongoose.Model<ClientUserDoc> {
     build(attrs: ClientUserAttrs): ClientUserDoc;
 }
 
 const clientUserSchema = getRootUserSchema();
+
+clientUserSchema.virtual('userGroups', {
+    ref: 'UserGroupModel', // The model to use
+    localField: 'userGroupIds', // Find people where `localField`
+    foreignField: 'id', // is equal to `foreignField`
+    justOne: false,
+  
+  });
 
 clientUserSchema.statics.build = (attrs: ClientUserAttrs) => {
     return new UserModel(attrs);
