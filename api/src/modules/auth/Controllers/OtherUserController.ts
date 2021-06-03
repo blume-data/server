@@ -62,7 +62,7 @@ export async function CreateUserGroup(req: Request, res: Response) {
 
     if(id) {
         // update the userGroup
-        await UserGroupModel.findOneAndUpdate({id}, {
+        await UserGroupModel.findOneAndUpdate({id, clientUserName, applicationName, env}, {
             name: trimCharactersAndNumbers(name), description
         });
         return sendOkayResponse(res);
