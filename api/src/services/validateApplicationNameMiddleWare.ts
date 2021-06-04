@@ -7,7 +7,7 @@ export const validateApplicationNameMiddleWare = async (req: Request, res: Respo
     const applicationName  = req.params && req.params[APPLICATION_NAME];
     const clientUserName = req.params.clientUserName;
     const env = req.params.env;
-
+     
     const applicationNames = await ApplicationSpaceModel.findOne({
         clientUserName,
         name: applicationName

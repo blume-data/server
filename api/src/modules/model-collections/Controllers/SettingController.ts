@@ -9,6 +9,7 @@ import {
 import { CollectionModel } from '../../../db-models/Collection';
 import { SettingModel } from '../../../db-models/ModelSetting';
 import { sendOkayResponse } from '../../../util/methods';
+import { v4 } from 'uuid';
 
 export async function getSetting(req: Request, res: Response) {
 
@@ -23,8 +24,8 @@ export async function getSetting(req: Request, res: Response) {
         ['name', 'setting']
         ).populate('setting');
 
-    if(settings && settings.setting) {
-        res.status(okayStatus).send(settings.setting);
+    if(settings && settings.settingId) {
+        res.status(okayStatus).send(settings.settingId);
     }
     else {
         sendSingleError(res, 'setting was not found for this model');
@@ -33,14 +34,17 @@ export async function getSetting(req: Request, res: Response) {
 
 export async function makeSetting(req: Request, res: Response) {
 
-    const {restrictedUserGroups=[], permittedUserGroups=[], isPublic=false} = req.body;
+    const {restrictedUserGroups=[], permittedUserGroups=[], isPublic=false, supportedDomains} = req.body;
 
+    const uid = v4();
+    
     const newSettings = SettingModel.build({
-        permittedUserGroups: (permittedUserGroups && Array.isArray(permittedUserGroups) ? permittedUserGroups : []),
-        restrictedUserGroups: (restrictedUserGroups && Array.isArray(restrictedUserGroups) ? restrictedUserGroups : []),
+        permittedUserGroupIds: (permittedUserGroups && Array.isArray(permittedUserGroups) ? permittedUserGroups : []),
+        restrictedUserGroupIds: (restrictedUserGroups && Array.isArray(restrictedUserGroups) ? restrictedUserGroups : []),
         isPublic: false,
+        id: uid,
         updatedBy: `${req.currentUser[ID]}`,
-        supportedDomains: []
+        supportedDomains
     });
     try {
         await newSettings.save();

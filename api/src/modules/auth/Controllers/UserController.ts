@@ -20,6 +20,7 @@ import {EXAMPLE_APPLICATION_NAME} from "../util/constants";
 import {createNewSession} from "../util/tools";
 import { newApplicationSpace } from "../../model-collections/Controllers/ApplicationNameController";
 import { clientUserType, USER_NAME, clientType } from "@ranjodhbirkaur/constants";
+import {v4} from 'uuid';
 
 interface ReqIsUserNameAvailable extends Request{
     body: {
@@ -74,11 +75,13 @@ export const verifyEmailToken = async function (req: ReqValidateEmail, res: Resp
             const jwtId = RANDOM_STRING(10);
             const created_at = `${new Date()}`;
             const userType = userExist.clientType;
+            const uid = v4();
 
             if(userType === clientUserType) {
                 const newUser = MainUserModel.build({
                     email: userExist[EMAIL],
                     jwtId,
+                    id: uid,
                     createdAt: created_at,
                     password: userExist[PASSWORD],
                     firstName: userExist[FIRST_NAME],

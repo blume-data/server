@@ -31,11 +31,11 @@ export async function checkAuth(req: Request, res: Response, next: NextFunction 
                 case clientUserType: {
                     const userExist = await UserModel.findOne({
                         [USER_NAME]: payload[USER_NAME], [JWT_ID]: payload[JWT_ID], [Is_Enabled]: true
-                    }, [JWT_ID, Is_Enabled, USER_NAME, ID]);
+                    }, [JWT_ID, Is_Enabled, USER_NAME, 'id']);
 
                     if(userExist && userExist[USER_NAME] === clientUserName) {
                         req.currentUser = {
-                            [ID]: userExist[ID],
+                            id: userExist.id,
                             [USER_NAME]: payload[USER_NAME],
                             [clientType]: payload[clientType]
                         };

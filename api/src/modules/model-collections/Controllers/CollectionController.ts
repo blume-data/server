@@ -7,11 +7,14 @@ import {CANNOT_CREATE_COLLECTIONS_MORE_THAN_LIMIT, COLLECTION_ALREADY_EXIST} fro
 import {
     ENTRY_UPDATED_AT,
     ENTRY_UPDATED_BY,
+    FIRST_NAME,
+    LAST_NAME,
     trimCharactersAndNumbers
 } from "@ranjodhbirkaur/constants";
-import {createModel, createModelSchema, createStoreModelName, getModel} from "../../../util/methods";
+import {createModel, createModelSchema, createStoreModelName, flatObject, getModel} from "../../../util/methods";
 import {DateTime} from "luxon";
 import mongoose from "mongoose";
+import {v4} from 'uuid';
 
 export async function createCollectionSchema(req: Request, res: Response) {
 
@@ -29,6 +32,9 @@ export async function createCollectionSchema(req: Request, res: Response) {
         const isInLimit = await CollectionModel.find({
             clientUserName
         },'name');
+        
+        const uid = v4();
+
         if ((isInLimit && isInLimit.length) > MAX_COLLECTION_LIMIT) {
             throw new BadRequestError(CANNOT_CREATE_COLLECTIONS_MORE_THAN_LIMIT);
         }
@@ -56,13 +62,14 @@ export async function createCollectionSchema(req: Request, res: Response) {
             name: reqBody.name,
             displayName: reqBody.displayName,
             env,
-            updatedBy: `${req.currentUser[ID]}`,
+            id: uid,
+            updatedById: `${req.currentUser.id}`,
             description: reqBody.description,
             createdAt,
-            createdBy: `${req.currentUser[ID]}`,
+            createdById: `${req.currentUser.id}`,
             updatedAt: createdAt,
             titleField: reqBody.titleField ? reqBody.titleField : reqBody.rules[0].name,
-            setting
+            settingId: setting
         });
 
         await newCollection.save();
@@ -72,7 +79,7 @@ export async function createCollectionSchema(req: Request, res: Response) {
     else {
 
         const exist = await CollectionModel.findOne({
-            _id: reqBody.id
+            id: reqBody.id
         },
             ['name', 'displayName', 'description', 'rules']);
 
@@ -88,22 +95,12 @@ export async function createCollectionSchema(req: Request, res: Response) {
                 update.displayName = reqBody.displayName;
             }
             update[ENTRY_UPDATED_AT] = DateTime.local().setZone('UTC').toJSDate();
+            update[`${ENTRY_UPDATED_BY}Id`] = req.currentUser.id;
 
             await CollectionModel.findOneAndUpdate({
-                _id: reqBody.id
+                id: reqBody.id
             }, update);
         
-            // delete model schemas
-            const uName = createStoreModelName(reqBody.name, applicationName, clientUserName);
-            if(mongoose.modelNames().includes(uName)) {
-                mongoose.model(uName).schema = createModelSchema(applicationName, clientUserName, reqBody.rules);
-            }
-            else {
-                // create the model
-                await getModel(req, uName, applicationName, clientUserName);
-            }
-            
-
             res.status(okayStatus).send('done');
 
         }
@@ -129,28 +126,36 @@ export async function getCollectionNames(req: Request, res: Response) {
         language,
         env
     };
-    let get: string[] = ['rules', 'name', 'description', 'displayName', 'updatedAt', 'updatedBy', 'titleField'];
-
+    let get: string[] = ['rules', 'name', 'description', 'displayName', 'updatedAt', 'updatedById', 'titleField', 'id'];
+    
     if(req.query.get && getOnly) {
-        get = getOnly.split(',')
+        get = getOnly.split(',');
+        get.push('id');
     }
     if(name) {
         where.name = name;
+        get.push('settingId');
     }
-    const query = CollectionModel.find(where, get)
-        .populate(ENTRY_UPDATED_BY, 'firstName lastName');
+    
+    const query = CollectionModel.find(where, get);
 
     if(name) {
-        query.populate({
+        query
+        .populate('updatedBy', 'firstName lastName')
+        .populate({
             path: 'setting',
             populate: [
-                { path: 'permittedUserGroups', select: 'name' }, 
-                {path: 'restrictedUserGroups', select: 'name'}
+                {path: 'permittedUserGroups', select: 'name' }, 
+                {path: 'restrictedUserGroups', select: 'name description'}
             ]
         });
     }
+    
     const collections = await query;
-    res.status(okayStatus).send(collections);
+    const flatty = flatObject(collections, {settingId: undefined, [`${ENTRY_UPDATED_BY}Id`]: undefined}, [
+        {name : 'setting', items: ['permittedUserGroups', 'restrictedUserGroups','supportedDomains', 'isPublic']},
+    ]);
+    res.status(okayStatus).send(flatty);
 }
 
 export async function deleteCollectionSchema(req: Request, res: Response) {

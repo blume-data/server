@@ -7,7 +7,7 @@ import {
     INTEGER_FIElD_TYPE, PUBLISHED_ENTRY_STATUS,
     JSON_FIELD_TYPE, ONE_TO_MANY_RELATION, ONE_TO_ONE_RELATION, REFERENCE_FIELD_TYPE,
     ARCHIVED_ENTRY_STATUS, RuleType,
-    DELETED_ENTRY_STATUS, DRAFT_ENTRY_STATUS, MEDIA_FIELD_TYPE, SINGLE_ASSETS_TYPE, MULTIPLE_ASSETS_TYPE,
+    DELETED_ENTRY_STATUS, DRAFT_ENTRY_STATUS, MEDIA_FIELD_TYPE, SINGLE_ASSETS_TYPE, MULTIPLE_ASSETS_TYPE, PASSWORD,
 } from "@ranjodhbirkaur/constants";
 import {
     ENTRY_LANGUAGE_PROPERTY_NAME, TIMEZONE_DATE_CONSTANT,
@@ -18,6 +18,7 @@ import {
     okayStatus
 } from "./common-module";
 import {getCollection} from "../modules/entries/Controllers/StoreController";
+import _ from 'lodash';
 
 export function isValidRegEx(reg: string) {
     let isValid = true;
@@ -225,56 +226,124 @@ export function sendOkayResponse(res: Response, data?: object) {
     return res.status(okayStatus).send(data);
 }
 
+const deleteThese = {
+    _id: undefined,
+    __v: undefined,
+    [PASSWORD]: undefined
+}
+
 // send a flat object without _id and other things
-export function flatObject(document: Document | Document[], useLessItems = {}, properties?: string[]) {
+export function flatObject(document: Document | Document[], useLessItems = {}, properties?: {name: string, items?: string[]}[]) {
+
+    // items are the properties to be fetched and cleaned
+    function flattenChildren(item: any, items?: string[]) {
+
+        if(typeof item !== 'object') {
+            return item;
+        }
+
+        if(!Array.isArray(item)) {
+            let newff: any = {
+                ...item,
+                ...deleteThese
+            };
+            if(items) {
+                newff = _.pick(newff, items);
+                for(let p in newff) {
+                    if(newff.hasOwnProperty(p))
+                    newff = {
+                        ...newff,
+                        [p]: flattenChildren(newff[p])
+                    }
+                }
+            }
+            return newff;
+        }
+        else {
+            let u: any = [];
+            if(items) {
+                u = item.map((e: any) => {
+                    let y: any = {};
+                    for(let p in e) {
+                        if(e.hasOwnProperty(p)) {
+                            y = {
+                                ...e,
+                                [p]: flattenChildren(e[p])
+                            }
+                        }
+                    }
+                    return _.pick(y, items);
+                });
+            }
+            else {
+                u = item.map((e: any) => {
+                    let y: any = {};
+                    for(let p in e) {
+                        if(e.hasOwnProperty(p)) {
+                            y = {
+                                ...e,
+                                [p]: flattenChildren(e[p])
+                            }
+                        }
+                    }
+                    return {
+                        ...y,
+                        ...deleteThese
+                    };
+                });
+            } 
+            return u;
+
+        }
+    }
+
+    // do the processing of something
+    function process(ff: any) {
+        for(let f in ff) {
+            if(ff.hasOwnProperty(f) && typeof ff[f] === 'object' && !(ff[f] instanceof Date)) {
+                if(properties) {
+                    const existInPropertiesParam = properties.find(prp => prp.name === f);
+                    ff = {
+                        ...ff,
+                        [f]: flattenChildren(ff[f], existInPropertiesParam?.items)
+                    }
+                }
+                else {
+                    ff = {
+                        ...ff,
+                        [f]: flattenChildren(ff[f])
+                    }
+                }
+            }
+            else if(f === PASSWORD) {
+                ff = {
+                    ...ff,
+                    [PASSWORD]: undefined
+                }
+            }
+        }
+        return ff;
+
+    }
 
     if(Array.isArray(document)) {
         return document.map(item => {
-
             const newObject = item.toObject();
-
             let newItem: any = {
                 ...newObject,
                 ...useLessItems,
-                _id: undefined
+                ...deleteThese
             }
-            if(properties && properties.length) {
-                properties.forEach(property => {
-                    newItem = {
-                        ...newItem,
-                        [property]: newItem[property].map((e: any) => {
-                            return {
-                                ...e,
-                                _id: undefined
-                            }
-                        })
-                    }
-                })
-            }
-
-            return newItem;
+            return process(newItem);
         });
     }
 
     const flatty = document.toObject();
-    let ff: any = {
+    const ff: any = {
         ...flatty,
         ...useLessItems,
-        _id: undefined
+        ...deleteThese
     }
-    if(properties) {
-        properties.forEach(property => {
-            ff = {
-                ...ff,
-                [property]: ff[property].map((e: any) => {
-                    return {
-                        ...e,
-                        _id: undefined
-                    }
-                })
-            }
 
-        })
-    }
-    return ff;
+    return process(ff);
 }

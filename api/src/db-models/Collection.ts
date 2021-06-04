@@ -12,19 +12,20 @@ interface CollectionAttrs {
     isPublic: boolean;
     isEnabled?: boolean;
     metaData?: string;
-    setting?: string;
+    settingId?: string;
     titleField: string;
+    id: string;
 
     // created
-    createdBy: string;
+    createdById: string;
     createdAt?: Date;
 
     // deleted
-    deletedBy?: string;
+    deletedById?: string;
     deletedAt?: Date;
 
     // updated
-    updatedBy: string;
+    updatedById: string;
     updatedAt?: Date;
 }
 
@@ -36,7 +37,7 @@ interface CollectionDoc extends mongoose.Document {
     clientUserName : string;
     applicationName: string;
     env: string;
-
+    id: string;
     rules: string;
     name: string;
     description: string;
@@ -44,16 +45,16 @@ interface CollectionDoc extends mongoose.Document {
     isPublic: boolean;
     isEnabled: boolean;
     metaData?: string;
-    setting?: string;
+    settingId?: string;
     titleField: string;
 
-    createdBy: string;
+    createdById: string;
     createdAt?: Date;
 
-    deletedBy?: string;
+    deletedById?: string;
     deletedAt?: Date;
 
-    updatedBy: string;
+    updatedById: string;
     updatedAt: Date;
 }
 
@@ -98,20 +99,53 @@ const Collection = new mongoose.Schema(
         metaData : {
             type: String
         },
-        setting: {type: Schema.Types.ObjectId, ref: 'SettingModel'},
+        settingId: String,
+        id: String,
         
         titleField: {type: String},
 
-        deletedBy : { type: Schema.Types.ObjectId, ref: 'ClientUser' },
+        deletedById : String,
         deletedAt : { type: Date },
 
-        createdBy : { type: Schema.Types.ObjectId, ref: 'ClientUser' },
+        createdById : String,
         createdAt : { type: Date },
 
-        updatedBy : { type: Schema.Types.ObjectId, ref: 'ClientUser' },
+        updatedById : String,
         updatedAt : { type: Date },
+    },
+    { 
+        toJSON: { virtuals: true },
+        toObject: { virtuals: true }
     }
 );
+
+Collection.virtual('setting', {
+    ref: 'SettingModel', // The model to use
+    localField: 'settingId', // Find people where `localField`
+    foreignField: 'id', // is equal to `foreignField`
+    justOne: true,
+});
+
+Collection.virtual('createdBy', {
+    ref: 'ClientUser', // The model to use
+    localField: 'createdById', // Find people where `localField`
+    foreignField: 'id', // is equal to `foreignField`
+    justOne: true,
+});
+
+Collection.virtual('updatedBy', {
+    ref: 'ClientUser', // The model to use
+    localField: 'updatedById', // Find people where `localField`
+    foreignField: 'id', // is equal to `foreignField`
+    justOne: true,
+});
+
+Collection.virtual('deletedBy', {
+    ref: 'ClientUser', // The model to use
+    localField: 'deletedById', // Find people where `localField`
+    foreignField: 'id', // is equal to `foreignField`
+    justOne: true,
+});
 
 Collection.statics.build = (attrs: CollectionAttrs) => {
     return new CollectionModel(attrs);

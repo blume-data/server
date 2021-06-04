@@ -121,7 +121,7 @@ export async function FetchUsers(req: Request, res: Response) {
 
     const flatUsers = flatObject(users, {
         userGroupIds: undefined
-    }, ['userGroups']);
+    }, [{name: 'userGroups'}]);
 
     return sendOkayResponse(res, flatUsers);    
 }
