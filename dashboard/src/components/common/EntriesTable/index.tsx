@@ -225,7 +225,7 @@ const EntriesTableComponent = (props: EntriesTableType) => {
     async function fetchModelDataAndRules() {
         if(GetCollectionNamesUrl && applicationName) {
             const response = await getModelDataAndRules({
-                GetCollectionNamesUrl, applicationName, modelName: modelName, language, env
+                GetCollectionNamesUrl, applicationName, modelName: modelName, language, env, getOnly:"rules,displayName,id"
             });
             if(response && !response.errors && response.length) {
                 if(response[0][TITLE_FIELD]) {
