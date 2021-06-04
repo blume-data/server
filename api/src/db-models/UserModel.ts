@@ -9,11 +9,10 @@ interface ClientUserAttrs {
     lastName?: string;
     type?: string;
     userGroupIds?: string[];
-
     clientUserName?: string;
     applicationName?: string;
     env?: string;
-
+    id: string;
     userName: string;
     jwtId: string;
     isEnabled?: boolean;
@@ -26,11 +25,10 @@ interface ClientUserDoc extends mongoose.Document {
     lastName?: string;
     type?: string;
     userGroupIds?: string[];
-
     clientUserName?: string;
     applicationName?: string;
     env?: string;
-
+    id: string;
     userName: string;
     jwtId: string;
     password: string;
@@ -76,6 +74,7 @@ function getRootUserSchema() {
                 type: String,
                 default: clientUserType
             },
+            id: String,
             details: Object,
             clientUserName: String,
             applicationName: String,

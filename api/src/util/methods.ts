@@ -7,7 +7,7 @@ import {
     INTEGER_FIElD_TYPE, PUBLISHED_ENTRY_STATUS,
     JSON_FIELD_TYPE, ONE_TO_MANY_RELATION, ONE_TO_ONE_RELATION, REFERENCE_FIELD_TYPE,
     ARCHIVED_ENTRY_STATUS, RuleType,
-    DELETED_ENTRY_STATUS, DRAFT_ENTRY_STATUS, MEDIA_FIELD_TYPE, SINGLE_ASSETS_TYPE, MULTIPLE_ASSETS_TYPE,
+    DELETED_ENTRY_STATUS, DRAFT_ENTRY_STATUS, MEDIA_FIELD_TYPE, SINGLE_ASSETS_TYPE, MULTIPLE_ASSETS_TYPE, PASSWORD,
 } from "@ranjodhbirkaur/constants";
 import {
     ENTRY_LANGUAGE_PROPERTY_NAME, TIMEZONE_DATE_CONSTANT,
@@ -226,6 +226,12 @@ export function sendOkayResponse(res: Response, data?: object) {
     return res.status(okayStatus).send(data);
 }
 
+const deleteThese = {
+    _id: undefined,
+    __v: undefined,
+    [PASSWORD]: undefined
+}
+
 // send a flat object without _id and other things
 export function flatObject(document: Document | Document[], useLessItems = {}, properties?: {name: string, items?: string[]}[]) {
 
@@ -239,7 +245,7 @@ export function flatObject(document: Document | Document[], useLessItems = {}, p
         if(!Array.isArray(item)) {
             let newff: any = {
                 ...item,
-                _id: undefined
+                ...deleteThese
             };
             if(items) {
                 newff = _.pick(newff, items);
@@ -282,7 +288,7 @@ export function flatObject(document: Document | Document[], useLessItems = {}, p
                     }
                     return {
                         ...y,
-                        _id: undefined
+                        ...deleteThese
                     };
                 });
             } 
@@ -294,7 +300,7 @@ export function flatObject(document: Document | Document[], useLessItems = {}, p
     // do the processing of something
     function process(ff: any) {
         for(let f in ff) {
-            if(ff.hasOwnProperty(f) && typeof ff[f] === 'object') {
+            if(ff.hasOwnProperty(f) && typeof ff[f] === 'object' && !(ff[f] instanceof Date)) {
                 if(properties) {
                     const existInPropertiesParam = properties.find(prp => prp.name === f);
                     ff = {
@@ -309,6 +315,12 @@ export function flatObject(document: Document | Document[], useLessItems = {}, p
                     }
                 }
             }
+            else if(f === PASSWORD) {
+                ff = {
+                    ...ff,
+                    [PASSWORD]: undefined
+                }
+            }
         }
         return ff;
 
@@ -320,7 +332,7 @@ export function flatObject(document: Document | Document[], useLessItems = {}, p
             let newItem: any = {
                 ...newObject,
                 ...useLessItems,
-                _id: undefined
+                ...deleteThese
             }
             return process(newItem);
         });
@@ -330,7 +342,7 @@ export function flatObject(document: Document | Document[], useLessItems = {}, p
     const ff: any = {
         ...flatty,
         ...useLessItems,
-        _id: undefined
+        ...deleteThese
     }
 
     return process(ff);

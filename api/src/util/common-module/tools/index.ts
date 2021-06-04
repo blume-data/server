@@ -1,7 +1,7 @@
 import { randomBytes } from 'crypto';
 import {Request} from 'express';
 import {RuleType} from "@ranjodhbirkaur/constants";
-import {ID, SKIP_PROPERTIES_IN_ENTRIES} from "../utils";
+import {SKIP_PROPERTIES_IN_ENTRIES} from "../utils";
 
 export const RANDOM_STRING = function (minSize=4) {
     return randomBytes(minSize).toString('hex')
@@ -37,6 +37,7 @@ export function getPageAndPerPage(req: Request): {page: Number, perPage: Number}
     return {page, perPage};
 }
 
+// TODO later iwth flatten children 
 export async function paginateData(data: PaginateDataType) {
     const {Model, req, where, rules} = data;
     let {items} = data;

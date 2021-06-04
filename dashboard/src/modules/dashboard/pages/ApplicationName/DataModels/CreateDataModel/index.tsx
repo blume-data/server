@@ -172,7 +172,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 true
             );
             if(response && !response.errors && response.length) {
-                if(response[0]._id && response[0].name) {
+                if(response[0].id && response[0].name) {
                     const hasUrlParam = getUrlSearchParams('name');
                     if(!hasUrlParam) {
                         history.push(`${dashboardCreateDataModelsUrl}?name=${response[0].name}`);
@@ -181,7 +181,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 setProperties(JSON.parse(response[0].rules));
                 setContentModelDisplayName(response[0].displayName);
                 setContentModelDescription(response[0].description);
-                setContentModelId(response[0]._id);
+                setContentModelId(response[0].id);
 
                 if(response[0].setting) {
                     setModelSetting({

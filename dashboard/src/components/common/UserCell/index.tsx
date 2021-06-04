@@ -10,14 +10,14 @@ export const UserCell = (props: UserCellType) => {
 
     const {value} = props;
 
-    if(value && value.firstName && value.lastName && value._id) {
+    if(value && value.firstName && value.lastName && value.id) {
 
         const name = `${value.firstName} ${value.lastName}`;
 
         return (
             <Tooltip title={name}>
                 <div className="user-cell-wrapper">
-                    <Link to={`/${value._id}`} className={'user-cell-link'}>
+                    <Link to={`/${value.id}`} className={'user-cell-link'}>
                         <p>{name}</p>
                     </Link>
                 </div>
