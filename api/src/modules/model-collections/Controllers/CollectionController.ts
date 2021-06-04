@@ -7,6 +7,8 @@ import {CANNOT_CREATE_COLLECTIONS_MORE_THAN_LIMIT, COLLECTION_ALREADY_EXIST} fro
 import {
     ENTRY_UPDATED_AT,
     ENTRY_UPDATED_BY,
+    FIRST_NAME,
+    LAST_NAME,
     trimCharactersAndNumbers
 } from "@ranjodhbirkaur/constants";
 import {createModel, createModelSchema, createStoreModelName, flatObject, getModel} from "../../../util/methods";
@@ -147,13 +149,15 @@ export async function getCollectionNames(req: Request, res: Response) {
             path: 'setting',
             populate: [
                 {path: 'permittedUserGroups', select: 'name' }, 
-                {path: 'restrictedUserGroups', select: 'name'}
+                {path: 'restrictedUserGroups', select: 'name description'}
             ]
         });
     }
     
     const collections = await query;
-    const flatty = flatObject(collections, {settingId: undefined}, [{name : 'setting', items: ['permittedUserGroups', 'restrictedUserGroups']}]);
+    const flatty = flatObject(collections, {settingId: undefined}, [
+        {name : 'setting', items: ['permittedUserGroups', 'restrictedUserGroups','supportedDomains', 'isPublic']},
+    ]);
     res.status(okayStatus).send(flatty);
 }
 

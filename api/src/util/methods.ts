@@ -229,6 +229,7 @@ export function sendOkayResponse(res: Response, data?: object) {
 // send a flat object without _id and other things
 export function flatObject(document: Document | Document[], useLessItems = {}, properties?: {name: string, items?: string[]}[]) {
 
+    // items are the properties to be fetched and cleaned
     function flattenChildren(item: any, items?: string[]) {
 
         if(typeof item !== 'object') {
@@ -243,6 +244,7 @@ export function flatObject(document: Document | Document[], useLessItems = {}, p
             if(items) {
                 newff = _.pick(newff, items);
                 for(let p in newff) {
+                    if(newff.hasOwnProperty(p))
                     newff = {
                         ...newff,
                         [p]: flattenChildren(newff[p])
@@ -257,9 +259,11 @@ export function flatObject(document: Document | Document[], useLessItems = {}, p
                 u = item.map((e: any) => {
                     let y: any = {};
                     for(let p in e) {
-                        y = {
-                            ...e,
-                            [p]: flattenChildren(e[p])
+                        if(e.hasOwnProperty(p)) {
+                            y = {
+                                ...e,
+                                [p]: flattenChildren(e[p])
+                            }
                         }
                     }
                     return _.pick(y, items);
@@ -269,9 +273,11 @@ export function flatObject(document: Document | Document[], useLessItems = {}, p
                 u = item.map((e: any) => {
                     let y: any = {};
                     for(let p in e) {
-                        y = {
-                            ...e,
-                            [p]: flattenChildren(e[p])
+                        if(e.hasOwnProperty(p)) {
+                            y = {
+                                ...e,
+                                [p]: flattenChildren(e[p])
+                            }
                         }
                     }
                     return {
@@ -285,43 +291,47 @@ export function flatObject(document: Document | Document[], useLessItems = {}, p
         }
     }
 
+    // do the processing of something
+    function process(ff: any) {
+        for(let f in ff) {
+            if(ff.hasOwnProperty(f) && typeof ff[f] === 'object') {
+                if(properties) {
+                    const existInPropertiesParam = properties.find(prp => prp.name === f);
+                    ff = {
+                        ...ff,
+                        [f]: flattenChildren(ff[f], existInPropertiesParam?.items)
+                    }
+                }
+                else {
+                    ff = {
+                        ...ff,
+                        [f]: flattenChildren(ff[f])
+                    }
+                }
+            }
+        }
+        return ff;
+
+    }
+
     if(Array.isArray(document)) {
         return document.map(item => {
-
             const newObject = item.toObject();
-
             let newItem: any = {
                 ...newObject,
                 ...useLessItems,
                 _id: undefined
             }
-            if(properties && properties.length) {
-                properties.forEach(property => {
-                    newItem = {
-                        ...newItem,
-                        [property.name]: flattenChildren(newItem[property.name], property.items)
-                    }
-                })
-            }
-
-            return newItem;
+            return process(newItem);
         });
     }
 
     const flatty = document.toObject();
-    let ff: any = {
+    const ff: any = {
         ...flatty,
         ...useLessItems,
         _id: undefined
     }
-    if(properties) {
-        properties.forEach(property => {
-            ff = {
-                ...ff,
-                [property.name]: flattenChildren(ff, property.items)
-            }
 
-        })
-    }
-    return ff;
+    return process(ff);
 }
