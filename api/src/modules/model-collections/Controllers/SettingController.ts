@@ -43,12 +43,13 @@ export async function makeSetting(req: Request, res: Response) {
         restrictedUserGroupIds: (restrictedUserGroups && Array.isArray(restrictedUserGroups) ? restrictedUserGroups : []),
         isPublic: false,
         id: uid,
-        updatedBy: `${req.currentUser[ID]}`,
+        updatedById: `${req.currentUser.id}`,
         supportedDomains
     });
     try {
         await newSettings.save();
     } catch (error) {
+        console.log('error', error)
         return sendSingleError(res, `permittedUserGroups is not okay`, 'permittedUserGroups');
     }
 

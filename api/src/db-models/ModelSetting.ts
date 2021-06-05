@@ -8,7 +8,7 @@ interface SettingModelAttrs {
     permittedUserGroupIds?: string[];
     id: string;
     // updated
-    updatedBy: string;
+    updatedById: string;
     updatedAt?: Date;
 }
 
@@ -23,7 +23,7 @@ interface SettingDoc extends mongoose.Document {
     restrictedUserGroupIds?: string[];
     permittedUserGroupIds?: string[];
     id: string;
-    updatedBy: string;
+    updatedById: string;
     updatedAt: Date;
 }
 
@@ -41,7 +41,7 @@ const Setting = new mongoose.Schema(
         restrictedUserGroupIds: [{ type: String}],
         permittedUserGroupIds: [{ type: String}],
         id: String,
-        updatedBy : { type: Schema.Types.ObjectId, ref: 'ClientUser' },
+        updatedById : String,
         updatedAt : { type: Date },
     },
     { 
@@ -61,6 +61,13 @@ Setting.virtual('permittedUserGroups', {
     localField: 'permittedUserGroupIds', // Find people where `localField`
     foreignField: 'id', // is equal to `foreignField`
     justOne: false,
+});
+
+Setting.virtual('updatedBy', {
+    ref: 'ClientUser', // The model to use
+    localField: 'updatedById', // Find people where `localField`
+    foreignField: 'id', // is equal to `foreignField`
+    justOne: true,
 });
 
 Setting.statics.build = (attrs: SettingModelAttrs) => {
