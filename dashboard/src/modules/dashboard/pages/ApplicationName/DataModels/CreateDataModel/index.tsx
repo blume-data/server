@@ -129,7 +129,8 @@ const CreateDataModel = (props: CreateDataModelType) => {
         description: string;
         displayName: string;
         id: string;
-    }>({name: '', description: '', displayName: '', id: ''});
+        titleProperty: string
+    }>({name: '', description: '', displayName: '', id: '', titleProperty: ''});
 
     const [properties, setProperties] = useState<RuleType[] | null>(null);
 
@@ -164,7 +165,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
 
             const response = await getModelDataAndRules({
                 modelName: contentModelData.name,
-                applicationName, env, language, GetCollectionNamesUrl, getOnly: "name,description,rules,displayName,settingId"
+                applicationName, env, language, GetCollectionNamesUrl, getOnly: "name,description,rules,displayName,titleField"
             });
 
             if(response && !response.errors && response.length) {
@@ -180,7 +181,8 @@ const CreateDataModel = (props: CreateDataModelType) => {
                     ...contentModelData,
                     displayName: response[0].displayName,
                     description: response[0].description,
-                    id: response[0].id
+                    id: response[0].id,
+                    titleProperty: response[0].titleField
                 });
 
                 if(response[0].setting) {
@@ -229,18 +231,12 @@ const CreateDataModel = (props: CreateDataModelType) => {
     }, [GetCollectionNamesUrl, contentModelData.name]);
 
     useEffect(() => {
-        // if(contentModelData.name) {
-        //     setContentModelData({
-        //         ...contentModelData,
-        //         name: contentModelData.name,
-        //     });
-        // }
         const Name = getUrlSearchParams('name');
         if(Name) {
             setContentModelData({
                 ...contentModelData,
                 name: Name,
-            })
+            });
 
             setFieldEditMode(true);
         }
@@ -553,7 +549,8 @@ const CreateDataModel = (props: CreateDataModelType) => {
                     displayName: contentModelData.displayName,
                     description: contentModelData.description,
                     rules: properties,
-                    id: contentModelData.id
+                    id: contentModelData.id,
+                    titleField: contentModelData.titleProperty
                 }, true);
                 setResponse(response);
             }
@@ -562,7 +559,8 @@ const CreateDataModel = (props: CreateDataModelType) => {
                     name: contentModelData.name,
                     displayName: contentModelData.displayName,
                     description: contentModelData.description,
-                    rules: properties
+                    rules: properties,
+                    titleField: contentModelData.titleProperty
                 }, true);
                 setResponse(response);
             }
@@ -666,23 +664,29 @@ const CreateDataModel = (props: CreateDataModelType) => {
                     </Grid>
                 </Grid>
                 <Grid item>
-                    <Grid container>
+                    <Grid container className='title-container' direction="column">
                         <Grid item>
-                            Title
+                            <RenderHeading
+                                type="primary"
+                                value="Title"
+                            />
 
                         </Grid>
 
                         <Grid item>
                             <DropDown
-                                options={[{label: 'dsf', value: 'sdfdsf'}]}
+                                options={properties?.map(property => {
+                                    return {label: property.displayName, value: property.name}
+                                }) || []}
                                 name='title'
                                 placeholder='dsfds'
                                 required={false}
-                                onChange={() => {}}
+                                onChange={(e) => {setContentModelData({...contentModelData, titleProperty:e.target.value})}}
                                 onBlur={() => {}}
-                                value={''}
+                                value={contentModelData.titleProperty}
                                 label="title"
-                                className="drop-down"
+                                className="title-drop-down"
+                                descriptionText="title property of the model, if left none first property will be set as title property"
                                 index={9}
                             />
                         </Grid>

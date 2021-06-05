@@ -93,6 +93,11 @@ export async function createCollectionSchema(req: Request, res: Response) {
             if(reqBody.displayName) {
                 update.displayName = reqBody.displayName;
             }
+
+            if(reqBody.titleField) {
+                update.titleField = reqBody.titleField;
+            }
+
             update[ENTRY_UPDATED_AT] = DateTime.local().setZone('UTC').toJSDate();
             update[`${ENTRY_UPDATED_BY}Id`] = req.currentUser.id;
 
