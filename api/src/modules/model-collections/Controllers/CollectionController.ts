@@ -135,13 +135,17 @@ export async function getCollectionNames(req: Request, res: Response) {
         where.name = name;
         get.push('settingId');
     }
+
+    console.log('get', get);
     
     const query = CollectionModel.find(where, get);
 
-    if(name) {
-        query
-        .populate('updatedBy', 'firstName lastName')
-        .populate({
+    if(get.includes(`${ENTRY_UPDATED_BY}Id`)) {
+        query.populate(ENTRY_UPDATED_BY, 'firstName lastName');
+    }
+
+    if(get.includes('settingId')) {
+        query.populate({
             path: 'setting',
             populate: [
                 {path: 'permittedUserGroups', select: 'name' }, 
@@ -149,7 +153,7 @@ export async function getCollectionNames(req: Request, res: Response) {
             ]
         });
     }
-    
+
     const collections = await query;
     const flatty = flatObject(collections, {settingId: undefined, [`${ENTRY_UPDATED_BY}Id`]: undefined}, [
         {name : 'setting', items: ['permittedUserGroups', 'restrictedUserGroups','supportedDomains', 'isPublic']},

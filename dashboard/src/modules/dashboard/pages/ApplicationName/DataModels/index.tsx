@@ -89,7 +89,7 @@ const DataModels = (props: PropsFromRedux) => {
             setIsLoading(true);
 
             const resp = await getModelDataAndRules({
-                applicationName, env, language, GetCollectionNamesUrl
+                applicationName, env, language, GetCollectionNamesUrl, getOnly: "name,description,updatedAt,updatedById,displayName"
             });
 
             if(resp && Array.isArray(resp)) {

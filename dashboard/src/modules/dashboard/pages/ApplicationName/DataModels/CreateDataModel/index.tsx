@@ -51,7 +51,7 @@ import ButtonGroup from "@material-ui/core/ButtonGroup";
 import {RootState} from "../../../../../../rootReducer";
 import {connect, ConnectedProps} from "react-redux";
 import {doGetRequest, doPostRequest, doPutRequest} from "../../../../../../utils/baseApi";
-import {getItemFromLocalStorage, getUrlSearchParams} from "../../../../../../utils/tools";
+import {getItemFromLocalStorage, getModelDataAndRules, getUrlSearchParams} from "../../../../../../utils/tools";
 import {dashboardCreateDataModelsUrl, dashboardDataModelsUrl, getBaseUrl} from "../../../../../../utils/urls";
 import Loader from "../../../../../../components/common/Loader";
 import BasicTableMIUI from "../../../../../../components/common/BasicTableMIUI";
@@ -158,19 +158,11 @@ const CreateDataModel = (props: CreateDataModelType) => {
     async function getData() {
         if(GetCollectionNamesUrl && contentModelName) {
             setIsLoading(true);
-            const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
 
-            const url = GetCollectionNamesUrl
-                .replace(`:${CLIENT_USER_NAME}`, clientUserName ? clientUserName : '')
-                .replace(':env', env)
-                .replace(':language', language)
-                .replace(`:${APPLICATION_NAME}`,applicationName);
+            const response = await getModelDataAndRules({
+                applicationName, env, language, GetCollectionNamesUrl, getOnly: "name,description,rules,displayName,settingId"
+            });
 
-            const response = await doGetRequest(
-                `${getBaseUrl()}${url}?name=${contentModelName ? contentModelName : ''}`,
-                {},
-                true
-            );
             if(response && !response.errors && response.length) {
                 if(response[0].id && response[0].name) {
                     const hasUrlParam = getUrlSearchParams('name');
