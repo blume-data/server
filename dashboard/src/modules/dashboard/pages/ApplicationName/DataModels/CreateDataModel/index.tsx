@@ -160,6 +160,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
             setIsLoading(true);
 
             const response = await getModelDataAndRules({
+                modelName: contentModelName,
                 applicationName, env, language, GetCollectionNamesUrl, getOnly: "name,description,rules,displayName,settingId"
             });
 
