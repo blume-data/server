@@ -32,14 +32,14 @@ function generateSchema() {
         },
 
         status: String,
-
-        deletedBy : { type: Schema.Types.ObjectId, ref: 'ClientUser' },
+        id: String,
+        deletedById : String,
         deletedAt : { type: Date },
 
-        createdBy : { type: Schema.Types.ObjectId, ref: 'ClientUser' },
+        createdById : String,
         createdAt : { type: Date },
 
-        updatedBy : { type: Schema.Types.ObjectId, ref: 'ClientUser' },
+        updatedById : String,
         updatedAt : { type: Date },
     };
 
@@ -64,7 +64,31 @@ function generateSchema() {
     return schema;
 }
 
-const CustomCollection = new mongoose.Schema(generateSchema());
+const CustomCollection = new mongoose.Schema(generateSchema(), { 
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true }
+});
+
+CustomCollection.virtual('createdBy', {
+    ref: 'ClientUser', // The model to use
+    localField: 'createdById', // Find people where `localField`
+    foreignField: 'id', // is equal to `foreignField`
+    justOne: true,
+});
+
+CustomCollection.virtual('updatedBy', {
+    ref: 'ClientUser', // The model to use
+    localField: 'updatedById', // Find people where `localField`
+    foreignField: 'id', // is equal to `foreignField`
+    justOne: true,
+});
+
+CustomCollection.virtual('deletedBy', {
+    ref: 'ClientUser', // The model to use
+    localField: 'deletedById', // Find people where `localField`
+    foreignField: 'id', // is equal to `foreignField`
+    justOne: true,
+});
 
 const CustomCollectionModel = mongoose.model('CustomCollectionModel', CustomCollection);
 
