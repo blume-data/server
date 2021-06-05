@@ -11,7 +11,7 @@ import {
     LAST_NAME,
     trimCharactersAndNumbers
 } from "@ranjodhbirkaur/constants";
-import {createModel, createModelSchema, createStoreModelName, flatObject, getModel} from "../../../util/methods";
+import {createModel, createModelSchema, createStoreModelName, flatObject, getModel, sendOkayResponse} from "../../../util/methods";
 import {DateTime} from "luxon";
 import mongoose from "mongoose";
 import {v4} from 'uuid';
@@ -73,8 +73,7 @@ export async function createCollectionSchema(req: Request, res: Response) {
         });
 
         await newCollection.save();
-
-        res.status(okayStatus).send(newCollection);
+        return sendOkayResponse(res);
     }
     else {
 

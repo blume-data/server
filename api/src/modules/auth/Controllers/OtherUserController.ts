@@ -90,8 +90,8 @@ export async function CreateUserGroup(req: Request, res: Response) {
         createdAt: date,
         updatedAt: date,
         id: uid,
-        createdBy: req.currentUser[ID],
-        updatedBy: req.currentUser[ID]
+        createdById: req.currentUser.id,
+        updatedById: req.currentUser.id
     });
 
     await newUserGroup.save();

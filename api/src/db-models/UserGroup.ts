@@ -10,9 +10,9 @@ interface UserGroupAttrs {
     id: string;
 
     createdAt: Date;
-    createdBy: string;
+    createdById: string;
     updatedAt: Date;
-    updatedBy: string;
+    updatedById: string;
 }
 
 interface UserGroupModelType extends mongoose.Model<UserGroupDoc> {
@@ -29,9 +29,9 @@ interface UserGroupDoc extends mongoose.Document {
     id: string;
     
     createdAt: Date;
-    createdBy: string;
+    createdById: string;
     updatedAt: Date;
-    updatedBy: string;
+    updatedById: string;
 }
 
 const UserGroupSchema = new mongoose.Schema(
@@ -47,11 +47,36 @@ const UserGroupSchema = new mongoose.Schema(
         description: String,
         id: String,
         updatedAt : { type: Date },
-        updatedBy : { type: Schema.Types.ObjectId, ref: 'ClientUser' },
+        updatedById : String,
         createdAt : { type: Date },
-        createdBy : { type: Schema.Types.ObjectId, ref: 'ClientUser' },
+        createdById : String
+    },
+    { 
+        toJSON: { virtuals: true },
+        toObject: { virtuals: true }
     }
 );
+
+UserGroupSchema.virtual('createdBy', {
+    ref: 'ClientUser', // The model to use
+    localField: 'createdById', // Find people where `localField`
+    foreignField: 'id', // is equal to `foreignField`
+    justOne: true,
+});
+
+UserGroupSchema.virtual('updatedBy', {
+    ref: 'ClientUser', // The model to use
+    localField: 'updatedById', // Find people where `localField`
+    foreignField: 'id', // is equal to `foreignField`
+    justOne: true,
+});
+
+UserGroupSchema.virtual('deletedBy', {
+    ref: 'ClientUser', // The model to use
+    localField: 'deletedById', // Find people where `localField`
+    foreignField: 'id', // is equal to `foreignField`
+    justOne: true,
+});
 
 UserGroupSchema.statics.build = (attrs: UserGroupAttrs) => {
     return new UserGroupModel(attrs);
