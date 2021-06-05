@@ -163,7 +163,7 @@ const EntriesTableComponent = (props: EntriesTableType) => {
 
     // Fetch records in the model
     async function getItems() {
-        if(GetEntriesUrl && modelName && applicationName && fieldTitle) {
+        if(GetEntriesUrl && modelName && applicationName) {
             setIsLoading(true);
             const getOnly = [ENTRY_UPDATED_AT, ENTRY_UPDATED_BY, STATUS, fieldTitle];
             if(where && typeof where === 'object' && Object.keys(where).length) {
@@ -186,6 +186,7 @@ const EntriesTableComponent = (props: EntriesTableType) => {
                 GetEntriesUrl: `${GetEntriesUrl}?page=${page}`,
                 match, where, getOnly
             });
+            console.log('resp entries', resp);
             if(resp && resp.data && Array.isArray(resp.data)) {
                 setResponse(resp.data);
                 if(resp && resp.total) {
@@ -298,6 +299,8 @@ const EntriesTableComponent = (props: EntriesTableType) => {
             getItems();
         }
     }
+
+    console.log('Model Name', modelName)
 
     return (
         <Grid

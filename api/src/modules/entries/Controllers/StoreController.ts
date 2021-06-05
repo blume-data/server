@@ -64,6 +64,7 @@ import {
 import {createModel, getModel, sendOkayResponse, trimGetOnly} from "../../../util/methods";
 import {CollectionModel} from "../../../db-models/Collection";
 import { CustomCollectionModel } from '../../../db-models/CustomCollections';
+import {v4} from 'uuid';
 interface PopulateData {
     name: string;
     getOnly?: string[];
@@ -264,11 +265,12 @@ async function createEntry(rules: RuleType[], req: Request, res: Response, colle
                         applicationName,
                         clientUserName,
                         env,
+                        id: v4(),
                         status: PUBLISHED_ENTRY_STATUS,
                         data: JSON.stringify(body.data),
                     })
                     const response: any = await item.save();
-                    return {_id: response._id};
+                    return {id: response.id};
                 }
             }
             catch (e) {
@@ -338,8 +340,8 @@ export async function createStoreRecord(req: Request, res: Response) {
                     let entryId = (req.body && req.body.id) || '';
                     if(req.body && !req.body.id) {
                         const entry: any = await createEntry(rules, req, res, collection);
-                        if(entry && entry._id) {
-                            entryId = entry._id;
+                        if(entry && entry.id) {
+                            entryId = entry.id;
                         }
                         else {
                             // validation failed
@@ -384,9 +386,9 @@ export async function createStoreRecord(req: Request, res: Response) {
         }
         else {
             const entry: any = await createEntry(rules, req, res, collection);
-            if(entry && entry._id) {
+            if(entry && entry.id) {
                 sendOkayResponse(res, {
-                    [ID]: entry._id
+                    id : entry.id
                 });
             }
         }
@@ -479,14 +481,14 @@ export async function getCollection(req: Request, specificModelName?: string) {
 function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
 
     const reqBody: any = req.body;
-    const currentUserId = (req.currentUser && req.currentUser[ID]) ? req.currentUser[ID] : '';
+    const currentUserId = (req.currentUser && req.currentUser.id) ? req.currentUser.id : '';
     const language = req.params.language;
     const createdAt = DateTime.local().setZone('UTC').toJSDate();
     let body: any = {
         [ENTRY_CREATED_AT]: createdAt,
         [ENTRY_UPDATED_AT]: createdAt,
-        [ENTRY_CREATED_BY]: currentUserId,
-        [ENTRY_UPDATED_BY]: currentUserId,
+        [`${ENTRY_CREATED_BY}Id`]: currentUserId,
+        [`${ENTRY_UPDATED_BY}Id`]: currentUserId,
         [ENTRY_LANGUAGE_PROPERTY_NAME]: language,
         data: {}
     };
