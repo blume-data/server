@@ -87,6 +87,7 @@ import {
 } from "./constants";
 import {getNameFields, getPropertyFields} from "./fields";
 import { ModelSetting, ModelSettingType } from "./ModelSetting";
+import { DropDown } from "../../../../../../components/common/Form/DropDown";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type CreateDataModelType = PropsFromRedux;
@@ -636,30 +637,57 @@ const CreateDataModel = (props: CreateDataModelType) => {
         }
 
         return (
-            <Grid container justify={"flex-start"} className="name-section-container">
-                <Grid item className={'text-container'}>
-                    <RenderHeading
-                        type={'primary'}
-                        className={'model-display-name'}
-                        value={contentModelData.displayName ? contentModelData.displayName : 'untitled model'}
-                    />
-                    {
-                        contentModelData.description ?
+            <Grid container justify={"space-between"} className="name-section-container">
+                <Grid item>
+                    <Grid container justify="flex-start">
+                        <Grid item className={'text-container'}>
                             <RenderHeading
-                                type={"secondary"}
-                                className={'model-description'}
-                                value={contentModelData.description}
+                                type={'primary'}
+                                className={'model-display-name'}
+                                value={contentModelData.displayName ? contentModelData.displayName : 'untitled model'}
                             />
-                            : null
-                    }
+                            {
+                                contentModelData.description ?
+                                    <RenderHeading
+                                        type={"secondary"}
+                                        className={'model-description'}
+                                        value={contentModelData.description}
+                                    />
+                                    : null
+                            }
+                        </Grid>
+                        <Grid item className={'edit-button'}>
+                            <Tooltip title={`Edit model ${contentModelData.displayName}`}>
+                                <IconButton onClick={onClick}>
+                                    <EditIcon />
+                                </IconButton>
+                            </Tooltip>
+                        </Grid>
+                    </Grid>
                 </Grid>
-                <Grid item className={'edit-button'}>
-                    <Tooltip title={`Edit model ${contentModelData.displayName}`}>
-                        <IconButton onClick={onClick}>
-                            <EditIcon />
-                        </IconButton>
-                    </Tooltip>
+                <Grid item>
+                    <Grid container>
+                        <Grid item>
+                            Title
 
+                        </Grid>
+
+                        <Grid item>
+                            <DropDown
+                                options={[{label: 'dsf', value: 'sdfdsf'}]}
+                                name='title'
+                                placeholder='dsfds'
+                                required={false}
+                                onChange={() => {}}
+                                onBlur={() => {}}
+                                value={''}
+                                label="title"
+                                className="drop-down"
+                                index={9}
+                            />
+                        </Grid>
+
+                    </Grid>
                 </Grid>
             </Grid>
         )
