@@ -43,6 +43,7 @@ export async function CreateUpdateOtherUser(req: Request, res: Response) {
         type,
         details,
         env,
+        id: uuidv4(),
         clientUserName, applicationName,
         email,
         userGroupIds: userGroups,
