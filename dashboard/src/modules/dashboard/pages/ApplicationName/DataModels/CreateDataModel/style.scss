@@ -138,6 +138,24 @@
         }
   
       }
+      .title-container {
+        margin-right: 10px;
+        max-width: 200px;
+        @include mobiles {
+          max-width: none;
+        }
+        .title-drop-down {
+          min-width: 200px;
+          .MuiInput-formControl {
+            margin-top: 0;
+          }
+          .MuiInputLabel-formControl {
+            display: none;
+          }
+
+        }
+        
+      }
     }
   }
   .right-container {
