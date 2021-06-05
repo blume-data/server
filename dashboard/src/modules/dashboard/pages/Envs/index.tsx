@@ -19,7 +19,7 @@ import './style.scss';
 interface EnvType {
     name: string;
     description: string;
-    _id?: string;
+    id?: string;
 }
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
@@ -63,10 +63,10 @@ const Envs = (props: PropsFromRedux) => {
 
         let resp: any;
 
-        if(envData && envData._id) {
+        if(envData && envData.id) {
             resp = await doPutRequest(url || '', {
                 ...values,
-                _id: envData._id
+                id: envData.id
             }, true);
         }
         else {
@@ -92,7 +92,7 @@ const Envs = (props: PropsFromRedux) => {
             setEnvData({
                 name: item.name,
                 description: item.description,
-                _id: item._id
+                id: item.id
             });
             setIsModalOpen(true);
         }

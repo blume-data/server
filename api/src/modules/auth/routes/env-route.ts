@@ -36,7 +36,7 @@ router.put(EnvUrl, checkAuth,
     .isLength(stringLimitOptions)
     .withMessage(stringLimitOptionErrorMessage(ENV)),
 
-    body('_id')
+    body('id')
     .trim()
     .isLength(stringLimitOptions)
     .withMessage(stringLimitOptionErrorMessage(ENV))
