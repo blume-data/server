@@ -123,10 +123,12 @@ const CreateDataModel = (props: CreateDataModelType) => {
 
     const [hideNames, setHideNames] = useState<boolean>(false);
 
-    const [contentModelName, setContentModelName] = useState<string>('');
-    const [contentModelDescription, setContentModelDescription] = useState<string>('');
-    const [contentModelDisplayName, setContentModelDisplayName] = useState<string>('');
-    const [contentModelId, setContentModelId] = useState<string | null>(null);
+    const [contentModelData, setContentModelData] = useState<{
+        name: string;
+        description: string;
+        displayName: string;
+        id: string;
+    }>({name: '', description: '', displayName: '', id: ''});
 
     const [properties, setProperties] = useState<RuleType[] | null>(null);
 
@@ -156,11 +158,11 @@ const CreateDataModel = (props: CreateDataModelType) => {
     const history = useHistory();
 
     async function getData() {
-        if(GetCollectionNamesUrl && contentModelName) {
+        if(GetCollectionNamesUrl && contentModelData.name) {
             setIsLoading(true);
 
             const response = await getModelDataAndRules({
-                modelName: contentModelName,
+                modelName: contentModelData.name,
                 applicationName, env, language, GetCollectionNamesUrl, getOnly: "name,description,rules,displayName,settingId"
             });
 
@@ -172,9 +174,13 @@ const CreateDataModel = (props: CreateDataModelType) => {
                     }
                 }
                 setProperties(JSON.parse(response[0].rules));
-                setContentModelDisplayName(response[0].displayName);
-                setContentModelDescription(response[0].description);
-                setContentModelId(response[0].id);
+
+                setContentModelData({
+                    ...contentModelData,
+                    displayName: response[0].displayName,
+                    description: response[0].description,
+                    id: response[0].id
+                });
 
                 if(response[0].setting) {
                     setModelSetting({
@@ -204,7 +210,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
             if(response && response.length) {
                 const m: {label: string; value: string}[] = [];
                 response.forEach((item: {displayName: string; name: string}) => {
-                    if(item.name !== contentModelName) {
+                    if(item.name !== contentModelData.name) {
                         m.push({
                             label: item.displayName,
                             value: item.name
@@ -219,21 +225,30 @@ const CreateDataModel = (props: CreateDataModelType) => {
     useEffect(() => {
         getData();
         getCollectionNames();
-    }, [GetCollectionNamesUrl, contentModelName]);
+    }, [GetCollectionNamesUrl, contentModelData.name]);
 
     useEffect(() => {
-        if(contentModelName) {
-            setContentModelName(contentModelName);
-        }
+        // if(contentModelData.name) {
+        //     setContentModelData({
+        //         ...contentModelData,
+        //         name: contentModelData.name,
+        //     });
+        // }
         const Name = getUrlSearchParams('name');
         if(Name) {
-            setContentModelName(Name);
+            setContentModelData({
+                ...contentModelData,
+                name: Name,
+            })
+
             setFieldEditMode(true);
         }
     }, []);
 
     const nameFields: ConfigField[] = getNameFields({
-        contentModelDisplayName, contentModelDescription, contentModelName,
+        contentModelDisplayName: contentModelData.displayName, 
+        contentModelDescription: contentModelData.description, 
+        contentModelName: contentModelData.name
     });
 
     const propertyNameFields = getPropertyFields({
@@ -262,9 +277,14 @@ const CreateDataModel = (props: CreateDataModelType) => {
         });
 
         const contentModelName = name ? name : trimCharactersAndNumbers(displayName);
-        setContentModelName(contentModelName);
-        setContentModelDisplayName(displayName);
-        setContentModelDescription(description);
+
+        setContentModelData({
+            ...contentModelData,
+            name: contentModelName,
+            description: description,
+            displayName: displayName
+        });
+
         if(contentModelName) {
             setHideNames(true);
         }
@@ -508,7 +528,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
 
         const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
         // validate
-        if(!contentModelDisplayName) {
+        if(!contentModelData.displayName) {
             setIsAlertOpen(true);
             setAlertMessage({
                 message: 'Please add model name',
@@ -526,21 +546,21 @@ const CreateDataModel = (props: CreateDataModelType) => {
 
             let response;
 
-            if(contentModelId) {
+            if(contentModelData.id) {
                 response = await doPutRequest(`${getBaseUrl()}${url}`, {
-                    name: contentModelName,
-                    displayName: contentModelDisplayName,
-                    description: contentModelDescription,
+                    name: contentModelData.name,
+                    displayName: contentModelData.displayName,
+                    description: contentModelData.description,
                     rules: properties,
-                    id: contentModelId
+                    id: contentModelData.id
                 }, true);
                 setResponse(response);
             }
             else {
                 response = await doPostRequest(`${getBaseUrl()}${url}`, {
-                    name: contentModelName,
-                    displayName: contentModelDisplayName,
-                    description: contentModelDescription,
+                    name: contentModelData.name,
+                    displayName: contentModelData.displayName,
+                    description: contentModelData.description,
                     rules: properties
                 }, true);
                 setResponse(response);
@@ -621,20 +641,20 @@ const CreateDataModel = (props: CreateDataModelType) => {
                     <RenderHeading
                         type={'primary'}
                         className={'model-display-name'}
-                        value={contentModelDisplayName ? contentModelDisplayName : 'untitled model'}
+                        value={contentModelData.displayName ? contentModelData.displayName : 'untitled model'}
                     />
                     {
-                        contentModelDescription ?
+                        contentModelData.description ?
                             <RenderHeading
                                 type={"secondary"}
                                 className={'model-description'}
-                                value={contentModelDescription}
+                                value={contentModelData.description}
                             />
                             : null
                     }
                 </Grid>
                 <Grid item className={'edit-button'}>
-                    <Tooltip title={`Edit model ${contentModelDisplayName}`}>
+                    <Tooltip title={`Edit model ${contentModelData.displayName}`}>
                         <IconButton onClick={onClick}>
                             <EditIcon />
                         </IconButton>
@@ -781,7 +801,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
     }
 
     function renderAddFieldsAndSaveModelButtonGroup() {
-        if(contentModelDisplayName) {
+        if(contentModelData.displayName) {
             return (
                 <Grid container justify={"flex-end"} className={'modal-action-buttons'}>
                     <CommonButton
@@ -819,7 +839,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
             <RenderHeading
                 className={'main-heading'}
                 type={"main"}
-                value={`${fieldEditMode || contentModelId ? 'Edit' : 'Create'} Model`}
+                value={`${fieldEditMode || contentModelData.id ? 'Edit' : 'Create'} Model`}
             />
             <Paper className={'model-name-container'}>
                 {renderNameSection()}
@@ -828,7 +848,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 <Grid item className="create-content-model">
                     <Grid>
                         {
-                            contentModelDisplayName
+                            contentModelData.displayName
                                 ? renderPropertiesSection()
                                 : <RenderHeading
                                     className={'add-name-heading'}
@@ -958,7 +978,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 severity={alert.severity}
                 message={alert.message} />
             <ModalDialog
-                title={`${fieldEditMode || contentModelId ? 'Edit' : 'Create new'} Model`}
+                title={`${fieldEditMode || contentModelData.id ? 'Edit' : 'Create new'} Model`}
                 isOpen={!hideNames}
                 handleClose={() => setHideNames(true)}
                 children={
