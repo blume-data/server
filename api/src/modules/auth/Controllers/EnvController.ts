@@ -4,6 +4,7 @@ import { ApplicationSpaceModel } from '../../../db-models/ApplicationSpace';
 import { EnvModel } from '../../../db-models/Env';
 import { sendSingleError } from '../../../util/common-module';
 import { sendOkayResponse } from '../../../util/methods';
+import {v4} from 'uuid';
 
 export async function CreateEnv(req: Request, res: Response) {
 
@@ -11,7 +12,7 @@ export async function CreateEnv(req: Request, res: Response) {
     const applicationName = req.params.applicationName;
     const name = req.body.name;
     const description = req.body.description || '';
-    const id = req.body._id;
+    const id = req.body.id;
 
 
     const exist = await EnvModel.findOne({name: trimCharactersAndNumbers(name), clientUserName, applicationName}, '_id');
@@ -22,7 +23,7 @@ export async function CreateEnv(req: Request, res: Response) {
         if(id) {
             // update env
             await EnvModel.findOneAndUpdate({
-                _id: id
+                id
             }, { description });
         }
         else {
@@ -37,12 +38,13 @@ export async function CreateEnv(req: Request, res: Response) {
                 name: trimCharactersAndNumbers(name),
                 description,
                 clientUserName, 
+                id: v4(),
                 applicationName,
                 order: ApplicationNameEntry.env.length + 1,
                 isPublic: true,
                 supportedDomains: ['*'],
-                createdBy: req.currentUser[ID],
-                updatedBy: req.currentUser[ID],
+                createdById: req.currentUser.id,
+                updatedById: req.currentUser.id,
             });
     
             await newEnv.save();
@@ -51,7 +53,7 @@ export async function CreateEnv(req: Request, res: Response) {
                 clientUserName,
                 name: applicationName
             }, {
-                $push: { env: newEnv._id }
+                $push: { envId: newEnv.id }
             });
     
             }

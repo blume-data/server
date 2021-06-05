@@ -13,6 +13,8 @@ import {
 import {DateTime} from "luxon";
 import {ApplicationSpaceModel} from "../../../db-models/ApplicationSpace";
 import { EnvModel } from '../../../db-models/Env';
+import {v4} from 'uuid';
+import { flatObject } from '../../../util/methods';
 
 interface NewApplicationSpace {
     res?: Response;
@@ -46,9 +48,10 @@ export async function newApplicationSpace(params: NewApplicationSpace) {
             clientUserName,
             description,
             order: 1,
-            updatedBy: userId,
+            id: v4(),
+            updatedById: userId,
             createdAt,
-            createdBy: userId,
+            createdById: userId,
             updatedAt: createdAt,
             isPublic: true,
             supportedDomains: ['']
@@ -59,7 +62,8 @@ export async function newApplicationSpace(params: NewApplicationSpace) {
         const newApplicationSpace = ApplicationSpaceModel.build({
             clientUserName,
             name: lowerCaseApplicationName,
-            env: [newEnv[ID]],
+            id: v4(),
+            envId: [newEnv.id],
             updatedBy: userId,
             description,
             createdAt,
@@ -88,11 +92,13 @@ export async function getApplicationName(req: Request, res: Response) {
 
     const clientUserName = req.params.clientUserName;
 
-    const applicationNames = await ApplicationSpaceModel
+    const items = await ApplicationSpaceModel
     .find({
         clientUserName: clientUserName,
-    }, ['name', 'env'])
-    .populate('env', ['name', 'description', 'order', 'isPublic', 'supportedDomains'])
-    ;
+    }, ['name', 'envId', 'id', 'description'])
+    .populate('env', ['name', 'description', 'order', 'isPublic', 'supportedDomains']);
+
+    const applicationNames = flatObject(items, {envId: undefined});
+
     return res.status(okayStatus).send({[APPLICATION_NAMES]: applicationNames});
 }
