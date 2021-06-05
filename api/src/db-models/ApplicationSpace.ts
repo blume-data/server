@@ -4,8 +4,8 @@ interface ApplicationSpaceAttrs {
     name: string;
     clientUserName: string;
     description: string;
-    env: string[];
-
+    envId: string[];
+    id: string;
     // created
     createdBy: string;
     createdAt?: Date;
@@ -27,18 +27,18 @@ interface ApplicationSpaceDoc extends mongoose.Document {
     name: string;
     clientUserName: string;
     description: string;
-    env: string[];
-
+    envId: string[];
+    id: string;
     // created
-    createdBy: string;
+    createdById: string;
     createdAt?: Date;
 
     // deleted
-    deletedBy?: string;
+    deletedById?: string;
     deletedAt?: Date;
 
     // updated
-    updatedBy: string;
+    updatedById: string;
     updatedAt?: Date;
 }
 
@@ -47,18 +47,49 @@ const ApplicationSpaceMModel = new mongoose.Schema({
         name: String,
         description: String,
         clientUserName : String,
-        
-        env: [{type: Schema.Types.ObjectId, ref: 'Env'}],
+        id: String,
+        envId: [{type: String}],
 
-        deletedBy : { type: Schema.Types.ObjectId, ref: 'ClientUser' },
+        deletedById : String,
         deletedAt : { type: Date },
 
-        createdBy : { type: Schema.Types.ObjectId, ref: 'ClientUser' },
+        createdById : String,
         createdAt : { type: Date },
 
-        updatedBy : { type: Schema.Types.ObjectId, ref: 'ClientUser' },
+        updatedById : String,
         updatedAt : { type: Date },
+    }, { 
+        toJSON: { virtuals: true },
+        toObject: { virtuals: true }
     });
+
+ApplicationSpaceMModel.virtual('env', {
+    ref: 'Env', // The model to use
+    localField: 'envId', // Find people where `localField`
+    foreignField: 'id', // is equal to `foreignField`
+    justOne: false,
+});
+
+ApplicationSpaceMModel.virtual('createdBy', {
+    ref: 'ClientUser', // The model to use
+    localField: 'createdById', // Find people where `localField`
+    foreignField: 'id', // is equal to `foreignField`
+    justOne: true,
+});
+
+ApplicationSpaceMModel.virtual('updatedBy', {
+    ref: 'ClientUser', // The model to use
+    localField: 'updatedById', // Find people where `localField`
+    foreignField: 'id', // is equal to `foreignField`
+    justOne: true,
+});
+
+ApplicationSpaceMModel.virtual('deletedBy', {
+    ref: 'ClientUser', // The model to use
+    localField: 'deletedById', // Find people where `localField`
+    foreignField: 'id', // is equal to `foreignField`
+    justOne: true,
+});
 
 ApplicationSpaceMModel.statics.build = (attrs: ApplicationSpaceAttrs) => {
     return new ApplicationSpaceModel(attrs);

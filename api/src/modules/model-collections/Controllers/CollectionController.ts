@@ -136,8 +136,6 @@ export async function getCollectionNames(req: Request, res: Response) {
         get.push('settingId');
     }
 
-    console.log('get', get);
-    
     const query = CollectionModel.find(where, get);
 
     if(get.includes(`${ENTRY_UPDATED_BY}Id`)) {

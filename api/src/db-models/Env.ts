@@ -9,10 +9,11 @@ interface EnvAttrs {
 
     applicationName: string;
     clientUserName: string;
+    id: string;
 
     createdAt?: Date;
-    createdBy: string;
-    updatedBy: string;
+    createdById: string;
+    updatedById: string;
     updatedAt?: Date;
 }
 
@@ -27,13 +28,13 @@ interface EnvDoc extends mongoose.Document {
     order: number;
     isPublic: boolean;
     supportedDomains: string[];
-
+    id: string;
     applicationName: string;
     clientUserName: string;
 
     createdAt?: Date;
-    createdBy: string;
-    updatedBy: string;
+    createdById: string;
+    updatedById: string;
     updatedAt?: Date;
 }
 
@@ -55,14 +56,39 @@ const SchemaInstance = new mongoose.Schema(
 
         applicationName: String,
         clientUserName: String,
-
-        updatedBy : { type: Schema.Types.ObjectId, ref: 'ClientUser' },
+        id: String,
+        updatedById : String,
         updatedAt : { type: Date },
 
-        createdBy : { type: Schema.Types.ObjectId, ref: 'ClientUser' },
+        createdById : String,
         createdAt : { type: Date },
+    },
+    { 
+        toJSON: { virtuals: true },
+        toObject: { virtuals: true }
     }
 );
+
+SchemaInstance.virtual('createdBy', {
+    ref: 'ClientUser', // The model to use
+    localField: 'createdById', // Find people where `localField`
+    foreignField: 'id', // is equal to `foreignField`
+    justOne: true,
+});
+
+SchemaInstance.virtual('updatedBy', {
+    ref: 'ClientUser', // The model to use
+    localField: 'updatedById', // Find people where `localField`
+    foreignField: 'id', // is equal to `foreignField`
+    justOne: true,
+});
+
+SchemaInstance.virtual('deletedBy', {
+    ref: 'ClientUser', // The model to use
+    localField: 'deletedById', // Find people where `localField`
+    foreignField: 'id', // is equal to `foreignField`
+    justOne: true,
+});
 
 SchemaInstance.statics.build = (attrs: EnvAttrs) => {
     return new EnvModel(attrs);
