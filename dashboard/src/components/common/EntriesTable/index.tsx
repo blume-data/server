@@ -78,7 +78,7 @@ const EntriesTableComponent = (props: EntriesTableType) => {
             const updatedBy = <UserCell value={i.updatedBy} />;
             const isChecked = selectedEntries.includes(i._id);
             const redirectUrl = dashboardCreateDataEntryUrl
-                .replace(':id?', i._id)
+                .replace(':id?', i.id)
                 .replace(`:${APPLICATION_NAME}`, applicationName)
                 .replace(`:modelName`, modelName);
             function onChangeCheckBox() {
@@ -165,7 +165,7 @@ const EntriesTableComponent = (props: EntriesTableType) => {
     async function getItems() {
         if(GetEntriesUrl && modelName && applicationName) {
             setIsLoading(true);
-            const getOnly = [ENTRY_UPDATED_AT, ENTRY_UPDATED_BY, STATUS, fieldTitle];
+            const getOnly = [ENTRY_UPDATED_AT, ENTRY_UPDATED_BY, STATUS, fieldTitle, 'id'];
             if(where && typeof where === 'object' && Object.keys(where).length) {
                 Object.keys(where).forEach(filter => {
                     if(!getOnly.includes(filter)) {

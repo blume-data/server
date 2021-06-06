@@ -18,4 +18,4 @@ export const APPLICATION_NAMES = 'applicationNames';
 export const SESSION_ID = 'sessionId';
 
 // properties outside in custom model
-export const SKIP_PROPERTIES_IN_ENTRIES = [ENTRY_UPDATED_BY, ENTRY_UPDATED_AT, STATUS, '_id'];
+export const SKIP_PROPERTIES_IN_ENTRIES = [ENTRY_UPDATED_BY, ENTRY_UPDATED_AT, STATUS, 'id'];
