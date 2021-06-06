@@ -813,9 +813,18 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
         }
         if (isValid) {
             if(rule.indexNumber !== undefined) {
-                body = {
-                    ...body,
-                    [`${rule.type}${rule.indexNumber}`]: reqBody[rule.name]
+                if(rule.type === REFERENCE_FIELD_TYPE) {
+                    console.log('reg', `${rule.type}Id${rule.indexNumber}`)
+                    body = {
+                        ...body,
+                        [`${rule.type}Id${rule.indexNumber}`]: reqBody[rule.name]
+                    }
+                }
+                else {
+                    body = {
+                        ...body,
+                        [`${rule.type}${rule.indexNumber}`]: reqBody[rule.name]
+                    }
                 }
             }
             // irrevelant
