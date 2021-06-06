@@ -248,14 +248,13 @@ async function createEntry(rules: RuleType[], req: Request, res: Response, colle
 
         if (!hasError) {
             try {
-
-                if(requestBody._id) {
-                    await model.findOneAndUpdate({
-                        _id: requestBody._id
-                    }, requestBody);
+                if(requestBody.id) {
+                    await CustomCollectionModel.findOneAndUpdate({
+                        id: body.id
+                    }, body);
                     
                     return {
-                        id: requestBody._id
+                        id: requestBody.id
                     };
                 }
                 else {
@@ -484,14 +483,20 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
     const currentUserId = (req.currentUser && req.currentUser.id) ? req.currentUser.id : '';
     const language = req.params.language;
     const createdAt = DateTime.local().setZone('UTC').toJSDate();
-    let body: any = {
-        [ENTRY_CREATED_AT]: createdAt,
-        [ENTRY_UPDATED_AT]: createdAt,
-        [`${ENTRY_CREATED_BY}Id`]: currentUserId,
-        [`${ENTRY_UPDATED_BY}Id`]: currentUserId,
-        [ENTRY_LANGUAGE_PROPERTY_NAME]: language,
-        data: {}
-    };
+    let body: any = {};
+
+    if(req.method === 'POST') {
+        body = {
+            ...body,
+            [ENTRY_CREATED_AT]: createdAt,
+            [ENTRY_UPDATED_AT]: createdAt,
+            [`${ENTRY_CREATED_BY}Id`]: currentUserId,
+            [`${ENTRY_UPDATED_BY}Id`]: currentUserId,
+            [ENTRY_LANGUAGE_PROPERTY_NAME]: language,
+            data: {}
+        };
+    }
+
     let isValid = true;
     const errorMessages: ErrorMessagesType[] = [];
 
@@ -836,9 +841,9 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
                     }
                 };
             }
-            // if there is _id in req body add it in body
-            if(reqBody._id) {
-                body._id = reqBody._id;
+            // if there is id in req body add it in body
+            if(reqBody.id) {
+                body.id = reqBody.id;
             }
         }
     });
@@ -885,42 +890,20 @@ function validateParams(req: Request, res: Response, rules: RuleType[], findWher
                     });
                 }
 
-                if(condition === '_id' && (!findWhere['_id'])) {
+                if(condition === 'id' && (!findWhere['id'])) {
                     isValid = false;
                     errorMessages.push({
                         field: 'where',
-                        message: '_id is not valid'
+                        message: 'id is not valid'
                     });
                 }
-                if(condition === '_id' && findWhere['_id']) {
-                    if(Array.isArray(findWhere['_id'] && findWhere['_id'].length)) {
-                        // check every id string
-                        findWhere['_id'].array.forEach((element: string) => {
-                            if(element && !element.match(/^[0-9a-fA-F]{24}$/)) {
-                                isValid = false;
-                                errorMessages.push({
-                                    field: 'where',
-                                    message: '_id should be array of valid id'
-                                });
-                            }
-                        });
-                    }
-                    else if((findWhere['_id'] && typeof findWhere['_id'] === 'string' && !findWhere['_id'].match(/^[0-9a-fA-F]{24}$/))) {
-                        // check id string
-                        isValid = false;
-                        errorMessages.push({
-                            field: 'where',
-                            message: '_id should be valid id'
-                        });
-                    }
-                    else {
-                        where = {
-                            ...where,
-                            [ID]: findWhere[condition]
-                        }
+                if(condition === 'id' && findWhere['id']) {
+                    where = {
+                        ...where,
+                        id: findWhere[condition]
                     }
                 }
-                if(skip.includes(condition) && condition !== '_id') {
+                if(skip.includes(condition) && condition !== 'id') {
                     where = {
                         ...where,
                         [condition]: findWhere[condition]

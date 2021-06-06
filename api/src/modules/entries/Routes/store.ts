@@ -24,9 +24,9 @@ router.put(
     StoreUrl, checkAuth,
     validateApplicationNameMiddleWare,
     (req: Request, res: Response, next: NextFunction) => {
-        const {_id} = req.body;
-        if(!_id) {
-            sendSingleError(res, '_id is required');
+        const {id} = req.body;
+        if(!id) {
+            sendSingleError(res, 'id is required');
         }
         else {
             next();

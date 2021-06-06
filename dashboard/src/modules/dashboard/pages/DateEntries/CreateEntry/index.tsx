@@ -93,7 +93,7 @@ const CreateEntry = (props: CreateEntryType) => {
         if(GetEntriesUrl && !modelData && applicationName && rules && rules.length) {
             const response = await fetchModelEntries({
                 env, language, applicationName, modelName: ModelName, GetEntriesUrl, where: {
-                    _id: entryId ? entryId : id ? id : undefined
+                    id: entryId ? entryId : id ? id : undefined
                 }
             });
             
@@ -383,7 +383,7 @@ const CreateEntry = (props: CreateEntryType) => {
             let res: any;
             setModelData(data)
             if(entryId) {
-                data._id = entryId;
+                data.id = entryId;
                 res = await doPutRequest(`${getBaseUrl()}${url}`, data, true);
             }
             else {
