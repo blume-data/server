@@ -73,6 +73,7 @@ export async function createCollectionSchema(req: Request, res: Response) {
         });
 
         await newCollection.save();
+        
         return sendOkayResponse(res);
     }
     else {

@@ -50,24 +50,38 @@ function generateSchema() {
     }
     const ref = 'FileModel';
 
-    addFields(SHORT_STRING_FIElD_TYPE, String);
+    addFields(SHORT_STRING_FIElD_TYPE, String, 40);
     addFields(INTEGER_FIElD_TYPE, Number);
-    addFields(LONG_STRING_FIELD_TYPE, String, 5);
+    addFields(LONG_STRING_FIELD_TYPE, String);
     addFields(BOOLEAN_FIElD_TYPE, Boolean);
     addFields(LOCATION_FIELD_TYPE, String);
     addFields(JSON_FIELD_TYPE, Object);
     addFields(MEDIA_FIELD_TYPE, [{type: Schema.Types.ObjectId, ref}]);
-    addFields(REFERENCE_FIELD_TYPE, [{type: String}]);
+    addFields(`${REFERENCE_FIELD_TYPE}Id`, [{type: String}], 40);
     addFields(DATE_FIElD_TYPE, Date);
     addFields(DATE_AND_TIME_FIElD_TYPE, Date);
     addFields(`${DATE_AND_TIME_FIElD_TYPE}-${TIMEZONE_DATE_CONSTANT}`, String);
     return schema;
 }
 
+function configureVirtual(schma: Schema) {
+    for(let i=0; i<= 40; i++) {
+        CustomCollection.virtual('deletedBy', {
+            ref: 'CustomCollectionModel',
+            localField: `${REFERENCE_FIELD_TYPE}${i}`,
+            foreignField: 'id',
+            justOne: true,
+        });
+    }
+
+}
+
 const CustomCollection = new mongoose.Schema(generateSchema(), { 
     toJSON: { virtuals: true },
     toObject: { virtuals: true }
 });
+
+configureVirtual(CustomCollection);
 
 CustomCollection.virtual('createdBy', {
     ref: 'ClientUser', // The model to use

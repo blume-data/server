@@ -159,6 +159,7 @@ const CreateEntry = (props: CreateEntryType) => {
                                         break;
                                     }
                                     case REFERENCE_FIELD_TYPE: {
+                                        debugger
                                         if(!Array.isArray(response.data[0][prop])) {
                                             if(response.data[0][prop]._id) {
                                                 newResponse[prop] = response.data[0][prop]._id;
