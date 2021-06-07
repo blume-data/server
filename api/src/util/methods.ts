@@ -206,11 +206,8 @@ export function createModel(params: CreateModelType) {
     }
 }
 
-export function trimGetOnly(params?: string[] | string | null): string {
-    if(typeof params === 'string') {
-        return params;
-    }
-    else if(params && Array.isArray(params)) {
+export function trimGetOnly(params?: string[] | null): string {
+    if(params && Array.isArray(params)) {
         return params.join(' ');
     }
     return `-${ENTRY_LANGUAGE_PROPERTY_NAME}`;

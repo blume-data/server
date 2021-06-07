@@ -86,6 +86,7 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
     const collectionName = collection.name;
     let isValid = true;
     let errorMessages: ErrorMessagesType[] = [];
+    const memoRules: {name: string; rules: string}[] = [];
 
     const params = validateParams(req, res, rules, findWhere, getOnlyThese, collectionName);
 
@@ -98,7 +99,14 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
                         mRules = rules;
                     }
                     else {
-                        const col = await getCollection(req, modelName);
+                        // echeck if the rules exist in memo
+                        const existInMemoRules = memoRules.find(memoRule => memoRule.name === modelName);
+                        if(existInMemoRules) {
+                            mRules = JSON.parse(existInMemoRules.rules);
+                        }
+                        // if not exist in memo then fetch from db
+                        else {
+                            const col = await getCollection(req, modelName);
                         if(col) {
                             mRules = JSON.parse(col.rules);
                         }
@@ -112,6 +120,7 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
                                 errors: errorMessages
                             });
                             return;
+                        }
                         }
                     }
                     let exist = mRules.find(rule => rule.name === population.name);
@@ -132,13 +141,44 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
                         }
 
                         if(population.getOnly) {
-                            if(population.getOnly && population.getOnly.length) {
-                                mongoosePopulate.select = trimGetOnly(population.getOnly);
+                            // if getOnly is array
+                            if(population.getOnly && Array.isArray(population.getOnly) && population.getOnly.length) {
+                                const select: string[] = [];
+                                let refRules: RuleType[] = [];
+
+                                // check if the rules exist in the memo rules
+                                const existInMemoRules1 = memoRules.find(memoRule => memoRule.name === population.name);
+
+                                if(existInMemoRules1) {
+                                    refRules = JSON.parse(existInMemoRules1.rules);
+                                }
+                                // if not exist in memo rules then fetch from the db
+                                else {
+                                    const refCollection = await getCollection(req, population.name);
+                                    if(refCollection) {
+                                        refRules = JSON.parse(refCollection.rules);
+                                    }
+                                }
+                                if(refRules) {
+                                    population.getOnly.forEach((item, index) => {
+                                        const ex = refRules.find((ru: any) => ru.name === item);
+                                        if(ex) {
+                                            select.push(`${ex.type}${ex.indexNumber}`);
+                                        }
+                                    });
+                                }
+                                mongoosePopulate.select = trimGetOnly(select);
                             }
+                            // if getOnly is a string its invalid
                             else {
-                                mongoosePopulate.select = trimGetOnly(population.getOnly);
+                                isValid = false;
+                                errorMessages.push({
+                                    field: 'populate',
+                                    message: `${population.name}'s getOnly should be an array`
+                                });
                             }
                         }
+                        // just remove unwanted properties
                         else {
                             mongoosePopulate.select = trimGetOnly(population.getOnly);
                         }
@@ -177,13 +217,13 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
                     return;
                 }
             }
-            console.log('mongoose populate', mongoosePopulate);
             return mongoosePopulate;
         }
     }
 
     if (params) {
         const {where} = params;
+
         // skip language property name
         let getOnly = trimGetOnly(params.getOnly);
 
