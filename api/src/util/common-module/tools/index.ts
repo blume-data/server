@@ -54,7 +54,6 @@ export async function paginateData(data: PaginateDataType) {
                             newItem[ruleMap[property]] = flatItem[property];
                         }
                         else {
-                            console.log('property', property)
                             const ruleExist = rules.find(rule => {
                                 if(`${rule.type}${rule.indexNumber}` === property) {
                                     return rule;

@@ -133,7 +133,22 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
 
                         if(population.getOnly) {
                             if(population.getOnly && population.getOnly.length) {
-                                mongoosePopulate.select = trimGetOnly(population.getOnly);
+                                const select: string[] = [];
+                                const refCollection = await getCollection(req, population.name);
+                                // TODO memorize this result
+                                console.log('TODO: try to memorize this result');
+                                if(refCollection) {
+                                    const refRules = JSON.parse(refCollection.rules);
+                                    if(refRules) {
+                                        population.getOnly.forEach((item, index) => {
+                                            const ex = refRules.find((ru: any) => ru.name === item);
+                                            if(ex) {
+                                                select.push(`${ex.type}${ex.indexNumber}`);
+                                            }
+                                        });
+                                    }
+                                }
+                                mongoosePopulate.select = trimGetOnly(select);
                             }
                             else {
                                 mongoosePopulate.select = trimGetOnly(population.getOnly);
