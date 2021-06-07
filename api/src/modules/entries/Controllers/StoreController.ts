@@ -8,6 +8,7 @@ import {
     getPageAndPerPage, ID,
     okayStatus,
     paginateData,
+    REFFERENCE_ID_UNIQUE_NAME,
     sendSingleError, SKIP_PROPERTIES_IN_ENTRIES
 } from "../../../util/common-module";
 import { v4 as uuidv4 } from 'uuid';
@@ -65,6 +66,7 @@ import {createModel, getModel, sendOkayResponse, trimGetOnly} from "../../../uti
 import {CollectionModel} from "../../../db-models/Collection";
 import { CustomCollectionModel } from '../../../db-models/CustomCollections';
 import {v4} from 'uuid';
+import { body } from 'express-validator';
 interface PopulateData {
     name: string;
     getOnly?: string[];
@@ -123,16 +125,12 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
                         const modelName = (exist && exist[REFERENCE_MODEL_NAME] && exist[REFERENCE_MODEL_NAME] !== '')
                             ? exist[REFERENCE_MODEL_NAME] || CLIENT_USER_MODEL_NAME
                             : CLIENT_USER_MODEL_NAME;
-                        try {
-                            if(!mongoose.model(modelName) || !mongoose.model(modelName).schema) {
-                                await getModel(req, modelName, applicationName, clientUserName);
-                            }
-                        }
-                        catch (e) {
-                            await getModel(req, modelName, applicationName, clientUserName);
+                        
+                        const refName = mRules.find(r => r.name === population.name);
+                        if(refName) {
+                            mongoosePopulate.path = `${refName.type}${refName.indexNumber}`;
                         }
 
-                        mongoosePopulate.path = population.name;
                         if(population.getOnly) {
                             if(population.getOnly && population.getOnly.length) {
                                 mongoosePopulate.select = trimGetOnly(population.getOnly);
@@ -146,7 +144,7 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
                         }
                         if(population.populate && mongoosePopulate.path) {
                             mongoosePopulate.populate = { path: '' };
-                            const pd = await recursivePopulation(res, population.populate,mongoosePopulate.populate,modelName );
+                            const pd = await recursivePopulation(res, population.populate, mongoosePopulate.populate, modelName);
                             if(pd) {
                                 mongoosePopulate.populate = pd;
                             }
@@ -179,15 +177,25 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
                     return;
                 }
             }
+            console.log('mongoose populate', mongoosePopulate);
             return mongoosePopulate;
         }
-
     }
 
     if (params) {
         const {where} = params;
         // skip language property name
-        const getOnly = trimGetOnly(params.getOnly);
+        let getOnly = trimGetOnly(params.getOnly);
+
+        // add any refference field if available
+        if(req.body.populate && req.body.populate.length) {
+            req.body.populate.forEach((ele: PopulateData) => {
+                const popExist = rules.find(rule => rule.name === ele.name);
+                if(popExist) {
+                    getOnly+= ` ${popExist.type}${REFFERENCE_ID_UNIQUE_NAME}${popExist.indexNumber}`;
+                }
+            });
+        }
 
         const {page, perPage} = getPageAndPerPage(req);
 
@@ -197,7 +205,7 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
                 .skip(Number(page) * Number(perPage))
                 .limit(Number(perPage));
 
-            // check if there is an asset
+            //check if there is an asset
             const existAsset = rules.find(rule => rule.type === MEDIA_FIELD_TYPE);
             if(existAsset) {
                 query.populate(existAsset.name, 'fileName thumbnailUrl');
@@ -207,15 +215,19 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
                 await recursivePopulation(res, req.body.populate, {path: ''}, collectionName, query);
             }
 
-            query.exec(async (err: any, items: any) => {
+            try {
+                const items = await query;
                 if(isValid) {
                     const data = await paginateData({
                         Model: CustomCollectionModel, where, items, req, rules
                     });
                     return res.status(okayStatus).send(data);
                 }
-            });
-
+                
+            } catch (error) {
+                console.log('Error', error);
+                return sendSingleError(res, 'something went wrong');
+            }
         }
         else {
             return res.status(errorStatus).send(errorMessages);
@@ -817,7 +829,7 @@ function checkBodyAndRules(rules: RuleType[], req: Request, res: Response) {
                     console.log('reg', `${rule.type}Id${rule.indexNumber}`)
                     body = {
                         ...body,
-                        [`${rule.type}Id${rule.indexNumber}`]: reqBody[rule.name]
+                        [`${rule.type}${REFFERENCE_ID_UNIQUE_NAME}${rule.indexNumber}`]: reqBody[rule.name]
                     }
                 }
                 else {
@@ -924,7 +936,7 @@ function validateParams(req: Request, res: Response, rules: RuleType[], findWher
     if (getOnly && Array.isArray(getOnly)) {
         // if the type is object|Array
         if (getOnly.length) {
-            getOnly.forEach((str: string) => {
+            getOnly.forEach((str: string, index: number) => {
                 const exist = rules.find(rule => rule.name === str);
                 if (!exist && !skip.includes(str)) {
                     isValid = false;
@@ -934,7 +946,12 @@ function validateParams(req: Request, res: Response, rules: RuleType[], findWher
                     })
                 }
                 else if(exist && getOnly) {
-                    getOnly.push(`${exist.type}${exist.indexNumber}`);
+                    if(exist.type === REFERENCE_FIELD_TYPE) {
+                        getOnly[index] = `${REFERENCE_FIELD_TYPE}${REFFERENCE_ID_UNIQUE_NAME}${exist.indexNumber}`;
+                    }
+                    else {
+                        getOnly[index]= `${exist.type}${exist.indexNumber}`;
+                    }
                 }
             });
         }

@@ -15,5 +15,7 @@ export const mongoConnectOptions = {
     useFindAndModify: false
 };
 
+export const REFFERENCE_ID_UNIQUE_NAME = 'REFFERENCE_ID_UNIQUE_NAME_RANJODHBIR_KAUR';
+
 export const JWT_KEY = 'hello singh ji you are so good';
 export const MAX_NUMBER_FIELD_TYPES = 10;

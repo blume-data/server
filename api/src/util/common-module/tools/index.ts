@@ -2,6 +2,7 @@ import { randomBytes } from 'crypto';
 import {Request} from 'express';
 import {RuleType} from "@ranjodhbirkaur/constants";
 import {SKIP_PROPERTIES_IN_ENTRIES} from "../utils";
+import { flatObject } from '../../methods';
 
 export const RANDOM_STRING = function (minSize=4) {
     return randomBytes(minSize).toString('hex')
@@ -41,17 +42,19 @@ export function getPageAndPerPage(req: Request): {page: Number, perPage: Number}
 export async function paginateData(data: PaginateDataType) {
     const {Model, req, where, rules} = data;
     let {items} = data;
-    if(rules && rules.length) {
+    if(rules && rules.length && items) {
         let ruleMap: any = {};
         items = items.map(item => {
             let newItem: any = {};
-            for(const property in item._doc) {
-                if(Object.prototype.hasOwnProperty.call(item._doc, property)) {
+            const flatItem = item.toObject();
+            for(const property in flatItem) {
+                if(Object.prototype.hasOwnProperty.call(flatItem, property)) {
                     if(!SKIP_PROPERTIES_IN_ENTRIES.includes(property)) {
                         if(ruleMap[property]) {
-                            newItem[ruleMap[property]] = item._doc[property];
+                            newItem[ruleMap[property]] = flatItem[property];
                         }
                         else {
+                            console.log('property', property)
                             const ruleExist = rules.find(rule => {
                                 if(`${rule.type}${rule.indexNumber}` === property) {
                                     return rule;
@@ -59,12 +62,12 @@ export async function paginateData(data: PaginateDataType) {
                             });
                             if(ruleExist) {
                                 ruleMap[property] = ruleExist.name;
-                                newItem[`${ruleExist.name}`] = item._doc[property];
+                                newItem[`${ruleExist.name}`] = flatItem[property];
                             }
                         }
                     }
                     else {
-                        newItem[property] = item._doc[property];
+                        newItem[property] = flatItem[property];
                     }
                 }
             }
