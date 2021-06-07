@@ -6,6 +6,7 @@ import {
     SHORT_STRING_FIElD_TYPE
 } from "@ranjodhbirkaur/constants";
 import {TIMEZONE_DATE_CONSTANT} from "../util/constants";
+import { REFFERENCE_ID_UNIQUE_NAME } from '../util/common-module';
 
 function generateSchema() {
 
@@ -57,7 +58,7 @@ function generateSchema() {
     addFields(LOCATION_FIELD_TYPE, String);
     addFields(JSON_FIELD_TYPE, Object);
     addFields(MEDIA_FIELD_TYPE, [{type: Schema.Types.ObjectId, ref}]);
-    addFields(`${REFERENCE_FIELD_TYPE}Id`, [{type: String}], 40);
+    addFields(`${REFERENCE_FIELD_TYPE}${REFFERENCE_ID_UNIQUE_NAME}`, [{type: String}], 40);
     addFields(DATE_FIElD_TYPE, Date);
     addFields(DATE_AND_TIME_FIElD_TYPE, Date);
     addFields(`${DATE_AND_TIME_FIElD_TYPE}-${TIMEZONE_DATE_CONSTANT}`, String);
@@ -66,11 +67,11 @@ function generateSchema() {
 
 function configureVirtual(schma: Schema) {
     for(let i=0; i<= 40; i++) {
-        CustomCollection.virtual('deletedBy', {
+        CustomCollection.virtual(`${REFERENCE_FIELD_TYPE}${i}`, {
             ref: 'CustomCollectionModel',
-            localField: `${REFERENCE_FIELD_TYPE}${i}`,
+            localField: `${REFERENCE_FIELD_TYPE}${REFFERENCE_ID_UNIQUE_NAME}${i}`,
             foreignField: 'id',
-            justOne: true,
+            justOne: false,
         });
     }
 
