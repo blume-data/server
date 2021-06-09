@@ -166,7 +166,6 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
                                 else {
                                     // check if the rules exist in the memo rules
                                     const existInMemoRules1 = memoRules.find(memoRule => memoRule.name === population.name);
-
                                     if(existInMemoRules1) {
                                         refRules = JSON.parse(existInMemoRules1.rules);
                                     }
@@ -306,12 +305,10 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
         else {
             return res.status(errorStatus).send(errorMessages);
         }
-
     }
     else {
         // params are not valid and error is also sent
     }
-
 }
 
 async function createEntry(rules: RuleType[], req: Request, res: Response, collection: {name: string, clientUserName: string, applicationName: string}) {
