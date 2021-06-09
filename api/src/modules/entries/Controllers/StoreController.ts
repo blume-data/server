@@ -5,17 +5,14 @@ import {
     CLIENT_USER_MODEL_NAME,
     CLIENT_USER_NAME,
     errorStatus,
-    getPageAndPerPage, ID,
-    okayStatus,
+    getPageAndPerPage, okayStatus,
     paginateData,
     REFFERENCE_ID_UNIQUE_NAME,
     sendSingleError, SKIP_PROPERTIES_IN_ENTRIES
 } from "../../../util/common-module";
-import { v4 as uuidv4 } from 'uuid';
 
 import {ENTRY_LANGUAGE_PROPERTY_NAME, TIMEZONE_DATE_CONSTANT} from "../../../util/constants";
 import {COLLECTION_NOT_FOUND, PARAM_SHOULD_BE_UNIQUE} from "../../../util/Messages";
-import * as mongoose from "mongoose";
 import {Model} from "mongoose";
 import {DateTime} from 'luxon';
 import {
@@ -54,7 +51,7 @@ import {
     REFERENCE_PROPERTY_NAME,
     RuleType,
     SHORT_STRING_FIElD_TYPE,
-    SINGLE_ASSETS_TYPE, STATUS, TITLE_FIELD,
+    SINGLE_ASSETS_TYPE, TITLE_FIELD,
     urlReg,
     UrlRegName,
     usPhoneReg,
@@ -62,11 +59,10 @@ import {
     usZipReg,
     UsZipRegName, PUBLISHED_ENTRY_STATUS, ENV
 } from "@ranjodhbirkaur/constants";
-import {createModel, getModel, sendOkayResponse, trimGetOnly} from "../../../util/methods";
+import {createModel, sendOkayResponse, trimGetOnly} from "../../../util/methods";
 import {CollectionModel} from "../../../db-models/Collection";
 import { CustomCollectionModel } from '../../../db-models/CustomCollections';
 import {v4} from 'uuid';
-import { body } from 'express-validator';
 interface PopulateData {
     name: string;
     getOnly?: string[];
@@ -78,6 +74,8 @@ interface PopulateMongooseData {
     select?: string;
     populate?: PopulateMongooseData;
 }
+
+const skipValidateReferences = [ENTRY_UPDATED_BY, ENTRY_CREATED_BY, ENTRY_DELETED_BY];
 
 async function fetchEntries(req: Request, res: Response, rules: RuleType[], findWhere: any, getOnlyThese: string[] | null, collection: any) {
 
@@ -125,9 +123,7 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
                     }
                     let exist = mRules.find(rule => rule.name === population.name);
                     let isUserField = false;
-                    if(population.name === ENTRY_DELETED_BY
-                        || population.name === ENTRY_CREATED_BY
-                        || population.name === ENTRY_UPDATED_BY) {
+                    if(skipValidateReferences.includes(population.name)) {
                         isUserField = true;
                     }
                     if((exist && exist[REFERENCE_MODEL_NAME]) || isUserField) {
@@ -135,9 +131,16 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
                             ? exist[REFERENCE_MODEL_NAME] || CLIENT_USER_MODEL_NAME
                             : CLIENT_USER_MODEL_NAME;
                         
-                        const refName = mRules.find(r => r.name === population.name);
-                        if(refName) {
-                            mongoosePopulate.path = `${refName.type}${refName.indexNumber}`;
+                        // population is to be skipped
+                        if(skipValidateReferences.includes(population.name)){
+                            mongoosePopulate.path = population.name;
+                        }
+                        // Else check in rules
+                        else {
+                            const refName = mRules.find(r => r.name === population.name);
+                            if(refName) {
+                                mongoosePopulate.path = `${refName.type}${refName.indexNumber}`;
+                            }
                         }
 
                         if(population.getOnly) {
@@ -146,26 +149,35 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
                                 const select: string[] = [];
                                 let refRules: RuleType[] = [];
 
-                                // check if the rules exist in the memo rules
-                                const existInMemoRules1 = memoRules.find(memoRule => memoRule.name === population.name);
-
-                                if(existInMemoRules1) {
-                                    refRules = JSON.parse(existInMemoRules1.rules);
-                                }
-                                // if not exist in memo rules then fetch from the db
-                                else {
-                                    const refCollection = await getCollection(req, population.name);
-                                    if(refCollection) {
-                                        refRules = JSON.parse(refCollection.rules);
+                                if(skipValidateReferences.includes(population.name)) {
+                                    if(population.getOnly && Array.isArray(population.getOnly)) {
+                                        population.getOnly.forEach((g: string) => {
+                                            select.push(g);
+                                        });
                                     }
                                 }
-                                if(refRules) {
-                                    population.getOnly.forEach((item, index) => {
-                                        const ex = refRules.find((ru: any) => ru.name === item);
-                                        if(ex) {
-                                            select.push(`${ex.type}${ex.indexNumber}`);
+                                else {
+                                    // check if the rules exist in the memo rules
+                                    const existInMemoRules1 = memoRules.find(memoRule => memoRule.name === population.name);
+
+                                    if(existInMemoRules1) {
+                                        refRules = JSON.parse(existInMemoRules1.rules);
+                                    }
+                                    // if not exist in memo rules then fetch from the db
+                                    else {
+                                        const refCollection = await getCollection(req, population.name);
+                                        if(refCollection) {
+                                            refRules = JSON.parse(refCollection.rules);
                                         }
-                                    });
+                                    }
+                                    if(refRules) {
+                                        population.getOnly.forEach((item, index) => {
+                                            const ex = refRules.find((ru: any) => ru.name === item);
+                                            if(ex) {
+                                                select.push(`${ex.type}${ex.indexNumber}`);
+                                            }
+                                        });
+                                    }
                                 }
                                 mongoosePopulate.select = trimGetOnly(select);
                             }
@@ -234,6 +246,9 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
                 if(popExist) {
                     getOnly+= ` ${popExist.type}${REFFERENCE_ID_UNIQUE_NAME}${popExist.indexNumber}`;
                 }
+                else if(ele.name === ENTRY_UPDATED_BY) {
+                    getOnly+= ` ${ENTRY_UPDATED_BY}Id`;
+                }
             });
         }
 
@@ -265,7 +280,7 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
                 }
                 
             } catch (error) {
-                console.log('Error', error);
+                console.log('Error while fetching entries', error);
                 return sendSingleError(res, 'something went wrong');
             }
         }
@@ -983,7 +998,7 @@ function validateParams(req: Request, res: Response, rules: RuleType[], findWher
                     errorMessages.push({
                         field: 'getOnly',
                         message: `${str} does not exist in schema`
-                    })
+                    });
                 }
                 else if(exist && getOnly) {
                     if(exist.type === REFERENCE_FIELD_TYPE) {
