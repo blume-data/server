@@ -74,6 +74,7 @@ interface PopulateMongooseData {
     select?: string;
     populate?: PopulateMongooseData;
 }
+const memoRules: {name: string; rules: string, title: string}[] = [];
 
 const skipValidateReferences = [ENTRY_UPDATED_BY, ENTRY_CREATED_BY, ENTRY_DELETED_BY];
 
@@ -84,7 +85,6 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
     const collectionName = collection.name;
     let isValid = true;
     let errorMessages: ErrorMessagesType[] = [];
-    const memoRules: {name: string; rules: string}[] = [];
 
     const params = validateParams(req, res, rules, findWhere, getOnlyThese, collectionName);
 
@@ -107,6 +107,11 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
                             const col = await getCollection(req, modelName);
                         if(col) {
                             mRules = JSON.parse(col.rules);
+                            memoRules.push({
+                                name: modelName,
+                                rules: JSON.parse(col.rules),
+                                title: col.titleField
+                            });
                         }
                         else {
                             isValid = false;
@@ -123,6 +128,7 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
                     }
                     let exist = mRules.find(rule => rule.name === population.name);
                     let isUserField = false;
+
                     if(skipValidateReferences.includes(population.name)) {
                         isUserField = true;
                     }
@@ -149,6 +155,7 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
                                 const select: string[] = [];
                                 let refRules: RuleType[] = [];
 
+                                // if the reference is updatedBy, createdBy or deletedBy
                                 if(skipValidateReferences.includes(population.name)) {
                                     if(population.getOnly && Array.isArray(population.getOnly)) {
                                         population.getOnly.forEach((g: string) => {
@@ -168,6 +175,11 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
                                         const refCollection = await getCollection(req, population.name);
                                         if(refCollection) {
                                             refRules = JSON.parse(refCollection.rules);
+                                            memoRules.push({
+                                                name: population.name,
+                                                rules: JSON.parse(refCollection.rules),
+                                                title: refCollection.titleField
+                                            });
                                         }
                                     }
                                     if(refRules) {
@@ -192,7 +204,14 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
                         }
                         // just remove unwanted properties
                         else {
-                            mongoosePopulate.select = trimGetOnly(population.getOnly);
+                            const existInMemoRules = memoRules.find(memo => memo.name === population.name);
+                            console.log('existInMemoRules', memoRules)
+                            // fetch only title if none is selected
+                            if(existInMemoRules) {
+                                
+                                mongoosePopulate.select = trimGetOnly([existInMemoRules.title]);
+                            }
+                            
                         }
                         if(population.populate && mongoosePopulate.path) {
                             mongoosePopulate.populate = { path: '' };
