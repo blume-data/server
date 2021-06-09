@@ -74,7 +74,7 @@ interface PopulateMongooseData {
     select?: string;
     populate?: PopulateMongooseData;
 }
-const memoRules: {name: string; rules: string, title: string}[] = [];
+const memoRules: {name: string; rules: RuleType[], title: string}[] = [];
 
 const skipValidateReferences = [ENTRY_UPDATED_BY, ENTRY_CREATED_BY, ENTRY_DELETED_BY];
 
@@ -100,7 +100,7 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
                         // echeck if the rules exist in memo
                         const existInMemoRules = memoRules.find(memoRule => memoRule.name === modelName);
                         if(existInMemoRules) {
-                            mRules = JSON.parse(existInMemoRules.rules);
+                            mRules = existInMemoRules.rules;
                         }
                         // if not exist in memo then fetch from db
                         else {
@@ -167,7 +167,8 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
                                     // check if the rules exist in the memo rules
                                     const existInMemoRules1 = memoRules.find(memoRule => memoRule.name === population.name);
                                     if(existInMemoRules1) {
-                                        refRules = JSON.parse(existInMemoRules1.rules);
+                                        console.log('dsfdsf', existInMemoRules1)
+                                        refRules = existInMemoRules1.rules;
                                     }
                                     // if not exist in memo rules then fetch from the db
                                     else {
@@ -204,10 +205,9 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
                         // just remove unwanted properties
                         else {
                             const existInMemoRules = memoRules.find(memo => memo.name === population.name);
-                            console.log('existInMemoRules', memoRules)
+                            console.log('existInMemoRules', memoRules, population.name)
                             // fetch only title if none is selected
                             if(existInMemoRules) {
-                                
                                 mongoosePopulate.select = trimGetOnly([existInMemoRules.title]);
                             }
                             
@@ -491,6 +491,11 @@ export async function getStoreRecord(req: Request, res: Response) {
 
     if (collection) {
         const rules = JSON.parse(collection.rules);
+        memoRules.push({
+            name: collection.name,
+            rules,
+            title: collection.titleField
+        });
 
         await fetchEntries(req, res, rules, findWhere, getOnlyThese, collection);
     }
