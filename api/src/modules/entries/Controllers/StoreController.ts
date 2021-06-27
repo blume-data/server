@@ -5,17 +5,14 @@ import {
     CLIENT_USER_MODEL_NAME,
     CLIENT_USER_NAME,
     errorStatus,
-    getPageAndPerPage, ID,
-    okayStatus,
+    getPageAndPerPage, okayStatus,
     paginateData,
     REFFERENCE_ID_UNIQUE_NAME,
     sendSingleError, SKIP_PROPERTIES_IN_ENTRIES
 } from "../../../util/common-module";
-import { v4 as uuidv4 } from 'uuid';
 
 import {ENTRY_LANGUAGE_PROPERTY_NAME, TIMEZONE_DATE_CONSTANT} from "../../../util/constants";
 import {COLLECTION_NOT_FOUND, PARAM_SHOULD_BE_UNIQUE} from "../../../util/Messages";
-import * as mongoose from "mongoose";
 import {Model} from "mongoose";
 import {DateTime} from 'luxon';
 import {
@@ -54,7 +51,7 @@ import {
     REFERENCE_PROPERTY_NAME,
     RuleType,
     SHORT_STRING_FIElD_TYPE,
-    SINGLE_ASSETS_TYPE, STATUS, TITLE_FIELD,
+    SINGLE_ASSETS_TYPE, TITLE_FIELD,
     urlReg,
     UrlRegName,
     usPhoneReg,
@@ -62,11 +59,10 @@ import {
     usZipReg,
     UsZipRegName, PUBLISHED_ENTRY_STATUS, ENV
 } from "@ranjodhbirkaur/constants";
-import {createModel, getModel, sendOkayResponse, trimGetOnly} from "../../../util/methods";
+import {createModel, sendOkayResponse, trimGetOnly} from "../../../util/methods";
 import {CollectionModel} from "../../../db-models/Collection";
 import { CustomCollectionModel } from '../../../db-models/CustomCollections';
 import {v4} from 'uuid';
-import { body } from 'express-validator';
 interface PopulateData {
     name: string;
     getOnly?: string[];
@@ -78,15 +74,24 @@ interface PopulateMongooseData {
     select?: string;
     populate?: PopulateMongooseData;
 }
+const memoRules: {name: string; rules: RuleType[], title: string}[] = [];
 
-async function fetchEntries(req: Request, res: Response, rules: RuleType[], findWhere: any, getOnlyThese: string[] | null, collection: any) {
+const skipValidateReferences = [ENTRY_UPDATED_BY, ENTRY_CREATED_BY, ENTRY_DELETED_BY];
+
+async function fetchEntries(req: Request, res: Response, rules: RuleType[], findWhere: any, getOnlyThese: string[] | null, collection: {
+    clientUserName: string,
+    [APPLICATION_NAME]: string,
+    _id?: string,
+    rules: string,
+    name: string,
+    titleField: string
+}) {
 
     const clientUserName = req.params[CLIENT_USER_NAME];
     const applicationName = req.params[APPLICATION_NAME];
     const collectionName = collection.name;
     let isValid = true;
     let errorMessages: ErrorMessagesType[] = [];
-    const memoRules: {name: string; rules: string}[] = [];
 
     const params = validateParams(req, res, rules, findWhere, getOnlyThese, collectionName);
 
@@ -102,13 +107,18 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
                         // echeck if the rules exist in memo
                         const existInMemoRules = memoRules.find(memoRule => memoRule.name === modelName);
                         if(existInMemoRules) {
-                            mRules = JSON.parse(existInMemoRules.rules);
+                            mRules = existInMemoRules.rules;
                         }
                         // if not exist in memo then fetch from db
                         else {
                             const col = await getCollection(req, modelName);
                         if(col) {
                             mRules = JSON.parse(col.rules);
+                            memoRules.push({
+                                name: modelName,
+                                rules: JSON.parse(col.rules),
+                                title: col.titleField
+                            });
                         }
                         else {
                             isValid = false;
@@ -125,9 +135,8 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
                     }
                     let exist = mRules.find(rule => rule.name === population.name);
                     let isUserField = false;
-                    if(population.name === ENTRY_DELETED_BY
-                        || population.name === ENTRY_CREATED_BY
-                        || population.name === ENTRY_UPDATED_BY) {
+
+                    if(skipValidateReferences.includes(population.name)) {
                         isUserField = true;
                     }
                     if((exist && exist[REFERENCE_MODEL_NAME]) || isUserField) {
@@ -135,9 +144,16 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
                             ? exist[REFERENCE_MODEL_NAME] || CLIENT_USER_MODEL_NAME
                             : CLIENT_USER_MODEL_NAME;
                         
-                        const refName = mRules.find(r => r.name === population.name);
-                        if(refName) {
-                            mongoosePopulate.path = `${refName.type}${refName.indexNumber}`;
+                        // population is to be skipped
+                        if(skipValidateReferences.includes(population.name)){
+                            mongoosePopulate.path = population.name;
+                        }
+                        // Else check in rules
+                        else {
+                            const refName = mRules.find(r => r.name === population.name);
+                            if(refName) {
+                                mongoosePopulate.path = `${refName.type}${refName.indexNumber}`;
+                            }
                         }
 
                         if(population.getOnly) {
@@ -146,26 +162,41 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
                                 const select: string[] = [];
                                 let refRules: RuleType[] = [];
 
-                                // check if the rules exist in the memo rules
-                                const existInMemoRules1 = memoRules.find(memoRule => memoRule.name === population.name);
-
-                                if(existInMemoRules1) {
-                                    refRules = JSON.parse(existInMemoRules1.rules);
-                                }
-                                // if not exist in memo rules then fetch from the db
-                                else {
-                                    const refCollection = await getCollection(req, population.name);
-                                    if(refCollection) {
-                                        refRules = JSON.parse(refCollection.rules);
+                                // if the reference is updatedBy, createdBy or deletedBy
+                                if(skipValidateReferences.includes(population.name)) {
+                                    if(population.getOnly && Array.isArray(population.getOnly)) {
+                                        population.getOnly.forEach((g: string) => {
+                                            select.push(g);
+                                        });
                                     }
                                 }
-                                if(refRules) {
-                                    population.getOnly.forEach((item, index) => {
-                                        const ex = refRules.find((ru: any) => ru.name === item);
-                                        if(ex) {
-                                            select.push(`${ex.type}${ex.indexNumber}`);
+                                else {
+                                    // check if the rules exist in the memo rules
+                                    const existInMemoRules1 = memoRules.find(memoRule => memoRule.name === population.name);
+                                    if(existInMemoRules1) {
+                                        console.log('dsfdsf', existInMemoRules1)
+                                        refRules = existInMemoRules1.rules;
+                                    }
+                                    // if not exist in memo rules then fetch from the db
+                                    else {
+                                        const refCollection = await getCollection(req, population.name);
+                                        if(refCollection) {
+                                            refRules = JSON.parse(refCollection.rules);
+                                            memoRules.push({
+                                                name: population.name,
+                                                rules: JSON.parse(refCollection.rules),
+                                                title: refCollection.titleField
+                                            });
                                         }
-                                    });
+                                    }
+                                    if(refRules) {
+                                        population.getOnly.forEach((item, index) => {
+                                            const ex = refRules.find((ru: any) => ru.name === item);
+                                            if(ex) {
+                                                select.push(`${ex.type}${ex.indexNumber}`);
+                                            }
+                                        });
+                                    }
                                 }
                                 mongoosePopulate.select = trimGetOnly(select);
                             }
@@ -180,7 +211,13 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
                         }
                         // just remove unwanted properties
                         else {
-                            mongoosePopulate.select = trimGetOnly(population.getOnly);
+                            const existInMemoRules = memoRules.find(memo => memo.name === population.name);
+                            console.log('existInMemoRules', memoRules, population.name)
+                            // fetch only title if none is selected
+                            if(existInMemoRules) {
+                                mongoosePopulate.select = trimGetOnly([existInMemoRules.title]);
+                            }
+                            
                         }
                         if(population.populate && mongoosePopulate.path) {
                             mongoosePopulate.populate = { path: '' };
@@ -223,9 +260,15 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
 
     if (params) {
         const {where} = params;
+        console.log('collection', collection)
 
-        // skip language property name
-        let getOnly = trimGetOnly(params.getOnly);
+        let getOnly = (() => {
+            const trimmedGetOnly = trimGetOnly(params.getOnly);
+            if(trimmedGetOnly) {
+                return trimmedGetOnly
+            }
+            else return collection.titleField;
+        })();
 
         // add any refference field if available
         if(req.body.populate && req.body.populate.length) {
@@ -234,12 +277,16 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
                 if(popExist) {
                     getOnly+= ` ${popExist.type}${REFFERENCE_ID_UNIQUE_NAME}${popExist.indexNumber}`;
                 }
+                else if(ele.name === ENTRY_UPDATED_BY) {
+                    getOnly+= ` ${ENTRY_UPDATED_BY}Id`;
+                }
             });
         }
 
         const {page, perPage} = getPageAndPerPage(req);
 
         if(isValid) {
+            console.log('get only', getOnly);
             const query = CustomCollectionModel
                 .find(where, getOnly)
                 .skip(Number(page) * Number(perPage))
@@ -265,19 +312,17 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
                 }
                 
             } catch (error) {
-                console.log('Error', error);
+                console.log('Error while fetching entries', error);
                 return sendSingleError(res, 'something went wrong');
             }
         }
         else {
             return res.status(errorStatus).send(errorMessages);
         }
-
     }
     else {
         // params are not valid and error is also sent
     }
-
 }
 
 async function createEntry(rules: RuleType[], req: Request, res: Response, collection: {name: string, clientUserName: string, applicationName: string}) {
@@ -460,6 +505,11 @@ export async function getStoreRecord(req: Request, res: Response) {
 
     if (collection) {
         const rules = JSON.parse(collection.rules);
+        memoRules.push({
+            name: collection.name,
+            rules,
+            title: collection.titleField
+        });
 
         await fetchEntries(req, res, rules, findWhere, getOnlyThese, collection);
     }
@@ -983,7 +1033,7 @@ function validateParams(req: Request, res: Response, rules: RuleType[], findWher
                     errorMessages.push({
                         field: 'getOnly',
                         message: `${str} does not exist in schema`
-                    })
+                    });
                 }
                 else if(exist && getOnly) {
                     if(exist.type === REFERENCE_FIELD_TYPE) {

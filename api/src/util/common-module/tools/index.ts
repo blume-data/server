@@ -38,7 +38,7 @@ export function getPageAndPerPage(req: Request): {page: Number, perPage: Number}
     return {page, perPage};
 }
 
-// TODO later iwth flatten children 
+// TODO later iwth flatten children  
 export async function paginateData(data: PaginateDataType) {
     const {Model, req, where, rules} = data;
     let {items} = data;

@@ -210,7 +210,7 @@ export function trimGetOnly(params?: string[] | null): string {
     if(params && Array.isArray(params)) {
         return params.join(' ');
     }
-    return `-${ENTRY_LANGUAGE_PROPERTY_NAME}`;
+    return params || '';
 }
 
 // send on id on create record
