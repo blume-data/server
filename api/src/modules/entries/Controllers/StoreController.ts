@@ -78,7 +78,14 @@ const memoRules: {name: string; rules: RuleType[], title: string}[] = [];
 
 const skipValidateReferences = [ENTRY_UPDATED_BY, ENTRY_CREATED_BY, ENTRY_DELETED_BY];
 
-async function fetchEntries(req: Request, res: Response, rules: RuleType[], findWhere: any, getOnlyThese: string[] | null, collection: any) {
+async function fetchEntries(req: Request, res: Response, rules: RuleType[], findWhere: any, getOnlyThese: string[] | null, collection: {
+    clientUserName: string,
+    [APPLICATION_NAME]: string,
+    _id?: string,
+    rules: string,
+    name: string,
+    titleField: string
+}) {
 
     const clientUserName = req.params[CLIENT_USER_NAME];
     const applicationName = req.params[APPLICATION_NAME];
@@ -253,9 +260,15 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
 
     if (params) {
         const {where} = params;
+        console.log('collection', collection)
 
-        // skip language property name
-        let getOnly = trimGetOnly(params.getOnly);
+        let getOnly = (() => {
+            const trimmedGetOnly = trimGetOnly(params.getOnly);
+            if(trimmedGetOnly) {
+                return trimmedGetOnly
+            }
+            else return collection.titleField;
+        })();
 
         // add any refference field if available
         if(req.body.populate && req.body.populate.length) {
@@ -273,6 +286,7 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
         const {page, perPage} = getPageAndPerPage(req);
 
         if(isValid) {
+            console.log('get only', getOnly);
             const query = CustomCollectionModel
                 .find(where, getOnly)
                 .skip(Number(page) * Number(perPage))
