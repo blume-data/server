@@ -71,8 +71,8 @@ const DataModels = (props: PropsFromRedux) => {
                     .replace(':modelName?', item.name)
                     .replace(':applicationName',applicationName)
                 }`,
-                edit: <IconButton><EditIcon /></IconButton>,
-                delete: <IconButton><DeleteIcon /></IconButton>,
+                edit: <IconButton><EditIcon color="primary" /></IconButton>,
+                delete: <IconButton><DeleteIcon color="secondary" /></IconButton>,
                 'delete-click': () => openConfirmAlert(item.name),
                 'edit-click': () => onClickEdit(item.name),
                 updatedAt: <DateCell value={updatedAt} />,

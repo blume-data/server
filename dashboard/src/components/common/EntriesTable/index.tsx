@@ -105,7 +105,7 @@ const EntriesTableComponent = (props: EntriesTableType) => {
                         style={{
                             pointerEvents: !!onEntrySelect ? 'none' : 'inherit',
                         }}
-                        to={redirectUrl}><IconButton><EditIcon /></IconButton></Link>,
+                        to={redirectUrl}><IconButton><EditIcon color="primary" /></IconButton></Link>,
                 updatedBy,
                 id
             };
@@ -215,10 +215,10 @@ const EntriesTableComponent = (props: EntriesTableType) => {
             });
         }
         newColumns.push({name: fieldTitle, value: fieldTitle});
-        newColumns.push({name: 'Edit', value: 'edit', align: 'center'});
         newColumns.push({name: 'Status', value: STATUS});
         newColumns.push({name: 'Updated At', value: ENTRY_UPDATED_AT});
         newColumns.push({name: 'Updated by', value: ENTRY_UPDATED_BY});
+        newColumns.push({name: 'Edit', value: 'edit', align: 'center'});
         setColumns(newColumns);
     }
 

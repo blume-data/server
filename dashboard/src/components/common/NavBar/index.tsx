@@ -86,7 +86,7 @@ export const NavBarComponent = (props: PropsFromRedux) => {
 
     return (
         <Grid id={'nav-bar-container'} >
-            <AppBar position="static" color={'transparent'} elevation={4}>
+            <AppBar position="static" color="primary" elevation={4}>
                 <Toolbar>
                     <IconButton
                         onClick={toggleDrawer(LEFT_ANCHOR, true)}

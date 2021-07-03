@@ -5,6 +5,7 @@ import {RouterComponent} from './Router';
 import {rootReducer, RouteAddressStateType} from './rootReducer';
 import {Provider} from "react-redux";
 import ReactDOM from "react-dom";
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import React from "react";
 import reportWebVitals from './reportWebVitals';
 
@@ -32,12 +33,28 @@ const store = createStore(
 /* eslint-enable */
 
 
+const theme = createMuiTheme({
+    palette: {
+      primary: {
+          main: '#3d44c3'
+      },
+      secondary: {
+        main: '#f50057'
+      },
+      error: {
+        main: '#f63e54',
+      },
+    }
+  });
+
 ReactDOM.render(
     <React.StrictMode>
         <Provider store={store}>
-            <BrowserRouter>
-                <RouterComponent />
-            </BrowserRouter>
+            <MuiThemeProvider theme={theme}>
+                <BrowserRouter>
+                    <RouterComponent />
+                </BrowserRouter>
+            </MuiThemeProvider>
         </Provider>
     </React.StrictMode>,
     document.getElementById('root')

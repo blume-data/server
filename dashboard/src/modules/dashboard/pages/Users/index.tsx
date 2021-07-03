@@ -1,6 +1,6 @@
 import { Grid, IconButton } from "@material-ui/core";
-import { APPLICATION_NAME, CLIENT_USER_NAME, ENV, freeUserType, SupportedUserType } from "@ranjodhbirkaur/constants";
-import React, { useEffect, useState } from "react";
+import { APPLICATION_NAME, CLIENT_USER_NAME, ENV, SupportedUserType } from "@ranjodhbirkaur/constants";
+import { useEffect, useState } from "react";
 import { connect, ConnectedProps } from "react-redux"
 import { AccordianCommon } from "../../../../components/common/AccordianCommon";
 import BasicTableMIUI from "../../../../components/common/BasicTableMIUI";
@@ -8,12 +8,12 @@ import { CommonButton } from "../../../../components/common/CommonButton";
 import { Form } from "../../../../components/common/Form";
 import { ConfigField, DROPDOWN, TEXT } from "../../../../components/common/Form/interface";
 import ModalDialog from "../../../../components/common/ModalDialog";
-import { RenderHeading } from "../../../../components/common/RenderHeading";
 import { RootState } from "../../../../rootReducer";
 import { doGetRequest, doPostRequest, doPutRequest } from "../../../../utils/baseApi";
 import { getItemFromLocalStorage } from "../../../../utils/tools";
 import EditIcon from '@material-ui/icons/Edit';
 import './style.scss';
+import { useParams } from "react-router";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 interface ModalDataType {
@@ -38,6 +38,8 @@ export const UsersComponent = (props: PropsFromRedux) => {
         data?: any;
         response?: any;
     } | null>(null);
+
+    const {type} = useParams<{type: string}>();
 
     const [urls, setUrls] = useState<{user: string; group: string}>({user: '', group: ''});
     const [modalData, setModalData] = useState<ModalDataType | null>(null);
@@ -330,14 +332,10 @@ export const UsersComponent = (props: PropsFromRedux) => {
 
     return (
         <Grid container direction='column' className='users-and-group-container'> 
-            <AccordianCommon 
-                name={'User model'}
-                children={component('user')}
-            />
-            <AccordianCommon
-                name={'User group'}
-                children={component('group')}
-            />
+        
+            {
+                type === 'group' ? component('group') : component('user')
+            }
 
             <ModalDialog
                 title={modalData?.title || 'Save'}
