@@ -5,8 +5,10 @@ import {
     LONG_STRING_FIELD_TYPE, MEDIA_FIELD_TYPE, REFERENCE_FIELD_TYPE,
     SHORT_STRING_FIElD_TYPE
 } from "@ranjodhbirkaur/constants";
-import {TIMEZONE_DATE_CONSTANT} from "../util/constants";
+import {CUSTOME_COLLECTION_MODEL_FIELD_COUNT, TIMEZONE_DATE_CONSTANT} from "../util/constants";
 import { REFFERENCE_ID_UNIQUE_NAME } from '../util/common-module';
+
+export const REFERENCE_FIELD_NAME_CUSTOME_MODEL = `${REFERENCE_FIELD_TYPE}${REFFERENCE_ID_UNIQUE_NAME}`;
 
 function generateSchema() {
 
@@ -44,14 +46,14 @@ function generateSchema() {
         updatedAt : { type: Date },
     };
 
-    function addFields(fieldName: string, type: any, size=20) {
+    function addFields(fieldName: string, type: any, size=CUSTOME_COLLECTION_MODEL_FIELD_COUNT) {
         for(let i=0; i<= size; i++) {
             schema[`${fieldName}${i}`] = type
         }
     }
     const ref = 'FileModel';
 
-    addFields(SHORT_STRING_FIElD_TYPE, String, 40);
+    addFields(SHORT_STRING_FIElD_TYPE, String, CUSTOME_COLLECTION_MODEL_FIELD_COUNT);
     addFields(INTEGER_FIElD_TYPE, Number);
     addFields(LONG_STRING_FIELD_TYPE, String);
     addFields(BOOLEAN_FIElD_TYPE, Boolean);
@@ -66,7 +68,7 @@ function generateSchema() {
 }
 
 function configureVirtual(schma: Schema) {
-    for(let i=0; i<= 40; i++) {
+    for(let i=0; i<= CUSTOME_COLLECTION_MODEL_FIELD_COUNT; i++) {
         CustomCollection.virtual(`${REFERENCE_FIELD_TYPE}${i}`, {
             ref: 'CustomCollectionModel',
             localField: `${REFERENCE_FIELD_TYPE}${REFFERENCE_ID_UNIQUE_NAME}${i}`,

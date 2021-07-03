@@ -436,7 +436,6 @@ const CreateDataModel = (props: CreateDataModelType) => {
                         required: propertyIsRequired === 'true',
                         type: fieldType,
                         description: propertyDescription,
-                        indexNumber: 1,
                         [IS_FIELD_UNIQUE]: propertyIsUnique === 'true',
 
                         default: propertyDefaultValue ? propertyDefaultValue : undefined,
