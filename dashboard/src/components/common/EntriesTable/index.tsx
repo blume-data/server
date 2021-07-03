@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, Suspense} from 'react';
 import {connect, ConnectedProps} from "react-redux";
 import {
     APPLICATION_NAME,
@@ -366,4 +366,12 @@ const mapState = (state: RootState) => {
 };
 
 const connector = connect(mapState);
-export const EntriesTable = connector(EntriesTableComponent);
+const EntriesTableCode = connector(EntriesTableComponent);
+
+export const EntriesTable = (props: EntriesTableType) => {
+    return (
+        <Suspense fallback="">
+            <EntriesTableCode {...props}></EntriesTableCode>
+        </Suspense>
+    );
+}
