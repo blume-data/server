@@ -366,12 +366,4 @@ const mapState = (state: RootState) => {
 };
 
 const connector = connect(mapState);
-const EntriesTableCode = connector(EntriesTableComponent);
-
-export const EntriesTable = (props: EntriesTableType) => {
-    return (
-        <Suspense fallback="">
-            <EntriesTableCode {...props}></EntriesTableCode>
-        </Suspense>
-    );
-}
+export const EntriesTable = connector(EntriesTableComponent);
