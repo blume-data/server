@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useEffect, Suspense} from "react";
 import AccordionSummary from "@material-ui/core/AccordionSummary";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import Typography from "@material-ui/core/Typography";
@@ -13,7 +13,7 @@ interface AccordianCommonProps {
     className?: string;
     shouldExpand?: boolean;
 }
-export const AccordianCommon = (props: AccordianCommonProps) => {
+const AccordianCommonCode = (props: AccordianCommonProps) => {
     const {children, name, shouldExpand=false, className=''} = props;
     const id = randomString();
 
@@ -47,3 +47,12 @@ export const AccordianCommon = (props: AccordianCommonProps) => {
         </Accordion>
     );
 };
+
+export const AccordianCommon = (props: AccordianCommonProps) => {
+    return (
+        <Suspense fallback="">
+            <AccordianCommon {...props} />
+        </Suspense>
+    );
+
+}

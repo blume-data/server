@@ -51,7 +51,7 @@ export interface AlertType {
     severity?: 'success' | 'error' | 'info'
 }
 
-export const Form = (props: FormType) => {
+const FormCode = (props: FormType) => {
 
     const [isAlertOpen, setIsAlertOpen] = React.useState<boolean>(false);
     const [alert, setAlertMessage] = React.useState<AlertType>({message: ''});
@@ -634,3 +634,11 @@ export const Form = (props: FormType) => {
         </Grid>
     );
 };
+
+export const Form = (props: FormType) => {
+    return (
+        <Suspense fallback="">
+            <FormCode {...props}/>
+        </Suspense>
+    );
+}

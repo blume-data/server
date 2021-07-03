@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Suspense} from 'react';
 import { createStyles, Theme, withStyles, WithStyles } from '@material-ui/core/styles';
 import MuiDialogTitle from '@material-ui/core/DialogTitle';
 import MuiDialogContent from '@material-ui/core/DialogContent';
@@ -6,7 +6,7 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
 import './style.scss';
-import { Suspense } from 'react';
+
 const Dialog = React.lazy(() => import('@material-ui/core/Dialog'));
 
 const styles = (theme: Theme) => createStyles({
@@ -56,7 +56,7 @@ interface ModalDialogType {
     className?: string;
 }
 
-export default function ModalDialog(props: ModalDialogType) {
+function ModalDialogCode(props: ModalDialogType) {
 
     const {isOpen, children, handleClose, title, className} = props;
 
@@ -70,6 +70,14 @@ export default function ModalDialog(props: ModalDialogType) {
                 {children}
             </DialogContent>
         </Dialog>
+        </Suspense>
+    );
+}
+
+export default function ModalDialog(props: ModalDialogType) {
+    return (
+        <Suspense fallback="">
+            <ModalDialogCode {...props} />
         </Suspense>
     );
 }
