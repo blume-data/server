@@ -25,7 +25,7 @@ import NoteIcon from '@material-ui/icons/Note';
 import WidgetsIcon from '@material-ui/icons/Widgets';
 import {APPLICATION_NAME, ENV} from "@ranjodhbirkaur/constants";
 import {setEnv} from '../../../../modules/authentication/pages/Auth/actions';
-import { PersonAdd } from "@material-ui/icons";
+import {PersonAdd} from "@material-ui/icons";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
@@ -78,46 +78,52 @@ const LeftDrawerListComponent = (props: PropsFromRedux) => {
                 {
                     applicationName
                     ? <div>
-                        <ListItem button>
-                            <Link className={'link-item-link'} to={EnvUrl}>
-                                <ListItemIcon><AdjustIcon /></ListItemIcon>
-                                <ListItemText
-                                    title={`selected Env: ${selectedEnv}`}
-                                    className='env-title'
-                                    primary={<div>Env: <b>{selectedEnv}</b></div>}
-                                  />
-                            </Link>
-                        </ListItem>
-                        <ListItem button>
-                            <Link className={'link-item-link'} to={dashboardApplicationNamesUrl}>
+                        
+                        <Link className={'link-item-link'} to={EnvUrl}>
+                            <ListItem button>
+                            <ListItemIcon><AdjustIcon /></ListItemIcon>
+                            <ListItemText
+                                title={`selected Env: ${selectedEnv}`}
+                                className='env-title'
+                                primary={<div>Env: <b>{selectedEnv}</b></div>}
+                                />
+                            </ListItem>
+                        </Link>
+                        
+                        <Link className={'link-item-link'} to={dashboardApplicationNamesUrl}>
+                                <ListItem button>
                                 <ListItemIcon><LanguageIcon /></ListItemIcon>
                                 <ListItemText primary={'Languages'} />
-                            </Link>
-                        </ListItem>
-                        <ListItem button>
-                            <Link className={'link-item-link'} to={dataModelsUrl}>
-                                <ListItemIcon><WidgetsIcon /></ListItemIcon>
-                                <ListItemText primary={'Models'} />
-                            </Link>
-                        </ListItem>
-                        <ListItem button>
-                            <Link className={'link-item-link'} to={dataEntriesUrl}>
+                                </ListItem>
+                        </Link>
+                        
+                        <Link className={'link-item-link'} to={dataModelsUrl}>
+                            <ListItem button>
+                            <ListItemIcon><WidgetsIcon /></ListItemIcon>
+                            <ListItemText primary={'Models'} />
+                            </ListItem>
+                        </Link>
+                        
+                        <Link className={'link-item-link'} to={dataEntriesUrl}>
+                            <ListItem button>
                                 <ListItemIcon><NoteIcon /></ListItemIcon>
                                 <ListItemText primary={'Entries'} />
-                            </Link>
-                        </ListItem>
-                        <ListItem button>
-                            <Link className={'link-item-link'} to={assetsUrl}>
+                            </ListItem>
+                        </Link>
+                        
+                        <Link className={'link-item-link'} to={assetsUrl}>
+                            <ListItem button>
                                 <ListItemIcon><PhotoAlbumIcon /></ListItemIcon>
                                 <ListItemText primary={'Assets'} />
-                            </Link>
-                        </ListItem>
-                        <ListItem button>
-                            <Link className={'link-item-link'} to={UserUrl}>
+                            </ListItem>
+                        </Link>
+                        
+                        <Link className={'link-item-link'} to={UserUrl}>
+                            <ListItem button>
                                 <ListItemIcon><PersonAdd /></ListItemIcon>
                                 <ListItemText primary={'Users'} />
-                            </Link>
-                        </ListItem>
+                            </ListItem>
+                        </Link>
                       </div>
                     : null
                 }
