@@ -51,7 +51,7 @@ export const RouterComponent = () => {
                 <Switch>
                     <Route exact path={APP_ROOT_URL} component={App} />
                     <Route exact path={`${authUrl}/:step`} component={Auth} />
-                    {/*Private Routes*/}
+                    
                     <Route exact path={dashboardHomeUrl} component={PrivateRoute(Home)}/>
                     <Route exact path={dashboardApplicationNamesUrl} component={PrivateRoute(ApplicationNames)}/>
                     <Route exact path={dashboardApplicationNameUrl} component={PrivateRoute(ApplicationName)}/>

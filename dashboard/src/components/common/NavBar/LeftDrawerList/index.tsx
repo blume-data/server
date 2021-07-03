@@ -31,7 +31,7 @@ type PropsFromRedux = ConnectedProps<typeof connector>;
 
 const LeftDrawerListComponent = (props: PropsFromRedux) => {
 
-    const {applicationName, applicationNames, selectedEnv} = props;
+    const {applicationName, selectedEnv} = props;
 
     const dataModelsUrl = `${dashboardDataModelsUrl
         .replace(':applicationName',applicationName)
@@ -47,17 +47,14 @@ const LeftDrawerListComponent = (props: PropsFromRedux) => {
     const UserUrl = `${dashbaordUserUrl
         .replace(`:${APPLICATION_NAME}`, applicationName)
         .replace(`:${ENV}`, selectedEnv)
-}`
+        .replace(`:type?`, '')
+    }`;
 
-    const envs = applicationNames.find(name => {
-        if(name.name === applicationName) {
-            return true;
-        }
-    });
-
-    function onSelectEnv(name: string) {
-        props.setEnv(name);
-    }
+    const GroupUserUrl = `${dashbaordUserUrl
+        .replace(`:${APPLICATION_NAME}`, applicationName)
+        .replace(`:${ENV}`, selectedEnv)
+        .replace(`:type?`, 'group')
+    }`;
 
     return (
         <Grid className={'left-drawer-list'}>
@@ -124,6 +121,14 @@ const LeftDrawerListComponent = (props: PropsFromRedux) => {
                                 <ListItemText primary={'Users'} />
                             </ListItem>
                         </Link>
+
+                        <Link className={'link-item-link'} to={GroupUserUrl}>
+                            <ListItem button>
+                                <ListItemIcon><PersonAdd /></ListItemIcon>
+                                <ListItemText primary={'User Group'} />
+                            </ListItem>
+                        </Link>
+
                       </div>
                     : null
                 }
