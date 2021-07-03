@@ -5,7 +5,7 @@ import Typography from "@material-ui/core/Typography";
 import AccordionDetails from "@material-ui/core/AccordionDetails";
 import {randomString} from "../../../utils/tools";
 import './index.scss';
-import Accordion from "@material-ui/core/Accordion"
+import Accordion from "@material-ui/core/Accordion";
 
 interface AccordianCommonProps {
     children: any;

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { lazy, Suspense } from "react";
 import App from "./components/App";
 import RouteNotFound from "./components/RouteNotFound";
 import {Auth, AUTH_ROOT, SIGN_IN} from "./modules/authentication/pages/Auth";
@@ -20,18 +20,18 @@ import {
     dashboardCreateDataModelsUrl,
     assetsUrl, APP_ROOT_URL, dashboardEnvUrl, dashbaordUserUrl
 } from "./utils/urls";
-import {Assets} from "./modules/assets";
 import Layout from "./components/common/Layout";
-import Home from "./modules/dashboard/pages/home";
 
-import CreateDataModel from "./modules/dashboard/pages/ApplicationName/DataModels/CreateDataModel";
-import CreateEntry from "./modules/dashboard/pages/DateEntries/CreateEntry";
-import DataModels from "./modules/dashboard/pages/ApplicationName/DataModels";
-import ApplicationName from "./modules/dashboard/pages/ApplicationName";
-import ApplicationNames from "./modules/dashboard/pages/applicationNames";
-import {DataEntries} from './modules/dashboard/pages/DateEntries';
-import Envs from "./modules/dashboard/pages/Envs";
-import { Users } from "./modules/dashboard/pages/Users";
+const Assets = lazy(() => import('./modules/assets').then(module => ({ default: module.Assets })));
+const DataEntries = lazy(() => import('./modules/dashboard/pages/DateEntries').then(module => ({ default: module.DataEntries })));
+const Users = lazy(() => import('./modules/dashboard/pages/Users').then(module => ({ default: module.Users })));
+const Envs = lazy(() => import('./modules/dashboard/pages/Envs'));
+const ApplicationNames = lazy(() => import('./modules/dashboard/pages/applicationNames'));
+const ApplicationName = lazy(() => import('./modules/dashboard/pages/ApplicationName'));
+const DataModels = lazy(() => import('./modules/dashboard/pages/ApplicationName/DataModels'));
+const Home = lazy(() => import('./modules/dashboard/pages/home'));
+const CreateEntry = lazy(() => import('./modules/dashboard/pages/DateEntries/CreateEntry'));
+const CreateDataModel = lazy(() => import('./modules/dashboard/pages/ApplicationName/DataModels/CreateDataModel'));
 
 function PrivateRoute(Component: any) {
     return () => {
@@ -40,7 +40,9 @@ function PrivateRoute(Component: any) {
 
             return <Redirect to={`${AUTH_ROOT}/${SIGN_IN}`} />
         }
-        return <Component />
+        return <Suspense fallback="">
+            <Component />
+        </Suspense>
     }
 }
 

@@ -31,7 +31,7 @@ import {
     APPLICATION_NAME,
     DATE_AND_TIME_FIElD_TYPE,
     RuleType,
-    FIELD_CUSTOM_ERROR_MSG_MATCH_CUSTOM_PATTERN, SINGLE_ASSETS_TYPE,
+    FIELD_CUSTOM_ERROR_MSG_MATCH_CUSTOM_PATTERN,
 } from "@ranjodhbirkaur/constants";
 import TextFieldsIcon from '@material-ui/icons/TextFields';
 import './style.scss';
@@ -47,7 +47,6 @@ import PermMediaIcon from '@material-ui/icons/PermMedia';
 import LinkIcon from '@material-ui/icons/Link';
 import EditIcon from '@material-ui/icons/Edit';
 import AccessTimeIcon from '@material-ui/icons/AccessTime';
-import ButtonGroup from "@material-ui/core/ButtonGroup";
 import {RootState} from "../../../../../../rootReducer";
 import {connect, ConnectedProps} from "react-redux";
 import {doGetRequest, doPostRequest, doPutRequest} from "../../../../../../utils/baseApi";
@@ -641,7 +640,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                             <RenderHeading
                                 type={'primary'}
                                 className={'model-display-name'}
-                                value={contentModelData.displayName ? contentModelData.displayName : 'untitled model'}
+                                value={`Model name: ${contentModelData.displayName ? contentModelData.displayName : 'untitled model'}`}
                             />
                             {
                                 contentModelData.description ?
@@ -708,12 +707,12 @@ const CreateDataModel = (props: CreateDataModelType) => {
 
     function renderPropertiesSection() {
 
-        const tableRows = [
+        const tableRows: any = [
             {name: 'Name', value: DISPLAY_NAME},
             {name: 'Description', value: DESCRIPTION},
             {name: 'Type', value: 'type'},
-            {name: 'Edit', value: 'edit', onClick: true},
-            {name: 'Delete', value: 'delete', onClick: true}
+            {name: 'Edit', value: 'edit', onClick: true, align: 'center'},
+            {name: 'Delete', value: 'delete', onClick: true, align: 'center'}
         ];
 
         function openConfirmAlert(property: RuleType) {
@@ -802,8 +801,8 @@ const CreateDataModel = (props: CreateDataModelType) => {
         const rows = properties && properties.map(property => {
             return {
                 ...property,
-                edit: <IconButton><EditIcon /></IconButton>,
-                delete: <IconButton><DeleteIcon /></IconButton>,
+                edit: <IconButton><EditIcon color="primary" /></IconButton>,
+                delete: <IconButton><DeleteIcon color="secondary" /></IconButton>,
                 'delete-click': () => openConfirmAlert(property),
                 'edit-click': () => onClickEdit(property),
             }
@@ -872,7 +871,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 type={"main"}
                 value={`${fieldEditMode || contentModelData.id ? 'Edit' : 'Create'} Model`}
             />
-            <Paper className={'model-name-container'}>
+            <Paper elevation={6} className={'model-name-container'}>
                 {renderNameSection()}
             </Paper>
             <Grid container className="create-model-container">
@@ -935,52 +934,16 @@ const CreateDataModel = (props: CreateDataModelType) => {
                             ? null
                             : renderAddFieldsAndSaveModelButtonGroup()
                     }
-
-                    {
-                        settingFieldName
-                            ? <Paper>
-                                <Grid container direction={'column'} className={'set-fields-property-container'}>
-                                    <Grid item className={'cancel-button-container'}>
-                                        <CommonButton
-                                            variant={"outlined"}
-                                            name={'Cancel'}
-                                            color={"primary"}
-                                            onClick={closeAddFieldForm}/>
-                                    </Grid>
-                                    <Grid item>
-                                        <Form
-                                            groups={
-                                                [
-                                                    FIELD_NAME_GROUP,
-                                                    FIELD_LIMIT_CHARACTER_COUNT_GROUP,
-                                                    FIELD_LIMIT_VALUE_GROUP,
-                                                    FIELD_ALLOW_ONLY_SPECIFIC_VALUES_GROUP,
-                                                    FIELD_DEFAULT_VALUE_GROUP,
-                                                    FIELD_MATCH_SPECIFIC_PATTERN_GROUP,
-                                                    FIELD_PROHIBIT_SPECIFIC_PATTERN_GROUP,
-                                                    FIELD_REFERENCE_MODEL_GROUP
-                                                ]
-                                            }
-                                            response={response}
-                                            submitButtonName={'Save field'}
-                                            onSubmit={onSubmitFieldProperty}
-                                            fields={propertyNameFields()}
-                                            className={'field-property-form'}
-                                        />
-                                    </Grid>
-                                </Grid>
-                            </Paper>
-                            : null
-                    }
                 </Grid>
             </Grid>
             </Grid>
+            {/* MODAL SETTING CONTAINER */}
             <Grid item className='right-container'>
-            <RenderHeading
-                className={'main-heading'}
-                type={"main"}
-                value={`Settings`}
-            />
+                <RenderHeading
+                    className={'main-heading'}
+                    type={"main"}
+                    value={`Settings`}
+                />
                 <ModelSetting 
                     data={modelSetting}
                 />
@@ -1021,6 +984,44 @@ const CreateDataModel = (props: CreateDataModelType) => {
                         showClearButton={true}
                         onSubmit={onSubmitCreateContentModel}
                     />
+                }
+            />
+
+            <ModalDialog
+                title={`Field`}
+                isOpen={!!settingFieldName}
+                handleClose={closeAddFieldForm}
+                children={
+                    <Grid container direction={'column'} className={'set-fields-property-container'}>
+                        <Grid item style={{display: 'none'}} className={'cancel-button-container'}>
+                            <CommonButton
+                                variant={"outlined"}
+                                name={'Cancel'}
+                                color={"primary"}
+                                onClick={closeAddFieldForm}/>
+                        </Grid>
+                        <Grid item>
+                            <Form
+                                groups={
+                                    [
+                                        FIELD_NAME_GROUP,
+                                        FIELD_LIMIT_CHARACTER_COUNT_GROUP,
+                                        FIELD_LIMIT_VALUE_GROUP,
+                                        FIELD_ALLOW_ONLY_SPECIFIC_VALUES_GROUP,
+                                        FIELD_DEFAULT_VALUE_GROUP,
+                                        FIELD_MATCH_SPECIFIC_PATTERN_GROUP,
+                                        FIELD_PROHIBIT_SPECIFIC_PATTERN_GROUP,
+                                        FIELD_REFERENCE_MODEL_GROUP
+                                    ]
+                                }
+                                response={response}
+                                submitButtonName={'Save field'}
+                                onSubmit={onSubmitFieldProperty}
+                                fields={propertyNameFields()}
+                                className={'field-property-form'}
+                            />
+                        </Grid>
+                    </Grid>
                 }
             />
 
