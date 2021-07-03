@@ -15,8 +15,8 @@ export async function CreateEnv(req: Request, res: Response) {
     const id = req.body.id;
 
 
-    const exist = await EnvModel.findOne({name: trimCharactersAndNumbers(name), clientUserName, applicationName}, '_id');
-    if(exist) {
+    const exist = await EnvModel.findOne({name: trimCharactersAndNumbers(name), clientUserName, applicationName}, ['_id', 'name']);
+    if(exist && name !== exist.name) {
         return sendSingleError(res, 'Env with same name already exist', 'name');
     }
     else {

@@ -212,7 +212,7 @@ export const UsersComponent = (props: PropsFromRedux) => {
             return {
                 ...user,
                 edit: <IconButton onClick={() => onClickEdit(user)}>
-                        <EditIcon />
+                        <EditIcon color="primary" />
                     </IconButton>
 
             }
@@ -222,7 +222,7 @@ export const UsersComponent = (props: PropsFromRedux) => {
             return {
                 ...user,
                 edit: <IconButton onClick={() => onClickEdit(user)}>
-                        <EditIcon />
+                        <EditIcon color="primary" />
                     </IconButton>
 
             }
