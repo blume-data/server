@@ -13,6 +13,7 @@ interface AccordianCommonProps {
     className?: string;
     shouldExpand?: boolean;
 }
+
 export const AccordianCommon = (props: AccordianCommonProps) => {
     const {children, name, shouldExpand=false, className=''} = props;
     const id = randomString();
