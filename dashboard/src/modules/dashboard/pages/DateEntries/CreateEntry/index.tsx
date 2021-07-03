@@ -94,7 +94,7 @@ const CreateEntry = (props: CreateEntryType) => {
             const response = await fetchModelEntries({
                 env, language, applicationName, modelName: ModelName, GetEntriesUrl, where: {
                     id: entryId ? entryId : id ? id : undefined
-                }
+                }, populate: false
             });
             
             if(response && response.data && response.data.length) {

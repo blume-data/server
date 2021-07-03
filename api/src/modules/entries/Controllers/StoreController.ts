@@ -259,15 +259,21 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
     }
 
     if (params) {
+
         const {where} = params;
-        console.log('collection', collection)
 
         let getOnly = (() => {
             const trimmedGetOnly = trimGetOnly(params.getOnly);
-            if(trimmedGetOnly) {
+            if(params.getOnly) {
                 return trimmedGetOnly
             }
-            else return collection.titleField;
+            else {
+                let get = '';
+                rules.forEach(rule => {
+                    get+= `${rule.type}${rule.indexNumber} `;
+                });
+                return get;
+            }
         })();
 
         // add any refference field if available

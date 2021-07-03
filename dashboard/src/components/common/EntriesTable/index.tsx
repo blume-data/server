@@ -162,10 +162,10 @@ const EntriesTableComponent = (props: EntriesTableType) => {
     }, [selectedEntries, response]);
 
     // Fetch records in the model
-    async function getItems() {
+    async function getItems(fieldTitleParam?: string) {
         if(GetEntriesUrl && modelName && applicationName) {
             setIsLoading(true);
-            const getOnly = [ENTRY_UPDATED_AT, ENTRY_UPDATED_BY, STATUS, fieldTitle, 'id'];
+            const getOnly = [ENTRY_UPDATED_AT, ENTRY_UPDATED_BY, STATUS, fieldTitleParam ? fieldTitleParam : fieldTitle, 'id'];
             if(where && typeof where === 'object' && Object.keys(where).length) {
                 Object.keys(where).forEach(filter => {
                     if(!getOnly.includes(filter)) {
@@ -229,10 +229,11 @@ const EntriesTableComponent = (props: EntriesTableType) => {
                 GetCollectionNamesUrl, applicationName, modelName: modelName, language, env, getOnly:"rules,displayName,id,titleField"
             });
             if(response && !response.errors && response.length) {
+                setRules(JSON.parse(response[0].rules));
                 if(response[0][TITLE_FIELD]) {
                     setFieldTitle(response[0][TITLE_FIELD]);
+                    getItems(response[0][TITLE_FIELD]);
                 }
-                setRules(JSON.parse(response[0].rules));
             }
             setIsLoading(false);
         }
@@ -253,14 +254,7 @@ const EntriesTableComponent = (props: EntriesTableType) => {
         if(modelName) {
             getItems();
         }
-    }, [modelName, fieldTitle, page]);
-
-    // where the where filters change fetch the entries
-    useEffect(() => {
-        if(modelName) {
-            getItems();
-        }
-    }, [where, match]);
+    }, [page, where, match]);
 
     // on all selected
     function selectAll() {
@@ -299,8 +293,6 @@ const EntriesTableComponent = (props: EntriesTableType) => {
             getItems();
         }
     }
-
-    console.log('Model Name', modelName)
 
     return (
         <Grid

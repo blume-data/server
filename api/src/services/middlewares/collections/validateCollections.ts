@@ -27,6 +27,7 @@ import {
     DATE_AND_TIME_FIElD_TYPE, DATE_FIElD_TYPE, BOOLEAN_FIElD_TYPE, LONG_STRING_FIELD_TYPE, LOCATION_FIELD_TYPE
 } from "@ranjodhbirkaur/constants";
 import {isValidRegEx} from "../../../util/methods";
+import { getCollection } from "../../../modules/entries/Controllers/StoreController";
 
 function hasSIDType(type: string) {
     const SID = [INTEGER_FIElD_TYPE, SHORT_STRING_FIElD_TYPE];
@@ -59,7 +60,6 @@ export async function validateCollections(req: Request, res: Response, next: Nex
 
     // Validate Rules
     if (reqBody.rules && typeof reqBody.rules === 'object' && reqBody.rules.length) {
-
         reqBody.rules.forEach((rule: RuleType) => {
 
             let parsedRule: RuleType = {
@@ -279,146 +279,148 @@ export async function validateCollections(req: Request, res: Response, next: Nex
             }
 
             // set the comparable searchable or dateable index number
-            switch (rule.type) {
-                case SHORT_STRING_FIElD_TYPE: {
-                    if(shortStringCount < MAX_NUMBER_FIELD_TYPES) {
-                        parsedRule.indexNumber = shortStringCount + 1;
-                        shortStringCount++;
+            if(reqMethod === 'POST') {
+                switch (rule.type) {
+                    case SHORT_STRING_FIElD_TYPE: {
+                        if(shortStringCount < MAX_NUMBER_FIELD_TYPES) {
+                            parsedRule.indexNumber = shortStringCount;
+                            shortStringCount++;
+                        }
+                        else {
+                            isValidBody = false;
+                            inValidMessage.push({
+                                message: `Cannot add more than ${MAX_NUMBER_FIELD_TYPES} Text fields`,
+                                field: 'rules'
+                            });
+                        }
+                        break;
                     }
-                    else {
-                        isValidBody = false;
-                        inValidMessage.push({
-                            message: `Cannot add more than ${MAX_NUMBER_FIELD_TYPES} Text fields`,
-                            field: 'rules'
-                        });
+                    case INTEGER_FIElD_TYPE: {
+                        if(integerCount < MAX_NUMBER_FIELD_TYPES) {
+                            parsedRule.indexNumber = integerCount;
+                            integerCount++;
+                        }
+                        else {
+                            isValidBody = false;
+                            inValidMessage.push({
+                                message: `Cannot add more than ${MAX_NUMBER_FIELD_TYPES} comparable number fields`,
+                                field: 'rules'
+                            });
+                        }
+                        break;
                     }
-                    break;
-                }
-                case INTEGER_FIElD_TYPE: {
-                    if(integerCount < MAX_NUMBER_FIELD_TYPES) {
-                        parsedRule.indexNumber = integerCount + 1;
-                        integerCount++;
+                    case DATE_AND_TIME_FIElD_TYPE: {
+                        if(dateAndTimeCount < MAX_NUMBER_FIELD_TYPES) {
+                            parsedRule.indexNumber = dateAndTimeCount;
+                            dateAndTimeCount++;
+                        }
+                        else {
+                            isValidBody = false;
+                            inValidMessage.push({
+                                message: `Cannot add more than ${MAX_NUMBER_FIELD_TYPES} dateable fields`,
+                                field: 'rules'
+                            });
+                        }
+                        break;
                     }
-                    else {
-                        isValidBody = false;
-                        inValidMessage.push({
-                            message: `Cannot add more than ${MAX_NUMBER_FIELD_TYPES} comparable number fields`,
-                            field: 'rules'
-                        });
+                    case DATE_FIElD_TYPE: {
+                        if(dateCount < MAX_NUMBER_FIELD_TYPES) {
+                            parsedRule.indexNumber = dateCount;
+                            dateCount++;
+                        }
+                        else {
+                            isValidBody = false;
+                            inValidMessage.push({
+                                message: `Cannot add more than ${MAX_NUMBER_FIELD_TYPES} dateable fields`,
+                                field: 'rules'
+                            });
+                        }
+                        break;
                     }
-                    break;
-                }
-                case DATE_AND_TIME_FIElD_TYPE: {
-                    if(dateAndTimeCount < MAX_NUMBER_FIELD_TYPES) {
-                        parsedRule.indexNumber = dateAndTimeCount + 1;
-                        dateAndTimeCount++;
+                    case BOOLEAN_FIElD_TYPE: {
+                        if(booleanCount < MAX_NUMBER_FIELD_TYPES) {
+                            parsedRule.indexNumber = booleanCount;
+                            booleanCount++;
+                        }
+                        else {
+                            isValidBody = false;
+                            inValidMessage.push({
+                                message: `Cannot add more than ${MAX_NUMBER_FIELD_TYPES} dateable fields`,
+                                field: 'rules'
+                            });
+                        }
+                        break;
                     }
-                    else {
-                        isValidBody = false;
-                        inValidMessage.push({
-                            message: `Cannot add more than ${MAX_NUMBER_FIELD_TYPES} dateable fields`,
-                            field: 'rules'
-                        });
+                    case JSON_FIELD_TYPE: {
+                        if(jsonCount < MAX_NUMBER_FIELD_TYPES) {
+                            parsedRule.indexNumber = jsonCount;
+                            jsonCount++;
+                        }
+                        else {
+                            isValidBody = false;
+                            inValidMessage.push({
+                                message: `Cannot add more than ${MAX_NUMBER_FIELD_TYPES} dateable fields`,
+                                field: 'rules'
+                            });
+                        }
+                        break;
                     }
-                    break;
-                }
-                case DATE_FIElD_TYPE: {
-                    if(dateCount < MAX_NUMBER_FIELD_TYPES) {
-                        parsedRule.indexNumber = dateCount + 1;
-                        dateCount++;
+                    case REFERENCE_FIELD_TYPE: {
+                        if(referenceCount < MAX_NUMBER_FIELD_TYPES) {
+                            parsedRule.indexNumber = referenceCount;
+                            referenceCount++;
+                        }
+                        else {
+                            isValidBody = false;
+                            inValidMessage.push({
+                                message: `Cannot add more than ${MAX_NUMBER_FIELD_TYPES} dateable fields`,
+                                field: 'rules'
+                            });
+                        }
+                        break;
                     }
-                    else {
-                        isValidBody = false;
-                        inValidMessage.push({
-                            message: `Cannot add more than ${MAX_NUMBER_FIELD_TYPES} dateable fields`,
-                            field: 'rules'
-                        });
+                    case LONG_STRING_FIELD_TYPE: {
+                        if(longStringCount < MAX_NUMBER_FIELD_TYPES) {
+                            parsedRule.indexNumber = longStringCount;
+                            longStringCount++;
+                        }
+                        else {
+                            isValidBody = false;
+                            inValidMessage.push({
+                                message: `Cannot add more than ${MAX_NUMBER_FIELD_TYPES} dateable fields`,
+                                field: 'rules'
+                            });
+                        }
+                        break;
                     }
-                    break;
-                }
-                case BOOLEAN_FIElD_TYPE: {
-                    if(booleanCount < MAX_NUMBER_FIELD_TYPES) {
-                        parsedRule.indexNumber = booleanCount + 1;
-                        booleanCount++;
+                    case MEDIA_FIELD_TYPE: {
+                        if(mediaCount < MAX_NUMBER_FIELD_TYPES) {
+                            parsedRule.indexNumber = mediaCount;
+                            mediaCount++;
+                        }
+                        else {
+                            isValidBody = false;
+                            inValidMessage.push({
+                                message: `Cannot add more than ${MAX_NUMBER_FIELD_TYPES} dateable fields`,
+                                field: 'rules'
+                            });
+                        }
+                        break;
                     }
-                    else {
-                        isValidBody = false;
-                        inValidMessage.push({
-                            message: `Cannot add more than ${MAX_NUMBER_FIELD_TYPES} dateable fields`,
-                            field: 'rules'
-                        });
+                    case LOCATION_FIELD_TYPE: {
+                        if(locationCount < MAX_NUMBER_FIELD_TYPES) {
+                            parsedRule.indexNumber = locationCount;
+                            locationCount++;
+                        }
+                        else {
+                            isValidBody = false;
+                            inValidMessage.push({
+                                message: `Cannot add more than ${MAX_NUMBER_FIELD_TYPES} dateable fields`,
+                                field: 'rules'
+                            });
+                        }
+                        break;
                     }
-                    break;
-                }
-                case JSON_FIELD_TYPE: {
-                    if(jsonCount < MAX_NUMBER_FIELD_TYPES) {
-                        parsedRule.indexNumber = jsonCount + 1;
-                        jsonCount++;
-                    }
-                    else {
-                        isValidBody = false;
-                        inValidMessage.push({
-                            message: `Cannot add more than ${MAX_NUMBER_FIELD_TYPES} dateable fields`,
-                            field: 'rules'
-                        });
-                    }
-                    break;
-                }
-                case REFERENCE_FIELD_TYPE: {
-                    if(referenceCount < MAX_NUMBER_FIELD_TYPES) {
-                        parsedRule.indexNumber = referenceCount + 1;
-                        referenceCount++;
-                    }
-                    else {
-                        isValidBody = false;
-                        inValidMessage.push({
-                            message: `Cannot add more than ${MAX_NUMBER_FIELD_TYPES} dateable fields`,
-                            field: 'rules'
-                        });
-                    }
-                    break;
-                }
-                case LONG_STRING_FIELD_TYPE: {
-                    if(longStringCount < MAX_NUMBER_FIELD_TYPES) {
-                        parsedRule.indexNumber = longStringCount + 1;
-                        longStringCount++;
-                    }
-                    else {
-                        isValidBody = false;
-                        inValidMessage.push({
-                            message: `Cannot add more than ${MAX_NUMBER_FIELD_TYPES} dateable fields`,
-                            field: 'rules'
-                        });
-                    }
-                    break;
-                }
-                case MEDIA_FIELD_TYPE: {
-                    if(mediaCount < MAX_NUMBER_FIELD_TYPES) {
-                        parsedRule.indexNumber = mediaCount + 1;
-                        mediaCount++;
-                    }
-                    else {
-                        isValidBody = false;
-                        inValidMessage.push({
-                            message: `Cannot add more than ${MAX_NUMBER_FIELD_TYPES} dateable fields`,
-                            field: 'rules'
-                        });
-                    }
-                    break;
-                }
-                case LOCATION_FIELD_TYPE: {
-                    if(locationCount < MAX_NUMBER_FIELD_TYPES) {
-                        parsedRule.indexNumber = locationCount + 1;
-                        locationCount++;
-                    }
-                    else {
-                        isValidBody = false;
-                        inValidMessage.push({
-                            message: `Cannot add more than ${MAX_NUMBER_FIELD_TYPES} dateable fields`,
-                            field: 'rules'
-                        });
-                    }
-                    break;
                 }
             }
 
@@ -455,7 +457,7 @@ export async function validateCollections(req: Request, res: Response, next: Nex
 
     // validate title field
     if(reqBody.titleField) {
-        const titleFieldExist = parsedRules.find(rule => rule.name === reqBody.titleField);
+        const titleFieldExist = reqBody.rules.find((rule: RuleType) => rule.name === reqBody.titleField);
         if(!titleFieldExist) {
             isValidBody = false;
             inValidMessage.push({
