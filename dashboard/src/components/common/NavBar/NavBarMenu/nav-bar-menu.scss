@@ -8,6 +8,7 @@
     button {
       max-width: 300px;
       color: $white;
+      margin-top: 4px;
       span {
         @include trim(1);
       }

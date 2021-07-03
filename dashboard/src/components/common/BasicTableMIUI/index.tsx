@@ -9,6 +9,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import {Link} from "react-router-dom";
 import {Checkbox} from "@material-ui/core";
+import './styles.scss';
 
 const useStyles = makeStyles({
     table: {
@@ -64,7 +65,7 @@ export default function BasicTableMIUI(props: BasicTableMIUIProps) {
     }
 
     return (
-        <TableContainer component={Paper}>
+        <TableContainer component={Paper} className='basic-table-container'>
             <Table className={classes.table} aria-label="simple table">
                 <TableHead>
                     <TableRow>
