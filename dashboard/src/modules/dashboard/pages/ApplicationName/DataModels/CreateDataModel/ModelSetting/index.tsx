@@ -5,16 +5,19 @@ import { CommonCheckBoxField } from '../../../../../../../components/common/Form
 import { doGetRequest, doPostRequest, doPutRequest } from '../../../../../../../utils/baseApi';
 import { AUTH_ROUTES, DATA_ROUTES } from '../../../../../../../utils/constants';
 import { getItemFromLocalStorage, getUrlSearchParams } from '../../../../../../../utils/tools';
-import {Avatar, Chip} from "@material-ui/core";
+import {Chip} from "@material-ui/core";
 import CloseIcon from '@material-ui/icons/Close';
 import DoneIcon from '@material-ui/icons/Done';
 import GroupIcon from '@material-ui/icons/Group';
-import { RenderHeading } from '../../../../../../../components/common/RenderHeading';
+import { AccordianCommon } from '../../../../../../../components/common/AccordianCommon';
+import './style.scss';
+import { TextBox } from '../../../../../../../components/common/Form/TextBox';
 
 
 export interface ModelSettingType {
     id: string,
     isPublic: boolean;
+    supportedDomains: string[];
     restrictedUserGroups: {id: string, name: string, description: string}[];
     permittedUserGroups: {id: string, name: string, description: string}[];
 }
@@ -37,9 +40,13 @@ export const ModelSetting = (props: SettingType) => {
     const [setting, setSetting] = useState<ModelSettingType>({
         id: '',
         isPublic: false,
+        supportedDomains: [],
         restrictedUserGroups: [],
         permittedUserGroups: []
     });
+
+    // supported domain
+    const [value, setValue] = useState('');
 
     async function createModelSetting() {
 
@@ -58,12 +65,10 @@ export const ModelSetting = (props: SettingType) => {
     }
 
     function updateSetting(type: 'isPublic' | 'restrictedUserGroups' | 'permittedUserGroups', value: any) {
-        console.warn('value', value)
         setSetting({
             ...setting,
             [type]: value
         });
-        requestUpdateSetting();
     }
 
     async function requestUpdateSetting() {
@@ -75,7 +80,9 @@ export const ModelSetting = (props: SettingType) => {
 
         await doPutRequest(url, {
             ...setting,
-            isPublic: !setting.isPublic
+            isPublic: !setting.isPublic,
+            restrictedUserGroups: setting.restrictedUserGroups.map(rg => rg.id),
+            permittedUserGroups: setting.permittedUserGroups.map(rg => rg.id)
         }, true);
     }
 
@@ -101,6 +108,11 @@ export const ModelSetting = (props: SettingType) => {
         fetchUserGroups();
     }, []);
 
+    // update setting
+    useEffect(() => {
+        requestUpdateSetting();
+    }, [setting]);
+
     async function fetchUserGroups() {
         const url = AUTH_ROUTES.userGroupUrl
             .replace(`:${CLIENT_USER_NAME}`, clientUserName)
@@ -114,8 +126,7 @@ export const ModelSetting = (props: SettingType) => {
 
     function renderPermissions(type: "restrict" | "permitted") {
         return (
-            <div className="user-groups">
-                <RenderHeading value={`${type === "restrict" ? 'Restricted' : 'Permitted'} UserGroups:`}/>
+            <Grid container className="user-groups">
                 {userGroups.map((userGroup, index) => {
 
                     let disabled = false;
@@ -191,7 +202,75 @@ export const ModelSetting = (props: SettingType) => {
                         />
                     );
                 })}
-            </div>
+            </Grid>
+        );
+    }
+
+    function renderSupportedDomain() {
+
+        function onblur(event: any) {
+
+            const code = (event.keyCode ? event.keyCode : event.which);
+            if(code === 13) {
+                const t = setting.supportedDomains;
+                t.push(event.target.value);
+
+                setValue('');
+                setSetting({
+                    ...setting,
+                    supportedDomains: t
+                });
+            }
+        }
+        
+
+        return (
+            <Grid container className='supported-domain'>
+                {
+                    setting.supportedDomains.map((supportedDomain, index) => {
+
+                        if(!supportedDomain) return null;
+
+
+                        function onClickDeleteIcon() {
+
+                            const t = setting.supportedDomains.filter(s => s !== supportedDomain);
+                            setSetting({
+                                ...setting,
+                                supportedDomains: t
+                            });
+                        }
+
+                        return (
+                            <Chip
+                                color={"primary"}
+                                size="medium"
+                                key={index}
+                                icon={<GroupIcon />}
+                                deleteIcon={<CloseIcon />}
+                                onDelete={onClickDeleteIcon}
+                                label={supportedDomain}
+                                variant="outlined"
+                            />
+                        );
+                    })
+                }
+
+                <TextBox
+                    type="text"
+                    placeholder="Supported domain url"
+                    value={value}
+                    className=""
+                    onChange={(event) => {setValue(event.target.value)}}
+                    onBlur={onblur}
+                    onKeyDown={onblur}
+                    name="supported domain"
+                    label="Supported Domain"
+                    required={false}
+                />
+
+
+            </Grid>
         );
     }
 
@@ -208,10 +287,18 @@ export const ModelSetting = (props: SettingType) => {
                 label="Is public"
             />
 
-            {renderPermissions('restrict')}
-            {renderPermissions('permitted')}
-
+            <AccordianCommon name="Restrict user groups">
+                {renderPermissions('restrict')}
+            </AccordianCommon>
             
+            <AccordianCommon name="Permit user groups">
+                {renderPermissions('permitted')}
+            </AccordianCommon>
+
+            <AccordianCommon name="Supported domains">
+                {renderSupportedDomain()}
+            </AccordianCommon>
+                        
         </Grid>
     );
 }

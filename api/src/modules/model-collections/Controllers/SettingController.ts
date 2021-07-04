@@ -33,7 +33,9 @@ export async function getSetting(req: Request, res: Response) {
 
 export async function makeSetting(req: Request, res: Response) {
 
-    const {restrictedUserGroups=[], permittedUserGroups=[], isPublic=false, isEnabled=false, supportedDomains=[], id} = req.body;
+    const {restrictedUserGroups=[], permittedUserGroups=[], isPublic=false, isEnabled=false, supportedDomains="", id} = req.body;
+
+    const sd = JSON.stringify(supportedDomains);
 
     if(req.method === 'POST') {
 
@@ -46,7 +48,7 @@ export async function makeSetting(req: Request, res: Response) {
             id: uid,
             isEnabled,
             updatedById: `${req.currentUser.id}`,
-            supportedDomains,
+            supportedDomains: sd,
             updatedAt: getNowDate()
         });
         try {
@@ -71,7 +73,7 @@ export async function makeSetting(req: Request, res: Response) {
             body.isPublic = isPublic;
         }
         if(supportedDomains) {
-            body.supportedDomains = supportedDomains;
+            body.supportedDomains = sd;
         }
 
         body = {

@@ -188,6 +188,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                     setModelSetting({
                         id: response[0].setting.id,
                         isPublic: response[0].setting.isPublic,
+                        supportedDomains: JSON.parse(response[0].setting?.supportedDomains || "[]"),
                         restrictedUserGroups: response[0].setting.restrictedUserGroups,
                         permittedUserGroups: response[0].setting.permittedUserGroups
                     });

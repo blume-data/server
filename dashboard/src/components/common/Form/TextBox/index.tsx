@@ -11,10 +11,11 @@ interface TextBoxType extends FieldType{
     type: string;
     onChange: (event: ChangeEvent<any>) => void;
     onBlur: (event: ChangeEvent<any>) => void;
+    onKeyDown?: (event: ChangeEvent<any>) => void;
 }
 export const TextBox = (props: TextBoxType) => {
     const {id, className, label, required=false,
-        onBlur, helperText, type, disabled=false, descriptionText='',
+        onBlur, helperText, type, disabled=false, descriptionText='', onKeyDown=() => {},
         onChange, error=false, value='', placeholder='', multiline=false} = props;
     return (
         <Grid className={`${className} app-text-box`}>
@@ -32,6 +33,7 @@ export const TextBox = (props: TextBoxType) => {
                     required={required}
                     id={id ? id : undefined}
                     label={label}
+                    onKeyDown={onKeyDown}
                 />
                 <DescriptionText description={descriptionText} />
             </FormControl>
