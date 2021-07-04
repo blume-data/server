@@ -30,6 +30,7 @@ export const DATA_ROUTES = {
     GetEntriesUrl: "/api/data/:env/:language/:clientUserName/:applicationName/entry/:modelName/get-entries",
     RoleUrl: "/api/data/:env/:userName/role/:roleName?",
     StoreUrl: "/api/data/:env/:language/:clientUserName/:applicationName/entry/:modelName",
+    SettingsUrl: `${getBaseUrl()}/api/data/:env/:clientUserName/:applicationName/setting`
 }
 
 export const ASSETS_ROUTE = {

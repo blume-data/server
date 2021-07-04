@@ -19,6 +19,7 @@ import {
 } from "./common-module";
 import {getCollection} from "../modules/entries/Controllers/StoreController";
 import _ from 'lodash';
+import { DateTime } from 'luxon';
 
 export function isValidRegEx(reg: string) {
     let isValid = true;
@@ -343,4 +344,9 @@ export function flatObject(document: Document | Document[], useLessItems = {}, p
     }
 
     return process(ff);
+}
+
+
+export function getNowDate() {
+    return DateTime.local().setZone('UTC').toJSDate();
 }

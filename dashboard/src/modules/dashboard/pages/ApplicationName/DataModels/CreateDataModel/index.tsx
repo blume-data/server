@@ -186,9 +186,10 @@ const CreateDataModel = (props: CreateDataModelType) => {
 
                 if(response[0].setting) {
                     setModelSetting({
-                        isPublic: response[0].isPublic,
-                        restrictedUserGroups: response[0].restrictedUserGroups,
-                        permittedUserGroups: response[0].permittedUserGroups
+                        id: response[0].setting.id,
+                        isPublic: response[0].setting.isPublic,
+                        restrictedUserGroups: response[0].setting.restrictedUserGroups,
+                        permittedUserGroups: response[0].setting.permittedUserGroups
                     });
                 }
 
@@ -809,7 +810,8 @@ const CreateDataModel = (props: CreateDataModelType) => {
         })
 
         return (
-            <Grid container direction={"column"} className={'property-section-container'}>
+            <Paper elevation={6}>
+                <Grid container direction={"column"} className={'property-section-container'}>
                 {
                     properties && properties.length ? <BasicTableMIUI
                         rows={rows}
@@ -820,6 +822,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                         : <RenderHeading className={'no-fields-added'} type={"primary"} value={'No fields added'} />
                 }
             </Grid>
+            </Paper>
         );
     }
 
@@ -939,14 +942,18 @@ const CreateDataModel = (props: CreateDataModelType) => {
             </Grid>
             {/* MODAL SETTING CONTAINER */}
             <Grid item className='right-container'>
-                <RenderHeading
-                    className={'main-heading'}
-                    type={"main"}
-                    value={`Settings`}
-                />
-                <ModelSetting 
-                    data={modelSetting}
-                />
+                <Paper elevation={6}>
+                    <RenderHeading
+                        className={'main-heading'}
+                        type={"main"}
+                        value={`Settings`}
+                    />
+                    <ModelSetting
+                        data={modelSetting}
+                        env={env}
+                        applicationName={applicationName}
+                    />
+                </Paper>
             </Grid>
             <AlertDialog
                 onClose={() => {
@@ -966,11 +973,13 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 title={'Confirm Delete'}
                 subTitle={'Please confirm if you want to delete'}
             />
+
             <Alert
                 isAlertOpen={isAlertOpen}
                 onAlertClose={setIsAlertOpen}
                 severity={alert.severity}
-                message={alert.message} />
+                message={alert.message}
+            />
             <ModalDialog
                 title={`${fieldEditMode || contentModelData.id ? 'Edit' : 'Create new'} Model`}
                 isOpen={!hideNames}
