@@ -15,7 +15,7 @@ import { TextBox } from '../../../../../../../components/common/Form/TextBox';
 
 
 export interface ModelSettingType {
-    id: string,
+    id: string | null,
     isPublic: boolean;
     supportedDomains: string[];
     restrictedUserGroups: {id: string, name: string, description: string}[];
@@ -23,27 +23,24 @@ export interface ModelSettingType {
 }
 
 interface SettingType {
-    data: ModelSettingType | null;
+    data: ModelSettingType;
     applicationName: string,
-    env: string
+    env: string,
+    setSetting: (id: ModelSettingType) => void;
+    isLoading: boolean;
 }
 
 export const ModelSetting = (props: SettingType) => {
 
-    const {env, applicationName, data} = props;
+    const {env, applicationName, data, setSetting, isLoading} = props;
     const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME) || '';
     const [userGroups, setUserGroups] = useState<{
         description: string,
         id: string,
         name: string
     }[]>([]);
-    const [setting, setSetting] = useState<ModelSettingType>({
-        id: '',
-        isPublic: false,
-        supportedDomains: [],
-        restrictedUserGroups: [],
-        permittedUserGroups: []
-    });
+
+    const setting = data;
 
     // supported domain
     const [value, setValue] = useState('');
@@ -56,6 +53,7 @@ export const ModelSetting = (props: SettingType) => {
             .replace(`:${APPLICATION_NAME}`, applicationName);
 
         const response = await doPostRequest(url, {}, true);
+
         if(response && response.id) {
             setSetting({
                 ...setting,
@@ -65,41 +63,44 @@ export const ModelSetting = (props: SettingType) => {
     }
 
     function updateSetting(type: 'isPublic' | 'restrictedUserGroups' | 'permittedUserGroups', value: any) {
-        setSetting({
+        
+        const udpatedSetting: ModelSettingType = {
             ...setting,
             [type]: value
-        });
+        }
+        setSetting(udpatedSetting);
+        requestUpdateSetting(udpatedSetting);
     }
 
-    async function requestUpdateSetting() {
+    async function requestUpdateSetting(updatedSetting: ModelSettingType) {
 
+        // If there is no id no required to update
+        if(!setting.id) return;
         const url = DATA_ROUTES.SettingsUrl
             .replace(`:${ENV}`, env)
             .replace(`:${CLIENT_USER_NAME}`, clientUserName)
             .replace(`:${APPLICATION_NAME}`, applicationName);
 
-        console.log('Setting', setting);
         await doPutRequest(url, {
             ...setting,
-            isPublic: setting.isPublic,
-            restrictedUserGroups: setting.restrictedUserGroups.map(rg => rg.id),
-            permittedUserGroups: setting.permittedUserGroups.map(rg => rg.id)
+            isPublic: updatedSetting.isPublic,
+            restrictedUserGroups: updatedSetting.restrictedUserGroups.map(rg => rg.id),
+            permittedUserGroups: updatedSetting.permittedUserGroups.map(rg => rg.id),
+            supportedDomains: updatedSetting.supportedDomains
         }, true);
     }
 
     // Create a model setting
     useEffect(() => {
-
         const modelName = getUrlSearchParams('name');
-
         if(modelName && data && data.id) {
-            if(data.id) {
+            if(data.id && data.id !== null && setting.id !== data.id) {
                 setSetting({
                     ...data
                 });
             }
         }
-        if(!modelName) {
+        if(!modelName && data.id === null) {
             createModelSetting();
         }
     }, [data]);
@@ -109,11 +110,6 @@ export const ModelSetting = (props: SettingType) => {
         fetchUserGroups();
     }, []);
 
-    // update setting
-    useEffect(() => {
-        requestUpdateSetting();
-    }, [setting]);
-
     async function fetchUserGroups() {
         const url = AUTH_ROUTES.userGroupUrl
             .replace(`:${CLIENT_USER_NAME}`, clientUserName)
@@ -122,7 +118,6 @@ export const ModelSetting = (props: SettingType) => {
 
         const response = await doGetRequest(url, {}, true);
         setUserGroups(response);
-        console.log('Response', response);
     }
 
     function renderPermissions(type: "restrict" | "permitted") {
@@ -146,21 +141,25 @@ export const ModelSetting = (props: SettingType) => {
                     })();
 
                     function onClickDoneIcon() {
-                        setSetting({
+                        const updatedSetting = {
                             ...setting,
                             [property]: [
                                 ...setting[property],
                                 userGroup
                             ]
-                        });
+                        };
+                        setSetting(updatedSetting);
+                        requestUpdateSetting(updatedSetting);
                     }
 
                     function onClickRemoveIcon() {
                         const temp = setting[property].filter(ug => ug.id !== userGroup.id);
-                            setSetting({
-                                ...setting,
-                                [property]: temp
-                            });
+                        const updatedSettting = {
+                            ...setting,
+                            [property]: temp
+                        }
+                        setSetting(updatedSettting);
+                        requestUpdateSetting(updatedSettting);
                     }
 
                     return (
@@ -191,13 +190,17 @@ export const ModelSetting = (props: SettingType) => {
                 t.push(event.target.value);
 
                 setValue('');
-                setSetting({
+                const updatedSetting = {
                     ...setting,
                     supportedDomains: t
+                };
+                setSetting({
+                    ...setting,
+                    ...updatedSetting
                 });
+                requestUpdateSetting(updatedSetting);
             }
         }
-        
 
         return (
             <Grid container className='supported-domain'>
@@ -205,7 +208,6 @@ export const ModelSetting = (props: SettingType) => {
                     setting.supportedDomains.map((supportedDomain, index) => {
 
                         if(!supportedDomain) return null;
-
 
                         function onClickDeleteIcon() {
 

@@ -142,8 +142,14 @@ const CreateDataModel = (props: CreateDataModelType) => {
     const [confirmDialogOpen, setConfirmDialogOpen] = useState<boolean>(false);
     const [deleteEntryName, setDeleteEntryName] = useState<string>('');
 
-    const [modelSetting, setModelSetting] = useState<ModelSettingType | null>(null);
-
+    const [modelSetting, setModelSetting] = useState<ModelSettingType>({
+        id: null,
+        permittedUserGroups: [],
+        restrictedUserGroups: [],
+        supportedDomains: [],
+        isPublic: false
+    });
+    
     const {
         env, CollectionUrl, applicationName, GetCollectionNamesUrl, language,
     } = props;
@@ -550,7 +556,8 @@ const CreateDataModel = (props: CreateDataModelType) => {
                     description: contentModelData.description,
                     rules: properties,
                     id: contentModelData.id,
-                    titleField: contentModelData.titleProperty
+                    titleField: contentModelData.titleProperty,
+                    setting: modelSetting.id
                 }, true);
                 setResponse(response);
             }
@@ -560,7 +567,8 @@ const CreateDataModel = (props: CreateDataModelType) => {
                     displayName: contentModelData.displayName,
                     description: contentModelData.description,
                     rules: properties,
-                    titleField: contentModelData.titleProperty
+                    titleField: contentModelData.titleProperty,
+                    setting: modelSetting.id
                 }, true);
                 setResponse(response);
             }
@@ -952,7 +960,9 @@ const CreateDataModel = (props: CreateDataModelType) => {
                     <ModelSetting
                         data={modelSetting}
                         env={env}
+                        setSetting={setModelSetting}
                         applicationName={applicationName}
+                        isLoading={isLoading}
                     />
                 </Paper>
             </Grid>

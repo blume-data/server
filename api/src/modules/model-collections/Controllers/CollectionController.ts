@@ -160,9 +160,6 @@ export async function createCollectionSchema(req: Request, res: Response) {
                         });
 
                     }
-                
-
-
                 update.rules = JSON.stringify(reqBody.rules);
             }
             if(reqBody.description) {
