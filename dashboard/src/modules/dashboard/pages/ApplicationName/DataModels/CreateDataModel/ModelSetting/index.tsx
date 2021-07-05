@@ -78,9 +78,10 @@ export const ModelSetting = (props: SettingType) => {
             .replace(`:${CLIENT_USER_NAME}`, clientUserName)
             .replace(`:${APPLICATION_NAME}`, applicationName);
 
+        console.log('Setting', setting);
         await doPutRequest(url, {
             ...setting,
-            isPublic: !setting.isPublic,
+            isPublic: setting.isPublic,
             restrictedUserGroups: setting.restrictedUserGroups.map(rg => rg.id),
             permittedUserGroups: setting.permittedUserGroups.map(rg => rg.id)
         }, true);
@@ -125,67 +126,41 @@ export const ModelSetting = (props: SettingType) => {
     }
 
     function renderPermissions(type: "restrict" | "permitted") {
+
+        const property = type === "permitted" ? "permittedUserGroups" : "restrictedUserGroups";
+        const otherProperty = type === "permitted" ? "restrictedUserGroups" : "permittedUserGroups";
+
         return (
             <Grid container className="user-groups">
                 {userGroups.map((userGroup, index) => {
 
                     let disabled = false;
                     const exist = (() => {
-                        if(type === "restrict") {
-                            const found = setting.restrictedUserGroups.find(ug => ug.id === userGroup.id);
-                            const alsoFound = setting.permittedUserGroups.find(ug => ug.id === userGroup.id);
-                            if(alsoFound) {
-                                disabled = true;
-                                return false;
-                            }
-                            return found;
-                        }
-                        else {
-                            const found =  setting.permittedUserGroups.find(ug => ug.id === userGroup.id);
-                            const alsoFound = setting.restrictedUserGroups.find(ug => ug.id === userGroup.id);
-                            if(alsoFound) {
-                                disabled = true;
-                                return false;
-                            }
-                            return found;
-                        }
+                        const found = setting[property].find(ug => ug.id === userGroup.id);
+                        const alsoFound = setting[otherProperty].find(ug => ug.id === userGroup.id);
+                        if(alsoFound) {
+                            disabled = true;
+                            return false;
+                        }   
+                        return found ;
                     })()
 
                     function onClickDoneIcon() {
-                       if(type === "restrict") {
-                            setSetting({
-                                ...setting,
-                                restrictedUserGroups: [
-                                    ...setting.restrictedUserGroups,
-                                    userGroup
-                                ]
-                            });
-                       }
-                       else {
                         setSetting({
                             ...setting,
-                            permittedUserGroups: [
-                                ...setting.permittedUserGroups,
+                            [property]: [
+                                ...setting[property],
                                 userGroup
                             ]
                         });
-                       }
                     }
+
                     function onClickRemoveIcon() {
-                        if(type === "restrict") {
-                            const temp = setting.restrictedUserGroups.filter(ug => ug.id !== userGroup.id);
+                        const temp = setting[property].filter(ug => ug.id !== userGroup.id);
                             setSetting({
                                 ...setting,
-                                restrictedUserGroups: temp
+                                [property]: temp
                             });
-                        }
-                        else {
-                            const temp = setting.permittedUserGroups.filter(ug => ug.id !== userGroup.id);
-                            setSetting({
-                                ...setting,
-                                permittedUserGroups: temp
-                            });
-                        }
                     }
 
                     return (
