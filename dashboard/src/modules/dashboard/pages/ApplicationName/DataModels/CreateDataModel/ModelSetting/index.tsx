@@ -134,16 +134,16 @@ export const ModelSetting = (props: SettingType) => {
             <Grid container className="user-groups">
                 {userGroups.map((userGroup, index) => {
 
-                    let disabled = false;
+                    let disabled = !!setting[otherProperty].length;
                     const exist = (() => {
                         const found = setting[property].find(ug => ug.id === userGroup.id);
                         const alsoFound = setting[otherProperty].find(ug => ug.id === userGroup.id);
                         if(alsoFound) {
-                            disabled = true;
+                            //disabled = true;
                             return false;
                         }   
                         return found ;
-                    })()
+                    })();
 
                     function onClickDoneIcon() {
                         setSetting({
