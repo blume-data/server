@@ -203,7 +203,8 @@ export const ModelSetting = (props: SettingType) => {
         }
 
         return (
-            <Grid container className='supported-domain'>
+            <Grid container className='supported-domain' direction="column">
+                <Grid item>
                 {
                     setting.supportedDomains.map((supportedDomain, index) => {
 
@@ -232,7 +233,9 @@ export const ModelSetting = (props: SettingType) => {
                         );
                     })
                 }
+                </Grid>
 
+                <Grid item>
                 <TextBox
                     type="text"
                     placeholder="Supported domain url"
@@ -245,6 +248,7 @@ export const ModelSetting = (props: SettingType) => {
                     label="Supported Domain"
                     required={false}
                 />
+                </Grid>
 
 
             </Grid>
