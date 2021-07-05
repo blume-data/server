@@ -20,7 +20,7 @@ import {
     SHORT_STRING_FIElD_TYPE,
     trimCharactersAndNumbers
 } from "@ranjodhbirkaur/constants";
-import {createModel, flatObject, sendOkayResponse} from "../../../util/methods";
+import {createModel, flatObject, getNowDate, sendOkayResponse} from "../../../util/methods";
 import {DateTime} from "luxon";
 import {v4} from 'uuid';
 import { getCollection } from '../../entries/Controllers/StoreController';
@@ -62,7 +62,7 @@ export async function createCollectionSchema(req: Request, res: Response) {
         if (alreadyExist) {
             throw new BadRequestError(COLLECTION_ALREADY_EXIST);
         }
-        const createdAt = DateTime.local().setZone('UTC').toJSDate();
+        const createdAt = getNowDate();
 
         const newCollection = CollectionModel.build({
             clientUserName,
@@ -237,7 +237,7 @@ export async function getCollectionNames(req: Request, res: Response) {
 
     const collections = await query;
     const flatty = flatObject(collections, {settingId: undefined, [`${ENTRY_UPDATED_BY}Id`]: undefined}, [
-        {name : 'setting', items: ['permittedUserGroups', 'restrictedUserGroups','supportedDomains', 'isPublic']},
+        {name : 'setting', items: ['permittedUserGroups', 'restrictedUserGroups','supportedDomains', 'isPublic', 'id']},
     ]);
     res.status(okayStatus).send(flatty);
 }

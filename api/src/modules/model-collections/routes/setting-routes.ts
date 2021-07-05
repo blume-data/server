@@ -14,5 +14,6 @@ router.get(
 );
 
 router.post(SettingUrl, checkAuth, validateApplicationNameMiddleWare, makeSetting);
+router.put(SettingUrl, checkAuth, validateApplicationNameMiddleWare, makeSetting);
 
 export { router as SettingRoutes };

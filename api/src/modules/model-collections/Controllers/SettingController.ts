@@ -8,11 +8,10 @@ import {
 } from "../../../util/common-module";
 import { CollectionModel } from '../../../db-models/Collection';
 import { SettingModel } from '../../../db-models/ModelSetting';
-import { sendOkayResponse } from '../../../util/methods';
+import { getNowDate, sendOkayResponse } from '../../../util/methods';
 import { v4 } from 'uuid';
 
 export async function getSetting(req: Request, res: Response) {
-
 
     const language = req.params.language;
     const clientUserName = req.params[CLIENT_USER_NAME];
@@ -34,25 +33,57 @@ export async function getSetting(req: Request, res: Response) {
 
 export async function makeSetting(req: Request, res: Response) {
 
-    const {restrictedUserGroups=[], permittedUserGroups=[], isPublic=false, supportedDomains} = req.body;
+    const {restrictedUserGroups=[], permittedUserGroups=[], isPublic=false, isEnabled=false, supportedDomains="", id} = req.body;
 
-    const uid = v4();
+    const sd = JSON.stringify(supportedDomains);
+
+    if(req.method === 'POST') {
+
+        const uid = v4();
     
-    const newSettings = SettingModel.build({
-        permittedUserGroupIds: (permittedUserGroups && Array.isArray(permittedUserGroups) ? permittedUserGroups : []),
-        restrictedUserGroupIds: (restrictedUserGroups && Array.isArray(restrictedUserGroups) ? restrictedUserGroups : []),
-        isPublic: false,
-        id: uid,
-        updatedById: `${req.currentUser.id}`,
-        supportedDomains
-    });
-    try {
-        await newSettings.save();
-    } catch (error) {
-        console.log('error', error)
-        return sendSingleError(res, `permittedUserGroups is not okay`, 'permittedUserGroups');
+        const newSettings = SettingModel.build({
+            permittedUserGroupIds: (permittedUserGroups && Array.isArray(permittedUserGroups) ? permittedUserGroups : []),
+            restrictedUserGroupIds: (restrictedUserGroups && Array.isArray(restrictedUserGroups) ? restrictedUserGroups : []),
+            isPublic,
+            id: uid,
+            isEnabled,
+            updatedById: `${req.currentUser.id}`,
+            supportedDomains: sd,
+            updatedAt: getNowDate()
+        });
+        try {
+            const newSetting = await newSettings.save();
+            return sendOkayResponse(res, {id: newSetting.id});
+        } catch (error) {
+            console.log('error while creating setting', error)
+            return sendSingleError(res, `permittedUserGroups is not okay`, 'permittedUserGroups');
+        } 
+    }   
+    else {
+        let body: any = {};
+
+        if(permittedUserGroups) {
+            body.permittedUserGroupIds = permittedUserGroups;
+        }
+
+        if(restrictedUserGroups) {
+            body.restrictedUserGroupIds = restrictedUserGroups;
+        }
+        if(typeof isPublic === 'boolean') {
+            body.isPublic = isPublic;
+        }
+        if(supportedDomains) {
+            body.supportedDomains = sd;
+        }
+
+        body = {
+            ...body,
+            updatedAt: getNowDate(),
+            updatedById: `${req.currentUser.id}`
+        }
+
+        await SettingModel.findOneAndUpdate({id}, body);
+        console.log('Updated settings', body, id);
+        sendOkayResponse(res, {id});
     }
-
-    return sendOkayResponse(res);
-    
 }

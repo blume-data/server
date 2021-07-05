@@ -3,10 +3,11 @@ import mongoose, {Schema} from 'mongoose';
 interface SettingModelAttrs {
 
     isPublic: boolean;
-    supportedDomains: string[];
+    supportedDomains?: string;
     restrictedUserGroupIds?: string[];
     permittedUserGroupIds?: string[];
     id: string;
+    isEnabled: boolean;
     // updated
     updatedById: string;
     updatedAt?: Date;
@@ -19,7 +20,8 @@ interface SettingModel extends mongoose.Model<SettingDoc> {
 interface SettingDoc extends mongoose.Document {
 
     isPublic: boolean;
-    supportedDomains: string[];
+    isEnabled: boolean;
+    supportedDomains: string;
     restrictedUserGroupIds?: string[];
     permittedUserGroupIds?: string[];
     id: string;
@@ -33,11 +35,11 @@ const Setting = new mongoose.Schema(
             type: Boolean,
             default: false
         },
-        supportedDomains: {
-            name: {
-                type: String
-            }
+        isEnabled: {
+            type: Boolean,
+            default: false
         },
+        supportedDomains: String,
         restrictedUserGroupIds: [{ type: String}],
         permittedUserGroupIds: [{ type: String}],
         id: String,
