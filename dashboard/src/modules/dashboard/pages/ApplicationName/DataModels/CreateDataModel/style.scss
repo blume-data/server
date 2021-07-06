@@ -160,6 +160,9 @@
   }
   .right-container {
     padding: 20px;
+    .heading-container {
+      margin-bottom: 20px;
+    }
     @include desktops {
       width: 20%;
       padding-right: 0;
