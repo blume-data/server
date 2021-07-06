@@ -1,11 +1,20 @@
-import mongoose, {Schema} from 'mongoose';
+import mongoose from 'mongoose';
 
 interface SettingModelAttrs {
 
     isPublic: boolean;
     supportedDomains?: string;
-    restrictedUserGroupIds?: string[];
-    permittedUserGroupIds?: string[];
+
+    getRestrictedUserGroupIds?: string[];
+    postRestrictedUserGroupIds?: string[];
+    putRestrictedUserGroupIds?: string[];
+    deleteRestrictedUserGroupIds?: string[];
+    
+    getPermittedUserGroupIds?: string[];
+    postPermittedUserGroupIds?: string[];
+    putPermittedUserGroupIds?: string[];
+    deletePermittedUserGroupIds?: string[];
+
     id: string;
     isEnabled: boolean;
     // updated
@@ -22,8 +31,17 @@ interface SettingDoc extends mongoose.Document {
     isPublic: boolean;
     isEnabled: boolean;
     supportedDomains: string;
-    restrictedUserGroupIds?: string[];
-    permittedUserGroupIds?: string[];
+    
+    getRestrictedUserGroupIds?: string[];
+    postRestrictedUserGroupIds?: string[];
+    putRestrictedUserGroupIds?: string[];
+    deleteRestrictedUserGroupIds?: string[];
+    
+    getPermittedUserGroupIds?: string[];
+    postPermittedUserGroupIds?: string[];
+    putPermittedUserGroupIds?: string[];
+    deletePermittedUserGroupIds?: string[];
+
     id: string;
     updatedById: string;
     updatedAt: Date;
@@ -40,8 +58,17 @@ const Setting = new mongoose.Schema(
             default: false
         },
         supportedDomains: String,
-        restrictedUserGroupIds: [{ type: String}],
-        permittedUserGroupIds: [{ type: String}],
+        
+        getRestrictedUserGroupIds: [{ type: String}],
+        postRestrictedUserGroupIds: [{ type: String}],
+        putRestrictedUserGroupIds: [{ type: String}],
+        deleteRestrictedUserGroupIds: [{ type: String}],
+        
+        getPermittedUserGroupIds: [{ type: String}],
+        postPermittedUserGroupIds: [{ type: String}],
+        putPermittedUserGroupIds: [{ type: String}],
+        deletePermittedUserGroupIds: [{ type: String}],
+
         id: String,
         updatedById : String,
         updatedAt : { type: Date },

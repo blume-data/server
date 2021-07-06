@@ -12,14 +12,22 @@ import GroupIcon from '@material-ui/icons/Group';
 import { AccordianCommon } from '../../../../../../../components/common/AccordianCommon';
 import './style.scss';
 import { TextBox } from '../../../../../../../components/common/Form/TextBox';
+import {RenderHeading} from '../../../../../../../components/common/RenderHeading';
 
 
 export interface ModelSettingType {
     id: string | null,
     isPublic: boolean;
     supportedDomains: string[];
-    restrictedUserGroups: {id: string, name: string, description: string}[];
-    permittedUserGroups: {id: string, name: string, description: string}[];
+    getRestrictedUserGroups: {id: string, name: string, description: string}[];
+    postRestrictedUserGroups: {id: string, name: string, description: string}[];
+    putRestrictedUserGroups: {id: string, name: string, description: string}[];
+    deleteRestrictedUserGroups: {id: string, name: string, description: string}[];
+
+    getPermittedUserGroups: {id: string, name: string, description: string}[];
+    postPermittedUserGroups: {id: string, name: string, description: string}[];
+    putPermittedUserGroups: {id: string, name: string, description: string}[];
+    deletePermittedUserGroups: {id: string, name: string, description: string}[];
 }
 
 interface SettingType {
@@ -84,8 +92,16 @@ export const ModelSetting = (props: SettingType) => {
         await doPutRequest(url, {
             ...setting,
             isPublic: updatedSetting.isPublic,
-            restrictedUserGroups: updatedSetting.restrictedUserGroups.map(rg => rg.id),
-            permittedUserGroups: updatedSetting.permittedUserGroups.map(rg => rg.id),
+            getRestrictedUserGroups: updatedSetting.getRestrictedUserGroups.map(rg => rg.id),
+            postRestrictedUserGroups: updatedSetting.postRestrictedUserGroups.map(rg => rg.id),
+            putRestrictedUserGroups: updatedSetting.putRestrictedUserGroups.map(rg => rg.id),
+            deleteRestrictedUserGroups: updatedSetting.deleteRestrictedUserGroups.map(rg => rg.id),
+
+            getPermittedUserGroups: updatedSetting.getPermittedUserGroups.map(rg => rg.id),
+            postPermittedUserGroups: updatedSetting.postPermittedUserGroups.map(rg => rg.id),
+            deletePermittedUserGroups: updatedSetting.deletePermittedUserGroups.map(rg => rg.id),
+            putPermittedUserGroups: updatedSetting.putPermittedUserGroups.map(rg => rg.id),
+
             supportedDomains: updatedSetting.supportedDomains
         }, true);
     }
@@ -120,62 +136,68 @@ export const ModelSetting = (props: SettingType) => {
         setUserGroups(response);
     }
 
-    function renderPermissions(type: "restrict" | "permitted") {
+    function renderPermissions(type: "restrict" | "permitted", requestType: "get" | "post" | "delete" | "put") {
 
-        const property = type === "permitted" ? "permittedUserGroups" : "restrictedUserGroups";
-        const otherProperty = type === "permitted" ? "restrictedUserGroups" : "permittedUserGroups";
+        const property: any = type === "permitted" ? `${requestType}PermittedUserGroups` : `${requestType}RestrictedUserGroups`;
+        const otherProperty: any = type === "permitted" ? `${requestType}RestrictedUserGroups` : `${requestType}PermittedUserGroups`;
+
+
+        console.log('property', property, otherProperty)
 
         return (
-            <Grid container className="user-groups">
+            <Grid container className="user-groups" direction="column">
+                <Grid item><RenderHeading value={type}></RenderHeading></Grid>
+                <Grid item>
                 {userGroups.map((userGroup, index) => {
 
-                    let disabled = !!setting[otherProperty].length;
-                    const exist = (() => {
-                        const found = setting[property].find(ug => ug.id === userGroup.id);
-                        const alsoFound = setting[otherProperty].find(ug => ug.id === userGroup.id);
-                        if(alsoFound) {
-                            //disabled = true;
-                            return false;
-                        }   
-                        return found ;
-                    })();
+                    // let disabled = !!setting[otherProperty].length;
+                    // const exist = (() => {
+                    //     const found = setting[property].find(ug => ug.id === userGroup.id);
+                    //     const alsoFound = setting[otherProperty].find(ug => ug.id === userGroup.id);
+                    //     if(alsoFound) {
+                    //         //disabled = true;
+                    //         return false;
+                    //     }   
+                    //     return found ;
+                    // })();
 
-                    function onClickDoneIcon() {
-                        const updatedSetting = {
-                            ...setting,
-                            [property]: [
-                                ...setting[property],
-                                userGroup
-                            ]
-                        };
-                        setSetting(updatedSetting);
-                        requestUpdateSetting(updatedSetting);
-                    }
+                    // function onClickDoneIcon() {
+                    //     const updatedSetting = {
+                    //         ...setting,
+                    //         [property]: [
+                    //             ...setting[property],
+                    //             userGroup
+                    //         ]
+                    //     };
+                    //     setSetting(updatedSetting);
+                    //     requestUpdateSetting(updatedSetting);
+                    // }
 
-                    function onClickRemoveIcon() {
-                        const temp = setting[property].filter(ug => ug.id !== userGroup.id);
-                        const updatedSettting = {
-                            ...setting,
-                            [property]: temp
-                        }
-                        setSetting(updatedSettting);
-                        requestUpdateSetting(updatedSettting);
-                    }
+                    // function onClickRemoveIcon() {
+                    //     const temp = setting[property].filter(ug => ug.id !== userGroup.id);
+                    //     const updatedSettting = {
+                    //         ...setting,
+                    //         [property]: temp
+                    //     }
+                    //     setSetting(updatedSettting);
+                    //     requestUpdateSetting(updatedSettting);
+                    // }
 
-                    return (
-                        <Chip
-                            disabled={disabled}
-                            color={exist ? "secondary" : undefined}
-                            size="medium"
-                            key={index}
-                            icon={<GroupIcon />}
-                            deleteIcon={exist ? <CloseIcon /> : <DoneIcon />}
-                            onDelete={exist ? onClickRemoveIcon : onClickDoneIcon}
-                            label={userGroup.name}
-                            variant="outlined"
-                        />
-                    );
-                })}
+                    // return (
+                    //     <Chip
+                    //         disabled={disabled}
+                    //         color={exist ? "secondary" : undefined}
+                    //         size="medium"
+                    //         key={index}
+                    //         icon={<GroupIcon />}
+                    //         deleteIcon={exist ? <CloseIcon /> : <DoneIcon />}
+                    //         onDelete={exist ? onClickRemoveIcon : onClickDoneIcon}
+                    //         label={userGroup.name}
+                    //         variant="outlined"
+                    //     />
+                    // );
+                    })}
+                </Grid>
             </Grid>
         );
     }
@@ -268,12 +290,26 @@ export const ModelSetting = (props: SettingType) => {
                 label="Is public"
             />
 
-            <AccordianCommon name="Restrict user groups">
-                {renderPermissions('restrict')}
+            <AccordianCommon name="Get permission">
+                <Grid container direction="column">
+                    <Grid item>
+                        {renderPermissions('restrict', 'get')}
+                    </Grid>
+                    <Grid item>
+                    {renderPermissions('permitted', 'get')}
+                    </Grid>
+                </Grid>
             </AccordianCommon>
             
-            <AccordianCommon name="Permit user groups">
-                {renderPermissions('permitted')}
+            <AccordianCommon name="Post permission">
+                <Grid container>
+                    <Grid item direction="column">
+                        {renderPermissions('restrict', 'post')}
+                    </Grid>
+                    <Grid>
+                        {renderPermissions('permitted', 'post')}
+                    </Grid>
+                </Grid>
             </AccordianCommon>
 
             <AccordianCommon name="Supported domains">
