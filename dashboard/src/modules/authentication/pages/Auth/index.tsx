@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useEffect, useState, lazy, Suspense} from "react";
 import Grid from "@material-ui/core/Grid";
 import {doGetRequest, doPostRequest} from "../../../../utils/baseApi";
 import {authUrl, dashboardHomeUrl, getBaseUrl} from "../../../../utils/urls";
@@ -245,4 +245,12 @@ const mapState = (state: RootState) => ({
 });
 
 const connector = connect(mapState, {setAuthentication, setApplicationName, fetchApplicationNames});
-export const Auth = connector(AuthComponent);
+const AuthCode = (props: AuthProps) => {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <AuthComponent {...props} />
+        </Suspense>
+
+    );
+}
+export const Auth = connector(AuthCode);
