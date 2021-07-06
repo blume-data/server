@@ -6,7 +6,6 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
 import './style.scss';
-
 const Dialog = React.lazy(() => import('@material-ui/core/Dialog'));
 
 const styles = (theme: Theme) => createStyles({
