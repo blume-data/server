@@ -1,4 +1,4 @@
-import React, {useEffect, useState, Suspense} from 'react';
+import React, {useEffect, useState} from 'react';
 import {connect, ConnectedProps} from "react-redux";
 import {
     APPLICATION_NAME,

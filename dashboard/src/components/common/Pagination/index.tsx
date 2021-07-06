@@ -1,4 +1,4 @@
-import React, {Suspense} from 'react';
+import React from 'react';
 import {Pagination} from '@material-ui/lab';
 import Grid from "@material-ui/core/Grid";
 import './pagination.scss';
@@ -19,7 +19,7 @@ interface PaginationProps {
     totalItems: number;
     id: string;
 }
-function PaginationTabCode(props: PaginationProps) {
+export function PaginationTab(props: PaginationProps) {
     const { currentPage,limit,handleChange,totalItems, id } = props;
     return (
         <Grid className={'main-pagination-container'}>
@@ -34,14 +34,4 @@ function PaginationTabCode(props: PaginationProps) {
             />
         </Grid>
     )
-}
-
-export function PaginationTab(props: PaginationProps) {
-    return (
-        <Suspense fallback="">
-            <PaginationTabCode {...props}></PaginationTabCode>
-        </Suspense>
-    );
-
-
 }

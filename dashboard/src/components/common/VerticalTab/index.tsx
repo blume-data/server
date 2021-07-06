@@ -1,4 +1,4 @@
-import React, {Suspense} from 'react';
+import React from 'react';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
@@ -18,7 +18,7 @@ interface VerticalTabProps {
     setValue: any;
 }
 
-function VerticalTabPanelCode(props: VerticalTabPanelProps) {
+export function VerticalTabPanel(props: VerticalTabPanelProps) {
     const { children, value, index, ...other } = props;
 
     return (
@@ -61,7 +61,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
 }));
 
-const VerticalTabCode = (props: VerticalTabProps) => {
+export const VerticalTab = (props: VerticalTabProps) => {
     const classes = useStyles();
     const {tabs, children, value, setValue} = props;
 
@@ -92,22 +92,4 @@ const VerticalTabCode = (props: VerticalTabProps) => {
             {children}
         </div>
     );
-}
-
-export function VerticalTabPanel(props: VerticalTabPanelProps) {
-    return (
-        <Suspense fallback="">
-            <VerticalTabPanelCode {...props}></VerticalTabPanelCode>
-        </Suspense>
-    );
-
-}
-
-export const VerticalTab = (props: VerticalTabProps) => {
-    return (
-        <Suspense fallback="">
-            <VerticalTabCode {...props}></VerticalTabCode>
-        </Suspense>
-    );
-
 }
