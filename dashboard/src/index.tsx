@@ -52,6 +52,7 @@ const theme = createMuiTheme({
 
 
 if(process.env.REACT_APP_ENV !== 'test') {
+    // Add Sentry
     Sentry.init({
         dsn: "https://9eaafcd0a5c94c6db6e86edf8e522e19@o912965.ingest.sentry.io/5850349",
         integrations: [new Integrations.BrowserTracing()],
