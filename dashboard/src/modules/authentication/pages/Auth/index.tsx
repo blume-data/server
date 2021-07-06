@@ -245,12 +245,4 @@ const mapState = (state: RootState) => ({
 });
 
 const connector = connect(mapState, {setAuthentication, setApplicationName, fetchApplicationNames});
-const AuthCode = (props: AuthProps) => {
-    return (
-        <Suspense fallback={<div>Loading...</div>}>
-            <AuthComponent {...props} />
-        </Suspense>
-
-    );
-}
-export const Auth = connector(AuthCode);
+export const Auth = connector(AuthComponent);

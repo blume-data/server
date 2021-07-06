@@ -1,5 +1,4 @@
 import React, { lazy, Suspense } from "react";
-// import App from "./components/App";
 import RouteNotFound from "./components/RouteNotFound";
 import {Auth, AUTH_ROOT, SIGN_IN} from "./modules/authentication/pages/Auth";
 import {Redirect} from "react-router-dom";
