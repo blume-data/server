@@ -303,7 +303,7 @@ export const ModelSetting = (props: SettingType) => {
             
             <AccordianCommon name="Post permission">
                 <Grid container direction="column">
-                    <Grid item direction="column">
+                    <Grid item>
                         {renderPermissions('restrict', 'post')}
                     </Grid>
                     <Grid>

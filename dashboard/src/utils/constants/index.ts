@@ -25,8 +25,8 @@ export const AUTH_ROUTES = {
 
 export const DATA_ROUTES = {
     ApplicationNameUrl: "/api/data/:clientUserName/application-space/:applicationName?",
-    CollectionUrl: "/api/data/:env/:clientUserName/:applicationName/models",
-    GetCollectionNamesUrl: "/api/data/:env/:clientUserName/:applicationName/get-models",
+    CollectionUrl: `/api/data/:env/:clientUserName/:applicationName/models`,
+    GetCollectionNamesUrl: `/api/data/:env/:clientUserName/:applicationName/get-models`,
     GetEntriesUrl: "/api/data/:env/:language/:clientUserName/:applicationName/entry/:modelName/get-entries",
     RoleUrl: "/api/data/:env/:userName/role/:roleName?",
     StoreUrl: "/api/data/:env/:language/:clientUserName/:applicationName/entry/:modelName",

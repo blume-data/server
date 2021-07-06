@@ -87,6 +87,7 @@ import {
 import {getNameFields, getPropertyFields} from "./fields";
 import { ModelSetting, ModelSettingType } from "./ModelSetting";
 import { DropDown } from "../../../../../../components/common/Form/DropDown";
+import { DATA_ROUTES } from "../../../../../../utils/constants";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type CreateDataModelType = PropsFromRedux;
@@ -158,7 +159,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
     });
     
     const {
-        env, CollectionUrl, applicationName, GetCollectionNamesUrl, language,
+        env, applicationName, language,
     } = props;
 
     const {
@@ -171,10 +172,11 @@ const CreateDataModel = (props: CreateDataModelType) => {
 
     const history = useHistory();
 
-    async function getData() {
-        if(GetCollectionNamesUrl && contentModelData.name) {
-            setIsLoading(true);
+    const GetCollectionNamesUrl = DATA_ROUTES.GetCollectionNamesUrl;
+    const CollectionUrl = DATA_ROUTES.CollectionUrl;
 
+    async function getData() {
+        setIsLoading(true);
             const response = await getModelDataAndRules({
                 modelName: contentModelData.name,
                 applicationName, env, language, GetCollectionNamesUrl, getOnly: "name,description,rules,displayName,titleField"
@@ -216,10 +218,10 @@ const CreateDataModel = (props: CreateDataModelType) => {
 
             }
             setIsLoading(false);
-        }
     }
 
     async function getCollectionNames() {
+        
         const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
 
         if(GetCollectionNamesUrl) {
@@ -247,9 +249,11 @@ const CreateDataModel = (props: CreateDataModelType) => {
     }
 
     useEffect(() => {
-        getData();
-        getCollectionNames();
-    }, [GetCollectionNamesUrl, contentModelData.name]);
+        if(contentModelData.name) {
+            getCollectionNames();
+            getData();
+        }
+    }, [contentModelData.name]);
 
     useEffect(() => {
         const Name = getUrlSearchParams('name');
@@ -541,7 +545,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
         }, 3000);
     }
 
-    async function onClickSaveDataModel() {
+    async function onClickSaveDataModel() { 
 
         const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
         // validate
@@ -555,7 +559,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
             return;
         }
 
-        if(CollectionUrl && clientUserName && properties && properties.length) {
+        if(clientUserName && properties && properties.length) {
             const url = CollectionUrl
                 .replace(':clientUserName', clientUserName)
                 .replace(':env', env)
@@ -1068,8 +1072,8 @@ const mapState = (state: RootState) => {
         env: state.authentication.env,
         applicationName: state.authentication.applicationName,
         language: state.authentication.language,
-        CollectionUrl: state.routeAddress.routes.data?.CollectionUrl,
-        GetCollectionNamesUrl: state.routeAddress.routes.data?.GetCollectionNamesUrl,
+        // CollectionUrl: state.routeAddress.routes.data?.CollectionUrl,
+        // GetCollectionNamesUrl: state.routeAddress.routes.data?.GetCollectionNamesUrl,
     }
 };
 
