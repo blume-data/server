@@ -1,4 +1,4 @@
-import React, {Suspense} from 'react';
+import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -30,7 +30,7 @@ interface BasicTableMIUIProps {
     tableName: string;
 }
 
-function BasicTableMIUICode(props: BasicTableMIUIProps) {
+export function BasicTableMIUI(props: BasicTableMIUIProps) {
 
     const classes = useStyles();
 
@@ -91,13 +91,5 @@ function BasicTableMIUICode(props: BasicTableMIUIProps) {
                 </TableBody>
             </Table>
         </TableContainer>
-    );
-}
-
-export default function BasicTableMIUI(props: BasicTableMIUIProps) {
-    return (
-        <Suspense fallback="">
-            <BasicTableMIUICode {...props}></BasicTableMIUICode>
-        </Suspense>
     );
 }

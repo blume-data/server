@@ -1,4 +1,4 @@
-import React, {useEffect, useState, Suspense} from 'react';
+import React, {useEffect, useState} from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -33,7 +33,7 @@ interface SearchMenuListProps {
     classNames?: string;
 }
 
-const SearchMenuListCode = (props: SearchMenuListProps) => {
+export const SearchMenuList = (props: SearchMenuListProps) => {
     const [search, setSearch] = useState<string>('');
     const [selectedValue, setSelectedValue] = useState<string>('');
     const [timeZones, setTimeZones] = useState<OptionType[]>([]);
@@ -141,13 +141,4 @@ const SearchMenuListCode = (props: SearchMenuListProps) => {
             </div>
         </Grid>
     );
-}
-
-export const SearchMenuList = (props: SearchMenuListProps) => {
-    return (
-        <Suspense fallback="">
-            <SearchMenuListCode {...props}></SearchMenuListCode>
-        </Suspense>
-    );
-
 }
