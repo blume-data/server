@@ -48,7 +48,7 @@ export const ModelSetting = (props: SettingType) => {
         name: string
     }[]>([]);
 
-    const setting = data;
+    const setting: any = data;
 
     // supported domain
     const [value, setValue] = useState('');
@@ -141,61 +141,58 @@ export const ModelSetting = (props: SettingType) => {
         const property: any = type === "permitted" ? `${requestType}PermittedUserGroups` : `${requestType}RestrictedUserGroups`;
         const otherProperty: any = type === "permitted" ? `${requestType}RestrictedUserGroups` : `${requestType}PermittedUserGroups`;
 
-
-        console.log('property', property, otherProperty)
-
         return (
             <Grid container className="user-groups" direction="column">
                 <Grid item><RenderHeading value={type}></RenderHeading></Grid>
                 <Grid item>
-                {userGroups.map((userGroup, index) => {
+                {setting && setting[otherProperty] && setting[property] && userGroups.map((userGroup, index) => {
 
-                    // let disabled = !!setting[otherProperty].length;
-                    // const exist = (() => {
-                    //     const found = setting[property].find(ug => ug.id === userGroup.id);
-                    //     const alsoFound = setting[otherProperty].find(ug => ug.id === userGroup.id);
-                    //     if(alsoFound) {
-                    //         //disabled = true;
-                    //         return false;
-                    //     }   
-                    //     return found ;
-                    // })();
+                    let disabled = !!setting[otherProperty].length;
+                    const exist = (() => {
+                        const found = setting[property].find((ug: any) => ug.id === userGroup.id);
+                        const alsoFound = setting[otherProperty].find((ug: any) => ug.id === userGroup.id);
+                        if(alsoFound) {
+                            disabled = true;
+                            return false;
+                        }   
+                        return found ;
+                    })();
 
-                    // function onClickDoneIcon() {
-                    //     const updatedSetting = {
-                    //         ...setting,
-                    //         [property]: [
-                    //             ...setting[property],
-                    //             userGroup
-                    //         ]
-                    //     };
-                    //     setSetting(updatedSetting);
-                    //     requestUpdateSetting(updatedSetting);
-                    // }
+                    function onClickDoneIcon() {
+                        const updatedSetting = {
+                            ...setting,
+                            [property]: [
+                                ...setting[property],
+                                userGroup
+                            ]
+                        };
+                        setSetting(updatedSetting);
+                        requestUpdateSetting(updatedSetting);
+                    }
 
-                    // function onClickRemoveIcon() {
-                    //     const temp = setting[property].filter(ug => ug.id !== userGroup.id);
-                    //     const updatedSettting = {
-                    //         ...setting,
-                    //         [property]: temp
-                    //     }
-                    //     setSetting(updatedSettting);
-                    //     requestUpdateSetting(updatedSettting);
-                    // }
+                    function onClickRemoveIcon() {
+                        const temp = setting[property].filter((ug: any) => ug.id !== userGroup.id);
+                        const updatedSettting = {
+                            ...setting,
+                            [property]: temp
+                        }
+                        setSetting(updatedSettting);
+                        requestUpdateSetting(updatedSettting);
+                    }
 
-                    // return (
-                    //     <Chip
-                    //         disabled={disabled}
-                    //         color={exist ? "secondary" : undefined}
-                    //         size="medium"
-                    //         key={index}
-                    //         icon={<GroupIcon />}
-                    //         deleteIcon={exist ? <CloseIcon /> : <DoneIcon />}
-                    //         onDelete={exist ? onClickRemoveIcon : onClickDoneIcon}
-                    //         label={userGroup.name}
-                    //         variant="outlined"
-                    //     />
-                    // );
+                    return (
+                        <Chip
+                            disabled={disabled}
+                            color={exist ? "secondary" : undefined}
+                            size="medium"
+                            key={index}
+                            icon={<GroupIcon />}
+                            deleteIcon={exist ? <CloseIcon /> : <DoneIcon />}
+                            onDelete={exist ? onClickRemoveIcon : onClickDoneIcon}
+                            label={userGroup.name}
+                            variant="outlined"
+                        />
+                    );
                     })}
                 </Grid>
             </Grid>
@@ -228,13 +225,13 @@ export const ModelSetting = (props: SettingType) => {
             <Grid container className='supported-domain' direction="column">
                 <Grid item>
                 {
-                    setting.supportedDomains.map((supportedDomain, index) => {
+                    setting.supportedDomains.map((supportedDomain: string, index: number) => {
 
                         if(!supportedDomain) return null;
 
                         function onClickDeleteIcon() {
 
-                            const t = setting.supportedDomains.filter(s => s !== supportedDomain);
+                            const t = setting.supportedDomains.filter((s: string) => s !== supportedDomain);
                             setSetting({
                                 ...setting,
                                 supportedDomains: t
@@ -278,7 +275,8 @@ export const ModelSetting = (props: SettingType) => {
     }
 
     return (
-        <Grid className="setting-container">
+        <AccordianCommon name="permissions">
+            <Grid className="setting-container">
             <CommonCheckBoxField
                 onChange={(e: any) => updateSetting('isPublic', e.target.checked)}
                 onBlur={() => {}}
@@ -302,7 +300,7 @@ export const ModelSetting = (props: SettingType) => {
             </AccordianCommon>
             
             <AccordianCommon name="Post permission">
-                <Grid container>
+                <Grid container direction="column">
                     <Grid item direction="column">
                         {renderPermissions('restrict', 'post')}
                     </Grid>
@@ -312,10 +310,33 @@ export const ModelSetting = (props: SettingType) => {
                 </Grid>
             </AccordianCommon>
 
+            <AccordianCommon name="Put permission">
+                <Grid container direction="column">
+                    <Grid item>
+                        {renderPermissions('restrict', 'put')}
+                    </Grid>
+                    <Grid item>
+                    {renderPermissions('permitted', 'put')}
+                    </Grid>
+                </Grid>
+            </AccordianCommon>
+
+            <AccordianCommon name="Delete permission">
+                <Grid container direction="column">
+                    <Grid item>
+                        {renderPermissions('restrict', 'delete')}
+                    </Grid>
+                    <Grid item>
+                    {renderPermissions('permitted', 'delete')}
+                    </Grid>
+                </Grid>
+            </AccordianCommon>
+
             <AccordianCommon name="Supported domains">
                 {renderSupportedDomain()}
             </AccordianCommon>
                         
         </Grid>
+        </AccordianCommon>
     );
 }
