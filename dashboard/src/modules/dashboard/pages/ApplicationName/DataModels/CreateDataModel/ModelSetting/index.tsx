@@ -199,6 +199,8 @@ export const ModelSetting = (props: SettingType) => {
         );
     }
 
+    console.log("setting", setting);
+
     function renderSupportedDomain() {
 
         function onblur(event: any) {

@@ -226,15 +226,24 @@ export async function getCollectionNames(req: Request, res: Response) {
         query.populate({
             path: 'setting',
             populate: [
-                {path: 'permittedUserGroups', select: 'name' }, 
-                {path: 'restrictedUserGroups', select: 'name description'}
+                {path: 'getPermittedUserGroups', select: 'name' }, 
+                {path: 'postPermittedUserGroups', select: 'name' }, 
+                {path: 'putPermittedUserGroups', select: 'name' }, 
+                {path: 'deletePermittedUserGroups', select: 'name' }, 
+                {path: 'getRestrictedUserGroups', select: 'name'},
+                {path: 'postRestrictedUserGroups', select: 'name'},
+                {path: 'putRestrictedUserGroups', select: 'name'},
+                {path: 'deleteRestrictedUserGroups', select: 'name'},
             ]
         });
     }
 
     const collections = await query;
     const flatty = flatObject(collections, {settingId: undefined, [`${ENTRY_UPDATED_BY}Id`]: undefined}, [
-        {name : 'setting', items: ['permittedUserGroups', 'restrictedUserGroups','supportedDomains', 'isPublic', 'id']},
+        {name : 'setting', items: [
+            'getPermittedUserGroups', 'postPermittedUserGroups', 'putPermittedUserGroups', 'deletePermittedUserGroups',
+            'getRestrictedUserGroups', 'postRestrictedUserGroups', 'putRestrictedUserGroups', 'deleteRestrictedUserGroups',
+            'supportedDomains', 'isPublic', 'id']},
     ]);
     res.status(okayStatus).send(flatty);
 }

@@ -88,7 +88,7 @@ export async function makeSetting(req: Request, res: Response) {
         }
 
         if(getRestrictedUserGroups) {
-            body.getPermittedUserGroupIds = getRestrictedUserGroups;
+            body.getRestrictedUserGroupIds = getRestrictedUserGroups;
         }
         if(postRestrictedUserGroups) {
             body.postRestrictedUserGroupIds = postRestrictedUserGroups;
