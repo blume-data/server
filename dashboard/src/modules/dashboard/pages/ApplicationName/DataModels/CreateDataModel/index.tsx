@@ -144,8 +144,15 @@ const CreateDataModel = (props: CreateDataModelType) => {
 
     const [modelSetting, setModelSetting] = useState<ModelSettingType>({
         id: null,
-        permittedUserGroups: [],
-        restrictedUserGroups: [],
+        getPermittedUserGroups: [],
+        postPermittedUserGroups: [],
+        putPermittedUserGroups: [],
+        deletePermittedUserGroups: [],
+
+        getRestrictedUserGroups: [],
+        postRestrictedUserGroups: [],
+        putRestrictedUserGroups: [],
+        deleteRestrictedUserGroups: [],
         supportedDomains: [],
         isPublic: false
     });
@@ -195,8 +202,15 @@ const CreateDataModel = (props: CreateDataModelType) => {
                         id: response[0].setting.id,
                         isPublic: response[0].setting.isPublic,
                         supportedDomains: JSON.parse(response[0].setting?.supportedDomains || "[]"),
-                        restrictedUserGroups: response[0].setting.restrictedUserGroups,
-                        permittedUserGroups: response[0].setting.permittedUserGroups
+                        getRestrictedUserGroups: response[0].setting.getRestrictedUserGroups,
+                        postRestrictedUserGroups: response[0].setting.postRestrictedUserGroups,
+                        putRestrictedUserGroups: response[0].setting.putRestrictedUserGroups,
+                        deleteRestrictedUserGroups: response[0].setting.deleteRestrictedUserGroups,
+
+                        getPermittedUserGroups: response[0].setting.getPermittedUserGroups,
+                        postPermittedUserGroups: response[0].setting.postPermittedUserGroups,
+                        putPermittedUserGroups: response[0].setting.putPermittedUserGroups,
+                        deletePermittedUserGroups: response[0].setting.deletePermittedUserGroups,
                     });
                 }
 

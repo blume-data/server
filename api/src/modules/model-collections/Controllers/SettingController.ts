@@ -33,7 +33,10 @@ export async function getSetting(req: Request, res: Response) {
 
 export async function makeSetting(req: Request, res: Response) {
 
-    const {restrictedUserGroups=[], permittedUserGroups=[], isPublic=false, isEnabled=false, supportedDomains="", id} = req.body;
+    const {
+        getRestrictedUserGroups=[], postRestrictedUserGroups=[], putRestrictedUserGroups=[], deleteRestrictedUserGroups=[],
+        getPermittedUserGroups=[], postPermittedUserGroups=[], deletePermittedUserGroups=[], putPermittedUserGroups=[],
+        isPublic=false, isEnabled=false, supportedDomains="", id} = req.body;
 
     const sd = JSON.stringify(supportedDomains);
 
@@ -42,8 +45,17 @@ export async function makeSetting(req: Request, res: Response) {
         const uid = v4();
     
         const newSettings = SettingModel.build({
-            permittedUserGroupIds: (permittedUserGroups && Array.isArray(permittedUserGroups) ? permittedUserGroups : []),
-            restrictedUserGroupIds: (restrictedUserGroups && Array.isArray(restrictedUserGroups) ? restrictedUserGroups : []),
+
+            getPermittedUserGroupIds: (getPermittedUserGroups && Array.isArray(getPermittedUserGroups) ? getPermittedUserGroups : []),
+            postPermittedUserGroupIds: (postPermittedUserGroups && Array.isArray(postPermittedUserGroups) ? postPermittedUserGroups : []),
+            deletePermittedUserGroupIds: (deletePermittedUserGroups && Array.isArray(deletePermittedUserGroups) ? deletePermittedUserGroups : []),
+            putPermittedUserGroupIds: (putPermittedUserGroups && Array.isArray(putPermittedUserGroups) ? putPermittedUserGroups : []),
+
+            getRestrictedUserGroupIds: (getRestrictedUserGroups && Array.isArray(getRestrictedUserGroups) ? getRestrictedUserGroups : []),
+            postRestrictedUserGroupIds: (postRestrictedUserGroups && Array.isArray(postRestrictedUserGroups) ? postRestrictedUserGroups : []),
+            deleteRestrictedUserGroupIds: (deleteRestrictedUserGroups && Array.isArray(deleteRestrictedUserGroups) ? deleteRestrictedUserGroups : []),
+            putRestrictedUserGroupIds: (putRestrictedUserGroups && Array.isArray(putRestrictedUserGroups) ? putRestrictedUserGroups : []),
+
             isPublic,
             id: uid,
             isEnabled,
@@ -62,13 +74,32 @@ export async function makeSetting(req: Request, res: Response) {
     else {
         let body: any = {};
 
-        if(permittedUserGroups) {
-            body.permittedUserGroupIds = permittedUserGroups;
+        if(getPermittedUserGroups) {
+            body.getPermittedUserGroupIds = getPermittedUserGroups;
+        }
+        if(postPermittedUserGroups) {
+            body.postPermittedUserGroupIds = postPermittedUserGroups;
+        }
+        if(putPermittedUserGroups) {
+            body.putPermittedUserGroupIds = putPermittedUserGroups;
+        }
+        if(deletePermittedUserGroups) {
+            body.deletePermittedUserGroupIds = deletePermittedUserGroups;
         }
 
-        if(restrictedUserGroups) {
-            body.restrictedUserGroupIds = restrictedUserGroups;
+        if(getRestrictedUserGroups) {
+            body.getPermittedUserGroupIds = getRestrictedUserGroups;
         }
+        if(postRestrictedUserGroups) {
+            body.postRestrictedUserGroupIds = postRestrictedUserGroups;
+        }
+        if(putRestrictedUserGroups) {
+            body.putRestrictedUserGroupIds = putRestrictedUserGroups;
+        }
+        if(deleteRestrictedUserGroups) {
+            body.deleteRestrictedUserGroupIds = deleteRestrictedUserGroups;
+        }
+
         if(typeof isPublic === 'boolean') {
             body.isPublic = isPublic;
         }

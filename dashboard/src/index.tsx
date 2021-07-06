@@ -7,7 +7,10 @@ import {Provider} from "react-redux";
 import ReactDOM from "react-dom";
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import React from "react";
+import * as Sentry from "@sentry/react";
+import { Integrations } from "@sentry/tracing";
 import reportWebVitals from './reportWebVitals';
+
 
 declare global {
     interface Window {
@@ -46,6 +49,16 @@ const theme = createMuiTheme({
       },
     }
   });
+
+
+if(process.env.REACT_APP_ENV !== 'test') {
+    Sentry.init({
+        dsn: "https://9eaafcd0a5c94c6db6e86edf8e522e19@o912965.ingest.sentry.io/5850349",
+        integrations: [new Integrations.BrowserTracing()],
+        tracesSampleRate: 1.0,
+    });
+}
+
 
 ReactDOM.render(
     <React.StrictMode>
