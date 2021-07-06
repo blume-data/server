@@ -30,7 +30,7 @@ interface BasicTableMIUIProps {
     tableName: string;
 }
 
-export function BasicTableMIUI(props: BasicTableMIUIProps) {
+export default function BasicTableMIUI(props: BasicTableMIUIProps) {
 
     const classes = useStyles();
 
