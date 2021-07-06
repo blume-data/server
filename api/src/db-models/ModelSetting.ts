@@ -79,15 +79,58 @@ const Setting = new mongoose.Schema(
     }
 );
 
-Setting.virtual('restrictedUserGroups', {
+  Setting.virtual('getRestrictedUserGroups', {
     ref: 'UserGroupModel', // The model to use
-    localField: 'restrictedUserGroupIds', // Find people where `localField`
+    localField: 'getRestrictedUserGroupIds', // Find people where `localField`
     foreignField: 'id', // is equal to `foreignField`
     justOne: false,
   });
-Setting.virtual('permittedUserGroups', {
+
+  Setting.virtual('postRestrictedUserGroups', {
     ref: 'UserGroupModel', // The model to use
-    localField: 'permittedUserGroupIds', // Find people where `localField`
+    localField: 'postRestrictedUserGroupIds', // Find people where `localField`
+    foreignField: 'id', // is equal to `foreignField`
+    justOne: false,
+  });
+
+  Setting.virtual('putRestrictedUserGroups', {
+    ref: 'UserGroupModel', // The model to use
+    localField: 'putRestrictedUserGroupIds', // Find people where `localField`
+    foreignField: 'id', // is equal to `foreignField`
+    justOne: false,
+  });
+
+  Setting.virtual('deleteRestrictedUserGroups', {
+    ref: 'UserGroupModel', // The model to use
+    localField: 'deleteRestrictedUserGroupIds', // Find people where `localField`
+    foreignField: 'id', // is equal to `foreignField`
+    justOne: false,
+  });
+
+Setting.virtual('getPermittedUserGroups', {
+    ref: 'UserGroupModel', // The model to use
+    localField: 'getPermittedUserGroupIds', // Find people where `localField`
+    foreignField: 'id', // is equal to `foreignField`
+    justOne: false,
+});
+
+Setting.virtual('postPermittedUserGroups', {
+    ref: 'UserGroupModel', // The model to use
+    localField: 'postPermittedUserGroupIds', // Find people where `localField`
+    foreignField: 'id', // is equal to `foreignField`
+    justOne: false,
+});
+
+Setting.virtual('putPermittedUserGroups', {
+    ref: 'UserGroupModel', // The model to use
+    localField: 'putPermittedUserGroupIds', // Find people where `localField`
+    foreignField: 'id', // is equal to `foreignField`
+    justOne: false,
+});
+
+Setting.virtual('deletePermittedUserGroups', {
+    ref: 'UserGroupModel', // The model to use
+    localField: 'deletePermittedUserGroupIds', // Find people where `localField`
     foreignField: 'id', // is equal to `foreignField`
     justOne: false,
 });
