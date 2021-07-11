@@ -10,4 +10,5 @@ export interface ExistingUserType {
     userName: string;
     jwtId: string;
     _id: string;
+    userGroupIds: [string]
 }

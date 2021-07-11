@@ -121,7 +121,11 @@ const AuthComponent = (props: AuthProps) => {
             }
         }
         else {
-            response = await doPostRequest(url, values, false);
+            response = await doPostRequest(url, {
+                ...values,
+                email: values.email ? values.email : undefined,
+                userName: values.userName ? values.userName : undefined,
+            }, false);
         }
         if (step === SIGN_OUT) {
             setAuthentication(false);

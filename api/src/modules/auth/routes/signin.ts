@@ -53,7 +53,8 @@ async function sendResponse(req: Request, res: Response, responseData: PayloadRe
     [USER_NAME]: existingUser.userName,
     [JWT_ID]: existingUser.jwtId,
     [ID]: existingUser._id,
-    [SESSION_ID]: newSession._id || ''
+    [SESSION_ID]: newSession._id || '',
+    userGroupIds: existingUser.userGroupIds
   };
 
   // generate JWT and cookie
@@ -82,14 +83,20 @@ router.post(
   ],
   validateRequest,
   async (req: Request, res: Response) => {
-    const { email, password } = req.body;
+    const { email, password, userName } = req.body;
     const userType = req.params.userType;
-    let existingUser: any;
     let responseData: PayloadResponseType;
+
+    const find: any = {
+      type: userType
+    };
+    if(email) find.email = email;
+    if(userName) find.userName = userName;
+
+    const existingUser: any = await MainUserModel.findOne(find, [APPLICATION_NAMES, USER_NAME, PASSWORD, JWT_ID, 'userGroupIds', CLIENT_USER_NAME]);
 
     switch (userType) {
       case clientUserType: {
-        existingUser = await MainUserModel.findOne({email}, [APPLICATION_NAMES, USER_NAME, PASSWORD, JWT_ID]);
         if(existingUser) {
           responseData = {
             [ID]: existingUser._id,
@@ -105,6 +112,7 @@ router.post(
       
       default: {
         if(userType === superVisorUserType || userType === supportUserType || userType === freeUserType) {
+          console.log('here', existingUser)
           if (existingUser) {
             responseData = {
               [clientType]: userType,
