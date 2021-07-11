@@ -8,6 +8,7 @@ import ReactDOM from "react-dom";
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import React from "react";
 import reportWebVitals from './reportWebVitals';
+import {register} from './serviceWorker';
 declare global {
     interface Window {
         INITIAL_STATE: {
@@ -59,3 +60,5 @@ ReactDOM.render(
     document.getElementById('root')
 );
 reportWebVitals();
+// turn on service worker
+register();
