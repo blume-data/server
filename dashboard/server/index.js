@@ -1,9 +1,9 @@
 const path = require('path');
 const Express = require('express');
-const compression = require('compression')
+const shrinkRayCurrent = require('shrink-ray-current')
 const PORT = 3000;
 const app = Express();
-app.use(compression());
+app.use(shrinkRayCurrent());
 
 if (process.env.NODE_ENV !== 'development') {
     console.log('Env is production using only https!!');
