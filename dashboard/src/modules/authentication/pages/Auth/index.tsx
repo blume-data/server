@@ -1,4 +1,4 @@
-import {useEffect, useState, lazy, Suspense} from "react";
+import {useEffect, useState} from "react";
 import Grid from "@material-ui/core/Grid";
 import {doGetRequest, doPostRequest} from "../../../../utils/baseApi";
 import {authUrl, dashboardHomeUrl, getBaseUrl} from "../../../../utils/urls";
