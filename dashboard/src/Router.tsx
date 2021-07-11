@@ -1,4 +1,4 @@
-import React, { lazy, Suspense } from "react";
+import React, { Suspense } from "react";
 import RouteNotFound from "./components/RouteNotFound";
 import {Auth, AUTH_ROOT, SIGN_IN} from "./modules/authentication/pages/Auth";
 import {Redirect} from "react-router-dom";
@@ -21,24 +21,22 @@ import {
 } from "./utils/urls";
 import Layout from "./components/common/Layout";
 
-const App = lazy(() => import('./components/App'));
-const Assets = lazy(() => import('./modules/assets').then(module => ({ default: module.Assets })));
-const DataEntries = lazy(() => import('./modules/dashboard/pages/DateEntries').then(module => ({ default: module.DataEntries })));
-const Users = lazy(() => import('./modules/dashboard/pages/Users').then(module => ({ default: module.Users })));
-const Envs = lazy(() => import('./modules/dashboard/pages/Envs'));
-const ApplicationNames = lazy(() => import('./modules/dashboard/pages/applicationNames'));
-const ApplicationName = lazy(() => import('./modules/dashboard/pages/ApplicationName'));
-const DataModels = lazy(() => import('./modules/dashboard/pages/ApplicationName/DataModels'));
-const Home = lazy(() => import('./modules/dashboard/pages/home'));
-const CreateEntry = lazy(() => import('./modules/dashboard/pages/DateEntries/CreateEntry'));
-const CreateDataModel = lazy(() => import('./modules/dashboard/pages/ApplicationName/DataModels/CreateDataModel'));
+import App from './components/App';
+import {Assets} from './modules/assets';
+import {DataEntries} from './modules/dashboard/pages/DateEntries';
+import {Users} from './modules/dashboard/pages/Users';
+import Envs from './modules/dashboard/pages/Envs';
+import ApplicationNames from './modules/dashboard/pages/applicationNames';
+import ApplicationName from './modules/dashboard/pages/ApplicationName';
+import DataModels from './modules/dashboard/pages/ApplicationName/DataModels';
+import Home from './modules/dashboard/pages/home';
+import CreateEntry from './modules/dashboard/pages/DateEntries/CreateEntry';
+import CreateDataModel from './modules/dashboard/pages/ApplicationName/DataModels/CreateDataModel';
 
 function suspenceComponent(Component: any) {
     return () => {
         return (
-            <Suspense fallback="">
-                <Component />
-            </Suspense>
+            <Component />
         );
     }
 }
@@ -50,9 +48,7 @@ function PrivateRoute(Component: any) {
 
             return <Redirect to={`${AUTH_ROOT}/${SIGN_IN}`} />
         }
-        return <Suspense fallback="">
-        <Component />
-    </Suspense>;
+        return <Component />;
     }
 }
 
@@ -61,8 +57,8 @@ export const RouterComponent = () => {
         <Router>
             <Layout>
                 <Switch>
-                    <Route exact path={APP_ROOT_URL} component={suspenceComponent(App)} />
-                    <Route exact path={`${authUrl}/:step`} component={suspenceComponent(Auth)} />
+                    <Route exact path={APP_ROOT_URL} component={App} />
+                    <Route exact path={`${authUrl}/:step`} component={Auth} />
                     
                     <Route exact path={dashboardHomeUrl} component={PrivateRoute(Home)}/>
                     <Route exact path={dashboardApplicationNamesUrl} component={PrivateRoute(ApplicationNames)}/>
