@@ -6,8 +6,8 @@ import {PRODUCTION_ENV, USER_NAME} from "@ranjodhbirkaur/constants";
 interface CreateNewSession {
     existingUser: {
         jwtId: string;
+        type: string;
     },
-    userType: string;
     responseData: {
         [USER_NAME]: string;
         [CLIENT_USER_NAME]: string;
@@ -17,11 +17,11 @@ interface CreateNewSession {
 
 export function createNewSession(data: CreateNewSession) {
 
-    const {existingUser, userType, req, responseData} = data;
+    const {existingUser, req, responseData} = data;
 
     return SessionModel.build({
         jwtId: existingUser.jwtId,
-        clientType: userType,
+        clientType: existingUser.type,
         userName: responseData[USER_NAME],
         selectedEnv: PRODUCTION_ENV,
         clientUserName: responseData[CLIENT_USER_NAME],

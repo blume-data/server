@@ -30,7 +30,7 @@ const
     router = express.Router();
 
 router.post(
-    signUpUrl(), validateUserTypeSignUp,
+    signUpUrl, validateUserTypeSignUp,
     [
         body('email')
             .optional()
