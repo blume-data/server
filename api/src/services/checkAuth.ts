@@ -1,10 +1,10 @@
 import {Request, Response, NextFunction} from 'express';
 import {
     JWT_ID,
-    sendSingleError, Is_Enabled, CLIENT_USER_NAME, ID, verifyJwt,
+    sendSingleError, Is_Enabled, CLIENT_USER_NAME, verifyJwt,
 } from "../util/common-module";
 import {UserModel} from "../db-models/UserModel";
-import { clientType, clientUserType, USER_NAME } from '@ranjodhbirkaur/constants';
+import { clientType, USER_NAME } from '@ranjodhbirkaur/constants';
 
 /*
 * Check isEnabled jwt_id and client type

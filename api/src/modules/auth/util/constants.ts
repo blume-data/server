@@ -1,3 +1,5 @@
+import { CLIENT_USER_NAME } from "@ranjodhbirkaur/constants";
+
 export const passwordLimitOptions = {min:6, max: 20};
 export const passwordLimitOptionErrorMessage = (field: string) => field+' must be between 6 and 20 characters';
 
@@ -11,5 +13,6 @@ export interface ExistingUserType {
     jwtId: string;
     _id: string;
     type: string;
-    userGroupIds: [string]
+    userGroupIds: [string];
+    [CLIENT_USER_NAME]: string;
 }

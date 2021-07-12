@@ -13,7 +13,8 @@ export interface JwtPayloadType{
     // id of person who signed in
     [ID]: string;
     [SESSION_ID]: string;
-    userGroupIds: [string]
+    userGroupIds: [string];
+    [CLIENT_USER_NAME]: string;
 }
 
 export interface ApplicationNameType {

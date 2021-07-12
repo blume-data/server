@@ -17,7 +17,7 @@ export const getAddressUrls = (userType?: string) => {
 export const addressUrlsUrl = `${authRootUrl}/${addressUrls}`;
 
 export const register = 'sign-up';
-export const signUpUrl = `${authRootUrl}/:userType/${register}`;
+export const signUpUrl = `${authRootUrl}/${register}`;
 
 export const logOut = 'sign-out';
 export const signOutUrl = `${authRootUrl}/${logOut}`;

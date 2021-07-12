@@ -5,7 +5,6 @@ import {
   BadRequestError,
   generateJwt,
   sendJwtResponse,
-  
   stringLimitOptionErrorMessage,
   stringLimitOptions,
   JWT_ID,
@@ -14,13 +13,10 @@ import {
 } from '../../../util/common-module';
 import {USER_NAME, clientType} from '@ranjodhbirkaur/constants';
 import { Password } from '../services/password';
-
 import {InValidEmailMessage, InvalidLoginCredentialsMessage} from "../util/errorMessages";
 import {ExistingUserType, passwordLimitOptionErrorMessage, passwordLimitOptions} from "../util/constants";
-
 import {signInUrl} from "../util/urls";
 import {UserModel as MainUserModel} from "../../../db-models/UserModel";
-
 import {createNewSession} from "../util/tools";
 
 const router = express.Router();
@@ -28,7 +24,6 @@ const router = express.Router();
 async function sendResponse(req: Request, res: Response, responseData: PayloadResponseType, existingUser: ExistingUserType, password: string) {
 
   if (!existingUser) {
-    
     throw new BadRequestError(InvalidLoginCredentialsMessage);
   }
 
@@ -45,6 +40,7 @@ async function sendResponse(req: Request, res: Response, responseData: PayloadRe
   });
 
   const payload: JwtPayloadType = {
+    clientUserName: existingUser.clientUserName,
     [clientType]: existingUser.type,
     [USER_NAME]: existingUser.userName,
     [JWT_ID]: existingUser.jwtId,
@@ -79,6 +75,7 @@ router.post(
   ],
   validateRequest,
   async (req: Request, res: Response) => {
+
     const { email, password, userName } = req.body;
 
     const find: any = {};
@@ -86,10 +83,7 @@ router.post(
     if(email) find.email = email;
     if(userName) find.userName = userName;
 
-    console.log('Find', find);
-
     const existingUser: any = await MainUserModel.findOne(find, [APPLICATION_NAMES, USER_NAME, PASSWORD, JWT_ID, 'userGroupIds', CLIENT_USER_NAME, 'type']);
-
 
     if(!existingUser) {
       return sendSingleError(res, InvalidLoginCredentialsMessage)

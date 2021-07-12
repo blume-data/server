@@ -6,7 +6,7 @@ import {sendSingleError
 
 export async function validateUserType(req: Request, res: Response, next: NextFunction) {
 
-    const userType = req.params && req.params.userType;
+    const userType = req.body && req.body.userType;
 
     if (!SupportedUserType.includes(userType)) {
         return sendSingleError(res, `userType: ${userType} is not supported`);
