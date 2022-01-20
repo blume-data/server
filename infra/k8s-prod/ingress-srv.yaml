@@ -11,18 +11,18 @@ metadata:
 spec:
   tls:
     - hosts:
-        - api.ranjod.com
-        - app.ranjod.com
+        - api.blumne.com
+        - app.blumne.com
       secretName: ranjod-com
   rules:
-    - host: api.ranjod.com
+    - host: api.blumne.com
       http:
         paths:
           - path: /api/?(.*)
             backend:
               serviceName: api-srv
               servicePort: 4000
-    - host: app.ranjod.com
+    - host: app.blumne.com
       http:
         paths:
           - path: /?(.*)
