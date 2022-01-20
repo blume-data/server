@@ -81,7 +81,7 @@ export function getFieldConfiguration(step: string, defaultValues?: any ): Confi
             return fields;
         }
         case SIGN_IN: {
-            return [getEmail(defaultEmailValue), password];
+            return [{...getEmail(defaultEmailValue), required: false}, password, {...userName, required: false}];
         }
         case VERIFY_EMAIL: {
             return [getEmail(defaultEmailValue), getToken(defaultTokenValue)];
