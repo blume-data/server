@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "export NODE_OPTIONS=--openssl-legacy-provider ENVIORNMENT=production && npm run build && npm run start:server",
+    "start": "export ENVIORNMENT=production && npm run build && npm run start:server",
     "start:server": "node --trace-warnings build/index.js",
     "dev": "ts-node-dev --poll src/index.ts",
     "test": "jest --watchAll --no-cache",
