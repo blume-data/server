@@ -18,7 +18,7 @@ async function checkIsEnabled(req: Request, res: Response, next: NextFunction) {
   next();
 }
 
-router.get(currentUserUrl(), getCurrentUser, checkIsEnabled, (req: Request, res: Response) => {
+router.get(currentUserUrl, getCurrentUser, checkIsEnabled, (req: Request, res: Response) => {
   if (req.currentUser) {
     res.status(okayStatus).send({ currentUser: req.currentUser });
   }
