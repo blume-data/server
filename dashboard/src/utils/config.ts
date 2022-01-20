@@ -8,7 +8,7 @@ export const ROOT_URL = (() => {
             return 'http://localhost:4000'
         }
         default: {
-            return 'https://api.ranjod.com';
+            return 'https://api.blumne.com';
         }
     }
 })();
