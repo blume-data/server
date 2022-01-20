@@ -48,7 +48,7 @@ const ApplicationSpaceMModel = new mongoose.Schema({
         description: String,
         clientUserName : String,
         id: String,
-        envId: [{type: String}],
+        env: [{type: String}],
 
         deletedById : String,
         deletedAt : { type: Date },
@@ -65,7 +65,7 @@ const ApplicationSpaceMModel = new mongoose.Schema({
 
 ApplicationSpaceMModel.virtual('env', {
     ref: 'Env', // The model to use
-    localField: 'envId', // Find people where `localField`
+    localField: 'env', // Find people where `localField`
     foreignField: 'id', // is equal to `foreignField`
     justOne: false,
 });

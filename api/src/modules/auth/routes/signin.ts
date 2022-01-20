@@ -5,34 +5,25 @@ import {
   BadRequestError,
   generateJwt,
   sendJwtResponse,
-  
   stringLimitOptionErrorMessage,
   stringLimitOptions,
   JWT_ID,
   CLIENT_USER_NAME,
   APPLICATION_NAMES, PayloadResponseType, JwtPayloadType, PASSWORD, sendSingleError, SESSION_ID, ID
 } from '../../../util/common-module';
-import {clientUserType,
-  freeUserType,
-  superVisorUserType,
-  supportUserType, USER_NAME, clientType} from '@ranjodhbirkaur/constants';
+import {USER_NAME, clientType} from '@ranjodhbirkaur/constants';
 import { Password } from '../services/password';
-
 import {InValidEmailMessage, InvalidLoginCredentialsMessage} from "../util/errorMessages";
 import {ExistingUserType, passwordLimitOptionErrorMessage, passwordLimitOptions} from "../util/constants";
-
 import {signInUrl} from "../util/urls";
-import {validateUserType} from "../middleware/userTypeCheck";
 import {UserModel as MainUserModel} from "../../../db-models/UserModel";
-
 import {createNewSession} from "../util/tools";
 
 const router = express.Router();
 
-async function sendResponse(req: Request, res: Response, responseData: PayloadResponseType, existingUser: ExistingUserType, password: string, userType: string) {
+async function sendResponse(req: Request, res: Response, responseData: PayloadResponseType, existingUser: ExistingUserType, password: string) {
 
   if (!existingUser) {
-    
     throw new BadRequestError(InvalidLoginCredentialsMessage);
   }
 
@@ -45,15 +36,17 @@ async function sendResponse(req: Request, res: Response, responseData: PayloadRe
   }
 
   const newSession = createNewSession({
-    req, existingUser, responseData, userType
+    req, existingUser, responseData
   });
 
   const payload: JwtPayloadType = {
-    [clientType]: userType,
+    clientUserName: existingUser.clientUserName,
+    [clientType]: existingUser.type,
     [USER_NAME]: existingUser.userName,
     [JWT_ID]: existingUser.jwtId,
     [ID]: existingUser._id,
-    [SESSION_ID]: newSession._id || ''
+    [SESSION_ID]: newSession._id || '',
+    userGroupIds: existingUser.userGroupIds
   };
 
   // generate JWT and cookie
@@ -65,7 +58,7 @@ async function sendResponse(req: Request, res: Response, responseData: PayloadRe
 }
 
 router.post(
-    signInUrl(), validateUserType,
+    signInUrl,
   [
     body('userName')
       .optional()
@@ -82,46 +75,29 @@ router.post(
   ],
   validateRequest,
   async (req: Request, res: Response) => {
-    const { email, password } = req.body;
-    const userType = req.params.userType;
-    let existingUser: any;
-    let responseData: PayloadResponseType;
 
-    switch (userType) {
-      case clientUserType: {
-        existingUser = await MainUserModel.findOne({email}, [APPLICATION_NAMES, USER_NAME, PASSWORD, JWT_ID]);
-        if(existingUser) {
-          responseData = {
-            [ID]: existingUser._id,
-            [clientType]: userType,
-            [CLIENT_USER_NAME]: existingUser[USER_NAME],
-            [USER_NAME]: existingUser[USER_NAME]
-        }
-        await sendResponse(req, res, responseData, existingUser, password, userType);
-        return;
-        }
-        break;
-      }
-      
-      default: {
-        if(userType === superVisorUserType || userType === supportUserType || userType === freeUserType) {
-          if (existingUser) {
-            responseData = {
-              [clientType]: userType,
-              [ID]: existingUser[ID],
-              [CLIENT_USER_NAME]: existingUser[CLIENT_USER_NAME],
-              [USER_NAME]: existingUser[USER_NAME]
-            }
-            return sendResponse(req, res, responseData, existingUser, password, userType);
-          }
-        }
-        break;
-      }
+    const { email, password, userName } = req.body;
 
-    }
+    const find: any = {};
+    
+    if(email) find.email = email;
+    if(userName) find.userName = userName;
+
+    const existingUser: any = await MainUserModel.findOne(find, [APPLICATION_NAMES, USER_NAME, PASSWORD, JWT_ID, 'userGroupIds', CLIENT_USER_NAME, 'type']);
 
     if(!existingUser) {
       return sendSingleError(res, InvalidLoginCredentialsMessage)
+    }
+    else {
+
+      const responseData: PayloadResponseType = {
+        [ID]: existingUser._id,
+        [clientType]: existingUser.type,
+        [CLIENT_USER_NAME]: existingUser[USER_NAME],
+        [USER_NAME]: existingUser[USER_NAME]
+      }
+      
+      await sendResponse(req, res, responseData, existingUser, password);
     }
   }
 );
