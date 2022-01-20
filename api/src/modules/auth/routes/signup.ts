@@ -13,8 +13,6 @@ import {
     CLIENT_USER_NAME,
     pushErrors,
     sendErrors,
-    JwtPayloadType,
-    verifyJwt,
 } from '../../../util/common-module';
 import {
     passwordLimitOptionErrorMessage,
@@ -27,13 +25,12 @@ import {CLIENT_USER_NAME_NOT_VALID, EmailInUseMessage, InValidEmailMessage, User
 import {signUpUrl} from "../util/urls";
 import {clientUserType, freeUserType, superVisorUserType, supportUserType, trimCharactersAndNumbers, USER_NAME} from "@ranjodhbirkaur/constants";
 import {UserModel as MainUserModel} from "../../../db-models/UserModel";
-import { v4 as uuidv4 } from 'uuid';
-import { ApplicationSpaceModel } from '../../../db-models/ApplicationSpace';
 
-const router = express.Router();
+const
+    router = express.Router();
 
 router.post(
-    signUpUrl,
+    signUpUrl(), validateUserTypeSignUp,
     [
         body('email')
             .optional()
@@ -53,15 +50,12 @@ router.post(
         body('userName')
             .isLength(stringLimitOptions)
             .withMessage(stringLimitOptionErrorMessage('userName')),
-        body('userType')
-            .isLength(stringLimitOptions)
-            .withMessage(stringLimitOptionErrorMessage('userType')),
     ],
-    validateRequest, validateUserTypeSignUp,
+    validateRequest,
 
   async (req: Request, res: Response) => {
 
-        const userType = req.body.userType;
+        const userType = req.params.userType;
         req.body.userName = trimCharactersAndNumbers(req.body.userName);
 
         switch (userType) {
@@ -81,11 +75,14 @@ router.post(
   }
 );
 
+export { router as signupRouter };
+
+
 async function validateClientUserName(req: Request): Promise<{isValid: boolean; errorMessages: ErrorMessages[]}> {
 
     let isValid = true;
     const reqBody = req.body;
-    const userType = req.body.userType;
+    const userType = req.params.userType;
     let errorMessages: ErrorMessages[] = [];
     
     const userExist = await MainUserModel.findOne({
@@ -109,42 +106,65 @@ async function validateClientUserName(req: Request): Promise<{isValid: boolean; 
     };
 }
 
-/* Register client user */
+/*
+* Register client user
+* */
 async function saveUser(req: Request, res: Response, type=clientUserType ) {
 
     const { email, password, firstName, lastName, userName, clientUserName, applicationName } = req.body;
-    
-    // validate the client user name
+    const [adminType] = req.body;
+
     if(type !== clientUserType) {
         const resp = await validateClientUserName(req);
         if(!resp.isValid) {
             return sendErrors(res, resp.errorMessages);
         }
     }
-    let existingUser;
     
-    // Check unique email address
-    if(email) {
-        existingUser = await MainUserModel.findOne({email});
-        if (existingUser) {
-            return sendSingleError(res, EmailInUseMessage, EMAIL);
+    let existingUser;
+    // Check if the email is not taken
+    switch (type) {
+        case clientUserType: {
+            existingUser = await MainUserModel.findOne({email});
+            break;
+        }
+        default: {
+            if (type === freeUserType || type === superVisorUserType || type === supportUserType) {
+                if (email) {
+                    //existingUser = await FreeUser.findOne({email});
+                }
+            }
         }
     }
+    if (existingUser) {
+        return sendSingleError(res, EmailInUseMessage, EMAIL);
+    }
 
-    // check is userName is not taken
-    if(userName) {
-        existingUser = await MainUserModel.findOne({userName});
-        if(existingUser) {
-            return sendSingleError(res, UserNameNotAvailableMessage, USER_NAME);
+    // check if the user name is not taken for client User
+    existingUser = null;
+    switch (type) {
+        case clientUserType: {
+            existingUser = await MainUserModel.findOne({userName});
+            break;
         }
+        default: {
+            if (type === freeUserType || type === superVisorUserType || type === supportUserType) {
+                //existingUser = await FreeUser.findOne({userName});
+            }
+        }
+    }
+    if (existingUser) {
+        return sendSingleError(res, UserNameNotAvailableMessage, USER_NAME);
     }
 
     const verificationToken = RANDOM_STRING(4);
 
+    let user;
+
     switch (type) {
         case clientUserType: {
 
-            const user = ClientTempUser.build({
+            user = ClientTempUser.build({
                 email, password, firstName, lastName,  userName, verificationToken, clientType: clientUserType
             });
             await user.save();
@@ -152,73 +172,7 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
             console.log('verification token', user.verificationToken);
             break;
         }
-
-        case freeUserType: {
-
-            // check if application names exist
-            if(!req.body[APPLICATION_NAMES] || (req.body[APPLICATION_NAMES] && !req.body[APPLICATION_NAMES].length)) {
-                return sendSingleError(res, `${APPLICATION_NAMES} should be array of valid applicationName ids`, APPLICATION_NAMES);
-            }
-            else {
-                const exist: any = await ApplicationSpaceModel.findOne({id: req.body[APPLICATION_NAMES][0]}, '_id env').populate('env', 'id');
-                if(!exist) {
-                    return sendSingleError(res, `${APPLICATION_NAMES} are not valid`, APPLICATION_NAMES)
-                }
-                else {
-                    // check if all envs are valid
-                    // check if envs exist
-                    if(!req.body.envs || (req.body.envs && !req.body.envs.length)) {
-                        return sendSingleError(res, `envs should be array of valid env ids`, 'envs');
-                    }
-                    else {
-                        let isValid = true;
-                        req.body.envs.forEach((env: string) => {
-                            const found = exist.envs.find((item: any) => item.id === env);
-                            if(!found) isValid = false;
-                        });
-                        if(!isValid) {
-                            return sendSingleError(res, 'envs are not valid ids', 'envs');
-                        }
-                    }
-
-                }
-
-            }
-
-            const payload: JwtPayloadType = verifyJwt(req);
-            const user = ClientTempUser.build({
-                email, 
-                password, 
-                firstName, 
-                lastName,  
-                userName, 
-                verificationToken, 
-                clientType: freeUserType,
-                clientUserName: payload.userName,
-                applicationNames: req.body[APPLICATION_NAMES],
-                envs: req.body.envs
-            });
-
-        }
-
-        default : {
-            // TODO add application names
-            const user = MainUserModel.build({
-                email, 
-                password, 
-                firstName, 
-                lastName,  
-                userName, 
-                type, 
-                id: uuidv4(),
-                jwtId: RANDOM_STRING(10)
-            });
-            await user.save();
-            break;
-        }
     }
 
     res.status(okayStatus).send(true);
 }
-
-export { router as signupRouter };

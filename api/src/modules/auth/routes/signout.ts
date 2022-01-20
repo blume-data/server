@@ -23,7 +23,7 @@ async function checkAuth(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-router.post(signOutUrl, validateUserType, checkAuth, async (req: Request, res: Response) => {
+router.post(signOutUrl(), validateUserType, checkAuth, async (req: Request, res: Response) => {
 
   const payload: JwtPayloadType = verifyJwt(req);
 

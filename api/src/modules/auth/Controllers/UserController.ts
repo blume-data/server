@@ -62,7 +62,7 @@ export const isUserNameAvailable = async function (req: ReqIsUserNameAvailable, 
 export const verifyEmailToken = async function (req: ReqValidateEmail, res: Response) {
     const modelProps = req.query;
 
-    const clientUserExist = await MainUserModel.findOne({email: modelProps.email}, 'id');
+    const clientUserExist = await MainUserModel.findOne({email: modelProps.email});
     if (clientUserExist) {
         throw new BadRequestError('Invalid Request');
     }
@@ -101,13 +101,12 @@ export const verifyEmailToken = async function (req: ReqValidateEmail, res: Resp
 
                 // create a new session
                 const newSession = await createNewSession({
-                    req, responseData: response, existingUser: {jwtId, type: userType}
+                    req, userType, responseData: response, existingUser: {jwtId}
                 });
 
                 const payload: JwtPayloadType = {
                     [JWT_ID]: jwtId,
                     [ID]: newUser[ID],
-                    userGroupIds: [''],
                     [USER_NAME]: newUser[USER_NAME] || '',
                     [clientType]: userType,
                     [SESSION_ID]: newSession._id || '',

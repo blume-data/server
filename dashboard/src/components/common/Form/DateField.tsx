@@ -1,6 +1,7 @@
 import React, {ChangeEvent, useEffect, useState} from "react";
 import {Grid} from "@material-ui/core";
 import {DATE_FORM_FIELD_TYPE, FieldType, ONLY_DATE_FORM_FIELD_TYPE} from "./interface";
+
 import {SearchMenuList} from "../SearchMenuList";
 import {validMomentTimezones} from "@ranjodhbirkaur/constants";
 import {DescriptionText} from "./DescriptionText";
@@ -20,7 +21,9 @@ interface DateFieldType extends FieldType{
 }
 
 export const DateField = (props: DateFieldType) => {
-    const {id, className, label, name, type, helperText, disabled=false, miscData, onChange, value=''} = props;
+    const {id, className, label, required=false, name, type,
+        onBlur, helperText, disabled=false, descriptionText='',miscData,
+        onChange, error=false, value='', placeholder=''} = props;
 
     const [timeZone, setTimeZone] = useState<string>('UCT');
     const [finalValue, setFinalValue] = useState<string>('');

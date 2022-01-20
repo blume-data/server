@@ -22,7 +22,6 @@ import { TopLink } from "./TopLink";
 import React from "react";
 import {getItemFromLocalStorage} from "../../../../utils/tools";
 import {fetchApplicationNames} from "../../../dashboard/pages/home/actions";
-import { AUTH_ROUTES } from "../../../../utils/constants";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type AuthProps = PropsFromRedux & {
@@ -77,30 +76,33 @@ const AuthComponent = (props: AuthProps) => {
     }
 
     async function authUser(values: any) {
-        const {setAuthentication} = props;
+        const {routeAddress, setAuthentication} = props;
         //setIsLoading(true);
         // set route url according to step
         const routeUrl = (() => {
             let urlName = '';
-            switch (step) {
-                case SIGN_IN: {
-                    urlName = AUTH_ROUTES.logIn;
-                    break;
+            if (routeAddress) {
+
+                switch (step) {
+                    case SIGN_IN: {
+                        urlName = routeAddress.logIn;
+                        break;
+                    }
+                    case SIGN_UP: {
+                        urlName = routeAddress.register;
+                        break;
+                    }
+                    case VERIFY_EMAIL: {
+                        urlName = routeAddress.emailVerification;
+                        break;
+                    }
+                    case SIGN_OUT: {
+                        urlName = routeAddress.logOut;
+                        break;
+                    }
                 }
-                case SIGN_UP: {
-                    urlName = AUTH_ROUTES.register;
-                    break;
-                }
-                case VERIFY_EMAIL: {
-                    urlName = AUTH_ROUTES.emailVerification;
-                    break;
-                }
-                case SIGN_OUT: {
-                    urlName = AUTH_ROUTES.logOut;
-                    break;
-                }
+                return `${routeAddress.authRootUrl}/${clientUserType}/${urlName}`;
             }
-            return `${AUTH_ROUTES.authRootUrl}/${urlName}`;
             return '';
         })();
         const url = `${getBaseUrl()}${routeUrl}`;
@@ -119,11 +121,7 @@ const AuthComponent = (props: AuthProps) => {
             }
         }
         else {
-            response = await doPostRequest(url, {
-                ...values,
-                email: values.email ? values.email : undefined,
-                userName: values.userName ? values.userName : undefined,
-            }, false);
+            response = await doPostRequest(url, values, false);
         }
         if (step === SIGN_OUT) {
             setAuthentication(false);
@@ -183,7 +181,7 @@ const AuthComponent = (props: AuthProps) => {
     const {step} = useParams<{step: string}>();
 
     useEffect(() => {
-        if (step === SIGN_OUT) {
+        if (step === SIGN_OUT && props.routeAddress && props.routeAddress.logOut) {
             authUser({});
             props.setApplicationName('');
         }
@@ -198,8 +196,9 @@ const AuthComponent = (props: AuthProps) => {
                     token: defaultToken ? defaultToken : ''
                 });
             }
+
         }
-    },[]);
+    },[props.routeAddress]);
 
 
     if(SIGN_OUT === step) {
@@ -241,5 +240,9 @@ const AuthComponent = (props: AuthProps) => {
     );
 };
 
-const connector = connect(null, {setAuthentication, setApplicationName, fetchApplicationNames});
+const mapState = (state: RootState) => ({
+    routeAddress: state.routeAddress.routes.auth
+});
+
+const connector = connect(mapState, {setAuthentication, setApplicationName, fetchApplicationNames});
 export const Auth = connector(AuthComponent);
