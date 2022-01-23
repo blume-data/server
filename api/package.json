@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node --trace-warnings build/index.js",
+    "start": "export ENVIORNMENT=production && node --trace-warnings build/index.js",
     "dev": "ts-node-dev --poll src/index.ts",
     "test": "jest --watchAll --no-cache",
     "test:ci": "jest",
