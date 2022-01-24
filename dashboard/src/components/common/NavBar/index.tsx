@@ -128,8 +128,8 @@ export const NavBarComponent = (props: PropsFromRedux) => {
                             {
                                 isAuth ?
                                     <Grid>
-                                        <MenuItem onClick={handleClose}>Profile</MenuItem>
-                                        <MenuItem onClick={handleClose}>My account</MenuItem>
+                                        {/* <MenuItem onClick={handleClose}>Profile</MenuItem>
+                                        <MenuItem onClick={handleClose}>My account</MenuItem> */}
                                         <Link to={`${authUrl}/${SIGN_OUT}`}><MenuItem>Log out</MenuItem></Link>
                                     </Grid>
                                     : <Link to={`${authUrl}/${SIGN_IN}`}>

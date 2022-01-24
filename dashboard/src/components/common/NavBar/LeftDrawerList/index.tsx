@@ -87,12 +87,12 @@ const LeftDrawerListComponent = (props: PropsFromRedux) => {
                             </ListItem>
                         </Link>
                         
-                        <Link className={'link-item-link'} to={dashboardApplicationNamesUrl}>
+                        {/* <Link className={'link-item-link'} to={dashboardApplicationNamesUrl}>
                                 <ListItem button>
                                 <ListItemIcon><LanguageIcon /></ListItemIcon>
                                 <ListItemText primary={'Languages'} />
                                 </ListItem>
-                        </Link>
+                        </Link> */}
                         
                         <Link className={'link-item-link'} to={dataModelsUrl}>
                             <ListItem button>
@@ -115,7 +115,7 @@ const LeftDrawerListComponent = (props: PropsFromRedux) => {
                             </ListItem>
                         </Link>
                         
-                        <Link className={'link-item-link'} to={UserUrl}>
+                        {/* <Link className={'link-item-link'} to={UserUrl}>
                             <ListItem button>
                                 <ListItemIcon><PersonAdd /></ListItemIcon>
                                 <ListItemText primary={'Users'} />
@@ -127,7 +127,7 @@ const LeftDrawerListComponent = (props: PropsFromRedux) => {
                                 <ListItemIcon><PersonAdd /></ListItemIcon>
                                 <ListItemText primary={'User Group'} />
                             </ListItem>
-                        </Link>
+                        </Link> */}
 
                       </div>
                     : null

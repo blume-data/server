@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {Grid} from "@material-ui/core";
+import {Grid, Typography} from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import ModalDialog from "../../../../components/common/ModalDialog";
 import {APPLICATION_NAME} from "@ranjodhbirkaur/constants";
@@ -38,7 +38,25 @@ const ApplicationNames = (props: PropsFromRedux) => {
 
     return (
         <Grid className={'application-name-container'}>
-            Application names
+
+            <Grid container justify={"space-between"} className={'button-section'}>
+                <Grid item className={'button-group'}>
+                    <Typography component={'h4'} variant={'h4'}>
+                        Application spaces 
+                    </Typography>
+                    <Typography component={'p'}>
+                        Select any application space you want to manage today 
+                    </Typography>
+
+                </Grid>
+                <Grid item className={'button-group'}>
+                    <Button variant="contained" color="primary" onClick={() => setIsModalOpen(true)}>
+                        Create Space
+                    </Button>
+                </Grid>
+            </Grid>
+
+            
             <Grid container justify={"center"} className={'application-spaces-list'} direction={"column"}>
                 {applicationNames && applicationNames.map((applicationName, index) => {
                     return (
@@ -53,13 +71,7 @@ const ApplicationNames = (props: PropsFromRedux) => {
                 })}
             </Grid>
 
-            <Grid container justify={"center"} className={'button-section'}>
-                <Grid container justify={"center"} className={'button-group'}>
-                    <Button variant="contained" color="primary" onClick={() => setIsModalOpen(true)}>
-                        Create Space
-                    </Button>
-                </Grid>
-            </Grid>
+            
 
             <ModalDialog
                 isOpen={isModalOpen}
