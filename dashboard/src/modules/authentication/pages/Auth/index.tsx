@@ -199,7 +199,7 @@ const AuthComponent = (props: AuthProps) => {
                 // attempt verify
                 onSubmit([
                     {name: 'email', value: defaultEmail},
-                    {name: 'verificationToken', defaultToken}
+                    {name: 'verificationToken', value: defaultToken}
                 ]);
             }
 

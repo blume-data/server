@@ -26,6 +26,7 @@ import {authRootUrl, emailVerification, signUpUrl} from "../util/urls";
 import {clientUserType, freeUserType, superVisorUserType, supportUserType, trimCharactersAndNumbers, USER_NAME} from "@ranjodhbirkaur/constants";
 import {UserModel as MainUserModel} from "../../../db-models/UserModel";
 import { Email } from '../../../util/email';
+import { emailTemplate } from '../../../util/email-template';
 
 const
     router = express.Router();
@@ -176,14 +177,15 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
                 to: email,
                 name: `${firstName} ${lastName}`
               });
-              em.send(`Your email verification token is: <b>${verificationToken}</b. <br/> 
-              <br />
-              <a href="${url}" target="_blank">Verify email</a> <br />
-              <br/>
-              Or copy the following url in your browser
-              <p>${url}</p>
-              `, 
-              "Please verify your email address");
+            //   em.send(`Your email verification token is: <b>${verificationToken}</b. <br/> 
+            //   <br />
+            //   <a href="${url}" target="_blank">Verify email</a> <br />
+            //   <br/>
+            //   Or copy the following url in your browser
+            //   <p>${url}</p>
+            //   `, 
+            //   "Please verify your email address");
+            em.send(emailTemplate(url, `${firstName} ${lastName}`, verificationToken), "Please verify your email address");
             break;
         }
     }
