@@ -25,7 +25,7 @@ export class Email {
        this.to = to;
        this.name = name.split(' ')[0];
        // we can easily customise email to send from
-       this.from = `Blumne <grimSquad@yandex.com>`;
+       this.from = `taranjeet@blumne.com <grimSquad@yandex.com>`;
 
        // FOR CONTACT
        if (user.message) this.userMessage = user.message;
