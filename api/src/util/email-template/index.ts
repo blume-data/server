@@ -121,7 +121,8 @@ export function emailTemplate(url:string, name: string, token: string) {
                     <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
                         <tr>
                             <td bgcolor="#ffffff" align="center" valign="top" style="padding: 40px 20px 20px 20px; border-radius: 4px 4px 0px 0px; color: #111111; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 48px; font-weight: 400; letter-spacing: 4px; line-height: 48px;">
-                                <h1 style="text-transform: capitalize; font-size: 48px; font-weight: 400; margin: 2;">Welcome <br/>${name}!</h1> <img src=" https://img.icons8.com/clouds/100/000000/handshake.png" width="125" height="120" style="display: block; border: 0px;" />
+                                <h1 style="text-transform: capitalize; font-size: 48px; font-weight: 400; margin: 2;">Welcome <br/>${name}!</h1>
+                                <h1 style="text-transform: capitalize; font-size: 48px; font-weight: 400; margin: 2;">${name}</h1>
                             </td>
                         </tr>
                     </table>
@@ -174,6 +175,7 @@ export function emailTemplate(url:string, name: string, token: string) {
                         <tr>
                             <td bgcolor="#ffffff" align="left" style="padding: 0px 30px 40px 30px; border-radius: 0px 0px 4px 4px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;">
                                 <p style="margin: 0;">Cheers,<br>Blumne Team</p>
+                                <p style="margin: 0;">Cheers,<br>Taranjeet Singh</p>
                             </td>
                         </tr>
                     </table>
