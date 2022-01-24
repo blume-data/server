@@ -60,7 +60,7 @@ export class Email {
        };
        // 3) create a transport and send email
 
-       if(process.env.ENVIORNMENT === PRODUCTION_ENV || true) {
+       if(process.env.ENVIORNMENT === PRODUCTION_ENV) {
             await this.newTransport().sendMail(mailOptions);
        }
     }
