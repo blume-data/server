@@ -14,6 +14,7 @@ import { getItemFromLocalStorage } from "../../../../utils/tools";
 import EditIcon from '@material-ui/icons/Edit';
 import './style.scss';
 import { useParams } from "react-router";
+import { DescriptionText } from "../../../../components/common/Form/DescriptionText";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 interface ModalDataType {
@@ -73,12 +74,24 @@ export const UsersComponent = (props: PropsFromRedux) => {
     const userModelfields: ConfigField[] = [
         {
             name: 'userName',
-            required: true,
             placeholder: 'Set a unique username of the user',
             label: 'Username',
             className: '',
             value: userFormData?.data?.userName,
-            inputType: TEXT
+            inputType: TEXT,
+            required: false,
+            descriptionText: "Set a unique username of the user"
+        },
+        {
+            name: 'email',
+            placeholder: 'Set a unique email of the user',
+            label: 'Email',
+            className: '',
+            value: userFormData?.data?.email,
+            inputType: TEXT,
+            required: false,
+            type: 'email',
+            descriptionText:"Set a unique email of the user"
         },
         {
             name: 'password',
@@ -87,7 +100,8 @@ export const UsersComponent = (props: PropsFromRedux) => {
             label: 'Password',
             className: '',
             value: userFormData?.data?.password,
-            inputType: TEXT
+            inputType: TEXT,
+            descriptionText: 'Set a password for the user',
         },
         {
             name: 'type',
@@ -97,6 +111,7 @@ export const UsersComponent = (props: PropsFromRedux) => {
             className: '',
             value: userFormData?.data?.type,
             inputType: DROPDOWN,
+            descriptionText: 'Select the User type of user',
             options: SupportedUserType.map((userType: any) => {
                 return {
                     label: userType,
@@ -113,6 +128,7 @@ export const UsersComponent = (props: PropsFromRedux) => {
             value: userFormData?.data?.userGroup || [],
             multiple: true,
             inputType: DROPDOWN,
+            descriptionText: 'Select the User group of user',
             options: userGroups && userGroups.length ? userGroups.map((userGroup: any) => {
                 return {
                     label: userGroup.name,
@@ -286,6 +302,9 @@ export const UsersComponent = (props: PropsFromRedux) => {
         }
 
         async function onSubmitUser(values: any) {
+
+            console.log("values", values);
+
             let response;
             if(userFormData && userFormData.data && userFormData.data.id) {
                 response = await doPutRequest(urls.user, {

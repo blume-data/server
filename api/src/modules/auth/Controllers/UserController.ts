@@ -139,7 +139,7 @@ async function sendValidateEmailResponse(req: Request, payload: JwtPayloadType, 
 }
 
 /*
-* On create new user
+* On create new main user
 * */
 export async function OnCreateNewUser(userId: string, userName: string) {
 
