@@ -22,6 +22,7 @@ import { TopLink } from "./TopLink";
 import React from "react";
 import {getItemFromLocalStorage} from "../../../../utils/tools";
 import {fetchApplicationNames} from "../../../dashboard/pages/home/actions";
+import { PermDeviceInformationOutlined } from "@material-ui/icons";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type AuthProps = PropsFromRedux & {
@@ -54,6 +55,9 @@ const AuthComponent = (props: AuthProps) => {
 
     async function onSubmit(values: object[]) {
         let data: any = {};
+
+        console.log("values", values);
+
         values.forEach((value: any) => {
             data[value.name] = value.value;
         });
@@ -190,6 +194,15 @@ const AuthComponent = (props: AuthProps) => {
             const defaultEmail = urlParams.get('email');
             const defaultToken = urlParams.get('token');
 
+            if(defaultEmail && defaultToken && props?.routeAddress?.emailVerification) {
+
+                // attempt verify
+                onSubmit([
+                    {name: 'email', value: defaultEmail},
+                    {name: 'verificationToken', defaultToken}
+                ]);
+            }
+
             if(defaultEmail) {
                 setDefaultValues({
                     email: defaultEmail,
@@ -198,7 +211,7 @@ const AuthComponent = (props: AuthProps) => {
             }
 
         }
-    },[props.routeAddress]);
+    },[props.routeAddress, step]);
 
 
     if(SIGN_OUT === step) {

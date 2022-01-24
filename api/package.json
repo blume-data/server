@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "export ENVIORNMENT=production && export NODE_OPTIONS=--openssl-legacy-provider && node --trace-warnings build/index.js",
-    "dev": "ts-node-dev --poll src/index.ts",
+    "dev": "export ENVIORNMENT=dev && ts-node-dev --poll src/index.ts",
     "test": "jest --watchAll --no-cache",
     "test:ci": "jest",
     "build": "export ENVIORNMENT=production && export NODE_OPTIONS=--openssl-legacy-provider && webpack",
@@ -32,6 +32,7 @@
     "@types/cors": "^2.8.7",
     "@types/express": "^4.17.3",
     "@types/express-useragent": "^1.0.0",
+    "@types/html-to-text": "^8.0.1",
     "@types/imagekit": "^3.1.1",
     "@types/jest": "^25.2.1",
     "@types/jsonwebtoken": "^8.3.8",
@@ -48,12 +49,14 @@
     "express-async-errors": "^3.1.1",
     "express-useragent": "^1.0.15",
     "express-validator": "^6.4.0",
+    "html-to-text": "^8.1.0",
     "imagekit": "^3.1.2",
     "jest": "^25.2.7",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.21",
     "luxon": "^1.25.0",
     "mongoose": "^5.12.2",
+    "nodemailer": "^6.7.2",
     "supertest": "^4.0.2",
     "ts-jest": "^25.3.1",
     "ts-loader": "^7.0.5",
@@ -63,5 +66,8 @@
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.12",
     "webpack-node-externals": "^1.7.2"
+  },
+  "devDependencies": {
+    "@types/nodemailer": "^6.4.4"
   }
 }

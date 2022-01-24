@@ -31,6 +31,7 @@ import {JsonEditor} from "./JsonEditor";
 import ReferenceEditor from "./ReferenceEditor";
 import HtmlEditor from "../HtmlEditor";
 import AssetsAdder from "./AssetsAdder";
+import { validateEmail } from "../../../utils/tools";
 
 const DateField = lazy(() => import('./DateField')
     .then(module => ({ default: module.DateField }))
@@ -57,7 +58,6 @@ export const Form = (props: FormType) => {
     const [alert, setAlertMessage] = React.useState<AlertType>({message: ''});
     const [tabValue, setTabValue] = React.useState<number>(0);
     const [filteredGroups, setFilteredGroups] = useState<string[]>([]);
-
     const [formState, setFormState] = useState<FormState[]>([]);
     const {className, groups, fields, onSubmit, submitButtonName, response='', clearOnSubmit=false, showClearButton=false} = props;
 
@@ -79,7 +79,8 @@ export const Form = (props: FormType) => {
         const value = event.target.value;
         let state: FormState[];
 
-        function setHelperText(fieldItem: ConfigField, formStateItem: FormState, value: string) {
+        // @param: whenTouched: set helper text on touch
+        function setHelperText(fieldItem: ConfigField, formStateItem: FormState, value: string, whenTouched = false) {
 
             const {max, inputType, min, required, type} = fieldItem;
             const {label} = formStateItem;
@@ -110,6 +111,9 @@ export const Form = (props: FormType) => {
                     }
                 }
             }
+            if(event.target.type === "email" && !validateEmail(value) && whenTouched) {
+                return `${label} must be a valid email address`;
+            }
             if(inputType === JSON_TEXT) {
                 if(!IsJsonString(value)) {
                     return `${label} is not a valid JSON`;
@@ -139,7 +143,7 @@ export const Form = (props: FormType) => {
                     if (item.label === field) {
                         return {
                             ...item,
-                            helperText: setHelperText(fieldItem, item, item.value),
+                            helperText: setHelperText(fieldItem, item, item.value, true),
                             isTouched: true
                         }
                     }

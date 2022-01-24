@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import { DateTime } from "luxon";
 import { UserGroupModel } from "../../../db-models/UserGroup";
 import { UserModel } from "../../../db-models/UserModel";
-import { RANDOM_STRING, sendSingleError } from "../../../util/common-module";
+import { RANDOM_STRING, sendSingleError, validateEmail } from "../../../util/common-module";
 import { flatObject, sendOkayResponse } from "../../../util/methods";
 import { v4 as uuidv4 } from 'uuid';
 
@@ -11,6 +11,16 @@ export async function CreateUpdateOtherUser(req: Request, res: Response) {
 
     const {type, userName, password, details, email, userGroups=[], id} = req.body;
     const {clientUserName, applicationName, env} = req.params;
+
+    // check if email/user is valid
+    if(!userName && !email) {
+        return sendSingleError(res, "One of email or userName is required");
+    }
+
+    // validate email
+    if(email && !validateEmail(email)) {
+        return sendSingleError(res, "email must be a valid email address", 'email');
+    }
 
     // check userType
     if(type && (!SupportedUserType.includes(type) || type === clientUserType)) {
@@ -31,10 +41,20 @@ export async function CreateUpdateOtherUser(req: Request, res: Response) {
         return sendOkayResponse(res);
     }
 
-    // check if user is not used already
-    const exist = await UserModel.findOne({userName}, '_id');
-    if(exist) {
-        return sendSingleError(res, 'userName is not available', 'userName');
+    // check userName if user is not used already
+    if(userName) { 
+        const exist = await UserModel.findOne({userName}, '_id');
+        if(exist) {
+            return sendSingleError(res, 'userName is not available', 'userName');
+        }
+    }
+
+    // check email if user is not used already
+    if(email) {
+        const exist = await UserModel.findOne({email}, '_id');
+        if(exist) {
+            return sendSingleError(res, 'email is not available', 'email');
+        }
     }
 
     const newUser = UserModel.build({
