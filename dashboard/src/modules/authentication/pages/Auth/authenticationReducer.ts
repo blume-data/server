@@ -64,10 +64,23 @@ export function authenticationReducer(
             }
         }
         case ACTION_FETCH_APPLICATION_NAMES: {
+
+
+            const seletectedSpace = getItemFromLocalStorage(LOCAL_STORAGE_SELECTED_APPLICATION_NAME);
+
+            if(seletectedSpace) {
+                return {
+                    ...state,
+                    applicationsNames: action.data.applicationNames,
+                    applicationName: seletectedSpace
+                }
+            }
             return {
                 ...state,
+                applicationName: (action.data.applicationNames[0].name),
                 applicationsNames: action.data.applicationNames
             }
+            
         }
 
         default:
