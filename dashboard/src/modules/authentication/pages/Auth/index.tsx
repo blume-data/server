@@ -189,7 +189,7 @@ const AuthComponent = (props: AuthProps) => {
             authUser({});
             props.setApplicationName('');
         }
-        if(step === VERIFY_EMAIL) {
+        else if(step === VERIFY_EMAIL) {
             const urlParams = new URLSearchParams(window.location.search);
             const defaultEmail = urlParams.get('email');
             const defaultToken = urlParams.get('token');
@@ -211,6 +211,13 @@ const AuthComponent = (props: AuthProps) => {
             }
 
         }
+        else {
+            setDefaultValues({
+                email: "",
+                password: ""
+            });
+        }
+        
     },[props.routeAddress, step]);
 
 
@@ -221,7 +228,7 @@ const AuthComponent = (props: AuthProps) => {
     return (
         <Grid container className={'auth-page'} direction={'row'} justify={'space-between'}>
             <Grid item lg={6} xl={6} md={6} sm={6} xs={12}>
-                
+                   
             </Grid>
             <Grid item lg={6} xl={6} md={6} sm={6} xs={12}>
                 <Grid container justify={'center'}>
