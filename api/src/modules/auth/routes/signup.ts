@@ -22,9 +22,10 @@ import {ClientTempUser} from "../../../db-models/clientTempUser";
 
 import {validateUserTypeSignUp} from "../middleware/userTypeCheck-Signup";
 import {CLIENT_USER_NAME_NOT_VALID, EmailInUseMessage, InValidEmailMessage, UserNameNotAvailableMessage} from "../util/errorMessages";
-import {signUpUrl} from "../util/urls";
+import {authRootUrl, emailVerification, signUpUrl} from "../util/urls";
 import {clientUserType, freeUserType, superVisorUserType, supportUserType, trimCharactersAndNumbers, USER_NAME} from "@ranjodhbirkaur/constants";
 import {UserModel as MainUserModel} from "../../../db-models/UserModel";
+import { Email } from '../../../util/email';
 
 const
     router = express.Router();
@@ -170,6 +171,19 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
             await user.save();
 
             console.log('verification token', user.verificationToken);
+            const url = `https://app.blumne.com/secure/verify-email?token=${verificationToken}&email=${email}`
+            const em = new Email({
+                to: email,
+                name: `${firstName} ${lastName}`
+              });
+              em.send(`Your email verification token is: <b>${verificationToken}</b. <br/> 
+              <br />
+              <a href="${url}" target="_blank">Verify email</a> <br />
+              <br/>
+              Or copy the following url in your browser
+              <p>${url}</p>
+              `, 
+              "Please verify your email address");
             break;
         }
     }

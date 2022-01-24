@@ -9,6 +9,8 @@ import userAgent from 'express-useragent';
 import {assetsRoutes} from "./modules/assets/routes";
 import {EnvRouter, currentUserRouter, addressRoutes, signinRouter, signoutRouter, signupRouter, validationRoutes} from './modules/auth/routes';
 import { createOtherUsersRouter } from './modules/auth/routes/create-other-users-route';
+import { Email } from './util/email';
+import { emailReg } from '@ranjodhbirkaur/constants';
 
 const start = async () => {
 
@@ -51,6 +53,9 @@ const start = async () => {
   serverApp.listen(4000, () => {
     console.log('Data Service: Server is Listening!');
   });
+
+  console.log("ENV", process.env.ENVIORNMENT);
+
 };
 
 start().then(() => console.log('started Everything'));
