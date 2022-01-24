@@ -145,7 +145,7 @@ export const ModelSetting = (props: SettingType) => {
             <Grid container className="user-groups" direction="column">
                 <Grid item><RenderHeading value={type}></RenderHeading></Grid>
                 <Grid item>
-                {setting && setting[otherProperty] && setting[property] && userGroups.map((userGroup, index) => {
+                {setting && setting[otherProperty] && setting[property] && userGroups?.length && userGroups?.map((userGroup, index) => {
 
                     let disabled = !!setting[otherProperty].length;
                     const exist = (() => {
@@ -227,7 +227,7 @@ export const ModelSetting = (props: SettingType) => {
             <Grid container className='supported-domain' direction="column">
                 <Grid item>
                 {
-                    setting.supportedDomains.map((supportedDomain: string, index: number) => {
+                    setting?.length && setting?.supportedDomains.map((supportedDomain: string, index: number) => {
 
                         if(!supportedDomain) return null;
 
@@ -290,7 +290,7 @@ export const ModelSetting = (props: SettingType) => {
                 label="Is public"
             />
 
-            <AccordianCommon name="Get permission">
+            {/* <AccordianCommon name="Get permission">
                 <Grid container direction="column">
                     <Grid item>
                         {renderPermissions('restrict', 'get')}
@@ -334,9 +334,10 @@ export const ModelSetting = (props: SettingType) => {
                 </Grid>
             </AccordianCommon>
 
-            <AccordianCommon name="Supported domains">
+            <AccordianCommon name="Supported domains"> 
                 {renderSupportedDomain()}
             </AccordianCommon>
+            */}
                         
         </Grid>
         </AccordianCommon>
