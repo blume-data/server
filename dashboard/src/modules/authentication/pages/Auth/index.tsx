@@ -1,4 +1,4 @@
-import {useEffect, useState, lazy, Suspense} from "react";
+import {useEffect, useState} from "react";
 import Grid from "@material-ui/core/Grid";
 import {doGetRequest, doPostRequest} from "../../../../utils/baseApi";
 import {authUrl, dashboardHomeUrl, getBaseUrl} from "../../../../utils/urls";
@@ -22,7 +22,6 @@ import { TopLink } from "./TopLink";
 import React from "react";
 import {getItemFromLocalStorage} from "../../../../utils/tools";
 import {fetchApplicationNames} from "../../../dashboard/pages/home/actions";
-import { PermDeviceInformationOutlined } from "@material-ui/icons";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type AuthProps = PropsFromRedux & {
@@ -150,9 +149,10 @@ const AuthComponent = (props: AuthProps) => {
                         showAlert({message: LOGGED_IN_SUCCESSFULLY});
                         saveAuthentication(response);
                         setAuthentication(true);
+                        
                         timeOut(() => {
-                            redirectToUrl(dashboardHomeUrl);
                             props.fetchApplicationNames();
+                            redirectToUrl(dashboardHomeUrl);
                         });
                     }
                     break;
@@ -221,7 +221,7 @@ const AuthComponent = (props: AuthProps) => {
     return (
         <Grid container className={'auth-page'} direction={'row'} justify={'space-between'}>
             <Grid item lg={6} xl={6} md={6} sm={6} xs={12}>
-                welcome
+                
             </Grid>
             <Grid item lg={6} xl={6} md={6} sm={6} xs={12}>
                 <Grid container justify={'center'}>

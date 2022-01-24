@@ -60,6 +60,12 @@ export const NavBarComponent = (props: PropsFromRedux) => {
     const toggleDrawer = (anchor: Anchor, open: boolean) => (
         event: React.KeyboardEvent | React.MouseEvent,
     ) => {
+        // Don't open side bar if not authenticated
+        if(!isAuth) {
+            setState({...state, [anchor]: false});
+            return;
+        }
+
         if (
             event.type === 'keydown' &&
             ((event as React.KeyboardEvent).key === 'Tab' ||
@@ -94,7 +100,7 @@ export const NavBarComponent = (props: PropsFromRedux) => {
                         <MenuIcon />
                     </IconButton>
                     <Typography variant="h6" className={'menu-title'}>
-                        Ranjod
+                        Blumne
                     </Typography>
                     {
                         isAuth
