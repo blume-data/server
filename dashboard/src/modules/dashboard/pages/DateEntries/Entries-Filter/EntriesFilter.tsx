@@ -19,8 +19,6 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import {KeyboardDatePicker, MuiPickersUtilsProvider} from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
-import {Provider, Context} from '@minimal_ui/save_data';
-
 interface ModelsType {
     [DESCRIPTION]: string;
     [NAME]: string;
@@ -63,35 +61,26 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
     const [filters, setFilters] = useState<FilterType[]>([]);
     const [rules, setRules] = useState<RuleType[]>([]);
 
-    const { updateStore, store } = useContext(Context);
+    
 
     async function fetchModelRulesAndData(fetchModels = false, getOnly = `${DESCRIPTION},${NAME},${DISPLAY_NAME}`) {
         if(GetCollectionNamesUrl && applicationName) {
-            getModelDataAndRules({
+            const response = await getModelDataAndRules({
                 applicationName,
                 language,
                 modelName: fetchModels ? modelName : '',
                 env,
                 GetCollectionNamesUrl,
-                getOnly,
-                persistData: {
-                    updateStore,
-                    name: "filterModelRulesData"
-                }
+                getOnly
             });
-        }
-    }
-
-    // Set model name to first selected if no model name is selected
-    useEffect(() => {
-        const response = store["ModelDataAndRules"] || [];
-        if(response.length) {
-            setModels(response);
-            if(!modelName) {
-                onChangeModelDropDown(response[0].name);
+            if(response && response.length) {
+                setModels(response);
+                if(!modelName) {
+                    onChangeModelDropDown(response[0].name);
+                }
             }
         }
-    }, [store["ModelDataAndRules"]])
+    }
 
     // Fetch Model Data and Rules
     useEffect(() => {
@@ -316,7 +305,7 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
     }
 
     return (
-        <Provider>
+        
             <Grid className={'entries-filter-wrapper-container'}>
                 {/*Selectable hide the dropdown with models*/}
                 {
@@ -347,7 +336,7 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
                     <CommonButton variant='text' name={'Add filter'} onClick={onClickAddFilter} />
                 </Grid>
             </Grid>
-        </Provider>
+        
     );
 }
 
