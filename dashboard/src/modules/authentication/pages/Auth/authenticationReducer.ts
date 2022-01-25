@@ -71,7 +71,7 @@ export function authenticationReducer(
             if(seletectedSpace) {
                 return {
                     ...state,
-                    applicationsNames: action.data.applicationNames,
+                    applicationsNames: action?.data?.applicationNames || [],
                     applicationName: seletectedSpace
                 }
             }
