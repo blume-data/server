@@ -188,6 +188,7 @@ const AuthComponent = (props: AuthProps) => {
     const {step} = useParams<{step: string}>();
 
     useEffect(() => {
+        setLoading(false);
         if (step === SIGN_OUT && props.routeAddress && props.routeAddress.logOut) {
             authUser({});
             props.setApplicationName('');
