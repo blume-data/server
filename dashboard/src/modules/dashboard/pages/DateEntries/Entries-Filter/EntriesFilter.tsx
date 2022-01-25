@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import Grid from "@material-ui/core/Grid";
 import {RootState} from "../../../../../rootReducer";
 import {connect, ConnectedProps} from "react-redux";
@@ -19,6 +19,7 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import {KeyboardDatePicker, MuiPickersUtilsProvider} from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
+import {Provider, Context} from '@minimal_ui/save_data';
 
 interface ModelsType {
     [DESCRIPTION]: string;
@@ -62,21 +63,35 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
     const [filters, setFilters] = useState<FilterType[]>([]);
     const [rules, setRules] = useState<RuleType[]>([]);
 
+    const { updateStore, store } = useContext(Context);
+
     async function fetchModelRulesAndData(fetchModels = false, getOnly = `${DESCRIPTION},${NAME},${DISPLAY_NAME}`) {
         if(GetCollectionNamesUrl && applicationName) {
-            const response = await getModelDataAndRules({
+            getModelDataAndRules({
                 applicationName,
                 language,
                 modelName: fetchModels ? modelName : '',
                 env,
                 GetCollectionNamesUrl,
-                getOnly
+                getOnly,
+                persistData: {
+                    updateStore,
+                    name: "filterModelRulesData"
+                }
             });
-            if(response && response.length) {
-                setModels(response);
-            }
         }
     }
+
+    // Set model name to first selected if no model name is selected
+    useEffect(() => {
+        const response = store["ModelDataAndRules"] || [];
+        if(response.length) {
+            setModels(response);
+            if(!modelName) {
+                onChangeModelDropDown(response[0].name);
+            }
+        }
+    }, [store["ModelDataAndRules"]])
 
     // Fetch Model Data and Rules
     useEffect(() => {
@@ -301,36 +316,38 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
     }
 
     return (
-        <Grid className={'entries-filter-wrapper-container'}>
-            {/*Selectable hide the dropdown with models*/}
-            {
-                disableModelChange
-                ? null
-                : <Grid className="filters-wrapper">
-                        <Grid className="model-dropdown-wrapper">
-                            <SearchMenuList
-                                value={modelName}
-                                placeholder={'Filter model'}
-                                options={modelOptions}
-                                onMenuChange={onChangeModelDropDown}
-                            />
-                        </Grid>
-                    </Grid>
-            }
-            <Grid className="property-dropdown-wrapper">
+        <Provider>
+            <Grid className={'entries-filter-wrapper-container'}>
+                {/*Selectable hide the dropdown with models*/}
                 {
-                    modelName
-                        ? <Grid container justify={"flex-start"} className="wrapper">
-                            {/*Render Property input value*/}
-                            {renderFilters()}
+                    disableModelChange
+                    ? null
+                    : <Grid className="filters-wrapper">
+                            <Grid className="model-dropdown-wrapper">
+                                <SearchMenuList
+                                    value={modelName}
+                                    placeholder={'Filter model'}
+                                    options={modelOptions}
+                                    onMenuChange={onChangeModelDropDown}
+                                />
+                            </Grid>
                         </Grid>
-                        : null
                 }
+                <Grid className="property-dropdown-wrapper">
+                    {
+                        modelName
+                            ? <Grid container justify={"flex-start"} className="wrapper">
+                                {/*Render Property input value*/}
+                                {renderFilters()}
+                            </Grid>
+                            : null
+                    }
+                </Grid>
+                <Grid className={'add-filters-button-wrapper'}>
+                    <CommonButton variant='text' name={'Add filter'} onClick={onClickAddFilter} />
+                </Grid>
             </Grid>
-            <Grid className={'add-filters-button-wrapper'}>
-                <CommonButton variant='text' name={'Add filter'} onClick={onClickAddFilter} />
-            </Grid>
-        </Grid>
+        </Provider>
     );
 }
 

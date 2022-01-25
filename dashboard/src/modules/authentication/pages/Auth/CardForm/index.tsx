@@ -11,16 +11,26 @@ interface RegisterType {
     fields: ConfigField[];
     title: string;
     response: string | ErrorMessagesType[];
+    loading?: boolean;
+    submitButtonName?: string;
 }
 
 export const CardForm = (props: RegisterType) => {
-    const {onSubmit, fields, title, response} = props;
+    const {onSubmit, fields, title, response, submitButtonName, loading} = props;
     return (
         <Card className={'auth-page-form-card'}>
             <CardContent>
                 <Typography variant={'h3'}>{title}</Typography>
             </CardContent>
-            <Form showClearButton={true} response={response} onSubmit={onSubmit} fields={fields} className={'auth-form'} />
+            <Form 
+                loading={loading}
+                submitButtonName={submitButtonName}
+                showClearButton={true} 
+                response={response} 
+                onSubmit={onSubmit} 
+                fields={fields} 
+                className={'auth-form'} 
+            />
         </Card>
     );
 };

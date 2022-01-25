@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Grid} from "@material-ui/core";
+import {Grid, Typography} from "@material-ui/core";
 import {dashboardCreateDataModelsUrl, dashboardDataEntriesUrl, getBaseUrl} from "../../../../../utils/urls";
 import {APPLICATION_NAME, CLIENT_USER_NAME} from "@ranjodhbirkaur/constants";
 import './store-list.scss';
@@ -22,6 +22,7 @@ import {DateCell} from "../../../../../components/common/DateCell";
 import {DateTime} from "luxon";
 import {UserCell} from "../../../../../components/common/UserCell";
 import Checkbox from "@material-ui/core/Checkbox";
+import { RenderHeading } from "../../../../../components/common/RenderHeading";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
@@ -163,7 +164,10 @@ const DataModels = (props: PropsFromRedux) => {
 
             <Grid className={'filter-section'} container justify={"space-between"}>
                 <Grid item>
-                    <TextField id="filter-stores" label="Filter" />
+                    <RenderHeading type="primary">Models</RenderHeading>
+                    <br />
+                    <RenderHeading >Configure sturcture of your data with creating model</RenderHeading>
+                    <br />
                 </Grid>
                 <Grid item className={'add-store-button'}>
                     {/*open model and clear model data*/}
@@ -171,7 +175,7 @@ const DataModels = (props: PropsFromRedux) => {
                         <Button
                             variant="contained"
                             color={'primary'}>
-                            Add model
+                            Create model
                         </Button>
                     </Link>
                 </Grid>
@@ -187,7 +191,7 @@ const DataModels = (props: PropsFromRedux) => {
                         rows={stores}
                         columns={tableRows}
                         tableName={'stores'}
-                    /> : <p>No models</p>
+                    /> : <Typography>You don't have any models yet</Typography>
                 }
             </Grid>
 

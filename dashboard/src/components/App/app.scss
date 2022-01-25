@@ -4,3 +4,33 @@
 .App {
   height: 100%;
 }
+
+.MuiFormControl-root {
+  max-width: 100vw;
+}
+
+.MuiDialog-paperWidthSm {
+  width: 100%;
+}
+a {
+  text-decoration: none;
+  color: #000;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.center {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  vertical-align: middle;
+
+}
