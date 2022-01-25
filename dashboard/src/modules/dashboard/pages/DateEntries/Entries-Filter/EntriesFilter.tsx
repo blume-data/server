@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import Grid from "@material-ui/core/Grid";
 import {RootState} from "../../../../../rootReducer";
 import {connect, ConnectedProps} from "react-redux";
@@ -60,6 +60,8 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
     const [models, setModels] = useState<ModelsType[]>([]);
     const [filters, setFilters] = useState<FilterType[]>([]);
     const [rules, setRules] = useState<RuleType[]>([]);
+
+    
 
     async function fetchModelRulesAndData(fetchModels = false, getOnly = `${DESCRIPTION},${NAME},${DISPLAY_NAME}`) {
         if(GetCollectionNamesUrl && applicationName) {
@@ -303,36 +305,38 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
     }
 
     return (
-        <Grid className={'entries-filter-wrapper-container'}>
-            {/*Selectable hide the dropdown with models*/}
-            {
-                disableModelChange
-                ? null
-                : <Grid className="filters-wrapper">
-                        <Grid className="model-dropdown-wrapper">
-                            <SearchMenuList
-                                value={modelName}
-                                placeholder={'Filter model'}
-                                options={modelOptions}
-                                onMenuChange={onChangeModelDropDown}
-                            />
-                        </Grid>
-                    </Grid>
-            }
-            <Grid className="property-dropdown-wrapper">
+        
+            <Grid className={'entries-filter-wrapper-container'}>
+                {/*Selectable hide the dropdown with models*/}
                 {
-                    modelName
-                        ? <Grid container justify={"flex-start"} className="wrapper">
-                            {/*Render Property input value*/}
-                            {renderFilters()}
+                    disableModelChange
+                    ? null
+                    : <Grid className="filters-wrapper">
+                            <Grid className="model-dropdown-wrapper">
+                                <SearchMenuList
+                                    value={modelName}
+                                    placeholder={'Filter model'}
+                                    options={modelOptions}
+                                    onMenuChange={onChangeModelDropDown}
+                                />
+                            </Grid>
                         </Grid>
-                        : null
                 }
+                <Grid className="property-dropdown-wrapper">
+                    {
+                        modelName
+                            ? <Grid container justify={"flex-start"} className="wrapper">
+                                {/*Render Property input value*/}
+                                {renderFilters()}
+                            </Grid>
+                            : null
+                    }
+                </Grid>
+                <Grid className={'add-filters-button-wrapper'}>
+                    <CommonButton variant='text' name={'Add filter'} onClick={onClickAddFilter} />
+                </Grid>
             </Grid>
-            <Grid className={'add-filters-button-wrapper'}>
-                <CommonButton variant='text' name={'Add filter'} onClick={onClickAddFilter} />
-            </Grid>
-        </Grid>
+        
     );
 }
 
