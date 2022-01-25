@@ -20,6 +20,7 @@ interface CreateApplicationNameProps extends PropsFromRedux {
 const CreateApplicationNameComponent = (props: CreateApplicationNameProps) => {
 
     const {handleClose, fetchApplicationNames} = props;
+    const [loading, setLoading] = useState(false);
     const [response, setResponse] = useState<string | ErrorMessagesType[]>('');
 
     const fields: ConfigField[] = [
@@ -55,11 +56,12 @@ const CreateApplicationNameComponent = (props: CreateApplicationNameProps) => {
             .replace(`:${CLIENT_USER_NAME}`, clientUserName ? clientUserName : '')
             .replace(`:${APPLICATION_NAME}?`,'');
 
+        setLoading(true);
         const resp = await doPostRequest(`${getBaseUrl()}${url}`, {
             [APPLICATION_NAME]: applicationName.value,
             description: description.value || ''
         }, true);
-
+        setLoading(false);
         if(resp && !resp.errors) {
             await fetchApplicationNames();
             handleClose(resp);
@@ -72,7 +74,7 @@ const CreateApplicationNameComponent = (props: CreateApplicationNameProps) => {
 
     return (
         <Grid container justify={"center"} className={'create-application-name-container'}>
-            <Form response={response} className={'create-application-name-form'} fields={fields} onSubmit={onSubmit} />
+            <Form loading={loading} response={response} className={'create-application-name-form'} fields={fields} onSubmit={onSubmit} />
         </Grid>
     );
 };

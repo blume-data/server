@@ -163,7 +163,7 @@ const EntriesTableComponent = (props: EntriesTableType) => {
 
     // Fetch records in the model
     async function getItems(fieldTitleParam?: string) {
-        if(GetEntriesUrl && modelName && applicationName) {
+        if(GetEntriesUrl && modelName && applicationName && (fieldTitleParam || fieldTitle)) {
             setIsLoading(true);
             const getOnly = [ENTRY_UPDATED_AT, ENTRY_UPDATED_BY, STATUS, fieldTitleParam ? fieldTitleParam : fieldTitle, 'id'];
             if(where && typeof where === 'object' && Object.keys(where).length) {
@@ -186,7 +186,7 @@ const EntriesTableComponent = (props: EntriesTableType) => {
                 GetEntriesUrl: `${GetEntriesUrl}?page=${page}`,
                 match, where, getOnly
             });
-            console.log('resp entries', resp);
+            
             if(resp && resp.data && Array.isArray(resp.data)) {
                 setResponse(resp.data);
                 if(resp && resp.total) {

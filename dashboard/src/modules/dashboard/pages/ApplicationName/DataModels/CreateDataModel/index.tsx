@@ -1071,9 +1071,7 @@ const mapState = (state: RootState) => {
     return {
         env: state.authentication.env,
         applicationName: state.authentication.applicationName,
-        language: state.authentication.language,
-        // CollectionUrl: state.routeAddress.routes.data?.CollectionUrl,
-        // GetCollectionNamesUrl: state.routeAddress.routes.data?.GetCollectionNamesUrl,
+        language: state.authentication.language
     }
 };
 

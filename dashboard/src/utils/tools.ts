@@ -1,6 +1,5 @@
 import {
     APPLICATION_NAME,
-    APPLICATION_NAMES,
     CLIENT_USER_NAME,
     ENTRY_UPDATED_BY,
     FIRST_NAME,
@@ -38,10 +37,14 @@ interface GetModelData {
     applicationName: string;
     modelName?: string;
     getOnly?: string;
+    persistData?: {
+        updateStore?: any;
+        name?: string;
+    }
 }
 // Fetch model rules, description
 export async function getModelDataAndRules(data: GetModelData) {
-    const {GetCollectionNamesUrl, applicationName, env, language, modelName='', getOnly} = data;
+    const {GetCollectionNamesUrl, applicationName, env, language, modelName='', getOnly, persistData} = data;
     const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
     const url = GetCollectionNamesUrl
         .replace(`:${CLIENT_USER_NAME}`, clientUserName ? clientUserName : '')
@@ -50,11 +53,26 @@ export async function getModelDataAndRules(data: GetModelData) {
         .replace(`:${APPLICATION_NAME}`,applicationName);
 
     const curl = `${getBaseUrl()}${url}?name=${modelName}${getOnly ? `&get=${getOnly}` : ''}`;
-    return  await doGetRequest(
-        curl,
-        {},
-        true
-    );
+    if(persistData?.updateStore) {
+        persistData?.updateStore({
+            fetcher: async () =>{
+                return  await doGetRequest(
+                    curl,
+                    {},
+                    true
+                )
+            },
+            name: persistData.name ? persistData.name :  "ModelDataAndRules",
+            checkForUpdate: false
+        });
+    }
+    else {
+        return  await doGetRequest(
+            curl,
+            {},
+            true
+        );
+    }
 }
 
 interface FetchModelEntriesType {

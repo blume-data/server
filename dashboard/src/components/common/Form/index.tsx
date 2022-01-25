@@ -32,6 +32,8 @@ import ReferenceEditor from "./ReferenceEditor";
 import HtmlEditor from "../HtmlEditor";
 import AssetsAdder from "./AssetsAdder";
 import { validateEmail } from "../../../utils/tools";
+import { RenderHeading } from "../RenderHeading";
+import { CircularProgress } from "@material-ui/core";
 
 const DateField = lazy(() => import('./DateField')
     .then(module => ({ default: module.DateField }))
@@ -59,7 +61,7 @@ export const Form = (props: FormType) => {
     const [tabValue, setTabValue] = React.useState<number>(0);
     const [filteredGroups, setFilteredGroups] = useState<string[]>([]);
     const [formState, setFormState] = useState<FormState[]>([]);
-    const {className, groups, fields, onSubmit, submitButtonName, response='', clearOnSubmit=false, showClearButton=false} = props;
+    const {className, groups, fields, onSubmit, submitButtonName, response='', clearOnSubmit=false, showClearButton=false, loading = false} = props;
 
 
     // focus on first input field in the form
@@ -623,10 +625,15 @@ export const Form = (props: FormType) => {
                 }
                 <Grid item>
                     <CommonButton
-                        onClick={onClickSubmit}
                         name={submitButtonName ? submitButtonName : 'Submit'}
+                        onClick={onClickSubmit}
                         color={"primary"}
-                    />
+                    >
+                        <Grid container justify="space-between" alignItems="center">
+                            <Grid justify="center"><RenderHeading value={loading ? "Loading" : submitButtonName ? submitButtonName : 'Submit'} /></Grid>
+                            {loading ? <Grid direction="column" justify="center" ><CircularProgress style={{color: "white", height: "20px", width: "20px"}} /></Grid> : null}
+                        </Grid>
+                    </CommonButton>
                 </Grid>
             </Grid>
             <Alert

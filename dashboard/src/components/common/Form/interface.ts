@@ -24,6 +24,7 @@ export interface FormType {
     clearOnSubmit?: boolean;
     showClearButton?: boolean;
     getValuesAsObject?: boolean;
+    loading?: boolean;
 }
 
 export interface OptionsType {

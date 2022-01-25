@@ -49,6 +49,7 @@ const AuthComponent = (props: AuthProps) => {
     const [alert, setAlertMessage] = React.useState<AlertType>({message: ''});
     const [response, setResponse] = React.useState<string | ErrorMessagesType[]>('');
     const [defaultValues, setDefaultValues] = useState<object>({});
+    const [loading, setLoading] = useState<boolean>(false);
 
     const history = useHistory();
 
@@ -110,6 +111,7 @@ const AuthComponent = (props: AuthProps) => {
         })();
         const url = `${getBaseUrl()}${routeUrl}`;
         let response: ResponseType;
+        setLoading(true);
         if (step === VERIFY_EMAIL) {
             const token = values.verificationToken ? values.verificationToken : '';
             response = await doGetRequest(`${url}?token=${token}&email=${values.email}`, values, false);
@@ -135,6 +137,7 @@ const AuthComponent = (props: AuthProps) => {
             setResponse('');
             return '';
         }
+        setLoading(false);
         if (response && !response.errors) {
             switch (step) {
                 case SIGN_UP: {
@@ -235,18 +238,28 @@ const AuthComponent = (props: AuthProps) => {
                     <TopLink step={step}/>
                     {step === SIGN_UP
                         ? <CardForm
-                            fields={getFieldConfiguration(SIGN_UP)} response={response}
+                            submitButtonName={"Create free account"}
+                            fields={getFieldConfiguration(SIGN_UP)} 
+                            response={response}
+                            loading={loading}
                             onSubmit={onSubmit} title={REGISTRATION_TITLE} />
                         : null}
                     {step === SIGN_IN
                         ? <CardForm
-                            fields={getFieldConfiguration(SIGN_IN)} response={response}
+                            submitButtonName="Login"
+                            fields={getFieldConfiguration(SIGN_IN)} 
+                            response={response}
+                            loading={loading}
                             onSubmit={onSubmit} title={LOGIN_TITLE} />
                         : null}
                     {step === VERIFY_EMAIL
                         ? <CardForm
-                            fields={getFieldConfiguration(VERIFY_EMAIL, defaultValues)} response={response}
-                            onSubmit={onSubmit} title={REGISTRATION_TITLE} />
+                            loading={loading}
+                            submitButtonName={"Verify"}
+                            fields={getFieldConfiguration(VERIFY_EMAIL, defaultValues)} 
+                            response={response}
+                            onSubmit={onSubmit} 
+                            title={REGISTRATION_TITLE} />
                         : null}
                 </Grid>
             </Grid>

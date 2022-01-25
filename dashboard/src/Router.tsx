@@ -20,8 +20,8 @@ import {
     assetsUrl, APP_ROOT_URL, dashboardEnvUrl, dashbaordUserUrl
 } from "./utils/urls";
 import Layout from "./components/common/Layout";
+import App from "./components/App";
 
-const App = lazy(() => import('./components/App'));
 const Assets = lazy(() => import('./modules/assets').then(module => ({ default: module.Assets })));
 const DataEntries = lazy(() => import('./modules/dashboard/pages/DateEntries').then(module => ({ default: module.DataEntries })));
 const Users = lazy(() => import('./modules/dashboard/pages/Users').then(module => ({ default: module.Users })));
@@ -61,7 +61,7 @@ export const RouterComponent = () => {
         <Router>
             <Layout>
                 <Switch>
-                    <Route exact path={APP_ROOT_URL} component={suspenceComponent(App)} />
+                    <Route exact path={APP_ROOT_URL} component={App} />
                     <Route exact path={`${authUrl}/:step`} component={suspenceComponent(Auth)} />
                     
                     <Route exact path={dashboardHomeUrl} component={PrivateRoute(Home)}/>

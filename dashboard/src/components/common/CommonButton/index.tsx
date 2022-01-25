@@ -12,9 +12,10 @@ export const CommonButton = (props: {
     type?: HeadingTypeInterface;
     className?: string;
     startIcon?: React.ReactNode;
+    children?: React.ReactNode;
 }) => {
 
-    const {name, startIcon, onClick=null, color='primary', variant='contained', title, type='secondary', className=''} = props;
+    const {name, startIcon, onClick=null, color='primary', variant='contained', title, type='secondary', className='', children} = props;
 
     function onButtonClick() {
         if(onClick) {
@@ -30,7 +31,7 @@ export const CommonButton = (props: {
                 variant={variant}
                 startIcon={startIcon}
                 color={color}>
-                <RenderHeading type={type} value={name} />
+                {!children ? <RenderHeading type={type} value={name} /> : children}
             </Button>
         </div>
     );

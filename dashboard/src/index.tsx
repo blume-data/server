@@ -8,6 +8,7 @@ import ReactDOM from "react-dom";
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import React from "react";
 import reportWebVitals from './reportWebVitals';
+import {Provider as StateProvider} from "@minimal_ui/save_data";
 declare global {
     interface Window {
         INITIAL_STATE: {
@@ -48,13 +49,15 @@ const theme = createMuiTheme({
 
 ReactDOM.render(
     <React.StrictMode>
-        <Provider store={store}>
-            <MuiThemeProvider theme={theme}>
-                <BrowserRouter>
-                    <RouterComponent />
-                </BrowserRouter>
-            </MuiThemeProvider>
-        </Provider>
+        <StateProvider>
+            <Provider store={store}>
+                <MuiThemeProvider theme={theme}>
+                    <BrowserRouter>
+                        <RouterComponent />
+                    </BrowserRouter>
+                </MuiThemeProvider>
+            </Provider>
+        </StateProvider>
     </React.StrictMode>,
     document.getElementById('root')
 );

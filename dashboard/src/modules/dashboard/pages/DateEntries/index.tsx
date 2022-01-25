@@ -8,6 +8,7 @@ import Button from "@material-ui/core/Button";
 import {Link} from "react-router-dom";
 import './data-entries.scss';
 import {EntriesTable} from "../../../../components/common/EntriesTable";
+import { RenderHeading } from "../../../../components/common/RenderHeading";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
@@ -34,26 +35,33 @@ function DataEntriesComponent(props: PropsFromRedux) {
 
     return (
         <Grid className={'data-entries-wrapper-container'}>
-            <Grid className="data-entries">
-                {
-                    modelName
-                    ? <Grid container justify={"space-between"}>
-                            <Grid item>
-                                <Link to={createDataEntryUrl}>
-                                    <Button variant={"contained"} color={"primary"}>
-                                        Add {`${modelName ? modelName : 'entry'}`}
-                                    </Button>
-                                </Link>
+            <Grid container className="data-entries" justify="space-between">
+                <Grid item>
+                    <RenderHeading type="primary">Entries</RenderHeading>
+                    <br />
+                    <RenderHeading >Store entries in models</RenderHeading>
+                    <br />
+                </Grid>
+                <Grid className="center">
+                    {
+                        modelName
+                        ? <Grid container justify={"center"} direction="column">
+                                <Grid item>
+                                    <Link to={createDataEntryUrl}>
+                                        <Button variant={"contained"} color={"primary"}>
+                                            create {`${modelName ? modelName : 'entry'}`}
+                                        </Button>
+                                    </Link>
+                                </Grid>
                             </Grid>
-                        </Grid>
-                    : null
-                }
-                <EntriesTable
-                    modelName={modelName}
-                    setModelName={setSelectedModelName}
-                />
-
+                        : null
+                    }
+                </Grid>
             </Grid>
+            <EntriesTable
+                modelName={modelName}
+                setModelName={setSelectedModelName}
+            />
         </Grid>
     );
 }
