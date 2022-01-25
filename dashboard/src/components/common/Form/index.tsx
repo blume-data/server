@@ -128,6 +128,10 @@ export const Form = (props: FormType) => {
         const fieldItem = fields.find(ranjodh => ranjodh.label === field);
         if(fieldItem) {
             if (action === SET_VALUE_ACTION) {
+                // If the form is loading change is not allowed
+                if(props.loading) {
+                    return;
+                }
                 state = formState.map((item) => {
                     if (item.label === field) {
                         return {
@@ -631,7 +635,7 @@ export const Form = (props: FormType) => {
                     >
                         <Grid container justify="space-between" alignItems="center">
                             <Grid justify="center"><RenderHeading value={loading ? "Loading" : submitButtonName ? submitButtonName : 'Submit'} /></Grid>
-                            {loading ? <Grid direction="column" justify="center" ><CircularProgress style={{color: "white", height: "20px", width: "20px"}} /></Grid> : null}
+                            {loading ? <Grid className="center" ><CircularProgress style={{color: "white", height: "20px", width: "20px", margin: "0 5px"}} /></Grid> : null}
                         </Grid>
                     </CommonButton>
                 </Grid>

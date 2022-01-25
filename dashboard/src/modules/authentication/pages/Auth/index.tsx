@@ -81,7 +81,6 @@ const AuthComponent = (props: AuthProps) => {
 
     async function authUser(values: any) {
         const {routeAddress, setAuthentication} = props;
-        //setIsLoading(true);
         // set route url according to step
         const routeUrl = (() => {
             let urlName = '';
