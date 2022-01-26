@@ -290,7 +290,7 @@ export const ModelSetting = (props: SettingType) => {
                 label="Is public"
             />
 
-            {/* <AccordianCommon name="Get permission">
+            <AccordianCommon name="Get permission">
                 <Grid container direction="column">
                     <Grid item>
                         {renderPermissions('restrict', 'get')}
@@ -337,7 +337,7 @@ export const ModelSetting = (props: SettingType) => {
             <AccordianCommon name="Supported domains"> 
                 {renderSupportedDomain()}
             </AccordianCommon>
-            */}
+           
                         
         </Grid>
         </AccordianCommon>

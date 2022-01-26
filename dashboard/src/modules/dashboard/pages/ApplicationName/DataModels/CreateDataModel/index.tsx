@@ -846,7 +846,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                         tableName={'Fields'}
                     /> : addingField
                         ? null
-                        : <RenderHeading className={'no-fields-added'} type={"primary"} value={'No fields added'} />
+                        : <RenderHeading className={'no-fields-added'} type={"primary"} value={'Add some fields to get stated'} />
                 }
             </Grid>
             </Paper>
@@ -968,8 +968,11 @@ const CreateDataModel = (props: CreateDataModelType) => {
             </Grid>
             </Grid>
             {/* MODAL SETTING CONTAINER */}
-            <Grid item className='right-container'>
-                <Paper elevation={6}>
+
+            {
+                properties && properties.length
+                ? (<Grid item className='right-container'>
+                <div>
                     <RenderHeading
                         className={'main-heading'}
                         type={"main"}
@@ -982,8 +985,11 @@ const CreateDataModel = (props: CreateDataModelType) => {
                         applicationName={applicationName}
                         isLoading={isLoading}
                     />
-                </Paper>
-            </Grid>
+                </div>
+            </Grid>)
+            : null
+            }
+
             <AlertDialog
                 onClose={() => {
                     setConfirmDialogOpen(false);

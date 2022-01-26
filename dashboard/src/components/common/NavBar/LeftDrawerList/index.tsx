@@ -115,7 +115,7 @@ const LeftDrawerListComponent = (props: PropsFromRedux) => {
                             </ListItem>
                         </Link>
                         
-                        {/* <Link className={'link-item-link'} to={UserUrl}>
+                        <Link className={'link-item-link'} to={UserUrl}>
                             <ListItem button>
                                 <ListItemIcon><PersonAdd /></ListItemIcon>
                                 <ListItemText primary={'Users'} />
@@ -127,7 +127,7 @@ const LeftDrawerListComponent = (props: PropsFromRedux) => {
                                 <ListItemIcon><PersonAdd /></ListItemIcon>
                                 <ListItemText primary={'User Group'} />
                             </ListItem>
-                        </Link> */}
+                        </Link>
 
                       </div>
                     : null
