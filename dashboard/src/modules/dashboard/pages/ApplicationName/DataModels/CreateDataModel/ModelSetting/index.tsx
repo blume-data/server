@@ -304,6 +304,7 @@ export const ModelSetting = (props: SettingType) => {
                 onBlur={() => {}}
                 placeholder=""
                 value={(setting.isPublic ? 'true' : 'false')}
+                descriptionText="If you want this data to be access and updated by any one. Mark it as public"
                 className=""
                 required={false}
                 name="isPublic"
@@ -316,10 +317,10 @@ export const ModelSetting = (props: SettingType) => {
                     <AccordianCommon name="Get permission">
                     <Grid container direction="column">
                     <Grid item>
-                    {renderPermissions('restrict', 'get')}
+                        {renderPermissions('restrict', 'get')}
                     </Grid>
                     <Grid item>
-                    {renderPermissions('permitted', 'get')}
+                        {renderPermissions('permitted', 'get')}
                     </Grid> 
                     </Grid>
                     </AccordianCommon>
@@ -327,10 +328,10 @@ export const ModelSetting = (props: SettingType) => {
                     <AccordianCommon name="Post permission">
                     <Grid container direction="column">
                     <Grid item>
-                    {renderPermissions('restrict', 'post')}
+                        {renderPermissions('restrict', 'post')}
                     </Grid>
                     <Grid>
-                    {renderPermissions('permitted', 'post')}
+                        {renderPermissions('permitted', 'post')}
                     </Grid>
                     </Grid>
                     </AccordianCommon>
@@ -338,10 +339,10 @@ export const ModelSetting = (props: SettingType) => {
                     <AccordianCommon name="Put permission">
                     <Grid container direction="column">
                     <Grid item>
-                    {renderPermissions('restrict', 'put')}
+                        {renderPermissions('restrict', 'put')}
                     </Grid>
                     <Grid item>
-                    {renderPermissions('permitted', 'put')}
+                        {renderPermissions('permitted', 'put')}
                     </Grid>
                     </Grid>
                     </AccordianCommon>
@@ -349,10 +350,10 @@ export const ModelSetting = (props: SettingType) => {
                     <AccordianCommon name="Delete permission">
                     <Grid container direction="column">
                     <Grid item>
-                    {renderPermissions('restrict', 'delete')}
+                        {renderPermissions('restrict', 'delete')}
                     </Grid>
                     <Grid item>
-                    {renderPermissions('permitted', 'delete')}
+                        {renderPermissions('permitted', 'delete')}
                     </Grid>
                     </Grid>
                     </AccordianCommon>
