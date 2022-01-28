@@ -200,10 +200,23 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 });
 
                 if(response[0].setting) {
+
+                    let supportedDomains = [];
+
+                    try {
+                        supportedDomains = JSON.parse(response[0].setting?.supportedDomains || "[]");
+                        if(!supportedDomains) {
+                            supportedDomains = [];
+                        }
+                    }
+                    catch(e) {
+                        supportedDomains = [];
+                    }
+                    
                     setModelSetting({
                         id: response[0].setting.id,
                         isPublic: response[0].setting.isPublic,
-                        supportedDomains: JSON.parse(response[0].setting?.supportedDomains || "[]"),
+                        supportedDomains,
                         getRestrictedUserGroups: response[0].setting.getRestrictedUserGroups,
                         postRestrictedUserGroups: response[0].setting.postRestrictedUserGroups,
                         putRestrictedUserGroups: response[0].setting.putRestrictedUserGroups,

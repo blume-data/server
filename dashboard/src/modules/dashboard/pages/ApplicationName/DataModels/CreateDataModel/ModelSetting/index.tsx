@@ -51,7 +51,7 @@ export const ModelSetting = (props: SettingType) => {
     const setting: any = data;
 
     // supported domain
-    const [value, setValue] = useState('');
+    const [supportedDomainsValue, setSupportedDomainsValue] = useState('');
 
     async function createModelSetting() {
 
@@ -145,7 +145,8 @@ export const ModelSetting = (props: SettingType) => {
             <Grid container className="user-groups" direction="column">
                 <Grid item><RenderHeading value={type}></RenderHeading></Grid>
                 <Grid item>
-                {setting && setting[otherProperty] && setting[property] && userGroups?.length && userGroups?.map((userGroup, index) => {
+                {(setting && setting[otherProperty] && setting[property] && userGroups?.length) ? 
+                userGroups?.map((userGroup, index) => {
 
                     let disabled = !!setting[otherProperty].length;
                     const exist = (() => {
@@ -193,33 +194,44 @@ export const ModelSetting = (props: SettingType) => {
                             variant="outlined"
                         />
                     );
-                    })}
+                    })
+                : null}
                 </Grid>
             </Grid>
         );
     }
 
-    console.log("setting", setting);
-
     function renderSupportedDomain() {
 
-        function onblur(event: any) {
+        function onblur() {
 
+            const domainNames: string[] = [];
+            supportedDomainsValue.split(",").map(item => {
+                const exist = setting.supportedDomains.find((domain: string) => domain === item);
+                if(!exist && item) {
+                    domainNames.push(item.trim());
+                }
+            });
+            setSupportedDomainsValue('');
+            const updatedSetting = {
+                ...setting,
+                supportedDomains: [
+                    ...setting.supportedDomains,
+                    ...domainNames
+                ]
+            };
+            setSetting({
+                ...setting,
+                ...updatedSetting
+            });
+
+            requestUpdateSetting(updatedSetting);
+        }
+
+        function onEnter(event: any) {
             const code = (event.keyCode ? event.keyCode : event.which);
             if(code === 13) {
-                const t = setting.supportedDomains;
-                t.push(event.target.value);
-
-                setValue('');
-                const updatedSetting = {
-                    ...setting,
-                    supportedDomains: t
-                };
-                setSetting({
-                    ...setting,
-                    ...updatedSetting
-                });
-                requestUpdateSetting(updatedSetting);
+                onblur();
             }
         }
 
@@ -227,17 +239,24 @@ export const ModelSetting = (props: SettingType) => {
             <Grid container className='supported-domain' direction="column">
                 <Grid item>
                 {
-                    setting?.length && setting?.supportedDomains.map((supportedDomain: string, index: number) => {
+                    setting?.supportedDomains.map((supportedDomain: string, index: number) => {
 
                         if(!supportedDomain) return null;
 
                         function onClickDeleteIcon() {
 
-                            const t = setting.supportedDomains.filter((s: string) => s !== supportedDomain);
+                            const domainNames = setting.supportedDomains.filter((s: string) => s !== supportedDomain);
+                            
+                            const updatedSetting = {
+                                ...setting,
+                                supportedDomains: domainNames
+                            };
                             setSetting({
                                 ...setting,
-                                supportedDomains: t
+                                ...updatedSetting
                             });
+
+                            requestUpdateSetting(updatedSetting);
                         }
 
                         return (
@@ -260,13 +279,14 @@ export const ModelSetting = (props: SettingType) => {
                 <TextBox
                     type="text"
                     placeholder="Supported domain url"
-                    value={value}
+                    value={supportedDomainsValue}
                     className=""
-                    onChange={(event) => {setValue(event.target.value)}}
+                    onChange={(event) => {setSupportedDomainsValue(event.target.value)}}
                     onBlur={onblur}
-                    onKeyDown={onblur}
+                    onKeyDown={onEnter}
                     name="supported domain"
                     label="Supported Domain"
+                    descriptionText="Add comma seperated supported domain names"
                     required={false}
                 />
                 </Grid>
@@ -290,49 +310,55 @@ export const ModelSetting = (props: SettingType) => {
                 label="Is public"
             />
 
-            <AccordianCommon name="Get permission">
-                <Grid container direction="column">
+            {
+                userGroups?.length
+                ? (<>
+                    <AccordianCommon name="Get permission">
+                    <Grid container direction="column">
                     <Grid item>
-                        {renderPermissions('restrict', 'get')}
+                    {renderPermissions('restrict', 'get')}
                     </Grid>
                     <Grid item>
                     {renderPermissions('permitted', 'get')}
+                    </Grid> 
                     </Grid>
-                </Grid>
-            </AccordianCommon>
-            
-            <AccordianCommon name="Post permission">
-                <Grid container direction="column">
+                    </AccordianCommon>
+
+                    <AccordianCommon name="Post permission">
+                    <Grid container direction="column">
                     <Grid item>
-                        {renderPermissions('restrict', 'post')}
+                    {renderPermissions('restrict', 'post')}
                     </Grid>
                     <Grid>
-                        {renderPermissions('permitted', 'post')}
+                    {renderPermissions('permitted', 'post')}
                     </Grid>
-                </Grid>
-            </AccordianCommon>
+                    </Grid>
+                    </AccordianCommon>
 
-            <AccordianCommon name="Put permission">
-                <Grid container direction="column">
+                    <AccordianCommon name="Put permission">
+                    <Grid container direction="column">
                     <Grid item>
-                        {renderPermissions('restrict', 'put')}
+                    {renderPermissions('restrict', 'put')}
                     </Grid>
                     <Grid item>
                     {renderPermissions('permitted', 'put')}
                     </Grid>
-                </Grid>
-            </AccordianCommon>
+                    </Grid>
+                    </AccordianCommon>
 
-            <AccordianCommon name="Delete permission">
-                <Grid container direction="column">
+                    <AccordianCommon name="Delete permission">
+                    <Grid container direction="column">
                     <Grid item>
-                        {renderPermissions('restrict', 'delete')}
+                    {renderPermissions('restrict', 'delete')}
                     </Grid>
                     <Grid item>
                     {renderPermissions('permitted', 'delete')}
                     </Grid>
-                </Grid>
-            </AccordianCommon>
+                    </Grid>
+                    </AccordianCommon>
+                </>)
+                : null
+            }
 
             <AccordianCommon name="Supported domains"> 
                 {renderSupportedDomain()}
