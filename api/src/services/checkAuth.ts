@@ -44,10 +44,15 @@ export async function checkAuth(req: Request, res: Response, next: NextFunction 
                 // If the model is public
                 // Allow all operations
                 if(model?.length && model[0]?.setting?.isPublic) {
-                    next();
-                    return;
+                    return next();
                 }
                 else if(model?.length && model[0]?.setting) {
+
+                    // If the permitted field is blank the method is public to all
+                    if(model[0]?.setting[`${req.method.toLowerCase()}PermittedUserGroupIds`]?.length === 0 && model[0]?.setting[`${req.method.toLowerCase()}RestrictedUserGroupIds`]?.length === 0) {
+                        console.log("Is empty", model[0]?.setting[`${req.method.toLowerCase()}PermittedUserGroupIds`])
+                        return next();
+                    }
                     modelSetting = model[0]?.setting;
                 }
                 // Model is not found
@@ -112,14 +117,8 @@ async function validateJWTInfo(params: {payload: any, clientUserName: string, re
                 // Has access to certain operaions on in entries
                 
                 if(requestForEntries) {
-
-                    // If the permitted field is blank the method is public to all
-                    if(requestForEntries[`${req.method.toLowerCase()}PermittedUserGroupIds`]?.length === 0 && requestForEntries[`${req.method.toLowerCase()}RestrictedUserGroupIds`]?.length === 0) {
-                        console.log("Is empty", requestForEntries[`${req.method.toLowerCase()}PermittedUserGroupIds`])
-                        return next();
-                    }
                     // Check permission
-                    else {
+                    
                         const currentUser: any = await setCurrentUser({
                             req, clientUserName, payload, res, fetchUserGroup: true
                         });
@@ -136,7 +135,7 @@ async function validateJWTInfo(params: {payload: any, clientUserName: string, re
                                 return next();
                             }
                         }
-                    }
+                    
                 }
 
                 notAuthorized(res)
