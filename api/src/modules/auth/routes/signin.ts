@@ -23,7 +23,7 @@ import {ExistingUserType, passwordLimitOptionErrorMessage, passwordLimitOptions}
 
 import {signInUrl} from "../util/urls";
 import {validateUserType} from "../middleware/userTypeCheck";
-import {UserModel as MainUserModel} from "../../../db-models/UserModel";
+import {UserModel} from "../../../db-models/UserModel";
 
 import {createNewSession} from "../util/tools";
 
@@ -89,7 +89,7 @@ router.post(
 
     switch (userType) {
       case clientUserType: {
-        existingUser = await MainUserModel.findOne({email}, [APPLICATION_NAMES, USER_NAME, PASSWORD, JWT_ID]);
+        existingUser = await UserModel.findOne({email}, [APPLICATION_NAMES, USER_NAME, PASSWORD, JWT_ID]);
         if(existingUser) {
           responseData = {
             [ID]: existingUser._id,
@@ -105,6 +105,7 @@ router.post(
       
       default: {
         if(userType === superVisorUserType || userType === supportUserType || userType === freeUserType) {
+          existingUser = await UserModel.findOne({email}, [APPLICATION_NAMES, USER_NAME, PASSWORD, JWT_ID, CLIENT_USER_NAME]);
           if (existingUser) {
             responseData = {
               [clientType]: userType,

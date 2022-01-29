@@ -114,7 +114,7 @@ export async function makeSetting(req: Request, res: Response) {
         }
 
         await SettingModel.findOneAndUpdate({id}, body);
-        console.log('Updated settings', body, id);
+        // console.log('Updated settings', body, id);
         sendOkayResponse(res, {id});
     }
 }

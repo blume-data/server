@@ -312,7 +312,7 @@ export const ModelSetting = (props: SettingType) => {
             />
 
             {
-                userGroups?.length
+                userGroups?.length && !setting.isPublic
                 ? (<>
                     <AccordianCommon name="Get permission">
                     <Grid container direction="column">

@@ -2,7 +2,7 @@ import {Request, Response} from 'express';
 import {BadRequestError, okayStatus, sendSingleError} from "../../../util/common-module";
 import {CUSTOME_COLLECTION_MODEL_FIELD_COUNT, MAX_COLLECTION_LIMIT,} from "../../../util/constants";
 import {CollectionModel} from "../../../db-models/Collection";
-import {CANNOT_CREATE_COLLECTIONS_MORE_THAN_LIMIT, COLLECTION_ALREADY_EXIST} from "../../../util/Messages";
+import {CANNOT_CREATE_COLLECTIONS_MORE_THAN_LIMIT, COLLECTION_ALREADY_EXIST, MODEL_NOT_FOUND} from "../../../util/Messages";
 
 import {
     BOOLEAN_FIElD_TYPE,
@@ -287,7 +287,7 @@ export async function deleteCollectionSchema(req: Request, res: Response) {
         }
     }
     else {
-        throw new BadRequestError('Collection not found');
+        throw new BadRequestError(MODEL_NOT_FOUND);
     }
     res.status(okayStatus).send(true);
 }
