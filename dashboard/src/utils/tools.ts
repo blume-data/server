@@ -53,7 +53,6 @@ export async function getModelDataAndRules(data: GetModelData) {
         .replace(':language', language)
         .replace(`:${APPLICATION_NAME}`,applicationName);
 
-    console.log("GetCollectionNamesUrl", url, GetCollectionNamesUrl);
     const curl = `${getBaseUrl()}${url}?name=${modelName}${getOnly ? `&get=${getOnly}` : ''}`;
     if(persistData?.updateStore) {
         persistData?.updateStore({
@@ -164,4 +163,15 @@ export function isExternalLink(url: string) {
 export function validateEmail(email: string) {
     const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(String(email).toLowerCase());
+}
+
+// Loggin 
+export const Logger = {
+    log: (name: string, message?: any) => {
+
+        if(process.env.REACT_APP_ENV && process.env.REACT_APP_ENV === 'development') {
+            console.log(name, message);
+        }
+    }
+
 }
