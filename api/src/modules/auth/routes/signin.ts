@@ -10,7 +10,7 @@ import {
   stringLimitOptions,
   JWT_ID,
   CLIENT_USER_NAME,
-  APPLICATION_NAMES, PayloadResponseType, JwtPayloadType, PASSWORD, sendSingleError, SESSION_ID, ID
+  APPLICATION_NAMES, PayloadResponseType, JwtPayloadType, PASSWORD, sendSingleError, SESSION_ID, ID, NOT_AUTHORISED_STATUS
 } from '../../../util/common-module';
 import {clientUserType,
   freeUserType,
@@ -25,15 +25,14 @@ import {signInUrl} from "../util/urls";
 import {validateUserType} from "../middleware/userTypeCheck";
 import {UserModel} from "../../../db-models/UserModel";
 
-import {createNewSession} from "../util/tools";
+import {createNewSession, handleWrongCredentials} from "../util/tools";
 
 const router = express.Router();
 
 async function sendResponse(req: Request, res: Response, responseData: PayloadResponseType, existingUser: ExistingUserType, password: string, userType: string) {
 
   if (!existingUser) {
-    
-    throw new BadRequestError(InvalidLoginCredentialsMessage);
+    return handleWrongCredentials(res);
   }
 
   const passwordsMatch = await Password.compare(
@@ -41,7 +40,7 @@ async function sendResponse(req: Request, res: Response, responseData: PayloadRe
       password
   );
   if (!passwordsMatch) {
-    throw new BadRequestError(InvalidLoginCredentialsMessage);
+    return handleWrongCredentials(res);
   }
 
   const newSession = createNewSession({
@@ -122,7 +121,7 @@ router.post(
     }
 
     if(!existingUser) {
-      return sendSingleError(res, InvalidLoginCredentialsMessage)
+      return handleWrongCredentials(res);
     }
   }
 );

@@ -184,7 +184,10 @@ export async function createCollectionSchema(req: Request, res: Response) {
 
         }
         else {
-            return sendSingleError(res, 'Model not found');
+            return sendSingleError({
+                res, 
+                message: 'Model not found'
+            });
         }
     }
 

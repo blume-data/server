@@ -10,7 +10,10 @@ async function checkAuth(req: Request, res: Response, next: NextFunction) {
 
   /*Send Not Authorised Response*/
   function notAuthorized() {
-    sendSingleError(res, 'Not authorised');
+    sendSingleError({
+      res,
+      message: 'Not authorised'
+    });
   }
 
   const payload: JwtPayloadType = verifyJwt(req);

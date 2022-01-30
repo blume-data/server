@@ -1,7 +1,7 @@
 import {Request, Response, NextFunction} from 'express';
 import {
     JWT_ID,
-    sendSingleError, Is_Enabled, CLIENT_USER_NAME, ID, verifyJwt, BadRequestError,
+    sendSingleError, Is_Enabled, CLIENT_USER_NAME, ID, verifyJwt, BadRequestError, NOT_AUTHORISED_STATUS,
 } from "../util/common-module";
 import {UserModel} from "../db-models/UserModel";
 import { clientType, clientUserType, freeUserType, superVisorUserType, supportUserType, USER_NAME } from '@ranjodhbirkaur/constants';
@@ -151,7 +151,11 @@ async function validateJWTInfo(params: {payload: any, clientUserName: string, re
 * Send Not Authorised Response
 */
 function notAuthorized(res: Response) {
-    sendSingleError(res, 'Not authorised');
+    sendSingleError({
+        res,
+        message: 'Not authorised',
+        code: NOT_AUTHORISED_STATUS
+    });
 }
 
 // Get user details

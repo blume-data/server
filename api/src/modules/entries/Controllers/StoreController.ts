@@ -319,7 +319,10 @@ async function fetchEntries(req: Request, res: Response, rules: RuleType[], find
                 
             } catch (error) {
                 console.log('Error while fetching entries', error);
-                return sendSingleError(res, 'something went wrong');
+                return sendSingleError({
+                    res, 
+                    message: 'something went wrong'
+                });
             }
         }
         else {
@@ -476,14 +479,23 @@ export async function createStoreRecord(req: Request, res: Response) {
                     }
                 }
                 else if(!propertyName) {
-                    return sendSingleError(res, `${REFERENCE_PROPERTY_NAME} ${propertyName} is not valid`);
+                    return sendSingleError({
+                        res, 
+                        message: `${REFERENCE_PROPERTY_NAME} ${propertyName} is not valid`
+                    });
                 }
                 else {
-                    return sendSingleError(res, `There is no entry in ${referenceModelName} of id ${referenceModelId}`);
+                    return sendSingleError({
+                        res, 
+                        message: `There is no entry in ${referenceModelName} of id ${referenceModelId}`
+                    });
                 }
             }
             else {
-                return sendSingleError(res, 'reference model does not exist');
+                return sendSingleError({
+                    res, 
+                    message: 'reference model does not exist'
+                });
             }
         }
         else {

@@ -26,7 +26,10 @@ router.put(
     (req: Request, res: Response, next: NextFunction) => {
         const {id} = req.body;
         if(!id) {
-            sendSingleError(res, 'id is required');
+            sendSingleError({
+                res, 
+                message: 'id is required'
+            });
         }
         else {
             next();

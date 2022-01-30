@@ -14,17 +14,28 @@ export async function CreateUpdateOtherUser(req: Request, res: Response) {
 
     // check if email/user is valid
     if(!userName && !email) {
-        return sendSingleError(res, "One of email or userName is required");
+        return sendSingleError({
+            res, 
+            message: "One of email or userName is required"
+        });
     }
 
     // validate email
     if(email && !validateEmail(email)) {
-        return sendSingleError(res, "email must be a valid email address", 'email');
+        return sendSingleError({
+            res, 
+            message: "email must be a valid email address", 
+            field: 'email'
+        });
     }
 
     // check userType
     if(type && (!SupportedUserType.includes(type) || type === clientUserType)) {
-        return sendSingleError(res, 'type is not valid', 'type');
+        return sendSingleError({
+            res, 
+            message: 'type is not valid', 
+            field: 'type'
+        });
     }
 
     if(id) {
@@ -34,7 +45,11 @@ export async function CreateUpdateOtherUser(req: Request, res: Response) {
                 type, password, details, email, userGroupIds: userGroups
             });
         } catch (error) {
-            return sendSingleError(res, 'userGroups ids are not valid', 'userGroups')
+            return sendSingleError({
+                res, 
+                message: 'userGroups ids are not valid', 
+                field: 'userGroups'
+            })
             
         }
 
@@ -45,7 +60,11 @@ export async function CreateUpdateOtherUser(req: Request, res: Response) {
     if(userName) { 
         const exist = await UserModel.findOne({userName}, '_id');
         if(exist) {
-            return sendSingleError(res, 'userName is not available', 'userName');
+            return sendSingleError({
+                res, 
+                message: 'userName is not available', 
+                field: 'userName'
+            });
         }
     }
 
@@ -53,7 +72,11 @@ export async function CreateUpdateOtherUser(req: Request, res: Response) {
     if(email) {
         const exist = await UserModel.findOne({email}, '_id');
         if(exist) {
-            return sendSingleError(res, 'email is not available', 'email');
+            return sendSingleError({
+                res, 
+                message: 'email is not available', 
+                field: 'email'
+            });
         }
     }
 
@@ -97,7 +120,11 @@ export async function CreateUserGroup(req: Request, res: Response) {
     }, [ID]);
 
     if(exist) {
-        return sendSingleError(res, 'user group with same name already exist', 'name');
+        return sendSingleError({
+            res, 
+            message: 'user group with same name already exist', 
+            field: 'name'
+        });
     }
 
     const uid = uuidv4();

@@ -2,7 +2,7 @@ import {Request, Response, NextFunction} from 'express';
 import {
     APPLICATION_NAMES,
     JWT_ID, 
-    sendSingleError, Is_Enabled, CLIENT_USER_NAME, ID, JWT_KEY,
+    sendSingleError, Is_Enabled, CLIENT_USER_NAME, ID, JWT_KEY, NOT_AUTHORISED_STATUS,
 } from "../../../util/common-module";
 import jwt from 'jsonwebtoken';
 import {UserModel} from "../../../db-models/UserModel";
@@ -17,7 +17,11 @@ export async function checkAuth(req: Request, res: Response, next: NextFunction 
     const clientUserName = req.params[CLIENT_USER_NAME];
     /*Send Not Authorised Response*/
     function notAuthorized() {
-        sendSingleError(res, 'Not authorised');
+        sendSingleError({
+            res,
+            message: 'Not authorised',
+            code: NOT_AUTHORISED_STATUS
+        });
     }
 
     try {
