@@ -189,7 +189,7 @@ export const UsersComponent = (props: PropsFromRedux) => {
         }
 
         function onClickEdit(data: any) {
-            console.log('on click edit');
+            // console.log('on click edit');
             if(type === 'user') {
                 setUserFormData({
                     ...userFormData,
@@ -303,7 +303,7 @@ export const UsersComponent = (props: PropsFromRedux) => {
 
         async function onSubmitUser(values: any) {
 
-            console.log("values", values);
+            // console.log("values", values);
 
             let response;
             if(userFormData && userFormData.data && userFormData.data.id) {

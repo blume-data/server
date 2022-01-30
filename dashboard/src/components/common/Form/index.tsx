@@ -31,7 +31,7 @@ import {JsonEditor} from "./JsonEditor";
 import ReferenceEditor from "./ReferenceEditor";
 import HtmlEditor from "../HtmlEditor";
 import AssetsAdder from "./AssetsAdder";
-import { validateEmail } from "../../../utils/tools";
+import { Logger, validateEmail } from "../../../utils/tools";
 import { RenderHeading } from "../RenderHeading";
 import { CircularProgress } from "@material-ui/core";
 
@@ -568,6 +568,7 @@ export const Form = (props: FormType) => {
     }
 
     function clearForm() {
+        
         const values: FormState[] = [];
         formState.forEach(item => {
             values.push({
@@ -634,7 +635,7 @@ export const Form = (props: FormType) => {
                         color={"primary"}
                     >
                         <Grid container justify="space-between" alignItems="center">
-                            <Grid justify="center"><RenderHeading value={loading ? "Loading" : submitButtonName ? submitButtonName : 'Submit'} /></Grid>
+                            <Grid container justify="center"><RenderHeading value={loading ? "Loading" : submitButtonName ? submitButtonName : 'Submit'} /></Grid>
                             {loading ? <Grid className="center" ><CircularProgress style={{color: "white", height: "20px", width: "20px", margin: "0 5px"}} /></Grid> : null}
                         </Grid>
                     </CommonButton>

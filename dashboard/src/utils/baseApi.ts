@@ -26,7 +26,7 @@ export function makeRequest(uri: string, options: AxiosRequestConfig, isAuthRequ
     })
         .catch(error => {
         if (error && error.response && error.response.status >= 400) {
-            console.log('auth error')
+            // console.log('auth error')
         }
         return error && error.response && error.response.data;
     })

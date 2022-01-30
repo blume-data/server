@@ -56,7 +56,7 @@ const AuthComponent = (props: AuthProps) => {
     async function onSubmit(values: object[]) {
         let data: any = {};
 
-        console.log("values", values);
+        // console.log("values", values);
 
         values.forEach((value: any) => {
             data[value.name] = value.value;
