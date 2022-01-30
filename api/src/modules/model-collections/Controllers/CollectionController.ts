@@ -84,7 +84,7 @@ export async function createCollectionSchema(req: Request, res: Response) {
 
         await newCollection.save();
         
-        return sendOkayResponse(res);
+        return sendOkayResponse(res, {id: uid});
     }
     else {
 
