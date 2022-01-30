@@ -53,6 +53,7 @@ export async function getModelDataAndRules(data: GetModelData) {
         .replace(':language', language)
         .replace(`:${APPLICATION_NAME}`,applicationName);
 
+    console.log("GetCollectionNamesUrl", url, GetCollectionNamesUrl);
     const curl = `${getBaseUrl()}${url}?name=${modelName}${getOnly ? `&get=${getOnly}` : ''}`;
     if(persistData?.updateStore) {
         persistData?.updateStore({
