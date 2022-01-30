@@ -42,3 +42,15 @@ export const ASSETS_ROUTE = {
     verifyTempRecord: "/api/assets/:clientUserName/verify-temp-record",
     verifyAssets: "/api/assets/:clientUserName/verify-url"
 }
+
+export const paletteColor = {
+    primary: {
+        main: '#3d44c3'
+    },
+    secondary: {
+      main: '#f50057'
+    },
+    error: {
+      main: '#f63e54',
+    },
+  }

@@ -1,0 +1,3 @@
+@function constants($constant-name) {
+    @return var(--#{$constant-name}_constant);
+  }

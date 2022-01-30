@@ -1,5 +1,5 @@
 import React from "react";
-import Button from '@material-ui/core/Button';
+import Button, { ButtonTypeMap } from '@material-ui/core/Button';
 import {HeadingTypeInterface, RenderHeading} from "../RenderHeading";
 import './style.scss';
 
@@ -13,9 +13,11 @@ export const CommonButton = (props: {
     className?: string;
     startIcon?: React.ReactNode;
     children?: React.ReactNode;
+    style?: React.CSSProperties;
+    tabIndex?: number
 }) => {
 
-    const {name, startIcon, onClick=null, color='primary', variant='contained', title, type='secondary', className='', children} = props;
+    const {name, startIcon, onClick=null, color='primary', variant='contained', title, type='secondary', className='', children, style, tabIndex=0} = props;
 
     function onButtonClick() {
         if(onClick) {
@@ -26,11 +28,14 @@ export const CommonButton = (props: {
     return (
         <div className="common-button-container">
             <Button
-                className={className}
+                tabIndex={tabIndex}
+                style={{ ...style}}
+                className={`${className}`}
                 onClick={onButtonClick}
                 variant={variant}
                 startIcon={startIcon}
-                color={color}>
+                color={color}
+                >
                 {!children ? <RenderHeading type={type} value={name} /> : children}
             </Button>
         </div>

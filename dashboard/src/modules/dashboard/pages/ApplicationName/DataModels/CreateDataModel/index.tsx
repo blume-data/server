@@ -87,7 +87,9 @@ import {
 import {getNameFields, getPropertyFields} from "./fields";
 import { ModelSetting, ModelSettingType } from "./ModelSetting";
 import { DropDown } from "../../../../../../components/common/Form/DropDown";
-import { DATA_ROUTES } from "../../../../../../utils/constants";
+import { DATA_ROUTES, paletteColor } from "../../../../../../utils/constants";
+import CloseOutlined from '@material-ui/icons/CloseOutlined';
+import ApplicationName from "../..";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type CreateDataModelType = PropsFromRedux;
@@ -111,6 +113,8 @@ interface FieldData {
     fieldAssetsType?: string;
     fieldType?: string;
 }
+
+
 
 const CreateDataModel = (props: CreateDataModelType) => {
 
@@ -237,7 +241,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
         
         const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
 
-        if(GetCollectionNamesUrl) {
+        if(GetCollectionNamesUrl && applicationName) {
             const url = GetCollectionNamesUrl
                 .replace(`:${CLIENT_USER_NAME}`, clientUserName ? clientUserName : '')
                 .replace(':env', env)
@@ -262,12 +266,13 @@ const CreateDataModel = (props: CreateDataModelType) => {
     }
 
     useEffect(() => {
-        if(contentModelData.name) {
+        if(contentModelData.name && applicationName) {
             getCollectionNames();
             getData();
         }
-    }, [contentModelData.name]);
+    }, [applicationName, contentModelData.name]);
 
+    // set model name from query string url
     useEffect(() => {
         const Name = getUrlSearchParams('name');
         if(Name) {
@@ -674,13 +679,13 @@ const CreateDataModel = (props: CreateDataModelType) => {
         }
 
         return (
-            <Grid container justify={"space-between"} className="name-section-container">
+            <Grid container justify={"space-between"} direction="column" className="name-section-container">
                 <Grid item>
                     <Grid container justify="flex-start">
                         <Grid item className={'text-container'}>
                             <RenderHeading
                                 type={'primary'}
-                                className={'model-display-name'}
+                                className={'model-display-name m-0'}
                                 value={`Model name: ${contentModelData.displayName ? contentModelData.displayName : 'untitled model'}`}
                             />
                             {
@@ -695,7 +700,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                         </Grid>
                         <Grid item className={'edit-button'}>
                             <Tooltip title={`Edit model ${contentModelData.displayName}`}>
-                                <IconButton onClick={onClick}>
+                                <IconButton onClick={onClick} color="primary" size="small">
                                     <EditIcon />
                                 </IconButton>
                             </Tooltip>
@@ -707,7 +712,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                         <Grid item>
                             <RenderHeading
                                 type="primary"
-                                value="Title"
+                                value="Title field"
                             />
 
                         </Grid>
@@ -717,15 +722,15 @@ const CreateDataModel = (props: CreateDataModelType) => {
                                 options={properties?.map(property => {
                                     return {label: property.displayName, value: property.name}
                                 }) || []}
-                                name='title'
-                                placeholder='dsfds'
+                                name='title field'
+                                placeholder='title field'
                                 required={false}
                                 onChange={(e) => {setContentModelData({...contentModelData, titleProperty:e.target.value})}}
                                 onBlur={() => {}}
                                 value={contentModelData.titleProperty}
-                                label="title"
+                                label="title field"
                                 className="title-drop-down"
-                                descriptionText="title property of the model, if left none first property will be set as title property"
+                                descriptionText="title property of the model, if left blank first property will be set as title property"
                                 index={9}
                             />
                         </Grid>
@@ -882,7 +887,6 @@ const CreateDataModel = (props: CreateDataModelType) => {
                         onClick={onClickAddFields}
                         color={"secondary"}
                         variant={"contained"}
-                        //title={'Add Fields'}
                     />
                     {
                         properties && properties.length
@@ -909,14 +913,22 @@ const CreateDataModel = (props: CreateDataModelType) => {
             }
 
             <Grid item className='left-container'>
-            <RenderHeading
-                className={'main-heading'}
-                type={"main"}
-                value={`${fieldEditMode || contentModelData.id ? 'Edit' : 'Create'} Model`}
-            />
-            <Paper elevation={6} className={'model-name-container'}>
-                {renderNameSection()}
-            </Paper>
+            
+            <Grid style={{flexWrap: 'nowrap'}} container className={'model-name-container'} justify="space-between">
+                <Grid item>
+                    {renderNameSection()}
+                </Grid>
+                <Grid item className="round-padding">
+                    <Tooltip title="Close">
+                        <IconButton title="close" 
+                            onClick={() => history.push(`${dashboardDataModelsUrl}`.replace(`:${ApplicationName}`, applicationName))}
+                            style={{backgroundColor: paletteColor.primary.main, color: "white"}} 
+                            size="medium">
+                            <CloseOutlined></CloseOutlined>
+                        </IconButton>
+                    </Tooltip>
+                </Grid>
+            </Grid>
             <Grid container className="create-model-container">
                 <Grid item className="create-content-model">
                     <Grid>
