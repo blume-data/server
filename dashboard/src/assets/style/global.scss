@@ -1,4 +1,3 @@
-@use "./functions.scss" as functions;
 @use "./constants.scss" as const;
 * {
   font-family: Verdana, Geneva, sans-serif;
@@ -126,10 +125,6 @@ body {
 
 .m-0 {
     margin: 0 !important;
-}
-
-.padding {
-    padding: functions.rem(16) functions.rem(14) !important;
 }
 
 .round-padding {
