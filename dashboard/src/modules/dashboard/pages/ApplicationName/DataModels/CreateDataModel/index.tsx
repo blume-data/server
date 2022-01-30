@@ -87,7 +87,9 @@ import {
 import {getNameFields, getPropertyFields} from "./fields";
 import { ModelSetting, ModelSettingType } from "./ModelSetting";
 import { DropDown } from "../../../../../../components/common/Form/DropDown";
-import { DATA_ROUTES } from "../../../../../../utils/constants";
+import { DATA_ROUTES, paletteColor } from "../../../../../../utils/constants";
+import CloseOutlined from '@material-ui/icons/CloseOutlined';
+import ApplicationName from "../..";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type CreateDataModelType = PropsFromRedux;
@@ -112,6 +114,14 @@ interface FieldData {
     fieldType?: string;
 }
 
+interface ContentModelBasicInfoType {
+    name: string;
+    description: string;
+    displayName: string;
+    id: string;
+    titleProperty: string
+}
+
 const CreateDataModel = (props: CreateDataModelType) => {
 
     const [modelNames, setModelNames] = useState<{label: string; value: string}[]>([]);
@@ -124,17 +134,11 @@ const CreateDataModel = (props: CreateDataModelType) => {
 
     const [hideNames, setHideNames] = useState<boolean>(false);
 
-    const [contentModelData, setContentModelData] = useState<{
-        name: string;
-        description: string;
-        displayName: string;
-        id: string;
-        titleProperty: string
-    }>({name: '', description: '', displayName: '', id: '', titleProperty: ''});
+    const [contentModelData, setContentModelData] = useState<ContentModelBasicInfoType>({name: '', description: '', displayName: '', id: '', titleProperty: ''});
 
     const [properties, setProperties] = useState<RuleType[] | null>(null);
 
-    const [response, setResponse] = useState<string | ErrorMessagesType[]>('');
+    const [formResponse, setFormResponse] = useState<string | ErrorMessagesType[]>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     // to show alerts
@@ -200,10 +204,23 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 });
 
                 if(response[0].setting) {
+
+                    let supportedDomains = [];
+
+                    try {
+                        supportedDomains = JSON.parse(response[0].setting?.supportedDomains || "[]");
+                        if(!supportedDomains) {
+                            supportedDomains = [];
+                        }
+                    }
+                    catch(e) {
+                        supportedDomains = [];
+                    }
+                    
                     setModelSetting({
                         id: response[0].setting.id,
                         isPublic: response[0].setting.isPublic,
-                        supportedDomains: JSON.parse(response[0].setting?.supportedDomains || "[]"),
+                        supportedDomains,
                         getRestrictedUserGroups: response[0].setting.getRestrictedUserGroups,
                         postRestrictedUserGroups: response[0].setting.postRestrictedUserGroups,
                         putRestrictedUserGroups: response[0].setting.putRestrictedUserGroups,
@@ -224,7 +241,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
         
         const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
 
-        if(GetCollectionNamesUrl) {
+        if(GetCollectionNamesUrl && applicationName) {
             const url = GetCollectionNamesUrl
                 .replace(`:${CLIENT_USER_NAME}`, clientUserName ? clientUserName : '')
                 .replace(':env', env)
@@ -249,12 +266,13 @@ const CreateDataModel = (props: CreateDataModelType) => {
     }
 
     useEffect(() => {
-        if(contentModelData.name) {
+        if(contentModelData.name && applicationName) {
             getCollectionNames();
             getData();
         }
-    }, [contentModelData.name]);
+    }, [applicationName, contentModelData.name]);
 
+    // set model name from query string url
     useEffect(() => {
         const Name = getUrlSearchParams('name');
         if(Name) {
@@ -300,15 +318,32 @@ const CreateDataModel = (props: CreateDataModelType) => {
 
         const contentModelName = name ? name : trimCharactersAndNumbers(displayName);
 
-        setContentModelData({
-            ...contentModelData,
-            name: contentModelName,
-            description: description,
-            displayName: displayName
-        });
-
         if(contentModelName) {
             setHideNames(true);
+
+            const newData = {
+                ...contentModelData,
+                name: contentModelName,
+                description: description,
+                displayName: displayName
+            }
+
+            setContentModelData(newData);
+    
+            if(!properties) {
+                // Save model properties
+                const newProperties = [{
+                    name: "example field",
+                    type: SHORT_STRING_FIElD_TYPE,
+                    required: false,
+                    unique: false,
+                    displayName: "Example field name",
+                    description: "example field type"
+                }];
+                setProperties(newProperties);
+                
+            }
+            onClickSaveDataModel(newData, properties || []);
         }
         else {
             // show alert that model name is required
@@ -509,7 +544,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 });
             }
             else {
-                setResponse(errors);
+                setFormResponse(errors);
             }
         }
     }
@@ -545,7 +580,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
         }, 3000);
     }
 
-    async function onClickSaveDataModel() { 
+    async function onClickSaveDataModel(contentModelData: ContentModelBasicInfoType, properties: RuleType[]) { 
 
         const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
         // validate
@@ -565,10 +600,10 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 .replace(':env', env)
                 .replace(':applicationName', applicationName);
 
-            let response;
+            let resp;
 
             if(contentModelData.id) {
-                response = await doPutRequest(`${getBaseUrl()}${url}`, {
+                resp = await doPutRequest(`${getBaseUrl()}${url}`, {
                     name: contentModelData.name,
                     displayName: contentModelData.displayName,
                     description: contentModelData.description,
@@ -577,10 +612,10 @@ const CreateDataModel = (props: CreateDataModelType) => {
                     titleField: contentModelData.titleProperty,
                     setting: modelSetting.id
                 }, true);
-                setResponse(response);
+                setFormResponse(resp);
             }
             else {
-                response = await doPostRequest(`${getBaseUrl()}${url}`, {
+                resp = await doPostRequest(`${getBaseUrl()}${url}`, {
                     name: contentModelData.name,
                     displayName: contentModelData.displayName,
                     description: contentModelData.description,
@@ -588,17 +623,24 @@ const CreateDataModel = (props: CreateDataModelType) => {
                     titleField: contentModelData.titleProperty,
                     setting: modelSetting.id
                 }, true);
-                setResponse(response);
+                if(resp?.id) {
+                    setContentModelData({
+                        ...contentModelData,
+                        id: resp.id
+                    })
+
+                }
+                setFormResponse(resp);
             }
 
-            if(response && !response.errors) {
-                const url = dashboardDataModelsUrl.replace(`:${APPLICATION_NAME}`, applicationName);
-                history.push(url);
+            if(resp && !resp.errors) {
+                const url = dashboardCreateDataModelsUrl.replace(`:${APPLICATION_NAME}`, applicationName);
+                history.push(`${url}?name=${contentModelData.name}`);
             }
-            else if(response.errors && response.errors.length) {
+            else if(resp.errors && resp.errors.length) {
                 setIsAlertOpen(true);
                 let message = '';
-                response.errors.map((errorItem: ErrorMessagesType, index: number) => {
+                resp.errors.map((errorItem: ErrorMessagesType, index: number) => {
                     return message+=`${index + 1}: ${errorItem[MESSAGE]} \n`
                 });
                 setAlertMessage({
@@ -661,14 +703,14 @@ const CreateDataModel = (props: CreateDataModelType) => {
         }
 
         return (
-            <Grid container justify={"space-between"} className="name-section-container">
+            <Grid container justify={"space-between"} direction="column" className="name-section-container">
                 <Grid item>
                     <Grid container justify="flex-start">
                         <Grid item className={'text-container'}>
                             <RenderHeading
                                 type={'primary'}
-                                className={'model-display-name'}
-                                value={`Model name: ${contentModelData.displayName ? contentModelData.displayName : 'untitled model'}`}
+                                className={'model-display-name m-0'}
+                                value={`${contentModelData.displayName ? contentModelData.displayName : 'untitled model'}`}
                             />
                             {
                                 contentModelData.description ?
@@ -682,7 +724,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                         </Grid>
                         <Grid item className={'edit-button'}>
                             <Tooltip title={`Edit model ${contentModelData.displayName}`}>
-                                <IconButton onClick={onClick}>
+                                <IconButton onClick={onClick} color="primary" size="small">
                                     <EditIcon />
                                 </IconButton>
                             </Tooltip>
@@ -693,8 +735,8 @@ const CreateDataModel = (props: CreateDataModelType) => {
                     <Grid container className='title-container' direction="column">
                         <Grid item>
                             <RenderHeading
-                                type="primary"
-                                value="Title"
+                                type="secondary"
+                                value="Set a title field"
                             />
 
                         </Grid>
@@ -704,15 +746,15 @@ const CreateDataModel = (props: CreateDataModelType) => {
                                 options={properties?.map(property => {
                                     return {label: property.displayName, value: property.name}
                                 }) || []}
-                                name='title'
-                                placeholder='dsfds'
+                                name='title field'
+                                placeholder='title field'
                                 required={false}
                                 onChange={(e) => {setContentModelData({...contentModelData, titleProperty:e.target.value})}}
                                 onBlur={() => {}}
                                 value={contentModelData.titleProperty}
-                                label="title"
+                                label="title field"
                                 className="title-drop-down"
-                                descriptionText="title property of the model, if left none first property will be set as title property"
+                                descriptionText="title property of the model, if left blank first property will be set as title property"
                                 index={9}
                             />
                         </Grid>
@@ -846,7 +888,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                         tableName={'Fields'}
                     /> : addingField
                         ? null
-                        : <RenderHeading className={'no-fields-added'} type={"primary"} value={'No fields added'} />
+                        : <RenderHeading className={'no-fields-added'} type={"primary"} value={'Add some fields to get stated'} />
                 }
             </Grid>
             </Paper>
@@ -869,14 +911,13 @@ const CreateDataModel = (props: CreateDataModelType) => {
                         onClick={onClickAddFields}
                         color={"secondary"}
                         variant={"contained"}
-                        //title={'Add Fields'}
                     />
                     {
                         properties && properties.length
                             ? <CommonButton
                                 name={'Save Model'}
                                 className={'save-model'}
-                                onClick={onClickSaveDataModel}
+                                onClick={() => onClickSaveDataModel(contentModelData, properties)}
                                 color={"primary"}
                                 variant={"contained"}
                                />
@@ -889,6 +930,14 @@ const CreateDataModel = (props: CreateDataModelType) => {
 
     }
 
+    // When settings is created save the model
+    useEffect(() => {
+        if(modelSetting.id) {
+            onClickSaveDataModel(contentModelData, properties || []);
+        }
+
+    }, [modelSetting.id])
+
     return (
         <Grid container className={'create-data-model-container'}>
             {
@@ -896,14 +945,22 @@ const CreateDataModel = (props: CreateDataModelType) => {
             }
 
             <Grid item className='left-container'>
-            <RenderHeading
-                className={'main-heading'}
-                type={"main"}
-                value={`${fieldEditMode || contentModelData.id ? 'Edit' : 'Create'} Model`}
-            />
-            <Paper elevation={6} className={'model-name-container'}>
-                {renderNameSection()}
-            </Paper>
+            
+            <Grid style={{flexWrap: 'nowrap'}} container className={'model-name-container'} justify="space-between">
+                <Grid item>
+                    {renderNameSection()}
+                </Grid>
+                <Grid item className="round-padding">
+                    <Tooltip title="Close">
+                        <IconButton
+                            onClick={() => history.push(`${dashboardDataModelsUrl}`.replace(`:${ApplicationName}`, applicationName))}
+                            style={{backgroundColor: paletteColor.primary.main, color: "white"}} 
+                            size="medium">
+                            <CloseOutlined></CloseOutlined>
+                        </IconButton>
+                    </Tooltip>
+                </Grid>
+            </Grid>
             <Grid container className="create-model-container">
                 <Grid item className="create-content-model">
                     <Grid>
@@ -968,8 +1025,11 @@ const CreateDataModel = (props: CreateDataModelType) => {
             </Grid>
             </Grid>
             {/* MODAL SETTING CONTAINER */}
-            <Grid item className='right-container'>
-                <Paper elevation={6}>
+
+            {
+                properties && properties.length
+                ? (<Grid item className='right-container'>
+                <div>
                     <RenderHeading
                         className={'main-heading'}
                         type={"main"}
@@ -982,8 +1042,11 @@ const CreateDataModel = (props: CreateDataModelType) => {
                         applicationName={applicationName}
                         isLoading={isLoading}
                     />
-                </Paper>
-            </Grid>
+                </div>
+            </Grid>)
+            : null
+            }
+
             <AlertDialog
                 onClose={() => {
                     setConfirmDialogOpen(false);
@@ -1015,7 +1078,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 handleClose={() => setHideNames(true)}
                 children={
                     <Form
-                        response={response}
+                        response={formResponse}
                         submitButtonName={'Save model name'}
                         className={'create-content-model-form'}
                         fields={nameFields}
@@ -1052,7 +1115,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                                         FIELD_REFERENCE_MODEL_GROUP
                                     ]
                                 }
-                                response={response}
+                                response={formResponse}
                                 submitButtonName={'Save field'}
                                 onSubmit={onSubmitFieldProperty}
                                 fields={propertyNameFields()}

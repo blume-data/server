@@ -139,7 +139,11 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
         }
     }
     if (existingUser) {
-        return sendSingleError(res, EmailInUseMessage, EMAIL);
+        return sendSingleError({
+            res, 
+            message: EmailInUseMessage, 
+            field: EMAIL
+        });
     }
 
     // check if the user name is not taken for client User
@@ -156,7 +160,11 @@ async function saveUser(req: Request, res: Response, type=clientUserType ) {
         }
     }
     if (existingUser) {
-        return sendSingleError(res, UserNameNotAvailableMessage, USER_NAME);
+        return sendSingleError({
+            res, 
+            message: UserNameNotAvailableMessage, 
+            field: USER_NAME
+        });
     }
 
     const verificationToken = RANDOM_STRING(4);

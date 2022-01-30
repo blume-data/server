@@ -36,7 +36,10 @@ export async function newApplicationSpace(params: NewApplicationSpace) {
     });
 
     if(alreadyExist && res) {
-        return sendSingleError(res, APPLICATION_NAME_ALREADY_EXIST);
+        return sendSingleError({
+            res, 
+            message: APPLICATION_NAME_ALREADY_EXIST
+        });
     }
     else {
         const createdAt = DateTime.local().setZone('UTC').toJSDate();

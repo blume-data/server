@@ -27,7 +27,10 @@ export async function getSetting(req: Request, res: Response) {
         res.status(okayStatus).send(settings.settingId);
     }
     else {
-        sendSingleError(res, 'setting was not found for this model');
+        sendSingleError({
+            res, 
+            message: 'setting was not found for this model'
+        });
     }
 }
 
@@ -68,7 +71,11 @@ export async function makeSetting(req: Request, res: Response) {
             return sendOkayResponse(res, {id: newSetting.id});
         } catch (error) {
             console.log('error while creating setting', error)
-            return sendSingleError(res, `permittedUserGroups is not okay`, 'permittedUserGroups');
+            return sendSingleError({
+                res, 
+                message: `permittedUserGroups is not okay`, 
+                field: 'permittedUserGroups'
+            });
         } 
     }   
     else {
@@ -114,7 +121,7 @@ export async function makeSetting(req: Request, res: Response) {
         }
 
         await SettingModel.findOneAndUpdate({id}, body);
-        console.log('Updated settings', body, id);
+        // console.log('Updated settings', body, id);
         sendOkayResponse(res, {id});
     }
 }

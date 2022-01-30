@@ -5,7 +5,6 @@ import {
     ErrorMessages, CLIENT_USER_NAME, APPLICATION_NAME,
     FIRST_NAME, LAST_NAME, EMAIL, pushErrors, sendErrors, PASSWORD,
 } from "../../../util/common-module";
-import {ADMIN_USER_TYPE_NOT_VALID} from "../util/errorMessages";
 
 
 export async function validateUserTypeSignUp(req: Request, res: Response, next: NextFunction) {

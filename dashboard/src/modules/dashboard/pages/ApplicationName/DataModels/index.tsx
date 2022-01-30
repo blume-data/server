@@ -6,8 +6,6 @@ import './store-list.scss';
 import {getItemFromLocalStorage, getModelDataAndRules} from "../../../../../utils/tools";
 import {doDeleteRequest} from "../../../../../utils/baseApi";
 import BasicTableMIUI from "../../../../../components/common/BasicTableMIUI";
-
-import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import {RootState} from "../../../../../rootReducer";
 import {connect, ConnectedProps} from "react-redux";

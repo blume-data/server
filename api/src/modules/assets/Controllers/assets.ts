@@ -51,7 +51,10 @@ export async function fetchAsset(req: Request, res: Response) {
 
     }
     else {
-        sendSingleError(res, 'name is required');
+        sendSingleError({
+            res, 
+            message: 'name is required'
+        });
     }
 
 }
@@ -85,16 +88,25 @@ export async function updateAsset(req: Request, res: Response) {
                 });
             }
             else {
-                return sendSingleError(res, `file with fileName ${newFileName} already exist`);
+                return sendSingleError({
+                    res,
+                    message: `file with fileName ${newFileName} already exist`
+                });
             }
         }
         else {
-            sendSingleError(res, `File of id ${id} does not exist`);
+            sendSingleError({
+                res, 
+                message: `File of id ${id} does not exist`
+            });
         }
 
     }
     else {
-        sendSingleError(res, `id is required`);
+        sendSingleError({
+            res, 
+            message: `id is required`
+        });
     }
 }
 

@@ -16,7 +16,10 @@ export const validateApplicationNameMiddleWare = async (req: Request, res: Respo
     if(env && applicationNames) {
         const exist = applicationNames.env.find((item: any) => item.name === env);
         if(!exist) {
-            return sendSingleError(res, 'env is not valid');
+            return sendSingleError({
+                res, 
+                message: 'env is not valid'
+            });
         }
     }
 
@@ -24,6 +27,9 @@ export const validateApplicationNameMiddleWare = async (req: Request, res: Respo
         next();
     }
     else {
-        return sendSingleError(res, `Application name is not valid`);
+        return sendSingleError({
+            res, 
+            message: `Application name is not valid`
+        });
     }
 };

@@ -1,7 +1,8 @@
 import {SessionModel} from "../../../db-models/SessionModel";
-import {Request} from 'express';
-import {CLIENT_USER_NAME} from "../../../util/common-module";
+import {Request, Response} from 'express';
+import {CLIENT_USER_NAME, NOT_AUTHORISED_STATUS, sendSingleError} from "../../../util/common-module";
 import {PRODUCTION_ENV, USER_NAME} from "@ranjodhbirkaur/constants";
+import { InvalidLoginCredentialsMessage } from "./errorMessages";
 
 interface CreateNewSession {
     existingUser: {
@@ -30,4 +31,12 @@ export function createNewSession(data: CreateNewSession) {
         userAgent: req.useragent,
         isActive: true
     });
+}
+
+export function handleWrongCredentials(res: Response) {
+    return sendSingleError({
+        res,
+        message: InvalidLoginCredentialsMessage,
+        code: NOT_AUTHORISED_STATUS
+      });
 }

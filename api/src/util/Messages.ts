@@ -1,6 +1,7 @@
 import {MAX_COLLECTION_LIMIT} from "../util/constants";
 
-export const COLLECTION_ALREADY_EXIST = 'collection already exist';
+export const COLLECTION_ALREADY_EXIST = 'model already exist';
+export const MODEL_NOT_FOUND = 'model not found';
 
 export const INVALID_RULES_MESSAGE = 'Body should be array of type and name properties';
 export const REQUIRED_PROPERTY_IN_RULES_SHOULD_BE_BOOLEAN = 'required property in the rules should be boolean';

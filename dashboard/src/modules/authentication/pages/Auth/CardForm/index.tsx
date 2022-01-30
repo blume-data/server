@@ -27,6 +27,7 @@ export const CardForm = (props: RegisterType) => {
                 submitButtonName={submitButtonName}
                 showClearButton={true} 
                 response={response} 
+                clearOnSubmit={false}
                 onSubmit={onSubmit} 
                 fields={fields} 
                 className={'auth-form'} 

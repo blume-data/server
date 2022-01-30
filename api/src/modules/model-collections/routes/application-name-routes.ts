@@ -19,7 +19,10 @@ async function AuthClientUser(req: Request, res: Response, next: NextFunction) {
         next();
     }
     else {
-        return sendSingleError(res, `Only ${clientUserType} can create application space`);
+        return sendSingleError({
+            res, 
+            message: `Only ${clientUserType} can create application space`
+        });
     }
 }
 

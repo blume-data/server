@@ -9,6 +9,7 @@ import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import React from "react";
 import reportWebVitals from './reportWebVitals';
 import {Provider as StateProvider} from "@minimal_ui/save_data";
+import { paletteColor } from "./utils/constants";
 declare global {
     interface Window {
         INITIAL_STATE: {
@@ -34,17 +35,7 @@ const store = createStore(
 
 
 const theme = createMuiTheme({
-    palette: {
-      primary: {
-          main: '#3d44c3'
-      },
-      secondary: {
-        main: '#f50057'
-      },
-      error: {
-        main: '#f63e54',
-      },
-    }
+    palette: paletteColor
   });
 
 ReactDOM.render(

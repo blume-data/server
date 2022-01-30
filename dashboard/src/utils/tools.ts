@@ -46,12 +46,14 @@ interface GetModelData {
 export async function getModelDataAndRules(data: GetModelData) {
     const {GetCollectionNamesUrl, applicationName, env, language, modelName='', getOnly, persistData} = data;
     const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
+    
     const url = GetCollectionNamesUrl
         .replace(`:${CLIENT_USER_NAME}`, clientUserName ? clientUserName : '')
         .replace(':env', env)
         .replace(':language', language)
         .replace(`:${APPLICATION_NAME}`,applicationName);
 
+    console.log("GetCollectionNamesUrl", url, GetCollectionNamesUrl);
     const curl = `${getBaseUrl()}${url}?name=${modelName}${getOnly ? `&get=${getOnly}` : ''}`;
     if(persistData?.updateStore) {
         persistData?.updateStore({
