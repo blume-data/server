@@ -229,45 +229,42 @@ const AuthComponent = (props: AuthProps) => {
     }
 
     return (
-        <Grid container className={'auth-page'} direction={'row'} justify={'space-between'}>
-            <Grid item lg={6} xl={6} md={6} sm={6} xs={12}>
-                   
-            </Grid>
-            <Grid item lg={6} xl={6} md={6} sm={6} xs={12}>
-                <Grid container justify={'center'}>
-                    <TopLink step={step}/>
-                    {step === SIGN_UP
-                        ? <CardForm
-                            submitButtonName={"Create free account"}
-                            fields={getFieldConfiguration(SIGN_UP)} 
-                            response={response}
-                            loading={loading}
-                            onSubmit={onSubmit} title={REGISTRATION_TITLE} />
-                        : null}
-                    {step === SIGN_IN
-                        ? <CardForm
-                            submitButtonName="Login"
-                            fields={getFieldConfiguration(SIGN_IN)} 
-                            response={response}
-                            loading={loading}
-                            onSubmit={onSubmit} title={LOGIN_TITLE} />
-                        : null}
-                    {step === VERIFY_EMAIL
-                        ? <CardForm
-                            loading={loading}
-                            submitButtonName={"Verify"}
-                            fields={getFieldConfiguration(VERIFY_EMAIL, defaultValues)} 
-                            response={response}
-                            onSubmit={onSubmit} 
-                            title={REGISTRATION_TITLE} />
-                        : null}
-                </Grid>
-            </Grid>
+        <Grid container className={'auth-page p-10'} direction={'row'} justify={'center'}>
+
+            <TopLink step={step}/>
+
+            {step === SIGN_UP
+                ? <CardForm
+                    submitButtonName={"Create free account"}
+                    fields={getFieldConfiguration(SIGN_UP)} 
+                    response={response}
+                    loading={loading}
+                    onSubmit={onSubmit} title={REGISTRATION_TITLE} />
+                : null}
+            {step === SIGN_IN
+                ? <CardForm
+                    submitButtonName="Login"
+                    fields={getFieldConfiguration(SIGN_IN)} 
+                    response={response}
+                    loading={loading}
+                    onSubmit={onSubmit} title={LOGIN_TITLE} />
+                : null}
+            {step === VERIFY_EMAIL
+                ? <CardForm
+                    loading={loading}
+                    submitButtonName={"Verify"}
+                    fields={getFieldConfiguration(VERIFY_EMAIL, defaultValues)} 
+                    response={response}
+                    onSubmit={onSubmit} 
+                    title={REGISTRATION_TITLE} />
+                : null}
+            
             <Alert
                 isAlertOpen={isAlertOpen}
                 onAlertClose={setIsAlertOpen}
                 severity={alert.severity}
-                message={alert.message} />
+                message={alert.message} 
+            />
 
         </Grid>
     );
