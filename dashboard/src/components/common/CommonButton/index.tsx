@@ -28,6 +28,7 @@ export const CommonButton = (props: {
     return (
         <div className="common-button-container">
             <Button
+                disableRipple
                 tabIndex={tabIndex}
                 style={{ ...style}}
                 className={`${className}`}

@@ -50,9 +50,9 @@ const Layout = (props: AppProps) => {
         <Grid className="appLayout">
             <NavBar />
             <Grid className="app-child-container">
-                <Paper elevation={3} className={'paper'}>
+                <div className="paper">
                     {children}
-                </Paper>
+                </div>
             </Grid>
             <Footer />
         </Grid>
