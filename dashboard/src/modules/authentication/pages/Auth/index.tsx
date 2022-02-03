@@ -229,7 +229,7 @@ const AuthComponent = (props: AuthProps) => {
     }
 
     return (
-        <Grid container className={'auth-page p-10'} direction={'row'} justify={'center'}>
+        <Grid container className={'auth-page p-10'} direction={'column'} justify={'center'}>
 
             <TopLink step={step}/>
 
