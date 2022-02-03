@@ -9,7 +9,7 @@ export const TopLink = (props: {step: string}) => {
     const {step} = props;
 
     return (
-        <Typography>
+        <Typography className="center p-10">
             {step === SIGN_UP ? `Already` :`Don't`} have an account? <Link
             to={`${authUrl}/${step === SIGN_UP ? SIGN_IN : SIGN_UP}`}>
             {step === SIGN_UP ? `Login` : `Register`}
