@@ -50,7 +50,9 @@ export const NavBarComponent = (props: PropsFromRedux) => {
     });
 
     const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
-        setAnchorEl(event.currentTarget);
+        if(isAuth) {
+            setAnchorEl(event.currentTarget);
+        }
     };
 
     const handleClose = () => {
@@ -94,52 +96,59 @@ export const NavBarComponent = (props: PropsFromRedux) => {
         <Grid id={'nav-bar-container'} >
             <AppBar position="static" color="primary" elevation={4}>
                 <Toolbar>
-                    <IconButton
-                        onClick={toggleDrawer(LEFT_ANCHOR, true)}
-                        edge="start" color="inherit" aria-label="menu">
-                        <MenuIcon />
-                    </IconButton>
+                    {
+                        isAuth
+                        ?<IconButton
+                            onClick={toggleDrawer(LEFT_ANCHOR, true)}
+                            edge="start" color="inherit" aria-label="menu">
+                            <MenuIcon />
+                        </IconButton>
+                        : null
+                    }
                     <Typography variant="h6" className={'menu-title'}>
                         Blumne
                     </Typography>
                     {
                         isAuth
-                        ? <NavBarMenu />
+                        ? <>
+                            <NavBarMenu />
+                            <Grid container justify={'flex-end'}>
+                                <IconButton
+                                    aria-label="account of current user"
+                                    aria-controls="nav-bar-menu"
+                                    aria-haspopup="true"
+                                    onClick={handleMenu}
+                                    color="inherit"
+                                >
+                                <AccountCircle />
+                                </IconButton>
+                                <Menu
+                                    id="nav-bar-menu"
+                                    anchorEl={anchorEl}
+                                    anchorOrigin={{vertical: 'top', horizontal: 'right',}}
+                                    keepMounted
+                                    transformOrigin={{vertical: 'top', horizontal: 'right',}}
+                                    open={open}
+                                    onClose={handleClose}>
+                                    {
+                                        isAuth ?
+                                            <Grid>
+                                                {/* <MenuItem onClick={handleClose}>Profile</MenuItem>
+                                                <MenuItem onClick={handleClose}>My account</MenuItem> */}
+                                                <Link onClick={handleClose} to={`${authUrl}/${SIGN_OUT}`}><MenuItem>Log out</MenuItem></Link>
+                                            </Grid>
+                                            : <Link to={`${authUrl}/${SIGN_IN}`}>
+                                                <MenuItem onClick={handleClose}>
+                                                    Log in
+                                                </MenuItem>
+                                            </Link>
+                                    }
+                                </Menu>
+                            </Grid>
+                          </>
                         : null
                     }
-                    <Grid container justify={'flex-end'}>
-                        <IconButton
-                            aria-label="account of current user"
-                            aria-controls="nav-bar-menu"
-                            aria-haspopup="true"
-                            onClick={handleMenu}
-                            color="inherit"
-                        >
-                        <AccountCircle />
-                        </IconButton>
-                        <Menu
-                            id="nav-bar-menu"
-                            anchorEl={anchorEl}
-                            anchorOrigin={{vertical: 'top', horizontal: 'right',}}
-                            keepMounted
-                            transformOrigin={{vertical: 'top', horizontal: 'right',}}
-                            open={open}
-                            onClose={handleClose}>
-                            {
-                                isAuth ?
-                                    <Grid>
-                                        {/* <MenuItem onClick={handleClose}>Profile</MenuItem>
-                                        <MenuItem onClick={handleClose}>My account</MenuItem> */}
-                                        <Link to={`${authUrl}/${SIGN_OUT}`}><MenuItem>Log out</MenuItem></Link>
-                                    </Grid>
-                                    : <Link to={`${authUrl}/${SIGN_IN}`}>
-                                        <MenuItem onClick={handleClose}>
-                                            Log in
-                                        </MenuItem>
-                                      </Link>
-                            }
-                        </Menu>
-                    </Grid>
+                    
                 </Toolbar>
             </AppBar>
             <Grid className="left-drawer-container">

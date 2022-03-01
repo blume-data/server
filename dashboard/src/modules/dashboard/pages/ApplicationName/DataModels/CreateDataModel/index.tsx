@@ -333,12 +333,12 @@ const CreateDataModel = (props: CreateDataModelType) => {
             if(!properties) {
                 // Save model properties
                 const newProperties = [{
-                    name: "example field",
+                    name: "title",
                     type: SHORT_STRING_FIElD_TYPE,
                     required: false,
                     unique: false,
-                    displayName: "Example field name",
-                    description: "example field type"
+                    displayName: "Example title field",
+                    description: "A default title field created by default in every model"
                 }];
                 setProperties(newProperties);
                 

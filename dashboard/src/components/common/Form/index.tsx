@@ -635,8 +635,8 @@ export const Form = (props: FormType) => {
                         color={"primary"}
                     >
                         <Grid container justify="space-between" alignItems="center">
-                            <Grid container justify="center"><RenderHeading value={loading ? "Loading" : submitButtonName ? submitButtonName : 'Submit'} /></Grid>
-                            {loading ? <Grid className="center" ><CircularProgress style={{color: "white", height: "20px", width: "20px", margin: "0 5px"}} /></Grid> : null}
+                            <Grid container style={{flex: 1}} justify="center"><RenderHeading value={loading ? "Loading" : submitButtonName ? submitButtonName : 'Submit'} /></Grid>
+                            {loading ? <Grid style={{flex: 1}} className="center" ><CircularProgress style={{color: "white", height: "20px", width: "20px", margin: "0 5px"}} /></Grid> : null}
                         </Grid>
                     </CommonButton>
                 </Grid>
