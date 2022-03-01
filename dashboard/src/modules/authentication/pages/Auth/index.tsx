@@ -110,7 +110,7 @@ const AuthComponent = (props: AuthProps) => {
         })();
         const url = `${getBaseUrl()}${routeUrl}`;
         let response: ResponseType;
-        // setLoading(true);
+        setLoading(true);
         if (step === VERIFY_EMAIL) {
             const token = values.verificationToken ? values.verificationToken : '';
             response = await doGetRequest(`${url}?token=${token}&email=${values.email}`, values, false);

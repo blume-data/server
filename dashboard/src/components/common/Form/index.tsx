@@ -130,7 +130,7 @@ export const Form = (props: FormType) => {
             if (action === SET_VALUE_ACTION) {
                 // If the form is loading change is not allowed
                 if(props.loading) {
-                    // return;
+                    return;
                 }
                 state = formState.map((item) => {
                     if (item.label === field) {
@@ -637,8 +637,8 @@ export const Form = (props: FormType) => {
                         color={"primary"}
                     >
                         <Grid container justify="space-between" alignItems="center">
-                            <Grid container justify="center"><RenderHeading value={loading ? "Loading" : submitButtonName ? submitButtonName : 'Submit'} /></Grid>
-                            {loading ? <Grid className="center" ><CircularProgress style={{color: "white", height: "20px", width: "20px", margin: "0 5px"}} /></Grid> : null}
+                            <Grid container style={{flex: 1}} justify="center"><RenderHeading value={loading ? "Loading" : submitButtonName ? submitButtonName : 'Submit'} /></Grid>
+                            {loading ? <Grid style={{flex: 1}} className="center" ><CircularProgress style={{color: "white", height: "20px", width: "20px", margin: "0 5px"}} /></Grid> : null}
                         </Grid>
                     </CommonButton>
                 </Grid>
