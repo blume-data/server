@@ -130,7 +130,7 @@ export const Form = (props: FormType) => {
             if (action === SET_VALUE_ACTION) {
                 // If the form is loading change is not allowed
                 if(props.loading) {
-                    return;
+                    // return;
                 }
                 state = formState.map((item) => {
                     if (item.label === field) {
@@ -580,6 +580,8 @@ export const Form = (props: FormType) => {
         });
         setFormState(values);
     }
+
+    console.log("FOrm", formState)
 
     return (
         <Grid className={`${className} app-common-form`} container justify={'center'} direction={'column'}>
