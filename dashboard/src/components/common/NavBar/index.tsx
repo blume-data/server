@@ -51,7 +51,9 @@ export const NavBarComponent = (props: PropsFromRedux) => {
     });
 
     const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
-        setAnchorEl(event.currentTarget);
+        if(isAuth) {
+            setAnchorEl(event.currentTarget);
+        }
     };
 
     const handleClose = () => {
