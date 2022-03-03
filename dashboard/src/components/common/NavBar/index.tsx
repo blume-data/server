@@ -19,6 +19,7 @@ import Drawer from '@material-ui/core/Drawer';
 import { LeftDrawerList } from './LeftDrawerList';
 import {NavBarMenu} from "./NavBarMenu";
 import {authUrl} from "../../../utils/urls";
+import Button from '@material-ui/core/Button';
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
@@ -105,9 +106,11 @@ export const NavBarComponent = (props: PropsFromRedux) => {
                         </IconButton>
                         : null
                     }
-                    <Typography variant="h6" className={'menu-title'}>
-                        Blumne
-                    </Typography>
+                    <Button disableRipple className="p-0" href="https://blumne.com">
+                        <Typography variant="h6" className={'menu-title'}>
+                            Blumne
+                        </Typography>
+                    </Button>
                     {
                         isAuth
                         ? <>

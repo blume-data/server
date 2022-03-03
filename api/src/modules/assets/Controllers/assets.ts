@@ -13,7 +13,7 @@ import {
     AssetsVerifyTempRecord, AssetsFetchAssetUrl, AssetsGetAssetsDataUrl
 } from "../utils/urls";
 import {DateTime} from "luxon";
-import {ENTRY_CREATED_BY, ENTRY_UPDATED_AT, FIRST_NAME, LAST_NAME} from "@ranjodhbirkaur/constants";
+import {CLIENT_USER_NAME, ENTRY_CREATED_BY, ENTRY_UPDATED_AT, FIRST_NAME, LAST_NAME} from "@ranjodhbirkaur/constants";
 
 // fetch asset url
 // on fetch redirect to the asset url
@@ -171,9 +171,11 @@ export async function verifyTempAssetsRecord(req: Request, res: Response) {
 // get list of all assets
 export async function getAssets(req: Request, res: Response) {
     const {page, perPage} = getPageAndPerPage(req);
+    const clientUserName = req.params[CLIENT_USER_NAME];
 
     const where = {
-        isVerified: true
+        isVerified: true,
+        clientUserName
     }
     const assets = await FileModel.find(where)
         .sort(`-${ENTRY_UPDATED_AT}`)
