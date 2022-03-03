@@ -51,9 +51,7 @@ export const NavBarComponent = (props: PropsFromRedux) => {
     });
 
     const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
-        if(isAuth) {
-            setAnchorEl(event.currentTarget);
-        }
+        setAnchorEl(event.currentTarget);
     };
 
     const handleClose = () => {
@@ -115,42 +113,43 @@ export const NavBarComponent = (props: PropsFromRedux) => {
                         isAuth
                         ? <>
                             <NavBarMenu />
-                            <Grid container justify={'flex-end'}>
-                                <IconButton
-                                    aria-label="account of current user"
-                                    aria-controls="nav-bar-menu"
-                                    aria-haspopup="true"
-                                    onClick={handleMenu}
-                                    color="inherit"
-                                >
-                                <AccountCircle />
-                                </IconButton>
-                                <Menu
-                                    id="nav-bar-menu"
-                                    anchorEl={anchorEl}
-                                    anchorOrigin={{vertical: 'top', horizontal: 'right',}}
-                                    keepMounted
-                                    transformOrigin={{vertical: 'top', horizontal: 'right',}}
-                                    open={open}
-                                    onClose={handleClose}>
-                                    {
-                                        isAuth ?
-                                            <Grid>
-                                                {/* <MenuItem onClick={handleClose}>Profile</MenuItem>
-                                                <MenuItem onClick={handleClose}>My account</MenuItem> */}
-                                                <Link onClick={handleClose} to={`${authUrl}/${SIGN_OUT}`}><MenuItem>Log out</MenuItem></Link>
-                                            </Grid>
-                                            : <Link to={`${authUrl}/${SIGN_IN}`}>
-                                                <MenuItem onClick={handleClose}>
-                                                    Log in
-                                                </MenuItem>
-                                            </Link>
-                                    }
-                                </Menu>
-                            </Grid>
                           </>
                         : null
                     }
+
+                    <Grid container justify={'flex-end'}>
+                        <IconButton
+                            aria-label="account of current user"
+                            aria-controls="nav-bar-menu"
+                            aria-haspopup="true"
+                            onClick={handleMenu}
+                            color="inherit"
+                        >
+                        <AccountCircle />
+                        </IconButton>
+                        <Menu
+                            id="nav-bar-menu"
+                            anchorEl={anchorEl}
+                            anchorOrigin={{vertical: 'top', horizontal: 'right',}}
+                            keepMounted
+                            transformOrigin={{vertical: 'top', horizontal: 'right',}}
+                            open={open}
+                            onClose={handleClose}>
+                            {
+                                isAuth ?
+                                    <Grid>
+                                        {/* <MenuItem onClick={handleClose}>Profile</MenuItem>
+                                        <MenuItem onClick={handleClose}>My account</MenuItem> */}
+                                        <Link onClick={handleClose} to={`${authUrl}/${SIGN_OUT}`}><MenuItem>Log out</MenuItem></Link>
+                                    </Grid>
+                                    : <Link to={`${authUrl}/${SIGN_IN}`}>
+                                        <MenuItem onClick={handleClose}>
+                                            Log in
+                                        </MenuItem>
+                                    </Link>
+                            }
+                        </Menu>
+                    </Grid>
                     
                 </Toolbar>
             </AppBar>
