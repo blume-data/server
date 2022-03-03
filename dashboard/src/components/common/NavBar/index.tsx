@@ -106,11 +106,9 @@ export const NavBarComponent = (props: PropsFromRedux) => {
                         </IconButton>
                         : null
                     }
-                    <Button disableRipple className="p-0" href="https://blumne.com">
-                        <Typography variant="h6" className={'menu-title'}>
+                    <Typography variant="h6" className={'menu-title'}>
                             Blumne
-                        </Typography>
-                    </Button>
+                    </Typography>
                     {
                         isAuth
                         ? <>
