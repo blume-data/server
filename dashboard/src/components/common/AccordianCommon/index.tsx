@@ -1,5 +1,4 @@
 import React from "react";
-import "./index.scss";
 
 interface AccordianCommonProps {
   children: any;
@@ -9,15 +8,13 @@ interface AccordianCommonProps {
 }
 
 export const AccordianCommon = (props: AccordianCommonProps) => {
-  const { children, name, shouldExpand = false, className = "" } = props;
-  
-  const [expanded, setExpanded] = React.useState<boolean>(shouldExpand);
+  const { children, name, shouldExpand = false } = props;
 
-  console.log("visisble", expanded);
+  const [expanded, setExpanded] = React.useState<boolean>(shouldExpand);
 
   return (
     <>
-      <div id="accordionExample">
+      <div>
         <div
           className="rounded mb-2 border border-neutral-200 bg-white dark:border-neutral-600 dark:bg-neutral-800">
           <h2 className="mb-0">
@@ -26,7 +23,7 @@ export const AccordianCommon = (props: AccordianCommonProps) => {
               type="button"
               aria-expanded={expanded}
               onClick={() => setExpanded(!expanded)}
-              >
+            >
               {name}
               <span
                 className={`ml-auto h-5 w-5 shrink-0 ${expanded ? '' : 'rotate-[-180deg]'} fill-[#336dec] transition-transform duration-200 ease-in-out group-[[data-te-collapse-collapsed]]:rotate-0 group-[[data-te-collapse-collapsed]]:fill-[#212529] motion-reduce:transition-none dark:fill-blue-300 dark:group-[[data-te-collapse-collapsed]]:fill-white`}>
@@ -56,6 +53,3 @@ export const AccordianCommon = (props: AccordianCommonProps) => {
 
   );
 };
-
-
-
