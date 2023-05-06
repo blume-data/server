@@ -1,0 +1,25 @@
+@import "src/assets/style/index";
+.menu-list-container {
+  margin: 0 10px;
+  .application-name-container {
+    span.MuiButton-label {
+      display: flex;
+      span.MuiButton-startIcon {
+        margin-top: 5px;
+        @include tablets {
+          display: none;
+        }
+      }
+    }
+  }
+  button {
+    max-width: 300px;
+    color: $white;
+    span {
+      @include trim(1);
+    }
+    .MuiButton-endIcon {
+      margin-top: 8px;
+    }
+  }
+}

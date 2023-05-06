@@ -1,0 +1,31 @@
+@import "src/assets/style/color";
+
+.vertical-tab-container {
+  .vertical-tab-panel {
+    width: 100%;
+    overflow: auto;
+    .vertical-tab-box-container {
+      padding: 0 10px 10px;
+    }
+  }
+  button.MuiTab-textColorInherit {
+    min-width: 50px;
+    span.MuiTab-wrapper {
+      color: $black;
+    }
+  }
+  button.MuiTab-textColorInherit.selected {
+    span.MuiTab-wrapper {
+      color: $blue !important;
+    }
+  }
+
+  .MuiTabs-flexContainerVertical {
+    button.MuiTab-textColorInherit:nth-child(even) {
+      background-color: $light-gray !important;
+    }
+  }
+  .MuiTabs-indicator {
+    background-color: $blue;
+  }
+}

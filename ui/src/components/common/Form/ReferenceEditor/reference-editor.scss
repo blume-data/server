@@ -1,0 +1,33 @@
+@import "src/assets/style/index";
+.reference-editor-wrapper {
+  .reference-ids-list-wrapper {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    a.ref-link {
+      text-decoration: underline;
+    }
+    .chip {
+      cursor: pointer;
+      margin-left: 5px;
+    }
+    .reference-list-name {
+      text-transform: capitalize;
+    }
+  }
+  .create-model-wrapper {
+    border: 1px dashed $gray;
+    display: flex;
+    justify-content: center;
+    padding: 5px;
+    button {
+      margin: 0 5px;
+    }
+  }
+}
+.dialog-modal-container.reference-editor-modal-container {
+  .MuiDialog-paperWidthSm {
+    height: 100%;
+    width: 100%;
+    max-width: none;
+  }
+}

@@ -1,0 +1,14 @@
+@import "src/assets/style/index";
+.appLayout {
+  .app-child-container {
+    max-width: 1920px;
+    margin: 0 auto;
+    .paper {
+      padding: 10px 25px;
+      min-height: calc(100vh - 130px);
+      @include mobiles {
+        padding: 10px 18px;
+      }
+    }
+  }
+}

@@ -1,0 +1,15 @@
+@import "src/assets/style/index";
+
+.store-list-container {
+  width: 100%;
+
+  .filter-section {
+    padding: 10px;
+    margin-bottom: 10px;
+    .add-store-button {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+  }
+}

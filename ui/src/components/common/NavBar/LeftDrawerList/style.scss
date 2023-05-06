@@ -1,0 +1,10 @@
+@import "src/assets/style/index";
+.left-drawer-list {
+  a.link-item-link {
+    display: flex;
+    width: 100%;
+  }
+  .env-title {
+    @include trim(1);
+  }
+}
