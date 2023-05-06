@@ -1,6 +1,6 @@
 import React from "react";
 // import {Pagination} from '@material-ui/lab';
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import "./pagination.scss";
 
 export function offsetNumber(page: number, limit: number) {

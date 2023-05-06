@@ -1,5 +1,5 @@
 import React, { ChangeEvent, lazy, useEffect, useState, Suspense } from "react";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import { TextBox } from "./TextBox";
 import { DropDown } from "./DropDown";
 import {
@@ -37,7 +37,7 @@ import HtmlEditor from "../HtmlEditor";
 import AssetsAdder from "./AssetsAdder";
 import { Logger, validateEmail } from "../../../utils/tools";
 import { RenderHeading } from "../RenderHeading";
-import { CircularProgress } from "@material-ui/core";
+import { CircularProgress } from "@mui/material";
 
 const DateField = lazy(() =>
   import("./DateField").then((module) => ({ default: module.DateField }))

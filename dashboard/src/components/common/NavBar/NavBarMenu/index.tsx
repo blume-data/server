@@ -1,5 +1,5 @@
 import { Fragment } from "react";
-import { Grid } from "@material-ui/core";
+import { Grid } from "@mui/material";
 import { ApplicationNameList } from "../ApplicationNameList";
 import { Link } from "react-router-dom";
 import "./nav-bar-menu.scss";

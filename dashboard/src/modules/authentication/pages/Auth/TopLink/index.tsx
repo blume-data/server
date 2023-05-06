@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import Typography from "@material-ui/core/Typography";
+import Typography from "@mui/material/Typography";
 import { SIGN_IN, SIGN_UP } from "../index";
 import { authUrl } from "../../../../../utils/urls";
 

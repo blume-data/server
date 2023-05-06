@@ -1,12 +1,12 @@
 import React, { ChangeEvent } from "react";
-import FormControl from "@material-ui/core/FormControl";
-import Grid from "@material-ui/core/Grid";
+import FormControl from "@mui/material/FormControl";
+import Grid from "@mui/material/Grid";
 import { FieldType } from "../interface";
-import { FormLabel } from "@material-ui/core";
-import RadioGroup from "@material-ui/core/RadioGroup";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Radio from "@material-ui/core/Radio";
-import FormHelperText from "@material-ui/core/FormHelperText";
+import { FormLabel } from "@mui/material";
+import RadioGroup from "@mui/material/RadioGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Radio from "@mui/material/Radio";
+import FormHelperText from "@mui/material/FormHelperText";
 import { DescriptionText } from "../DescriptionText";
 
 interface RadioTypeProps extends FieldType {

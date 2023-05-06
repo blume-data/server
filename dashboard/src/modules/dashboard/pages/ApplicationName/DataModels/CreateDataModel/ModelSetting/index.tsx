@@ -1,4 +1,4 @@
-import { Grid } from "@material-ui/core";
+import { Grid } from "@mui/material";
 import {
   APPLICATION_NAME,
   CLIENT_USER_NAME,
@@ -16,10 +16,10 @@ import {
   getItemFromLocalStorage,
   getUrlSearchParams,
 } from "../../../../../../../utils/tools";
-import { Chip } from "@material-ui/core";
-import CloseIcon from "@material-ui/icons/Close";
-import DoneIcon from "@material-ui/icons/Done";
-import GroupIcon from "@material-ui/icons/Group";
+import { Chip } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import DoneIcon from "@mui/icons-material/Done";
+import GroupIcon from "@mui/icons-material/Group";
 import { AccordianCommon } from "../../../../../../../components/common/AccordianCommon";
 import "./style.scss";
 import { TextBox } from "../../../../../../../components/common/Form/TextBox";

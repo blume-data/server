@@ -4,26 +4,23 @@ import {
   Theme,
   withStyles,
   WithStyles,
-} from "@material-ui/core/styles";
-import MuiDialogTitle from "@material-ui/core/DialogTitle";
-import MuiDialogContent from "@material-ui/core/DialogContent";
-import IconButton from "@material-ui/core/IconButton";
-import CloseIcon from "@material-ui/icons/Close";
-import Typography from "@material-ui/core/Typography";
+} from "@mui/styles";
+import MuiDialogTitle from "@mui/material/DialogTitle";
+import MuiDialogContent from "@mui/material/DialogContent";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
+import Typography from "@mui/material/Typography";
 import "./style.scss";
-import Dialog from "@material-ui/core/Dialog";
+import Dialog from "@mui/material/Dialog";
 
 const styles = (theme: Theme) =>
   createStyles({
     root: {
-      margin: 0,
-      padding: theme.spacing(2),
+      margin: 0
     },
     closeButton: {
       position: "absolute",
-      right: theme.spacing(1),
-      top: theme.spacing(1),
-      color: theme.palette.grey[500],
+      color: 'gray',
     },
   });
 
@@ -53,7 +50,7 @@ const DialogTitle = withStyles(styles)((props: DialogTitleProps) => {
 
 const DialogContent = withStyles((theme: Theme) => ({
   root: {
-    padding: theme.spacing(2),
+    
   },
 }))(MuiDialogContent);
 

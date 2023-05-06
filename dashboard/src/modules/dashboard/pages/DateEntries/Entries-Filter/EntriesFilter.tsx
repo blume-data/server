@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import { RootState } from "../../../../../rootReducer";
 import { connect, ConnectedProps } from "react-redux";
 import { getModelDataAndRules } from "../../../../../utils/tools";
@@ -15,9 +15,9 @@ import {
 import "./entries-filter.scss";
 import { SearchMenuList } from "../../../../../components/common/SearchMenuList";
 import { Button } from "../../../../../components/common/Button";
-import { TextField, Tooltip } from "@material-ui/core";
-import IconButton from "@material-ui/core/IconButton";
-import CloseIcon from "@material-ui/icons/Close";
+import { TextField, Tooltip } from "@mui/material";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
 // import {KeyboardDatePicker, MuiPickersUtilsProvider} from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
 interface ModelsType {

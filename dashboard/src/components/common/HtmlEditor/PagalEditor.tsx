@@ -1,7 +1,7 @@
 import React from "react";
 import { Editor } from "@tinymce/tinymce-react";
 import "./style.scss";
-import { Grid } from "@material-ui/core";
+import { Grid } from "@mui/material";
 interface PagalEditorType {
   value: string;
   setValue: (str: string) => void;

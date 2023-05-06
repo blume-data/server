@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import BasicTableMIUI from "../../../components/common/BasicTableMIUI";
 import {
   CLIENT_USER_NAME,
@@ -12,8 +12,8 @@ import { getItemFromLocalStorage } from "../../../utils/tools";
 import { DateTime } from "luxon";
 import { UserCell } from "../../../components/common/UserCell";
 import { DateCell } from "../../../components/common/DateCell";
-import { Avatar } from "@material-ui/core";
-import Checkbox from "@material-ui/core/Checkbox";
+import { Avatar } from "@mui/material";
+import Checkbox from "@mui/material/Checkbox";
 import { PaginationTab } from "../../../components/common/Pagination";
 import Loader from "../../../components/common/Loader";
 import { FileUploadType } from "../../../components/common/Form/AssetsAdder";
@@ -114,7 +114,7 @@ export const AssetsTable = (prop: AssetsTableType) => {
           );
 
           const thumbnailUrl = (
-            <a href={assetUrl} target={"_blank"}>
+            <a href={assetUrl} target={"_blank"} rel="noreferrer">
               <Avatar alt={"a"} src={i.thumbnailUrl} />
             </a>
           );

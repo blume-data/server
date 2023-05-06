@@ -1,9 +1,9 @@
 import React from "react";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import { RootState } from "../../../../rootReducer";
 import { connect, ConnectedProps } from "react-redux";
-import { Paper, Card, CardContent, ListItem, List } from "@material-ui/core";
-import Typography from "@material-ui/core/Typography";
+import { Paper, Card, CardContent, ListItem, List } from "@mui/material";
+import Typography from "@mui/material/Typography";
 import { Link } from "react-router-dom";
 import { dashboardApplicationNamesUrl } from "../../../../utils/urls";
 import { Button } from "../../../../components/common/Button";

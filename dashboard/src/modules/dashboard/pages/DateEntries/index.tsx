@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Grid } from "@material-ui/core";
+import { Grid } from "@mui/material";
 import { RootState } from "../../../../rootReducer";
 import { connect, ConnectedProps } from "react-redux";
 import { useHistory, useParams } from "react-router";
@@ -7,7 +7,7 @@ import {
   dashboardCreateDataEntryUrl,
   dashboardDataEntriesUrl,
 } from "../../../../utils/urls";
-import Button from "@material-ui/core/Button";
+import Button from "@mui/material/Button";
 import { Link } from "react-router-dom";
 import "./data-entries.scss";
 import { EntriesTable } from "../../../../components/common/EntriesTable";

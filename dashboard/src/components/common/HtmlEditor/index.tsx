@@ -1,9 +1,9 @@
 import React, { Suspense } from "react";
-import FormControl from "@material-ui/core/FormControl";
+import FormControl from "@mui/material/FormControl";
 import { DescriptionText } from "../Form/DescriptionText";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import { FieldType } from "../Form/interface";
-import { FormLabel } from "@material-ui/core";
+import { FormLabel } from "@mui/material";
 import Loader from "../Loader";
 const PagalEditor = React.lazy(() => import("./PagalEditor"));
 

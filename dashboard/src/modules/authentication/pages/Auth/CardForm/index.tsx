@@ -1,8 +1,8 @@
 import React from "react";
-import { CardContent } from "@material-ui/core";
-import Typography from "@material-ui/core/Typography";
+import { CardContent } from "@mui/material";
+import Typography from "@mui/material/Typography";
 import { Form } from "../../../../../components/common/Form";
-import Card from "@material-ui/core/Card";
+import Card from "@mui/material/Card";
 import { ConfigField } from "../../../../../components/common/Form/interface";
 import { ErrorMessagesType } from "@ranjodhbirkaur/constants";
 

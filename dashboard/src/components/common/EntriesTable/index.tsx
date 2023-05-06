@@ -12,7 +12,7 @@ import {
   STATUS,
   TITLE_FIELD,
 } from "@ranjodhbirkaur/constants";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import "./entries-table.scss";
 import BasicTableMIUI from "../BasicTableMIUI";
 import { DateTime } from "luxon";
@@ -26,15 +26,15 @@ import {
 } from "../../../utils/tools";
 import { EntriesFilter } from "../../../modules/dashboard/pages/DateEntries/Entries-Filter/EntriesFilter";
 import { EntryStatus } from "./EntryStatus";
-import Checkbox from "@material-ui/core/Checkbox";
+import Checkbox from "@mui/material/Checkbox";
 import Loader from "../Loader";
 import { PaginationTab } from "../Pagination";
 import { AvatarCommon } from "../AvatarCommon";
 import { dashboardCreateDataEntryUrl } from "../../../utils/urls";
 import { Link } from "react-router-dom";
 import { Button } from "../Button";
-import { IconButton } from "@material-ui/core";
-import EditIcon from "@material-ui/icons/Edit";
+import { IconButton } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type EntriesTableType = PropsFromRedux & {

@@ -4,7 +4,7 @@ import { connect, ConnectedProps } from "react-redux";
 import { RootState } from "../../rootReducer";
 import { CLIENT_USER_NAME } from "@ranjodhbirkaur/constants";
 import { getItemFromLocalStorage } from "../../utils/tools";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import "./assets-component.scss";
 import { AssetsTable } from "./AssetsTable";
 import UploadAsset from "../../components/common/UploadAsset";

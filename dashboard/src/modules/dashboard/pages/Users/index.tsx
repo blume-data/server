@@ -1,4 +1,4 @@
-import { Grid, IconButton } from "@material-ui/core";
+import { Grid, IconButton } from "@mui/material";
 import {
   APPLICATION_NAME,
   CLIENT_USER_NAME,
@@ -24,7 +24,7 @@ import {
   doPutRequest,
 } from "../../../../utils/baseApi";
 import { getItemFromLocalStorage } from "../../../../utils/tools";
-import EditIcon from "@material-ui/icons/Edit";
+import EditIcon from "@mui/icons-material/Edit";
 import "./style.scss";
 import { useParams } from "react-router";
 import { DescriptionText } from "../../../../components/common/Form/DescriptionText";

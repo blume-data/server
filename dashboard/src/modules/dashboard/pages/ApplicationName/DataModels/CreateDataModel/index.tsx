@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Grid, Tooltip } from "@material-ui/core";
+import { Grid, Tooltip } from "@mui/material";
 import { AlertType, Form } from "../../../../../../components/common/Form";
 import { ConfigField } from "../../../../../../components/common/Form/interface";
 import {
@@ -31,19 +31,19 @@ import {
   RuleType,
   FIELD_CUSTOM_ERROR_MSG_MATCH_CUSTOM_PATTERN,
 } from "@ranjodhbirkaur/constants";
-import TextFieldsIcon from "@material-ui/icons/TextFields";
+import TextFieldsIcon from "@mui/icons-material/TextFields";
 import "./style.scss";
-import Looks3Icon from "@material-ui/icons/Looks3";
-import Looks5Icon from "@material-ui/icons/Looks5";
-import Looks4Icon from "@material-ui/icons/Looks4";
-import DateRangeIcon from "@material-ui/icons/DateRange";
-import LocationOnIcon from "@material-ui/icons/LocationOn";
-import ToggleOffIcon from "@material-ui/icons/ToggleOff";
-import CodeIcon from "@material-ui/icons/Code";
-import PermMediaIcon from "@material-ui/icons/PermMedia";
-import LinkIcon from "@material-ui/icons/Link";
-import EditIcon from "@material-ui/icons/Edit";
-import AccessTimeIcon from "@material-ui/icons/AccessTime";
+import Looks3Icon from "@mui/icons-material/Looks3";
+import Looks5Icon from "@mui/icons-material/Looks5";
+import Looks4Icon from "@mui/icons-material/Looks4";
+import DateRangeIcon from "@mui/icons-material/DateRange";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
+import ToggleOffIcon from "@mui/icons-material/ToggleOff";
+import CodeIcon from "@mui/icons-material/Code";
+import PermMediaIcon from "@mui/icons-material/PermMedia";
+import LinkIcon from "@mui/icons-material/Link";
+import EditIcon from "@mui/icons-material/Edit";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import { RootState } from "../../../../../../rootReducer";
 import { connect, ConnectedProps } from "react-redux";
 import {
@@ -63,9 +63,9 @@ import {
 } from "../../../../../../utils/urls";
 import Loader from "../../../../../../components/common/Loader";
 import BasicTableMIUI from "../../../../../../components/common/BasicTableMIUI";
-import DeleteIcon from "@material-ui/icons/Delete";
-import IconButton from "@material-ui/core/IconButton";
-import Paper from "@material-ui/core/Paper";
+import DeleteIcon from "@mui/icons-material/Delete";
+import IconButton from "@mui/material/IconButton";
+import Paper from "@mui/material/Paper";
 import { Alert } from "../../../../../../components/common/Toast";
 import { AlertDialog } from "../../../../../../components/common/AlertDialog";
 import { useHistory } from "react-router";
@@ -97,7 +97,7 @@ import { getNameFields, getPropertyFields } from "./fields";
 import { ModelSetting, ModelSettingType } from "./ModelSetting";
 import { DropDown } from "../../../../../../components/common/Form/DropDown";
 import { DATA_ROUTES, paletteColor } from "../../../../../../utils/constants";
-import CloseOutlined from "@material-ui/icons/CloseOutlined";
+import CloseOutlined from "@mui/icons-material/CloseOutlined";
 import ApplicationName from "../..";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;

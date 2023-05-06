@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import "./index.scss";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import { Footer } from "../Footer";
 import { NavBar } from "../NavBar";
 import { connect, ConnectedProps } from "react-redux";
@@ -23,7 +23,7 @@ import {
   LOCAL_STORAGE_ENV,
   LOCAL_STORAGE_LANGUAGE,
 } from "../../../utils/constants";
-import { Paper } from "@material-ui/core";
+import { Paper } from "@mui/material";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type AppProps = PropsFromRedux & {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import { connect, ConnectedProps } from "react-redux";
 import { RootState } from "../../../../rootReducer";
 import "./asset-adder.scss";
@@ -12,7 +12,7 @@ import {
   SINGLE_ASSETS_TYPE,
 } from "@ranjodhbirkaur/constants";
 import { getBaseUrl } from "../../../../utils/urls";
-import { Avatar, Chip } from "@material-ui/core";
+import { Avatar, Chip } from "@mui/material";
 import Loader from "../../Loader";
 import { Button } from "../../Button";
 import { AssetsTable } from "../../../../modules/assets/AssetsTable";

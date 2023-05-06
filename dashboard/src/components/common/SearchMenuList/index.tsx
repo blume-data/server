@@ -1,21 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import TextField from "@material-ui/core/TextField";
-import { Grid, InputAdornment } from "@material-ui/core";
+import { createStyles, makeStyles } from "@mui/styles";
+import ListItem from "@mui/material/ListItem";
+import ListItemText from "@mui/material/ListItemText";
+import TextField from "@mui/material/TextField";
+import { Grid, InputAdornment } from "@mui/material";
 import "./style.scss";
-import List from "@material-ui/core/List";
-import InputLabel from "@material-ui/core/InputLabel";
-import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
+import List from "@mui/material/List";
+import InputLabel from "@mui/material/InputLabel";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { randomString } from "../../../utils/tools";
 
-const useStyles = makeStyles((theme: Theme) =>
+const useStyles = makeStyles(() =>
   createStyles({
     root: {
       width: "100%",
-      maxHeight: 400,
-      backgroundColor: theme.palette.background.paper,
+      maxHeight: 400
     },
   })
 );

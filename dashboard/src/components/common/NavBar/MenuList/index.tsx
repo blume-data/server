@@ -1,10 +1,10 @@
 import React from "react";
-import MenuItem from "@material-ui/core/MenuItem";
-import Menu from "@material-ui/core/Menu";
-import { Grid, Tooltip } from "@material-ui/core";
-import Button from "@material-ui/core/Button";
+import MenuItem from "@mui/material/MenuItem";
+import Menu from "@mui/material/Menu";
+import { Grid, Tooltip } from "@mui/material";
+import Button from "@mui/material/Button";
 import "./menu-list.scss";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 interface ApplicationNamesListProps {
   onSelectMenuItem: (name: string) => void;

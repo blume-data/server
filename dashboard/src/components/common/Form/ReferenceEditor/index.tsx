@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import { connect, ConnectedProps } from "react-redux";
 import "./reference-editor.scss";
 import { RootState } from "../../../../rootReducer";
 import CreateEntry from "../../../../modules/dashboard/pages/DateEntries/CreateEntry";
-import { Chip, Tooltip } from "@material-ui/core";
-import Typography from "@material-ui/core/Typography";
+import { Chip, Tooltip } from "@mui/material";
+import Typography from "@mui/material/Typography";
 import { Button } from "../../Button";
 import {
   APPLICATION_NAME,

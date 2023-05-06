@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Grid, Typography } from "@material-ui/core";
-import Button from "@material-ui/core/Button";
+import { Grid, Typography } from "@mui/material";
+import Button from "@mui/material/Button";
 import ModalDialog from "../../../../components/common/ModalDialog";
 import { APPLICATION_NAME } from "@ranjodhbirkaur/constants";
 import { CreateApplicationName } from "./create-application-name";

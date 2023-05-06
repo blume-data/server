@@ -1,11 +1,11 @@
 import React, { ChangeEvent } from "react";
-import { FormLabel, Grid } from "@material-ui/core";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Checkbox from "@material-ui/core/Checkbox";
+import { FormLabel, Grid } from "@mui/material";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Checkbox from "@mui/material/Checkbox";
 import { FieldType } from "../interface";
-import FormControl from "@material-ui/core/FormControl";
-import FormGroup from "@material-ui/core/FormGroup";
-import FormHelperText from "@material-ui/core/FormHelperText";
+import FormControl from "@mui/material/FormControl";
+import FormGroup from "@mui/material/FormGroup";
+import FormHelperText from "@mui/material/FormHelperText";
 import "./style.scss";
 import { DescriptionText } from "../DescriptionText";
 

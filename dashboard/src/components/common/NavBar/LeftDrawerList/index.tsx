@@ -1,10 +1,10 @@
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ApartmentIcon from "@material-ui/icons/Apartment";
-import ListItemText from "@material-ui/core/ListItemText";
-import AdjustIcon from "@material-ui/icons/Adjust";
-import Divider from "@material-ui/core/Divider";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ApartmentIcon from "@mui/icons-material/Apartment";
+import ListItemText from "@mui/material/ListItemText";
+import AdjustIcon from "@mui/icons-material/Adjust";
+import Divider from "@mui/material/Divider";
 import { Link } from "react-router-dom";
 import {
   assetsUrl,
@@ -15,18 +15,17 @@ import {
   dashboardEnvUrl,
   dashboardHomeUrl,
 } from "../../../../utils/urls";
-import { Grid } from "@material-ui/core";
-import DashboardIcon from "@material-ui/icons/Dashboard";
-import LanguageIcon from "@material-ui/icons/Language";
-import PhotoAlbumIcon from "@material-ui/icons/PhotoAlbum";
+import { Grid } from "@mui/material";
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import PhotoAlbumIcon from "@mui/icons-material/PhotoAlbum";
 import "./style.scss";
 import { connect, ConnectedProps } from "react-redux";
 import { RootState } from "../../../../rootReducer";
-import NoteIcon from "@material-ui/icons/Note";
-import WidgetsIcon from "@material-ui/icons/Widgets";
+import NoteIcon from "@mui/icons-material/Note";
+import WidgetsIcon from "@mui/icons-material/Widgets";
 import { APPLICATION_NAME, ENV } from "@ranjodhbirkaur/constants";
 import { setEnv } from "../../../../modules/authentication/pages/Auth/actions";
-import { PersonAdd } from "@material-ui/icons";
+import { PersonAdd } from "@mui/icons-material";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 

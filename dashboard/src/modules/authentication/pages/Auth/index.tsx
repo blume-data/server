@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import { doGetRequest, doPostRequest } from "../../../../utils/baseApi";
 import { authUrl, dashboardHomeUrl, getBaseUrl } from "../../../../utils/urls";
 import { RootState } from "../../../../rootReducer";

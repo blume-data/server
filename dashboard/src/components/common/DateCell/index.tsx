@@ -1,7 +1,7 @@
 import React from "react";
 import { DateTime } from "luxon";
-import { Tooltip } from "@material-ui/core";
-import Typography from "@material-ui/core/Typography";
+import { Tooltip } from "@mui/material";
+import Typography from "@mui/material/Typography";
 
 interface DateCellType {
   value: DateTime;

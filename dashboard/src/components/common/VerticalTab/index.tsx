@@ -1,8 +1,8 @@
 import React from "react";
-import { makeStyles, Theme } from "@material-ui/core/styles";
-import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
-import Box from "@material-ui/core/Box";
+import { makeStyles } from "@mui/styles";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+import Box from "@mui/material/Box";
 import "./style.scss";
 
 interface VerticalTabPanelProps {
@@ -46,16 +46,12 @@ function a11yProps(index: any) {
   };
 }
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles(() => ({
   root: {
     flexGrow: 1,
-    backgroundColor: theme.palette.background.paper,
     display: "flex",
     //height: '400px'
-  },
-  tabs: {
-    borderRight: `1px solid ${theme.palette.divider}`,
-  },
+  }
 }));
 
 export const VerticalTab = (props: VerticalTabProps) => {

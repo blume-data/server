@@ -1,7 +1,7 @@
 import React, { ChangeEvent } from "react";
-import Grid from "@material-ui/core/Grid";
-import FormControl from "@material-ui/core/FormControl";
-import TextField from "@material-ui/core/TextField";
+import Grid from "@mui/material/Grid";
+import FormControl from "@mui/material/FormControl";
+import TextField from "@mui/material/TextField";
 
 import { FieldType } from "../interface";
 import { DescriptionText } from "../DescriptionText";

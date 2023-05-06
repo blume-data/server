@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import { ConfigField, TEXT } from "../../../components/common/Form/interface";
 import {
   DESCRIPTION,

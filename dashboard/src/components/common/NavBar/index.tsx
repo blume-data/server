@@ -1,25 +1,25 @@
 import React from "react";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
-import IconButton from "@material-ui/core/IconButton";
-import MenuIcon from "@material-ui/icons/Menu";
-import Grid from "@material-ui/core/Grid";
-import Menu from "@material-ui/core/Menu";
-import MenuItem from "@material-ui/core/MenuItem";
-import AccountCircle from "@material-ui/icons/AccountCircle";
+import AppBar from "@mui/material/AppBar";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import IconButton from "@mui/material/IconButton";
+import MenuIcon from "@mui/icons-material/Menu";
+import Grid from "@mui/material/Grid";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import AccountCircle from "@mui/icons-material/AccountCircle";
 import { Link } from "react-router-dom";
 import "./styles.scss";
 import { SIGN_IN, SIGN_OUT } from "../../../modules/authentication/pages/Auth";
 import { connect, ConnectedProps } from "react-redux";
 import { RootState } from "../../../rootReducer";
 import clsx from "clsx";
-import { makeStyles } from "@material-ui/core/styles";
-import Drawer from "@material-ui/core/Drawer";
+import { makeStyles } from "@mui/styles";
+import Drawer from "@mui/material/Drawer";
 import { LeftDrawerList } from "./LeftDrawerList";
 import { NavBarMenu } from "./NavBarMenu";
 import { authUrl } from "../../../utils/urls";
-import Button from "@material-ui/core/Button";
+import Button from "@mui/material/Button";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Grid, Typography } from "@material-ui/core";
+import { Grid, Typography } from "@mui/material";
 import {
   dashboardCreateDataModelsUrl,
   dashboardDataEntriesUrl,
@@ -13,12 +13,12 @@ import {
 } from "../../../../../utils/tools";
 import { doDeleteRequest } from "../../../../../utils/baseApi";
 import BasicTableMIUI from "../../../../../components/common/BasicTableMIUI";
-import Button from "@material-ui/core/Button";
+import Button from "@mui/material/Button";
 import { RootState } from "../../../../../rootReducer";
 import { connect, ConnectedProps } from "react-redux";
-import DeleteIcon from "@material-ui/icons/Delete";
-import EditIcon from "@material-ui/icons/Edit";
-import IconButton from "@material-ui/core/IconButton";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import IconButton from "@mui/material/IconButton";
 import { AlertDialog } from "../../../../../components/common/AlertDialog";
 import Loader from "../../../../../components/common/Loader";
 import { Link } from "react-router-dom";
@@ -26,7 +26,7 @@ import { useHistory } from "react-router";
 import { DateCell } from "../../../../../components/common/DateCell";
 import { DateTime } from "luxon";
 import { UserCell } from "../../../../../components/common/UserCell";
-import Checkbox from "@material-ui/core/Checkbox";
+import Checkbox from "@mui/material/Checkbox";
 import { RenderHeading } from "../../../../../components/common/RenderHeading";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
