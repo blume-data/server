@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { createStyles, makeStyles } from "@mui/styles";
+// import { createStyles, makeStyles } from "@mui/styles";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import TextField from "@mui/material/TextField";
@@ -10,14 +10,14 @@ import InputLabel from "@mui/material/InputLabel";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { randomString } from "../../../utils/tools";
 
-const useStyles = makeStyles(() =>
-  createStyles({
-    root: {
-      width: "100%",
-      maxHeight: 400
-    },
-  })
-);
+// const useStyles = makeStyles(() =>
+//   createStyles({
+//     root: {
+//       width: "100%",
+//       maxHeight: 400
+//     },
+//   })
+// );
 
 interface OptionType {
   label: string;
@@ -38,7 +38,7 @@ export const SearchMenuList = (props: SearchMenuListProps) => {
   const [timeZones, setTimeZones] = useState<OptionType[]>([]);
   const [hide, setHide] = useState<boolean>(true);
   const [offSetWidth, setOffSetWidth] = useState<number>(200);
-  const classes = useStyles();
+  // const classes = useStyles();
 
   const randomId = randomString();
 
@@ -141,7 +141,7 @@ export const SearchMenuList = (props: SearchMenuListProps) => {
         onChange={onChange}
       />
       <div
-        className={`${classes.root} list`}
+        className={`list`}
         style={{ display: `${hide ? "none" : "block"}` }}
       >
         <List className={"fixed-size-list"} style={{ width: offSetWidth }}>

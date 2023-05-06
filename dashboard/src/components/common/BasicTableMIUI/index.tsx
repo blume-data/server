@@ -1,5 +1,5 @@
 import React from "react";
-import { makeStyles } from "@mui/styles";
+//import { makeStyles } from "@mui/styles";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -10,11 +10,11 @@ import Paper from "@mui/material/Paper";
 import { Link } from "react-router-dom";
 import { Checkbox } from "@mui/material";
 
-const useStyles = makeStyles({
-  table: {
-    minWidth: 650,
-  },
-});
+// const useStyles = makeStyles({
+//   table: {
+//     minWidth: 650,
+//   },
+// });
 
 interface BasicTableMIUIProps {
   columns: {
@@ -31,7 +31,7 @@ interface BasicTableMIUIProps {
 }
 
 export default function BasicTableMIUI(props: BasicTableMIUIProps) {
-  const classes = useStyles();
+  // const classes = useStyles();
 
   const { columns, rows, onSelectAll, isAllSelected = false } = props;
 
@@ -70,7 +70,7 @@ export default function BasicTableMIUI(props: BasicTableMIUIProps) {
 
   return (
     <TableContainer component={Paper} className="basic-table-container">
-      <Table className={classes.table} aria-label="simple table">
+      <Table className={'table'} aria-label="simple table">
         <TableHead>
           <TableRow>
             {columns.map((tableRow, index) => {

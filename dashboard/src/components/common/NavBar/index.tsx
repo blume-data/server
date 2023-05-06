@@ -14,23 +14,22 @@ import { SIGN_IN, SIGN_OUT } from "../../../modules/authentication/pages/Auth";
 import { connect, ConnectedProps } from "react-redux";
 import { RootState } from "../../../rootReducer";
 import clsx from "clsx";
-import { makeStyles } from "@mui/styles";
+// import { makeStyles } from "@mui/styles";
 import Drawer from "@mui/material/Drawer";
 import { LeftDrawerList } from "./LeftDrawerList";
 import { NavBarMenu } from "./NavBarMenu";
 import { authUrl } from "../../../utils/urls";
-import Button from "@mui/material/Button";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
-const useStyles = makeStyles({
-  list: {
-    width: 250,
-  },
-  fullList: {
-    width: "auto",
-  },
-});
+// const useStyles = makeStyles({
+//   list: {
+//     width: 250,
+//   },
+//   fullList: {
+//     width: "auto",
+//   },
+// });
 
 export type Anchor = "top" | "left" | "bottom" | "right";
 
@@ -41,7 +40,7 @@ export const NavBarComponent = (props: PropsFromRedux) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
-  const classes = useStyles();
+  // const classes = useStyles();
   const [state, setState] = React.useState({
     top: false,
     left: false,
@@ -81,8 +80,8 @@ export const NavBarComponent = (props: PropsFromRedux) => {
 
   const list = (anchor: Anchor) => (
     <div
-      className={`${clsx(classes.list, {
-        [classes.fullList]: anchor === "top" || anchor === "bottom",
+      className={`${clsx('', {
+        ['full-list']: anchor === "top" || anchor === "bottom",
       })} responsive-big-left-drawer`}
       role="presentation"
       onClick={toggleDrawer(anchor, false)}
@@ -115,7 +114,7 @@ export const NavBarComponent = (props: PropsFromRedux) => {
             </>
           ) : null}
 
-          <Grid container justify={"flex-end"}>
+          <Grid container={true} justify={"flex-end"}>
             <IconButton
               aria-label="account of current user"
               aria-controls="nav-bar-menu"
