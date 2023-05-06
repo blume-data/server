@@ -20,8 +20,8 @@ a {
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -36,122 +36,125 @@ body {
 // }
 
 .hidden {
-    display: none !important;
-    opacity: 0 !important;
+  display: none !important;
+  opacity: 0 !important;
 }
 
 .user-select-none {
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 .text-dec-none {
-    text-decoration: none;
+  text-decoration: none;
 }
 
 .font-size {
-    font-size: 1rem;
+  font-size: 1rem;
 }
 
 .full-width {
-    width: 100% !important;
+  width: 100% !important;
 }
 
 // Position------------------------------------------------------
 .pos-relative {
-    position: relative !important;
+  position: relative !important;
 }
 
 .pos-absolute {
-    position: absolute !important;
+  position: absolute !important;
 }
 
 // Border and outline------------------------------------------------------
 .border-none {
-    border: none !important;
+  border: none !important;
 }
 
 .outline-none {
-    outline: none !important;
+  outline: none !important;
 }
 
 .border-radius {
-    border-radius: const.constants(border_radius) !important;
+  border-radius: const.constants(border_radius) !important;
 }
 
 .border-radius-50 {
-    border-radius: 50% !important;
+  border-radius: 50% !important;
 }
 
 // Cursor------------------------------------------------------
 .cursor-pointer {
-    * {cursor: pointer;}
+  * {
+    cursor: pointer;
+  }
 }
 
 .cursor-text {
-    * {cursor: text;}
+  * {
+    cursor: text;
+  }
 }
 
 //Alignment------------------------------------------------------
 .center {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .flex {
-    display: flex;
+  display: flex;
 }
 
 .justify-sb {
-    display: flex;
-    justify-content: space-between;
+  display: flex;
+  justify-content: space-between;
 }
 
 .inline-align-center {
-    display: inline-flex;
-    align-items: center;
-    vertical-align: middle;
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
 }
 
 // Margin Padding
 .p-0 {
-    padding: 0 !important;
+  padding: 0 !important;
 }
 
 .m-0 {
-    margin: 0 !important;
+  margin: 0 !important;
 }
 
 .round-padding {
-    padding: 10px !important;
+  padding: 10px !important;
 }
 
 .m-10 {
-    margin: 10px !important;
+  margin: 10px !important;
 }
 
 .p-10 {
-    padding: 10px !important;
+  padding: 10px !important;
 }
 
 .plr-10 {
-    padding: 0 10px !important
+  padding: 0 10px !important;
 }
 
 .ptb-10 {
-    margin: 10px 0 !important
+  margin: 10px 0 !important;
 }
 
 .mtb-10 {
-    margin: 10px 0 !important
+  margin: 10px 0 !important;
 }
 
 .mlr-10 {
-    margin: 0 10px !important
+  margin: 0 10px !important;
 }
- 

@@ -1,14 +1,16 @@
-@import 'src/assets/style/index';
+@import "src/assets/style/index";
 .heading-container {
   .heading {
-    width: auto ;
+    width: auto;
     margin: 0;
     text-transform: capitalize;
   }
-  .main,.primary {
+  .main,
+  .primary {
     font-weight: $font-weight-bold;
   }
-  .secondary, .para {
+  .secondary,
+  .para {
     font-weight: $font-weight-normal;
   }
   @include desktops {

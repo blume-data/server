@@ -1,29 +1,29 @@
-import React from 'react';
-import {Pagination} from '@material-ui/lab';
+import React from "react";
+// import {Pagination} from '@material-ui/lab';
 import Grid from "@material-ui/core/Grid";
-import './pagination.scss';
+import "./pagination.scss";
 
-export function offsetNumber(page: number,limit: number){
-    return  (page - 1) * limit;
+export function offsetNumber(page: number, limit: number) {
+  return (page - 1) * limit;
 }
 
 export function calculateNumberOfPages(totalItems: number, limit: number) {
-    //This function return the number of pages listed in the pagination
-    return Math.ceil(totalItems / limit);
+  //This function return the number of pages listed in the pagination
+  return Math.ceil(totalItems / limit);
 }
 
 interface PaginationProps {
-    limit: number;
-    currentPage: number;
-    handleChange: any;
-    totalItems: number;
-    id: string;
+  limit: number;
+  currentPage: number;
+  handleChange: any;
+  totalItems: number;
+  id: string;
 }
 export function PaginationTab(props: PaginationProps) {
-    const { currentPage,limit,handleChange,totalItems, id } = props;
-    return (
-        <Grid className={'main-pagination-container'}>
-            <Pagination
+  const { currentPage, limit, handleChange, totalItems, id } = props;
+  return (
+    <Grid className={"main-pagination-container"}>
+      {/* <Pagination
                 id={id}
                 shape={"round"}
                 size={"large"}
@@ -31,7 +31,7 @@ export function PaginationTab(props: PaginationProps) {
                 count={calculateNumberOfPages(totalItems, limit)}
                 page={currentPage}
                 onChange={handleChange}
-            />
-        </Grid>
-    )
+            /> */}
+    </Grid>
+  );
 }

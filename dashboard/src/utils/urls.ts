@@ -1,10 +1,10 @@
-import {ROOT_URL} from "./config";
+import { ROOT_URL } from "./config";
 
 export function getBaseUrl() {
-    return ROOT_URL;
+  return ROOT_URL;
 }
 
-export const APP_ROOT_URL = '/';
+export const APP_ROOT_URL = "/";
 export const dashboardHomeUrl = `${APP_ROOT_URL}dashboard/home`;
 
 export const dashboardApplicationNamesUrl = `${APP_ROOT_URL}dashboard/application-space`;

@@ -2,12 +2,12 @@
   padding-top: 10px;
   .second-toolbar {
     border: none;
-    a{
+    a {
       pointer-events: none !important;
       span {
         color: transparent !important;
       }
-      svg{
+      svg {
         display: none;
       }
     }

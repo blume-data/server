@@ -1,9 +1,9 @@
-$mobiles: 'screen and (max-width: 640px)'; // till Mobile View
-$tablets: 'screen and (min-width: 641px) and (max-width: 1024px)'; // Tablet view
-$desktops: 'screen and (min-width: 1025px)'; // Desktop view and higher
-$desktopsAndTablets: 'screen and (min-width: 641px and max-width: 1024px)'; // Cover all devices tablet and desktop
-$mobileAndTablet: 'screen and (max-width: 1024px)'; // Cover all devices upto tablet
-$tablets-up: 'screen and (min-width: 641px)'; // If Required for tablets and higher
+$mobiles: "screen and (max-width: 640px)"; // till Mobile View
+$tablets: "screen and (min-width: 641px) and (max-width: 1024px)"; // Tablet view
+$desktops: "screen and (min-width: 1025px)"; // Desktop view and higher
+$desktopsAndTablets: "screen and (min-width: 641px and max-width: 1024px)"; // Cover all devices tablet and desktop
+$mobileAndTablet: "screen and (max-width: 1024px)"; // Cover all devices upto tablet
+$tablets-up: "screen and (min-width: 641px)"; // If Required for tablets and higher
 
 @mixin mobiles {
   @media #{$mobiles} {
@@ -37,4 +37,3 @@ $tablets-up: 'screen and (min-width: 641px)'; // If Required for tablets and hig
     @content;
   }
 }
-

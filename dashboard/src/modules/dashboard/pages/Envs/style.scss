@@ -1,12 +1,12 @@
 @import "src/assets/style/index";
 
 .env-container {
-    .selected {
-        background: $blue;
-        color: $white;
-    }
-    .selected:hover {
-        color: $white;
-        background: $blue;
-    }
+  .selected {
+    background: $blue;
+    color: $white;
+  }
+  .selected:hover {
+    color: $white;
+    background: $blue;
+  }
 }

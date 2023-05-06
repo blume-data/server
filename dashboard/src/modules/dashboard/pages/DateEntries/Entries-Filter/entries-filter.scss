@@ -1,13 +1,12 @@
 @import "src/assets/style/index";
 .entries-filter-wrapper-container {
-  
   .filter-wrapper {
-    
     border: 2px solid $light-gray;
     border-radius: 5px;
     padding: 10px;
     margin-bottom: 10px;
-    .input-field-wrapper, .close-button {
+    .input-field-wrapper,
+    .close-button {
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -16,7 +15,7 @@
       @include tablets-up {
         padding-top: 0;
       }
-      
+
       .filter-text-input {
         input {
           @include tablets-up {
@@ -45,5 +44,4 @@
       }
     }
   }
-
 }

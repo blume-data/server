@@ -57,7 +57,7 @@
                   font-weight: 700;
                   font-size: 14px;
                 }
-                p{
+                p {
                   text-transform: lowercase;
                   padding: 5px;
                   font-size: 12px;
@@ -66,9 +66,8 @@
             }
           }
         }
-  
+
         .property-section-container {
-  
           .property-item {
             margin: 0 20px;
             h2 {
@@ -79,9 +78,8 @@
             padding: 10px 0;
             padding-left: 10px;
           }
-  
         }
-  
+
         .modal-action-buttons {
           float: right;
           margin-top: 20px;
@@ -89,7 +87,7 @@
             margin-left: 10px;
           }
         }
-  
+
         .set-fields-property-container {
           margin-top: 10px;
           padding: 20px 0;
@@ -100,7 +98,6 @@
               margin-right: 10px;
             }
           }
-  
         }
         .add-name-heading {
           padding: 10px;
@@ -115,7 +112,8 @@
         padding-left: 10px;
         .text-container {
           padding: 10px 0;
-          .model-display-name, .model-description {
+          .model-display-name,
+          .model-description {
             text-transform: capitalize;
             max-width: 500px;
             @include mobiles {
@@ -136,7 +134,6 @@
           flex-direction: column;
           justify-content: center;
         }
-  
       }
       .title-container {
         margin-right: 10px;
@@ -152,9 +149,7 @@
           .MuiInputLabel-formControl {
             display: none;
           }
-
         }
-        
       }
     }
   }
@@ -167,7 +162,7 @@
       width: 20%;
       padding-right: 0;
     }
-    
+
     margin-top: 20px;
     .MuiPaper-elevation6 {
       padding: 10px;

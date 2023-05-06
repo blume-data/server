@@ -1,5 +1,12 @@
-@import '../../../assets/style/index.scss';
-@keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+@import "../../../assets/style/index.scss";
+@keyframes spin {
+  0% {
+    transform: rotate(0);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
 .spinner-container {
   top: calc(50vh - 60px);
   left: calc(50% - 60px);
@@ -16,7 +23,7 @@
   }
 }
 .spinner-background {
-  opacity: .5;
+  opacity: 0.5;
   top: 0;
   right: 0;
   bottom: 0;
