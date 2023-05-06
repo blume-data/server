@@ -11,7 +11,7 @@ import { DescriptionText } from "../DescriptionText";
 
 interface CheckBoxTypeProps extends FieldType {
   onChange: (event: ChangeEvent<any>) => void;
-  onBlur: (event: ChangeEvent<any>) => void;
+  onBlur?: (event: ChangeEvent<any>) => void;
 }
 
 export const CommonCheckBoxField = (props: CheckBoxTypeProps) => {

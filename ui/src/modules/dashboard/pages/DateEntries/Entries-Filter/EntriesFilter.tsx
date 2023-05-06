@@ -303,8 +303,8 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
    * Change match and where
    * */
   function changeMatchAndWhere(newFilters: FilterType[]) {
-    let where: any = {};
-    let match: any = {};
+    const where: any = {};
+    const match: any = {};
 
     newFilters.forEach((newFilter) => {
       if (newFilter.inputType === SHORT_STRING_FIElD_TYPE) {

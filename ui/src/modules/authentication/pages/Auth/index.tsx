@@ -61,7 +61,7 @@ const AuthComponent = (props: AuthProps) => {
   const history = useHistory();
 
   async function onSubmit(values: object[]) {
-    let data: any = {};
+    const data: any = {};
 
     // console.log("values", values);
 

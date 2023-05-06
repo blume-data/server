@@ -135,8 +135,9 @@ const CreateEntry = (props: CreateEntryType) => {
         const newResponse: any = {};
         // check for rules and data
         if (response.data[0]) {
-          for (let prop in response.data[0]) {
-            if (response.data[0].hasOwnProperty(prop)) {
+          for (const prop in response.data[0]) {
+            if(Object.prototype.hasOwnProperty.call(response.data[0], prop)) {
+            // if (response.data[0].hasOwnProperty(prop)) {
               const ruleExist =
                 rules &&
                 rules.find((rule) => {
@@ -194,7 +195,7 @@ const CreateEntry = (props: CreateEntryType) => {
                     break;
                   }
                   case REFERENCE_FIELD_TYPE: {
-                    debugger;
+                    
                     if (!Array.isArray(response.data[0][prop])) {
                       if (response.data[0][prop]._id) {
                         newResponse[prop] = response.data[0][prop]._id;
@@ -276,8 +277,8 @@ const CreateEntry = (props: CreateEntryType) => {
       rules.forEach((rule) => {
         let inputType = "text";
         let type = "text";
-        let option: string[] = [];
-        let miscData: any = {};
+        const option: string[] = [];
+        const miscData: any = {};
         let value =
           entryId && modelData && modelData[rule.name]
             ? modelData[rule.name]
@@ -372,7 +373,7 @@ const CreateEntry = (props: CreateEntryType) => {
         .replace(":modelName", ModelName)
         .replace(`:${APPLICATION_NAME}`, applicationName);
 
-      let data: any = {};
+      const data: any = {};
 
       values.forEach((valueItem: { name: string; value: string }) => {
         function parseValues() {
@@ -472,5 +473,4 @@ const mapState = (state: RootState) => {
 };
 
 const connector = connect(mapState);
-// @ts-ignore
 export default connector(CreateEntry);

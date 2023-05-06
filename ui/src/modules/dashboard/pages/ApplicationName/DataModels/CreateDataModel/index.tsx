@@ -518,7 +518,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
       });
 
       let isValid = true;
-      let errors: { message: string }[] = [];
+      const errors: { message: string }[] = [];
 
       /*
        * If field type is reference
@@ -789,13 +789,12 @@ const CreateDataModel = (props: CreateDataModelType) => {
 
     return (
       <Grid
-        container
-        justify={"space-between"}
+        container={true}
         direction="column"
         className="name-section-container"
       >
         <Grid item>
-          <Grid container justify="flex-start">
+          <Grid container={true}>
             <Grid item className={"text-container"}>
               <RenderHeading
                 type={"primary"}
@@ -848,7 +847,6 @@ const CreateDataModel = (props: CreateDataModelType) => {
                     titleProperty: e.target.value,
                   });
                 }}
-                onBlur={() => {}}
                 value={contentModelData.titleProperty}
                 label="title field"
                 className="title-drop-down"

@@ -13,7 +13,7 @@ interface DropDownType extends FieldType {
   options: OptionsType[];
   index: number;
   onChange: (event: ChangeEvent<any>) => void;
-  onBlur: (event: ChangeEvent<any>) => void;
+  onBlur?: (event: ChangeEvent<any>) => void;
   multiple?: boolean;
   value: any;
 }

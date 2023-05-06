@@ -24,7 +24,7 @@ export const TextBox = (props: TextBoxType) => {
     type,
     disabled = false,
     descriptionText = "",
-    onKeyDown = () => {},
+    onKeyDown,
     onChange,
     error = false,
     value = "",

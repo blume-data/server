@@ -349,7 +349,6 @@ export const ModelSetting = (props: SettingType) => {
       <Grid className="setting-container">
         <CommonCheckBoxField
           onChange={(e: any) => updateSetting("isPublic", e.target.checked)}
-          onBlur={() => {}}
           placeholder=""
           value={setting.isPublic ? "true" : "false"}
           descriptionText="If you want this data to be access and updated by any one. Mark it as public"

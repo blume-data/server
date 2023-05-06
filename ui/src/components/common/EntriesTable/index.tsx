@@ -129,7 +129,7 @@ const EntriesTableComponent = (props: EntriesTableType) => {
           <Link
             aria-disabled={!!onEntrySelect}
             style={{
-              pointerEvents: !!onEntrySelect ? "none" : "inherit",
+              pointerEvents: onEntrySelect ? "none" : "inherit",
             }}
             to={redirectUrl}
           >

@@ -58,7 +58,7 @@ export const VerticalTab = (props: VerticalTabProps) => {
   // const classes = useStyles();
   const { tabs, children, value, setValue } = props;
 
-  const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
+  const handleChange = (event: React.ChangeEvent, newValue: number) => {
     setValue(newValue);
   };
 

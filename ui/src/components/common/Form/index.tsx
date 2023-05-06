@@ -542,7 +542,7 @@ export const Form = (props: FormType) => {
     let isValid = true;
 
     function setIsTouched() {
-      let newFormState: FormState[] = [];
+      const newFormState: FormState[] = [];
       formState.forEach((item) => {
         const formItem = fields.find((field) => field.label === item.label);
         if (formItem && formItem.required && !item.value) {
