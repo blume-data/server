@@ -1,11 +1,5 @@
-import React, { useEffect } from "react";
-import AccordionSummary from "@material-ui/core/AccordionSummary";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import Typography from "@material-ui/core/Typography";
-import AccordionDetails from "@material-ui/core/AccordionDetails";
-import { randomString } from "../../../utils/tools";
+import React from "react";
 import "./index.scss";
-import Accordion from "@material-ui/core/Accordion";
 
 interface AccordianCommonProps {
   children: any;
@@ -16,35 +10,52 @@ interface AccordianCommonProps {
 
 export const AccordianCommon = (props: AccordianCommonProps) => {
   const { children, name, shouldExpand = false, className = "" } = props;
-  const id = randomString();
+  
+  const [expanded, setExpanded] = React.useState<boolean>(shouldExpand);
 
-  const [expanded, setExpanded] = React.useState<string | false>("");
-
-  useEffect(() => {
-    if (shouldExpand) {
-      setExpanded("panel1");
-    }
-  }, [shouldExpand]);
-
-  const handleChange =
-    (panel: string) => (event: React.ChangeEvent<{}>, newExpanded: boolean) => {
-      setExpanded(newExpanded ? panel : false);
-    };
+  console.log("visisble", expanded);
 
   return (
-    <Accordion
-      className={`accordian-common-container ${className ? className : ""}`}
-      expanded={expanded === "panel1"}
-      onChange={handleChange("panel1")}
-    >
-      <AccordionSummary
-        expandIcon={<ExpandMoreIcon />}
-        aria-controls={`${id}-content`}
-        id={`${id}-header`}
-      >
-        <Typography>{name}</Typography>
-      </AccordionSummary>
-      <AccordionDetails>{children}</AccordionDetails>
-    </Accordion>
+    <>
+      <div id="accordionExample">
+        <div
+          className="rounded mb-2 border border-neutral-200 bg-white dark:border-neutral-600 dark:bg-neutral-800">
+          <h2 className="mb-0">
+            <button
+              className="group relative flex w-full items-center rounded-t-[15px] border-0 bg-white px-5 py-4 text-left text-base text-neutral-800 transition [overflow-anchor:none] hover:z-[2] focus:z-[3] focus:outline-none dark:bg-neutral-800 dark:text-white"
+              type="button"
+              aria-expanded={expanded}
+              onClick={() => setExpanded(!expanded)}
+              >
+              {name}
+              <span
+                className={`ml-auto h-5 w-5 shrink-0 ${expanded ? '' : 'rotate-[-180deg]'} fill-[#336dec] transition-transform duration-200 ease-in-out group-[[data-te-collapse-collapsed]]:rotate-0 group-[[data-te-collapse-collapsed]]:fill-[#212529] motion-reduce:transition-none dark:fill-blue-300 dark:group-[[data-te-collapse-collapsed]]:fill-white`}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  className="h-6 w-6">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                </svg>
+              </span>
+            </button>
+          </h2>
+          <div className={`${expanded ? 'visible' : 'hidden'}`}>
+            <div className="px-5 py-4">
+              {children}
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+
   );
 };
+
+
+
