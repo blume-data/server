@@ -11,7 +11,7 @@ import {
   dashboardDataEntriesUrl,
   dashboardDataModelsUrl,
 } from "../../../../utils/urls";
-import { CommonButton } from "../../CommonButton";
+import { Button } from "../../Button";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 const NavBarMenuComponent = (props: PropsFromRedux) => {
@@ -32,13 +32,13 @@ const NavBarMenuComponent = (props: PropsFromRedux) => {
       {applicationName ? (
         <Fragment>
           <Link className={"nav-bar-menu-link-item"} to={dataModelsUrl}>
-            <CommonButton name={"Models"} variant={"text"} />
+            <Button name={"Models"} variant={"text"} />
           </Link>
           <Link className={"nav-bar-menu-link-item"} to={dataEntriesUrl}>
-            <CommonButton name={"Entries"} variant={"text"} />
+            <Button name={"Entries"} variant={"text"} />
           </Link>
           <Link className={"nav-bar-menu-link-item"} to={assetsUrl}>
-            <CommonButton name={"Assets"} variant={"text"} />
+            <Button name={"Assets"} variant={"text"} />
           </Link>
         </Fragment>
       ) : null}

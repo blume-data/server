@@ -6,7 +6,7 @@ import { Paper, Card, CardContent, ListItem, List } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import { Link } from "react-router-dom";
 import { dashboardApplicationNamesUrl } from "../../../../utils/urls";
-import { CommonButton } from "../../../../components/common/CommonButton";
+import { Button } from "../../../../components/common/Button";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
@@ -18,7 +18,7 @@ const Home = (props: PropsFromRedux) => {
       <Grid container justify="flex-end">
         <Grid item>
           <Link to={dashboardApplicationNamesUrl}>
-            <CommonButton name="Application Spaces" />
+            <Button name="Application Spaces" />
           </Link>
         </Grid>
       </Grid>

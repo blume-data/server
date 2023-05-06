@@ -10,7 +10,7 @@ import {
 import { useState } from "react";
 import { connect, ConnectedProps } from "react-redux";
 import BasicTableMIUI from "../../../../components/common/BasicTableMIUI";
-import { CommonButton } from "../../../../components/common/CommonButton";
+import { Button } from "../../../../components/common/Button";
 import { Form } from "../../../../components/common/Form";
 import {
   ConfigField,
@@ -132,7 +132,7 @@ const Envs = (props: PropsFromRedux) => {
   if (env)
     return (
       <Grid className="env-container">
-        <CommonButton name="Create Env" onClick={() => setIsModalOpen(true)} />
+        <Button name="Create Env" onClick={() => setIsModalOpen(true)} />
         <BasicTableMIUI
           tableName="Envs"
           rows={rows || []}

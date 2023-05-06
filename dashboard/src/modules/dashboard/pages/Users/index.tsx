@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import { connect, ConnectedProps } from "react-redux";
 import { AccordianCommon } from "../../../../components/common/AccordianCommon";
 import BasicTableMIUI from "../../../../components/common/BasicTableMIUI";
-import { CommonButton } from "../../../../components/common/CommonButton";
+import { Button } from "../../../../components/common/Button";
 import { Form } from "../../../../components/common/Form";
 import {
   ConfigField,
@@ -269,7 +269,7 @@ export const UsersComponent = (props: PropsFromRedux) => {
       <Grid container direction="column">
         <Grid container justify="flex-end" className="accordian-top">
           <Grid item>
-            <CommonButton onClick={onClick} name={`create ${type}`} />
+            <Button onClick={onClick} name={`create ${type}`} />
           </Grid>
         </Grid>
 

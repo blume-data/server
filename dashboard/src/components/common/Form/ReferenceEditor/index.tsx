@@ -6,7 +6,7 @@ import { RootState } from "../../../../rootReducer";
 import CreateEntry from "../../../../modules/dashboard/pages/DateEntries/CreateEntry";
 import { Chip, Tooltip } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
-import { CommonButton } from "../../CommonButton";
+import { Button } from "../../Button";
 import {
   APPLICATION_NAME,
   ONE_TO_ONE_RELATION,
@@ -133,11 +133,11 @@ export const ReferenceEditor = (props: ReferenceEditorType) => {
       {showCreateButton &&
       !(refIds.length && REFERENCE_MODEL_TYPE === ONE_TO_ONE_RELATION) ? (
         <Grid className="create-model-wrapper">
-          <CommonButton
+          <Button
             name={`Add ${REFERENCE_MODEL_NAME}`}
             onClick={() => setShowCreateButton(false)}
           />
-          <CommonButton
+          <Button
             title={`Select existing ${REFERENCE_MODEL_NAME}`}
             name={`Select ${REFERENCE_MODEL_NAME}`}
             onClick={() => setIsEntryFormOpen(true)}

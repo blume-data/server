@@ -29,7 +29,7 @@ import {
 import { Alert } from "../Toast";
 import { CommonRadioField } from "./CommonRadioField";
 import { CommonCheckBoxField } from "./CommonCheckBoxField";
-import { CommonButton } from "../CommonButton";
+import { Button } from "../Button";
 import { VerticalTab, VerticalTabPanel } from "../VerticalTab";
 import { JsonEditor } from "./JsonEditor";
 import ReferenceEditor from "./ReferenceEditor";
@@ -680,7 +680,7 @@ export const Form = (props: FormType) => {
       <Grid container className={"button-section"}>
         {showClearButton ? (
           <Grid item>
-            <CommonButton
+            <Button
               name={"Clear values"}
               onClick={clearForm}
               color={"secondary"}
@@ -688,7 +688,7 @@ export const Form = (props: FormType) => {
           </Grid>
         ) : null}
         <Grid item>
-          <CommonButton
+          <Button
             name={submitButtonName ? submitButtonName : "Submit"}
             onClick={onClickSubmit}
             color={"primary"}
@@ -718,7 +718,7 @@ export const Form = (props: FormType) => {
                 </Grid>
               ) : null}
             </Grid>
-          </CommonButton>
+          </Button>
         </Grid>
       </Grid>
       <Alert

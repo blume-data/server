@@ -2,7 +2,7 @@ import React from "react";
 import ImageKit from "imagekit-javascript";
 import { getItemFromLocalStorage, randomString } from "../../../utils/tools";
 import { CLIENT_USER_NAME } from "@ranjodhbirkaur/constants";
-import { CommonButton } from "../CommonButton";
+import { Button } from "../Button";
 import "./upload-assets.scss";
 import { doPostRequest } from "../../../utils/baseApi";
 import { getBaseUrl } from "../../../utils/urls";
@@ -116,7 +116,7 @@ export default (props) => {
           type="file"
           multiple
         />
-        <CommonButton
+        <Button
           onClick={clickOnUploadInput}
           name={"Add Assets"}
           title={"Add Assets"}

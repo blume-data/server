@@ -32,7 +32,7 @@ import { PaginationTab } from "../Pagination";
 import { AvatarCommon } from "../AvatarCommon";
 import { dashboardCreateDataEntryUrl } from "../../../utils/urls";
 import { Link } from "react-router-dom";
-import { CommonButton } from "../CommonButton";
+import { Button } from "../Button";
 import { IconButton } from "@material-ui/core";
 import EditIcon from "@material-ui/icons/Edit";
 
@@ -370,7 +370,7 @@ const EntriesTableComponent = (props: EntriesTableType) => {
         <Grid container justify={"flex-end"} className="action-buttons">
           <Grid item className="action-button">
             {selectable ? null : (
-              <CommonButton
+              <Button
                 onClick={deleteSelectedEntries}
                 name={"Delete Entries"}
               />

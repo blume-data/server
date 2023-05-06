@@ -33,7 +33,6 @@ import {
 } from "@ranjodhbirkaur/constants";
 import TextFieldsIcon from "@material-ui/icons/TextFields";
 import "./style.scss";
-import Button from "@material-ui/core/Button";
 import Looks3Icon from "@material-ui/icons/Looks3";
 import Looks5Icon from "@material-ui/icons/Looks5";
 import Looks4Icon from "@material-ui/icons/Looks4";
@@ -72,7 +71,7 @@ import { AlertDialog } from "../../../../../../components/common/AlertDialog";
 import { useHistory } from "react-router";
 import ModalDialog from "../../../../../../components/common/ModalDialog";
 import { RenderHeading } from "../../../../../../components/common/RenderHeading";
-import { CommonButton } from "../../../../../../components/common/CommonButton";
+import { Button } from "../../../../../../components/common/Button";
 import {
   FIELD_ONLY_SPECIFIED_VALUES,
   FIELD_ALLOW_ONLY_SPECIFIC_VALUES_GROUP,
@@ -1032,14 +1031,14 @@ const CreateDataModel = (props: CreateDataModelType) => {
     if (contentModelData.displayName) {
       return (
         <Grid container justify={"flex-end"} className={"modal-action-buttons"}>
-          <CommonButton
+          <Button
             name={"Add Fields"}
             onClick={onClickAddFields}
             color={"secondary"}
             variant={"contained"}
           />
           {properties && properties.length ? (
-            <CommonButton
+            <Button
               name={"Save Model"}
               className={"save-model"}
               onClick={() => onClickSaveDataModel(contentModelData, properties)}
@@ -1120,7 +1119,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                   </Grid>
                   <Grid item>
                     <Grid container justify={"center"} direction={"column"}>
-                      <CommonButton
+                      <Button
                         className={"cancel-button"}
                         variant={"outlined"}
                         name={"Cancel"}
@@ -1287,7 +1286,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
               style={{ display: "none" }}
               className={"cancel-button-container"}
             >
-              <CommonButton
+              <Button
                 variant={"outlined"}
                 name={"Cancel"}
                 color={"primary"}

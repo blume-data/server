@@ -14,7 +14,7 @@ import {
 } from "@ranjodhbirkaur/constants";
 import "./entries-filter.scss";
 import { SearchMenuList } from "../../../../../components/common/SearchMenuList";
-import { CommonButton } from "../../../../../components/common/CommonButton";
+import { Button } from "../../../../../components/common/Button";
 import { TextField, Tooltip } from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
@@ -342,7 +342,7 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
         ) : null}
       </Grid>
       <Grid className={"add-filters-button-wrapper"}>
-        <CommonButton
+        <Button
           variant="text"
           name={"Add filter"}
           onClick={onClickAddFilter}

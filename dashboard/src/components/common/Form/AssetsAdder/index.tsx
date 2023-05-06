@@ -14,7 +14,7 @@ import {
 import { getBaseUrl } from "../../../../utils/urls";
 import { Avatar, Chip } from "@material-ui/core";
 import Loader from "../../Loader";
-import { CommonButton } from "../../CommonButton";
+import { Button } from "../../Button";
 import { AssetsTable } from "../../../../modules/assets/AssetsTable";
 import ModalDialog from "../../ModalDialog";
 import { Alert } from "../../Toast";
@@ -172,7 +172,7 @@ export const AssetsAdderComponent = (props: AssetsAdderType) => {
                 clientUserName || ""
               )}
             />
-            <CommonButton
+            <Button
               onClick={() => setIsEntryFormOpen(true)}
               name={"Select Asset"}
             />
