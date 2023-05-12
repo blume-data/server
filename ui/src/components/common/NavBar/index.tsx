@@ -114,7 +114,7 @@ export const NavBarComponent = (props: PropsFromRedux) => {
             </>
           ) : null}
 
-          <Grid container={true} justify={"flex-end"}>
+          <Grid container={true} justifyContent={"flex-end"}>
             <IconButton
               aria-label="account of current user"
               aria-controls="nav-bar-menu"

@@ -266,9 +266,9 @@ export const UsersComponent = (props: PropsFromRedux) => {
     });
 
     return (
-      <Grid container direction="column">
-        <Grid container justify="flex-end" className="accordian-top">
-          <Grid item>
+      <Grid container={true} direction="column">
+        <Grid container={true} justifyContent="flex-end" className="accordian-top">
+          <Grid item={true}>
             <Button onClick={onClick} name={`create ${type}`} />
           </Grid>
         </Grid>
@@ -373,7 +373,7 @@ export const UsersComponent = (props: PropsFromRedux) => {
   }
 
   return (
-    <Grid container direction="column" className="users-and-group-container">
+    <Grid container={true} direction="column" className="users-and-group-container">
       {type === "group" ? component("group") : component("user")}
 
       <ModalDialog

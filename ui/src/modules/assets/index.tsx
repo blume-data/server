@@ -21,8 +21,8 @@ export const AssetsComponent = (props: PropsFromRedux) => {
 
   if (authUrl && clientUserName) {
     return (
-      <Grid container className={"assets-main-container-wrapper"}>
-        <Grid container={true} justify={"flex-end"}>
+      <Grid container={true} className={"assets-main-container-wrapper"}>
+        <Grid container={true} justifyContent={"flex-end"}>
           {/* <UploadAsset
             setLoading={setIsLoading}
             verifyTempRecord={

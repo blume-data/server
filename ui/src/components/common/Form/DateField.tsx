@@ -104,7 +104,7 @@ export const DateField = (props: DateFieldType) => {
       <RenderHeading value={`${label}: ${finalValue}`} />
 
       {/* <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                <Grid container justify="space-around" direction={"column"}>
+                <Grid container={true} justifyContent="space-around" direction={"column"}>
                     <KeyboardDatePicker
                         margin="normal"
                         id={`date-picker-dialog-${name}`}
