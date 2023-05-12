@@ -1,5 +1,5 @@
 
-// import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
+import { SyntheticEvent } from 'react'
 import Snackbar from "@mui/material/Snackbar";
 
 export interface AlertType {
@@ -12,7 +12,7 @@ export interface AlertType {
 export const Alert = (props: AlertType) => {
   const { severity = "success", message, isAlertOpen, onAlertClose } = props;
 
-  const handleAlertClose = (event?: React.SyntheticEvent, reason?: string) => {
+  const handleAlertClose = (event?: SyntheticEvent, reason?: string) => {
     if (reason === "clickaway") return;
     onAlertClose(false);
   };

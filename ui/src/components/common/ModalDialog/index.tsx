@@ -11,6 +11,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import Typography from "@mui/material/Typography";
 import "./style.scss";
 import Dialog from "@mui/material/Dialog";
+import { ReactNode } from "react";
 
 // const styles = () =>
 //   createStyles({
@@ -25,7 +26,7 @@ import Dialog from "@mui/material/Dialog";
 
 export interface DialogTitleProps {
   id: string;
-  children: React.ReactNode;
+  children: ReactNode;
   onClose: () => void;
 }
 

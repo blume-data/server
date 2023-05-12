@@ -1,4 +1,5 @@
 
+import { ReactNode, CSSProperties } from 'react';
 import { HeadingTypeInterface } from "../RenderHeading";
 import "./style.scss";
 
@@ -10,9 +11,9 @@ export const Button = (props: {
   title?: string;
   type?: HeadingTypeInterface;
   className?: string;
-  startIcon?: React.ReactNode;
-  children?: React.ReactNode;
-  style?: React.CSSProperties;
+  startIcon?: ReactNode;
+  children?: ReactNode;
+  style?: CSSProperties;
   tabIndex?: number;
 }) => {
   const {

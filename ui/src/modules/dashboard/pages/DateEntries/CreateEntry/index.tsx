@@ -5,8 +5,7 @@ import { connect, ConnectedProps } from "react-redux";
 import {
   fetchModelEntries,
   getItemFromLocalStorage,
-  getModelDataAndRules,
-  getUrlSearchParams,
+  getModelDataAndRules
 } from "../../../../../utils/tools";
 import {
   APPLICATION_NAME,
@@ -27,7 +26,7 @@ import {
   REFERENCE_MODEL_TYPE,
   RuleType,
   SHORT_STRING_FIElD_TYPE,
-  SINGLE_ASSETS_TYPE,
+  // SINGLE_ASSETS_TYPE,
 } from "@ranjodhbirkaur/constants";
 import { doPostRequest, doPutRequest } from "../../../../../utils/baseApi";
 import { getBaseUrl } from "../../../../../utils/urls";
@@ -277,7 +276,7 @@ const CreateEntry = (props: CreateEntryType) => {
       rules.forEach((rule) => {
         let inputType = "text";
         let type = "text";
-        const option: string[] = [];
+        // const option: string[] = [];
         const miscData: any = {};
         let value =
           entryId && modelData && modelData[rule.name]

@@ -14,11 +14,12 @@ import { SIGN_IN, SIGN_OUT } from "../../../modules/authentication/pages/Auth";
 import { connect, ConnectedProps } from "react-redux";
 import { RootState } from "../../../rootReducer";
 import clsx from "clsx";
-// import { makeStyles } from "@mui/styles";
+import React from 'react';
 import Drawer from "@mui/material/Drawer";
 import { LeftDrawerList } from "./LeftDrawerList";
 import { NavBarMenu } from "./NavBarMenu";
 import { authUrl } from "../../../utils/urls";
+import { useState, MouseEvent } from "react";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
@@ -37,18 +38,18 @@ export const NavBarComponent = (props: PropsFromRedux) => {
   const { isAuth } = props;
   const LEFT_ANCHOR = "left";
 
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
   // const classes = useStyles();
-  const [state, setState] = React.useState({
+  const [state, setState] = useState({
     top: false,
     left: false,
     bottom: false,
     right: false,
   });
 
-  const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
+  const handleMenu = (event: MouseEvent<HTMLElement>) => {
     if (isAuth) {
       setAnchorEl(event.currentTarget);
     }

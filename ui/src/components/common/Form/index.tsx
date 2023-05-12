@@ -59,9 +59,9 @@ export interface AlertType {
 }
 
 export const Form = (props: FormType) => {
-  const [isAlertOpen, setIsAlertOpen] = React.useState<boolean>(false);
-  const [alert, setAlertMessage] = React.useState<AlertType>({ message: "" });
-  const [tabValue, setTabValue] = React.useState<number>(0);
+  const [isAlertOpen, setIsAlertOpen] = useState<boolean>(false);
+  const [alert, setAlertMessage] = useState<AlertType>({ message: "" });
+  const [tabValue, setTabValue] = useState<number>(0);
   const [filteredGroups, setFilteredGroups] = useState<string[]>([]);
   const [formState, setFormState] = useState<FormState[]>([]);
   const {

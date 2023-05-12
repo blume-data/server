@@ -1,11 +1,11 @@
-import { Suspense } from "react";
+import { Suspense, lazy } from "react";
 import FormControl from "@mui/material/FormControl";
 import { DescriptionText } from "../Form/DescriptionText";
 import Grid from "@mui/material/Grid";
 import { FieldType } from "../Form/interface";
 import { FormLabel } from "@mui/material";
 import Loader from "../Loader";
-const PagalEditor = React.lazy(() => import("./PagalEditor"));
+const PagalEditor = lazy(() => import("./PagalEditor"));
 
 interface HtmlEditorType extends FieldType {
   value: string;

@@ -1,12 +1,13 @@
 
-// import { makeStyles } from "@mui/styles";
+import { ReactNode, ChangeEvent } from 'react';
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
+
 import "./style.scss";
 
 interface VerticalTabPanelProps {
-  children?: React.ReactNode;
+  children?: ReactNode;
   index: any;
   value: any;
 }
@@ -58,7 +59,7 @@ export const VerticalTab = (props: VerticalTabProps) => {
   // const classes = useStyles();
   const { tabs, children, value, setValue } = props;
 
-  const handleChange = (event: React.ChangeEvent, newValue: number) => {
+  const handleChange = (event: ChangeEvent, newValue: number) => {
     setValue(newValue);
   };
 

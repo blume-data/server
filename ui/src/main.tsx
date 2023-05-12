@@ -1,4 +1,4 @@
-import { Profiler } from 'react'
+import { Profiler, StrictMode } from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter } from "react-router-dom";
 import { applyMiddleware, createStore, compose } from "redux";
@@ -46,7 +46,7 @@ const theme = createTheme({
 });
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-  <React.StrictMode>
+  <StrictMode>
     <Profiler id="profiler-app" onRender={onRender}>
       <Provider store={store}>
         <ThemeProvider theme={theme}>
@@ -56,6 +56,6 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
         </ThemeProvider>
       </Provider>
       </Profiler>
-  </React.StrictMode>
+  </StrictMode>
 )
 

@@ -57,8 +57,8 @@ export const AssetsAdderComponent = (props: AssetsAdderType) => {
   const [filesIds, setFilesIds] = useState<FileUploadType[]>([]);
 
   // to show alert on single and multiple restriction
-  const [isAlertOpen, setIsAlertOpen] = React.useState<boolean>(false);
-  const [alert, setAlertMessage] = React.useState<AlertType>({ message: "" });
+  const [isAlertOpen, setIsAlertOpen] = useState<boolean>(false);
+  const [alert, setAlertMessage] = useState<AlertType>({ message: "" });
 
   // to handle select assets
   const [isEntryFormOpen, setIsEntryFormOpen] = useState<boolean>(false);

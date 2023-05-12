@@ -1,18 +1,17 @@
 
 import Grid from "@mui/material/Grid";
 import { RootState } from "../../../../rootReducer";
-import { connect, ConnectedProps } from "react-redux";
-import { Paper, Card, CardContent, ListItem, List } from "@mui/material";
+import { connect } from "react-redux";
+import { ListItem, List } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import { Link } from "react-router-dom";
 import { dashboardApplicationNamesUrl } from "../../../../utils/urls";
 import { Button } from "../../../../components/common/Button";
 
-type PropsFromRedux = ConnectedProps<typeof connector>;
+// type PropsFromRedux = ConnectedProps<typeof connector>;
 
-const Home = (props: PropsFromRedux) => {
-  const { dataRoutes } = props;
-
+const Home = (/*props: PropsFromRedux*/) => {
+  
   return (
     <Grid>
       <Grid container={true} justifyContent="flex-end">
