@@ -25,7 +25,7 @@ import { setApplicationName, setAuthentication } from "./actions";
 import { Alert } from "../../../../components/common/Toast";
 import { AlertType } from "../../../../components/common/Form";
 import { TopLink } from "./TopLink";
-import React from "react";
+
 import { getItemFromLocalStorage } from "../../../../utils/tools";
 import { fetchApplicationNames } from "../../../dashboard/pages/home/actions";
 

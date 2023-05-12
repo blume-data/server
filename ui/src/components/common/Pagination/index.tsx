@@ -1,4 +1,4 @@
-import React from "react";
+
 // import {Pagination} from '@material-ui/lab';
 import Grid from "@mui/material/Grid";
 import "./pagination.scss";

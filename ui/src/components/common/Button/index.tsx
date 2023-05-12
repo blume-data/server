@@ -1,4 +1,4 @@
-import React from "react";
+
 import { HeadingTypeInterface } from "../RenderHeading";
 import "./style.scss";
 

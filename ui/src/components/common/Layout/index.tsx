@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import "./index.scss";
 import Grid from "@mui/material/Grid";
 import { Footer } from "../Footer";

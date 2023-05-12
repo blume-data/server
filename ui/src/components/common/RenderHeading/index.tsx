@@ -1,4 +1,4 @@
-import React from "react";
+
 import "./style.scss";
 
 export type HeadingTypeInterface = "main" | "primary" | "secondary" | "para";

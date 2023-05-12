@@ -1,4 +1,4 @@
-import React, { ChangeEvent, lazy, useEffect, useState, Suspense } from "react";
+import { ChangeEvent, lazy, useEffect, useState, Suspense } from "react";
 import Grid from "@mui/material/Grid";
 import { TextBox } from "./TextBox";
 import { DropDown } from "./DropDown";

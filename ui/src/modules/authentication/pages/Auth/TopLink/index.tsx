@@ -1,4 +1,4 @@
-import React from "react";
+
 import { Link } from "react-router-dom";
 import Typography from "@mui/material/Typography";
 import { SIGN_IN, SIGN_UP } from "../index";

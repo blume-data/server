@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { MenuList } from "../MenuList";
 import { getItemFromLocalStorage } from "../../../../utils/tools";
 import { APPLICATION_NAME, PRODUCTION_ENV } from "@ranjodhbirkaur/constants";

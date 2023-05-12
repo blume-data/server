@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { getBaseUrl } from "../../utils/urls";
 import { connect, ConnectedProps } from "react-redux";
 import { RootState } from "../../rootReducer";
