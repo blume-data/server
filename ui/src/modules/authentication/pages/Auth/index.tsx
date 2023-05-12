@@ -25,7 +25,7 @@ import { setApplicationName, setAuthentication } from "./actions";
 import { Alert } from "../../../../components/common/Toast";
 import { AlertType } from "../../../../components/common/Form";
 import { TopLink } from "./TopLink";
-import React from "react";
+
 import { getItemFromLocalStorage } from "../../../../utils/tools";
 import { fetchApplicationNames } from "../../../dashboard/pages/home/actions";
 
@@ -50,9 +50,9 @@ export const VERIFY_EMAIL = "verify-email";
 export const SIGN_OUT = "sign-out";
 
 const AuthComponent = (props: AuthProps) => {
-  const [isAlertOpen, setIsAlertOpen] = React.useState<boolean>(false);
-  const [alert, setAlertMessage] = React.useState<AlertType>({ message: "" });
-  const [response, setResponse] = React.useState<string | ErrorMessagesType[]>(
+  const [isAlertOpen, setIsAlertOpen] = useState<boolean>(false);
+  const [alert, setAlertMessage] = useState<AlertType>({ message: "" });
+  const [response, setResponse] = useState<string | ErrorMessagesType[]>(
     ""
   );
   const [defaultValues, setDefaultValues] = useState<object>({});

@@ -1,13 +1,12 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { MenuList } from "../MenuList";
 import { getItemFromLocalStorage } from "../../../../utils/tools";
-import { APPLICATION_NAME, PRODUCTION_ENV } from "@ranjodhbirkaur/constants";
+import { APPLICATION_NAME } from "@ranjodhbirkaur/constants";
 import { dashboardApplicationNameUrl } from "../../../../utils/urls";
 import { RootState } from "../../../../rootReducer";
 import { connect, ConnectedProps } from "react-redux";
 import {
-  setApplicationName,
-  setEnv,
+  setApplicationName
 } from "../../../../modules/authentication/pages/Auth/actions";
 import { useHistory } from "react-router";
 import { LOCAL_STORAGE_SELECTED_APPLICATION_NAME } from "../../../../utils/constants";

@@ -1,17 +1,15 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
 import { connect, ConnectedProps } from "react-redux";
 import { RootState } from "../../../../rootReducer";
 import "./asset-adder.scss";
 import { RenderHeading } from "../../RenderHeading";
 // import UploadAsset from "../../UploadAsset";
-import { getItemFromLocalStorage } from "../../../../utils/tools";
+// import { getItemFromLocalStorage } from "../../../../utils/tools";
 import {
-  CLIENT_USER_NAME,
   MULTIPLE_ASSETS_TYPE,
   SINGLE_ASSETS_TYPE,
 } from "@ranjodhbirkaur/constants";
-import { getBaseUrl } from "../../../../utils/urls";
 import { Avatar, Chip } from "@mui/material";
 import Loader from "../../Loader";
 import { Button } from "../../Button";
@@ -53,20 +51,20 @@ export const AssetsAdderComponent = (props: AssetsAdderType) => {
     assetInit,
     assetsUrls,
   } = props;
-  const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
+  // const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
   const [filesIds, setFilesIds] = useState<FileUploadType[]>([]);
 
   // to show alert on single and multiple restriction
-  const [isAlertOpen, setIsAlertOpen] = React.useState<boolean>(false);
-  const [alert, setAlertMessage] = React.useState<AlertType>({ message: "" });
+  const [isAlertOpen, setIsAlertOpen] = useState<boolean>(false);
+  const [alert, setAlertMessage] = useState<AlertType>({ message: "" });
 
   // to handle select assets
   const [isEntryFormOpen, setIsEntryFormOpen] = useState<boolean>(false);
 
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading] = useState<boolean>(false);
 
-  const url = props.assetsUrls ? props.assetsUrls.authAssets : "";
-  const authUrl = `${getBaseUrl()}${url}`;
+  // const url = props.assetsUrls ? props.assetsUrls.authAssets : "";
+  // const authUrl = `${getBaseUrl()}${url}`;
 
   /*If value changes from back update the ids*/
   useEffect(() => {

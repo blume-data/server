@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { connect, ConnectedProps } from "react-redux";
 import {
   APPLICATION_NAME,
@@ -256,9 +256,9 @@ const EntriesTableComponent = (props: EntriesTableType) => {
     }
   }
 
-  function renderModelLink(name: string) {
-    return <p>{name}</p>;
-  }
+  // function renderModelLink(name: string) {
+  //   return <p>{name}</p>;
+  // }
 
   // update the columns with new fetched rules
   function updateColumns() {
@@ -331,6 +331,7 @@ const EntriesTableComponent = (props: EntriesTableType) => {
 
   function onPageClick(e: any, page: number) {
     setPage(page);
+    console.log("E", e);
   }
 
   // delete selected entries

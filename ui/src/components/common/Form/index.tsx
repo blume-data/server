@@ -1,4 +1,4 @@
-import React, { ChangeEvent, lazy, useEffect, useState, Suspense } from "react";
+import { ChangeEvent, lazy, useEffect, useState, Suspense } from "react";
 import Grid from "@mui/material/Grid";
 import { TextBox } from "./TextBox";
 import { DropDown } from "./DropDown";
@@ -35,7 +35,7 @@ import { JsonEditor } from "./JsonEditor";
 import ReferenceEditor from "./ReferenceEditor";
 import HtmlEditor from "../HtmlEditor";
 import AssetsAdder from "./AssetsAdder";
-import { Logger, validateEmail } from "../../../utils/tools";
+import { validateEmail } from "../../../utils/tools";
 import { RenderHeading } from "../RenderHeading";
 import { CircularProgress } from "@mui/material";
 
@@ -59,9 +59,9 @@ export interface AlertType {
 }
 
 export const Form = (props: FormType) => {
-  const [isAlertOpen, setIsAlertOpen] = React.useState<boolean>(false);
-  const [alert, setAlertMessage] = React.useState<AlertType>({ message: "" });
-  const [tabValue, setTabValue] = React.useState<number>(0);
+  const [isAlertOpen, setIsAlertOpen] = useState<boolean>(false);
+  const [alert, setAlertMessage] = useState<AlertType>({ message: "" });
+  const [tabValue, setTabValue] = useState<number>(0);
   const [filteredGroups, setFilteredGroups] = useState<string[]>([]);
   const [formState, setFormState] = useState<FormState[]>([]);
   const {
@@ -79,7 +79,7 @@ export const Form = (props: FormType) => {
   // focus on first input field in the form
   useEffect(() => {
     const inputFields = document.getElementsByTagName("input");
-    if (inputFields && inputFields.length && inputFields[0].focus) {
+    if (inputFields && inputFields.length) {
       inputFields[0].focus();
     }
   }, []);
@@ -140,7 +140,7 @@ export const Form = (props: FormType) => {
       }
       if (
         event.target.type === "email" &&
-        !validateEmail(value) &&
+        !validateEmail() &&
         whenTouched
       ) {
         return `${label} must be a valid email address`;
@@ -577,9 +577,9 @@ export const Form = (props: FormType) => {
         values.forEach((value) => {
           formValues[value.name] = value.value;
         });
-        const res = await onSubmit(formValues);
+        await onSubmit(formValues);
       } else {
-        const res = await onSubmit(values);
+        await onSubmit(values);
       }
       if (clearOnSubmit) {
         // clearForm();

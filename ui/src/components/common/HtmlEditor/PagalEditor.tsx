@@ -1,4 +1,4 @@
-import React from "react";
+
 import { Editor } from "@tinymce/tinymce-react";
 import "./style.scss";
 import { Grid } from "@mui/material";

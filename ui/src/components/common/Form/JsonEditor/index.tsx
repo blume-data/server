@@ -1,11 +1,11 @@
-import React, { ChangeEvent } from "react";
+import { ChangeEvent } from "react";
 import Grid from "@mui/material/Grid";
 import FormControl from "@mui/material/FormControl";
 import TextField from "@mui/material/TextField";
 
 import { FieldType } from "../interface";
 import { DescriptionText } from "../DescriptionText";
-import { IsJsonString } from "@ranjodhbirkaur/constants";
+// import { IsJsonString } from "@ranjodhbirkaur/constants";
 
 interface JsonEditorProps extends FieldType {
   onChange: (event: ChangeEvent<any>) => void;
@@ -29,7 +29,7 @@ export const JsonEditor = (props: JsonEditorProps) => {
   } = props;
 
   function onChangeJson(e: any) {
-    const value = e.target.value;
+    // const value = e.target.value;
     onChange(e);
   }
   return (

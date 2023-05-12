@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
 import { connect, ConnectedProps } from "react-redux";
 import "./reference-editor.scss";
@@ -14,7 +14,7 @@ import {
 import ModalDialog from "../../ModalDialog";
 import { EntriesTable } from "../../EntriesTable";
 import { RenderHeading } from "../../RenderHeading";
-import { Link, useHistory } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { dashboardCreateDataEntryUrl } from "../../../../utils/urls";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
@@ -42,7 +42,7 @@ export const ReferenceEditor = (props: ReferenceEditorType) => {
   const [refIds, setRefIds] = useState<string[]>([]);
   const [showCreateButton, setShowCreateButton] = useState<boolean>(true);
   const [isEntryFormOpen, setIsEntryFormOpen] = useState<boolean>(false);
-  const history = useHistory();
+  // const history = useHistory();
 
   useEffect(() => {
     // value is csv

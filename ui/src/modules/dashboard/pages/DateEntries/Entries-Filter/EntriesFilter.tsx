@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
 import { RootState } from "../../../../../rootReducer";
 import { connect, ConnectedProps } from "react-redux";
@@ -19,7 +19,7 @@ import { TextField, Tooltip } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 // import {KeyboardDatePicker, MuiPickersUtilsProvider} from "@material-ui/pickers";
-import DateFnsUtils from "@date-io/date-fns";
+// import DateFnsUtils from "@date-io/date-fns";
 interface ModelsType {
   [DESCRIPTION]: string;
   [NAME]: string;
@@ -157,7 +157,7 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
 
   // remove property from dropdown
   function removePropertyDropDown(index: number) {
-    const newFilters = filters.filter((f, i) => i !== index);
+    const newFilters = filters.filter((_f, i) => i !== index);
 
     const newRules: RuleType[] = [];
 

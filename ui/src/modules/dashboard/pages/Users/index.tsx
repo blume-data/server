@@ -7,7 +7,6 @@ import {
 } from "@ranjodhbirkaur/constants";
 import { useEffect, useState } from "react";
 import { connect, ConnectedProps } from "react-redux";
-import { AccordianCommon } from "../../../../components/common/AccordianCommon";
 import BasicTableMIUI from "../../../../components/common/BasicTableMIUI";
 import { Button } from "../../../../components/common/Button";
 import { Form } from "../../../../components/common/Form";
@@ -27,7 +26,6 @@ import { getItemFromLocalStorage } from "../../../../utils/tools";
 import EditIcon from "@mui/icons-material/Edit";
 import "./style.scss";
 import { useParams } from "react-router";
-import { DescriptionText } from "../../../../components/common/Form/DescriptionText";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 interface ModalDataType {

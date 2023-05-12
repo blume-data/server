@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { Grid, Paper } from "@mui/material";
 import { connect, ConnectedProps } from "react-redux";
 import { RootState } from "../../../../rootReducer";

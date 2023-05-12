@@ -1,4 +1,4 @@
-import React from "react";
+
 import "./picture.scss";
 
 export const Triangle = (props: { className?: string }) => {

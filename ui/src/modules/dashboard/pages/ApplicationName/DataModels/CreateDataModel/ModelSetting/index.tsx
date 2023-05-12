@@ -57,7 +57,7 @@ interface SettingType {
 }
 
 export const ModelSetting = (props: SettingType) => {
-  const { env, applicationName, data, setSetting, isLoading } = props;
+  const { env, applicationName, data, setSetting } = props;
   const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME) || "";
   const [userGroups, setUserGroups] = useState<
     {

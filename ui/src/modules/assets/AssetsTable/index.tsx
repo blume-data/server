@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
 import BasicTableMIUI from "../../../components/common/BasicTableMIUI";
 import {
@@ -175,6 +175,7 @@ export const AssetsTable = (prop: AssetsTableType) => {
   }
 
   function onPageClick(e: any, page: number) {
+    console.log("pagee", e);
     setPage(page);
   }
 

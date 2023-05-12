@@ -1,10 +1,11 @@
-import React from "react";
+
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
 import { Grid, Tooltip } from "@mui/material";
 import Button from "@mui/material/Button";
 import "./menu-list.scss";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import {useState, MouseEvent} from 'react';
 
 interface ApplicationNamesListProps {
   onSelectMenuItem: (name: string) => void;
@@ -15,9 +16,9 @@ interface ApplicationNamesListProps {
 }
 export const MenuList = (props: ApplicationNamesListProps) => {
   const { menuName, onSelectMenuItem, menuItems, id, defaultName } = props;
-  const [MenuAnchor, setMenuAnchor] = React.useState<null | HTMLElement>(null);
+  const [MenuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
 
-  function openMenu(event: React.MouseEvent<HTMLButtonElement>) {
+  function openMenu(event: MouseEvent<HTMLButtonElement>) {
     setMenuAnchor(event.currentTarget);
   }
 

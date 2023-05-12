@@ -1,4 +1,4 @@
-import React from "react";
+
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
@@ -14,7 +14,7 @@ import { SIGN_IN, SIGN_OUT } from "../../../modules/authentication/pages/Auth";
 import { connect, ConnectedProps } from "react-redux";
 import { RootState } from "../../../rootReducer";
 import clsx from "clsx";
-// import { makeStyles } from "@mui/styles";
+import {KeyboardEvent, MouseEvent, useState} from 'react';
 import Drawer from "@mui/material/Drawer";
 import { LeftDrawerList } from "./LeftDrawerList";
 import { NavBarMenu } from "./NavBarMenu";
@@ -37,18 +37,18 @@ export const NavBarComponent = (props: PropsFromRedux) => {
   const { isAuth } = props;
   const LEFT_ANCHOR = "left";
 
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
   // const classes = useStyles();
-  const [state, setState] = React.useState({
+  const [state, setState] = useState({
     top: false,
     left: false,
     bottom: false,
     right: false,
   });
 
-  const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
+  const handleMenu = (event: MouseEvent<HTMLElement>) => {
     if (isAuth) {
       setAnchorEl(event.currentTarget);
     }
@@ -60,7 +60,7 @@ export const NavBarComponent = (props: PropsFromRedux) => {
 
   const toggleDrawer =
     (anchor: Anchor, open: boolean) =>
-    (event: React.KeyboardEvent | React.MouseEvent) => {
+    (event: KeyboardEvent | MouseEvent) => {
       // Don't open side bar if not authenticated
       if (!isAuth) {
         setState({ ...state, [anchor]: false });
@@ -69,8 +69,8 @@ export const NavBarComponent = (props: PropsFromRedux) => {
 
       if (
         event.type === "keydown" &&
-        ((event as React.KeyboardEvent).key === "Tab" ||
-          (event as React.KeyboardEvent).key === "Shift")
+        ((event as KeyboardEvent).key === "Tab" ||
+          (event as KeyboardEvent).key === "Shift")
       ) {
         return;
       }

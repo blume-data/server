@@ -1,15 +1,15 @@
-import React, { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { Grid } from "@mui/material";
 import {
-  DATE_FORM_FIELD_TYPE,
+  // DATE_FORM_FIELD_TYPE,
   FieldType,
-  ONLY_DATE_FORM_FIELD_TYPE,
+  // ONLY_DATE_FORM_FIELD_TYPE,
 } from "./interface";
 
-import { SearchMenuList } from "../SearchMenuList";
-import { validMomentTimezones } from "@ranjodhbirkaur/constants";
-import { DescriptionText } from "./DescriptionText";
-import DateFnsUtils from "@date-io/date-fns";
+// import { SearchMenuList } from "../SearchMenuList";
+// import { validMomentTimezones } from "@ranjodhbirkaur/constants";
+// import { DescriptionText } from "./DescriptionText";
+// import DateFnsUtils from "@date-io/date-fns";
 // import {
 //     MuiPickersUtilsProvider,
 //     KeyboardTimePicker,
@@ -29,24 +29,24 @@ export const DateField = (props: DateFieldType) => {
     id,
     className,
     label,
-    required = false,
-    name,
-    type,
-    onBlur,
-    helperText,
-    disabled = false,
-    descriptionText = "",
+    // required = false,
+    // name,
+    // type,
+    // onBlur,
+    // helperText,
+    // disabled = false,
+    // descriptionText = "",
     miscData,
     onChange,
-    error = false,
+    // error = false,
     value = "",
-    placeholder = "",
+    // placeholder = "",
   } = props;
 
   const [timeZone, setTimeZone] = useState<string>("UCT");
   const [finalValue, setFinalValue] = useState<string>("");
 
-  const [selectedDate, setSelectedDate] = React.useState<Date | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
   function updateFinalValue() {
     if (selectedDate) {
@@ -82,9 +82,9 @@ export const DateField = (props: DateFieldType) => {
     }
   }, []);
 
-  const handleDateChange = (date: Date | null) => {
-    setSelectedDate(date);
-  };
+  // const handleDateChange = (date: Date | null) => {
+  //   setSelectedDate(date);
+  // };
 
   /*set initial data*/
   useEffect(() => {

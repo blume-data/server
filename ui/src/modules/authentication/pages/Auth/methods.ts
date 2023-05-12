@@ -8,8 +8,6 @@ import {
   EnglishLanguage,
 } from "@ranjodhbirkaur/constants";
 import {
-  LOCAL_STORAGE_ENV,
-  LOCAL_STORAGE_LANGUAGE,
   LOCAL_STORAGE_SELECTED_APPLICATION_NAME,
 } from "../../../../utils/constants";
 

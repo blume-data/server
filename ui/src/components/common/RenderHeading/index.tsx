@@ -1,4 +1,5 @@
-import React from "react";
+
+import { ReactNode } from 'react'
 import "./style.scss";
 
 export type HeadingTypeInterface = "main" | "primary" | "secondary" | "para";
@@ -7,7 +8,7 @@ interface RenderHeadingType {
   className?: string;
   value?: string;
   type?: HeadingTypeInterface;
-  children?: React.ReactNode;
+  children?: ReactNode;
 }
 
 export const RenderHeading = (props: RenderHeadingType) => {

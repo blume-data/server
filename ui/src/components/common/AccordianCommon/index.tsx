@@ -1,4 +1,4 @@
-import React from "react";
+import {useState} from 'react';
 
 interface AccordianCommonProps {
   children: any;
@@ -10,7 +10,7 @@ interface AccordianCommonProps {
 export const AccordianCommon = (props: AccordianCommonProps) => {
   const { children, name, shouldExpand = false } = props;
 
-  const [expanded, setExpanded] = React.useState<boolean>(shouldExpand);
+  const [expanded, setExpanded] = useState<boolean>(shouldExpand);
 
   return (
     <>
