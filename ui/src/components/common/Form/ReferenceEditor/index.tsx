@@ -14,7 +14,7 @@ import {
 import ModalDialog from "../../ModalDialog";
 import { EntriesTable } from "../../EntriesTable";
 import { RenderHeading } from "../../RenderHeading";
-import { Link, useHistory } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { dashboardCreateDataEntryUrl } from "../../../../utils/urls";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;

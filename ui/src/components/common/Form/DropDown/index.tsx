@@ -1,4 +1,3 @@
-import { ChangeEvent } from "react";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
@@ -12,8 +11,8 @@ import { DescriptionText } from "../DescriptionText";
 interface DropDownType extends FieldType {
   options: OptionsType[];
   index: number;
-  onChange: (event: ChangeEvent<any>) => void;
-  onBlur?: (event: ChangeEvent<any>) => void;
+  onChange: (event: any) => void;
+  onBlur?: (event: any) => void;
   multiple?: boolean;
   value: any;
 }

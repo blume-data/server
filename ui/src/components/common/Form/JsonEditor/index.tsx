@@ -29,7 +29,7 @@ export const JsonEditor = (props: JsonEditorProps) => {
   } = props;
 
   function onChangeJson(e: any) {
-    const value = e.target.value;
+    // const value = e.target.value;
     onChange(e);
   }
   return (

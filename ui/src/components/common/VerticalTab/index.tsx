@@ -1,5 +1,5 @@
 
-import { ReactNode, ChangeEvent } from 'react';
+import { ReactNode } from 'react';
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
@@ -59,8 +59,9 @@ export const VerticalTab = (props: VerticalTabProps) => {
   // const classes = useStyles();
   const { tabs, children, value, setValue } = props;
 
-  const handleChange = (event: ChangeEvent, newValue: number) => {
+  const handleChange = (event: any, newValue: number) => {
     setValue(newValue);
+    console.log("Event", event);
   };
 
   return (

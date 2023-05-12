@@ -20,8 +20,8 @@ export const DateCell = (props: DateCellType) => {
     );
   } else {
     return (
-      <Tooltip title={value}>
-        <Typography component={"p"}>{value}</Typography>
+      <Tooltip title={value.toString()}>
+        <Typography component={"p"}>{value.toString()}</Typography>
       </Tooltip>
     );
   }

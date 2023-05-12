@@ -414,7 +414,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
       let propertyMin = 0;
       let propertyMinMaxCustomErrorMessage = "";
       let propertyIsUnique = "";
-      let propertyIsIndexable = "";
+      // let propertyIsIndexable = "";
 
       let propertyMatchPattern = "";
       let propertyMatchPatternError = "";
@@ -498,10 +498,10 @@ const CreateDataModel = (props: CreateDataModelType) => {
             propertyMinMaxCustomErrorMessage = v;
             break;
           }
-          case "indexable": {
-            propertyIsIndexable = v;
-            break;
-          }
+          // case "indexable": {
+          //   propertyIsIndexable = v;
+          //   break;
+          // }
           case IS_FIELD_UNIQUE: {
             propertyIsUnique = v;
             break;
