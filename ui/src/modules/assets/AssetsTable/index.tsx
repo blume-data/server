@@ -181,7 +181,7 @@ export const AssetsTable = (prop: AssetsTableType) => {
   return (
     <Grid
       container
-      justify={"center"}
+      justifyContent={"center"}
       direction={"column"}
       className={"assets-table-container"}
     >

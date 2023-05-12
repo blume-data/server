@@ -40,8 +40,8 @@ const ApplicationNames = (props: PropsFromRedux) => {
 
   return (
     <Grid className={"application-name-container"}>
-      <Grid container justify={"space-between"} className={"button-section"}>
-        <Grid item className={"button-group"}>
+      <Grid container={true} justifyContent={"space-between"} className={"button-section"}>
+        <Grid item={true} className={"button-group"}>
           <Typography component={"h4"} variant={"h4"}>
             Application spaces
           </Typography>
@@ -49,7 +49,7 @@ const ApplicationNames = (props: PropsFromRedux) => {
             Select any application space you want to manage today
           </Typography>
         </Grid>
-        <Grid item className={"button-group"}>
+        <Grid item={true} className={"button-group"}>
           <Button
             variant="contained"
             color="primary"
@@ -62,7 +62,7 @@ const ApplicationNames = (props: PropsFromRedux) => {
 
       <Grid
         container
-        justify={"center"}
+        justifyContent={"center"}
         className={"application-spaces-list"}
         direction={"column"}
       >

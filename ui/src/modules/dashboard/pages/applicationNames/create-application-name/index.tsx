@@ -83,7 +83,7 @@ const CreateApplicationNameComponent = (props: CreateApplicationNameProps) => {
   return (
     <Grid
       container
-      justify={"center"}
+      justifyContent={"center"}
       className={"create-application-name-container"}
     >
       <Form

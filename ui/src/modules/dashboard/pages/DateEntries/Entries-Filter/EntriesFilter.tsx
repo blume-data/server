@@ -181,10 +181,10 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
           <Grid
             key={index}
             container
-            justify={"flex-start"}
+            justifyContent={"flex-start"}
             className="filter-wrapper"
           >
-            <Grid item className={"property-list"}>
+            <Grid item={true} className={"property-list"}>
               <SearchMenuList
                 value={filter.propertyName}
                 classNames={"property-dropdown"}
@@ -193,10 +193,10 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
                 onMenuChange={(v) => onChangePropertiesDropdown(v, index)}
               />
             </Grid>
-            <Grid item className={"input-field-wrapper"}>
+            <Grid item={true} className={"input-field-wrapper"}>
               {renderPropertyInputField(filter)}
             </Grid>
-            <Grid item className={"close-button"}>
+            <Grid item={true} className={"close-button"}>
               <Tooltip title={"Delete filter"}>
                 <IconButton>
                   <CloseIcon onClick={() => removePropertyDropDown(index)} />
@@ -335,7 +335,7 @@ export const EntriesFilterComponent = (props: EntriesFilterComponentType) => {
       )}
       <Grid className="property-dropdown-wrapper">
         {modelName ? (
-          <Grid container justify={"flex-start"} className="wrapper">
+          <Grid container={true} justifyContent={"flex-start"} className="wrapper">
             {/*Render Property input value*/}
             {renderFilters()}
           </Grid>

@@ -191,8 +191,8 @@ const DataModels = (props: PropsFromRedux) => {
     <Grid className={"store-list-container"}>
       {isLoading ? <Loader /> : null}
 
-      <Grid className={"filter-section"} container justify={"space-between"}>
-        <Grid item>
+      <Grid className={"filter-section"} container justifyContent={"space-between"}>
+        <Grid item={true}>
           <RenderHeading type="primary">Models</RenderHeading>
           <br />
           <RenderHeading>
@@ -200,7 +200,7 @@ const DataModels = (props: PropsFromRedux) => {
           </RenderHeading>
           <br />
         </Grid>
-        <Grid item className={"add-store-button"}>
+        <Grid item={true} className={"add-store-button"}>
           {/*open model and clear model data*/}
           <Link to={createModelUrl}>
             <Button variant="contained" color={"primary"}>
@@ -212,7 +212,7 @@ const DataModels = (props: PropsFromRedux) => {
 
       <Grid
         container
-        justify={"center"}
+        justifyContent={"center"}
         className={"stores-list"}
         direction={"column"}
       >
