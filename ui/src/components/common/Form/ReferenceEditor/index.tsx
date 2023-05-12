@@ -42,7 +42,7 @@ export const ReferenceEditor = (props: ReferenceEditorType) => {
   const [refIds, setRefIds] = useState<string[]>([]);
   const [showCreateButton, setShowCreateButton] = useState<boolean>(true);
   const [isEntryFormOpen, setIsEntryFormOpen] = useState<boolean>(false);
-  const history = useHistory();
+  // const history = useHistory();
 
   useEffect(() => {
     // value is csv

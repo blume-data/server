@@ -14,12 +14,11 @@ import { SIGN_IN, SIGN_OUT } from "../../../modules/authentication/pages/Auth";
 import { connect, ConnectedProps } from "react-redux";
 import { RootState } from "../../../rootReducer";
 import clsx from "clsx";
-import React from 'react';
+import {KeyboardEvent, MouseEvent, useState} from 'react';
 import Drawer from "@mui/material/Drawer";
 import { LeftDrawerList } from "./LeftDrawerList";
 import { NavBarMenu } from "./NavBarMenu";
 import { authUrl } from "../../../utils/urls";
-import { useState, MouseEvent } from "react";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
@@ -61,7 +60,7 @@ export const NavBarComponent = (props: PropsFromRedux) => {
 
   const toggleDrawer =
     (anchor: Anchor, open: boolean) =>
-    (event: React.KeyboardEvent | React.MouseEvent) => {
+    (event: KeyboardEvent | MouseEvent) => {
       // Don't open side bar if not authenticated
       if (!isAuth) {
         setState({ ...state, [anchor]: false });
@@ -70,8 +69,8 @@ export const NavBarComponent = (props: PropsFromRedux) => {
 
       if (
         event.type === "keydown" &&
-        ((event as React.KeyboardEvent).key === "Tab" ||
-          (event as React.KeyboardEvent).key === "Shift")
+        ((event as KeyboardEvent).key === "Tab" ||
+          (event as KeyboardEvent).key === "Shift")
       ) {
         return;
       }

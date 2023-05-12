@@ -1,6 +1,6 @@
 
-import { SyntheticEvent } from 'react'
-import Snackbar from "@mui/material/Snackbar";
+// import { SyntheticEvent } from 'react'
+// import Snackbar from "@mui/material/Snackbar";
 
 export interface AlertType {
   severity?: "success" | "error" | "info";
@@ -10,12 +10,13 @@ export interface AlertType {
 }
 
 export const Alert = (props: AlertType) => {
-  const { severity = "success", message, isAlertOpen, onAlertClose } = props;
+  // const { severity = "success", message, isAlertOpen, onAlertClose } = props;
 
-  const handleAlertClose = (event?: SyntheticEvent, reason?: string) => {
-    if (reason === "clickaway") return;
-    onAlertClose(false);
-  };
+  // const handleAlertClose = (event?: SyntheticEvent, reason?: string) => {
+  //   if (reason === "clickaway") return;
+  //   onAlertClose(false);
+  // };
+  console.log("Props", props);
 
   return (
     <div>

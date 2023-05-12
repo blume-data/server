@@ -14,7 +14,7 @@ type PropsFromRedux = ConnectedProps<typeof connector>;
 export const AssetsComponent = (props: PropsFromRedux) => {
   const { assetsUrls } = props;
   const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading] = useState<boolean>(false);
 
   const url = props.assetsUrls ? props.assetsUrls.authAssets : "";
   const authUrl = `${getBaseUrl()}${url}`;

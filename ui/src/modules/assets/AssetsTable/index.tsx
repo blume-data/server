@@ -175,6 +175,7 @@ export const AssetsTable = (prop: AssetsTableType) => {
   }
 
   function onPageClick(e: any, page: number) {
+    console.log("pagee", e);
     setPage(page);
   }
 

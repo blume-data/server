@@ -23,7 +23,6 @@ import {
   LOCAL_STORAGE_ENV,
   LOCAL_STORAGE_LANGUAGE,
 } from "../../../utils/constants";
-import { Paper } from "@mui/material";
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type AppProps = PropsFromRedux & {

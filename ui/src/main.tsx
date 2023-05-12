@@ -1,7 +1,8 @@
 import { Profiler, StrictMode } from 'react'
-import ReactDOM from 'react-dom/client'
+import {createRoot} from 'react-dom/client'
 import { BrowserRouter } from "react-router-dom";
-import { applyMiddleware, createStore, compose } from "redux";
+import { applyMiddleware, compose } from "redux";
+import {legacy_createStore as createStore} from 'redux';
 import thunk from "redux-thunk";
 import { RouterComponent } from "./Router";
 import { rootReducer, RouteAddressStateType } from "./rootReducer";
@@ -22,6 +23,8 @@ let routeAddress: RouteAddressStateType | null = null;
 if (window.INITIAL_STATE && window.INITIAL_STATE.routeAddress) {
   routeAddress = window.INITIAL_STATE.routeAddress;
 }
+
+console.log("Route Adddress", routeAddress);
 
  
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
@@ -45,7 +48,7 @@ const theme = createTheme({
   palette: paletteColor
 });
 
-ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
+createRoot(document.getElementById('root') as HTMLElement).render(
   <StrictMode>
     <Profiler id="profiler-app" onRender={onRender}>
       <Provider store={store}>

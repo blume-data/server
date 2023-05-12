@@ -20,7 +20,8 @@ interface PaginationProps {
   id: string;
 }
 export function PaginationTab(props: PaginationProps) {
-  const { currentPage, limit, handleChange, totalItems, id } = props;
+  // const { currentPage, limit, handleChange, totalItems, id } = props;
+  console.log("Props", props);
   return (
     <Grid className={"main-pagination-container"}>
       {/* <Pagination

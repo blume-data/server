@@ -5,7 +5,7 @@ import TextField from "@mui/material/TextField";
 
 import { FieldType } from "../interface";
 import { DescriptionText } from "../DescriptionText";
-import { IsJsonString } from "@ranjodhbirkaur/constants";
+// import { IsJsonString } from "@ranjodhbirkaur/constants";
 
 interface JsonEditorProps extends FieldType {
   onChange: (event: ChangeEvent<any>) => void;

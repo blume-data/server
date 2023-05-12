@@ -35,7 +35,7 @@ import { JsonEditor } from "./JsonEditor";
 import ReferenceEditor from "./ReferenceEditor";
 import HtmlEditor from "../HtmlEditor";
 import AssetsAdder from "./AssetsAdder";
-import { Logger, validateEmail } from "../../../utils/tools";
+import { validateEmail } from "../../../utils/tools";
 import { RenderHeading } from "../RenderHeading";
 import { CircularProgress } from "@mui/material";
 
@@ -79,7 +79,7 @@ export const Form = (props: FormType) => {
   // focus on first input field in the form
   useEffect(() => {
     const inputFields = document.getElementsByTagName("input");
-    if (inputFields && inputFields.length && inputFields[0].focus) {
+    if (inputFields && inputFields.length) {
       inputFields[0].focus();
     }
   }, []);
@@ -140,7 +140,7 @@ export const Form = (props: FormType) => {
       }
       if (
         event.target.type === "email" &&
-        !validateEmail(value) &&
+        !validateEmail() &&
         whenTouched
       ) {
         return `${label} must be a valid email address`;
@@ -577,9 +577,9 @@ export const Form = (props: FormType) => {
         values.forEach((value) => {
           formValues[value.name] = value.value;
         });
-        const res = await onSubmit(formValues);
+        await onSubmit(formValues);
       } else {
-        const res = await onSubmit(values);
+        await onSubmit(values);
       }
       if (clearOnSubmit) {
         // clearForm();
