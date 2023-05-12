@@ -186,11 +186,11 @@ export const ModelSetting = (props: SettingType) => {
         : `${requestType}PermittedUserGroups`;
 
     return (
-      <Grid container className="user-groups" direction="column">
-        <Grid item>
+      <Grid container={true} className="user-groups" direction="column">
+        <Grid item={true}>
           <RenderHeading value={type}></RenderHeading>
         </Grid>
-        <Grid item>
+        <Grid item={true}>
           {setting &&
           setting[otherProperty] &&
           setting[property] &&
@@ -284,8 +284,8 @@ export const ModelSetting = (props: SettingType) => {
     }
 
     return (
-      <Grid container className="supported-domain" direction="column">
-        <Grid item>
+      <Grid container={true} className="supported-domain" direction="column">
+        <Grid item={true}>
           {setting?.supportedDomains.map(
             (supportedDomain: string, index: number) => {
               if (!supportedDomain) return null;
@@ -323,7 +323,7 @@ export const ModelSetting = (props: SettingType) => {
           )}
         </Grid>
 
-        <Grid item>
+        <Grid item={true}>
           <TextBox
             type="text"
             placeholder="Supported domain url"
@@ -361,30 +361,30 @@ export const ModelSetting = (props: SettingType) => {
         {userGroups?.length && !setting.isPublic ? (
           <>
             <AccordianCommon name="Get permission">
-              <Grid container direction="column">
-                <Grid item>{renderPermissions("restrict", "get")}</Grid>
-                <Grid item>{renderPermissions("permitted", "get")}</Grid>
+              <Grid container={true} direction="column">
+                <Grid item={true}>{renderPermissions("restrict", "get")}</Grid>
+                <Grid item={true}>{renderPermissions("permitted", "get")}</Grid>
               </Grid>
             </AccordianCommon>
 
             <AccordianCommon name="Post permission">
-              <Grid container direction="column">
-                <Grid item>{renderPermissions("restrict", "post")}</Grid>
+              <Grid container={true} direction="column">
+                <Grid item={true}>{renderPermissions("restrict", "post")}</Grid>
                 <Grid>{renderPermissions("permitted", "post")}</Grid>
               </Grid>
             </AccordianCommon>
 
             <AccordianCommon name="Put permission">
-              <Grid container direction="column">
-                <Grid item>{renderPermissions("restrict", "put")}</Grid>
-                <Grid item>{renderPermissions("permitted", "put")}</Grid>
+              <Grid container={true} direction="column">
+                <Grid item={true}>{renderPermissions("restrict", "put")}</Grid>
+                <Grid item={true}>{renderPermissions("permitted", "put")}</Grid>
               </Grid>
             </AccordianCommon>
 
             <AccordianCommon name="Delete permission">
-              <Grid container direction="column">
-                <Grid item>{renderPermissions("restrict", "delete")}</Grid>
-                <Grid item>{renderPermissions("permitted", "delete")}</Grid>
+              <Grid container={true} direction="column">
+                <Grid item={true}>{renderPermissions("restrict", "delete")}</Grid>
+                <Grid item={true}>{renderPermissions("permitted", "delete")}</Grid>
               </Grid>
             </AccordianCommon>
           </>

@@ -38,8 +38,8 @@ function DataEntriesComponent(props: PropsFromRedux) {
 
   return (
     <Grid className={"data-entries-wrapper-container"}>
-      <Grid container className="data-entries" justify="space-between">
-        <Grid item>
+      <Grid container={true} className="data-entries" justifyContent="space-between">
+        <Grid item={true}>
           <RenderHeading type="primary">Entries</RenderHeading>
           <br />
           <RenderHeading>Store entries in models</RenderHeading>
@@ -47,8 +47,8 @@ function DataEntriesComponent(props: PropsFromRedux) {
         </Grid>
         <Grid className="center">
           {modelName ? (
-            <Grid container justify={"center"} direction="column">
-              <Grid item>
+            <Grid container={true} justifyContent={"center"} direction="column">
+              <Grid item={true}>
                 <Link to={createDataEntryUrl}>
                   <Button variant={"contained"} color={"primary"}>
                     create {`${modelName ? modelName : "entry"}`}

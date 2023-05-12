@@ -237,7 +237,7 @@ const AuthComponent = (props: AuthProps) => {
       container
       className={"auth-page p-10"}
       direction={"column"}
-      justify={"center"}
+      justifyContent={"center"}
     >
       <TopLink step={step} />
 

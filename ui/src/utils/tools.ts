@@ -166,6 +166,9 @@ export async function deleteModelEntries(data: DeleteModelEntriesType) {
   );
 }
 
+
+
+/*
 interface UploadedFileType {
   tbU: string;
   name: string;
@@ -183,7 +186,7 @@ interface UploadImagesType {
   // to return the ids of uploaded files
   setUploadedFiles?: (data: UploadedFileType[]) => void;
   uFiles?: UploadImagesType[];
-}
+}*/
 
 export function isExternalLink(url: string) {
   if (url) {
@@ -197,7 +200,7 @@ export function isExternalLink(url: string) {
   return false;
 }
 
-export function validateEmail(email: string) {
+export function validateEmail(/**email: string */) {
   // const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   // return re.test(String(email).toLowerCase());
   return true;

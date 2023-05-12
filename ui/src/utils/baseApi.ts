@@ -1,5 +1,5 @@
 import axios, { AxiosRequestConfig } from "axios";
-import { getItemFromLocalStorage, isUserLoggedIn } from "./tools";
+import { getItemFromLocalStorage } from "./tools";
 import { AUTH_TOKEN } from "@ranjodhbirkaur/constants";
 
 const axiosInstance = axios.create({

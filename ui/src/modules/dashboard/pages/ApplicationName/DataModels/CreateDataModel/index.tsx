@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Grid, Tooltip } from "@mui/material";
 import { AlertType, Form } from "../../../../../../components/common/Form";
 import { ConfigField } from "../../../../../../components/common/Form/interface";
@@ -161,8 +161,8 @@ const CreateDataModel = (props: CreateDataModelType) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   // to show alerts
-  const [isAlertOpen, setIsAlertOpen] = React.useState<boolean>(false);
-  const [alert, setAlertMessage] = React.useState<AlertType>({ message: "" });
+  const [isAlertOpen, setIsAlertOpen] = useState<boolean>(false);
+  const [alert, setAlertMessage] = useState<AlertType>({ message: "" });
   const [confirmDialogOpen, setConfirmDialogOpen] = useState<boolean>(false);
   const [deleteEntryName, setDeleteEntryName] = useState<string>("");
 
@@ -793,9 +793,9 @@ const CreateDataModel = (props: CreateDataModelType) => {
         direction="column"
         className="name-section-container"
       >
-        <Grid item>
+        <Grid item={true}>
           <Grid container={true}>
-            <Grid item className={"text-container"}>
+            <Grid item={true} className={"text-container"}>
               <RenderHeading
                 type={"primary"}
                 className={"model-display-name m-0"}
@@ -813,7 +813,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 />
               ) : null}
             </Grid>
-            <Grid item className={"edit-button"}>
+            <Grid item={true} className={"edit-button"}>
               <Tooltip title={`Edit model ${contentModelData.displayName}`}>
                 <IconButton onClick={onClick} color="primary" size="small">
                   <EditIcon />
@@ -822,13 +822,13 @@ const CreateDataModel = (props: CreateDataModelType) => {
             </Grid>
           </Grid>
         </Grid>
-        <Grid item>
-          <Grid container className="title-container" direction="column">
-            <Grid item>
+        <Grid item={true}>
+          <Grid container={true} className="title-container" direction="column">
+            <Grid item={true}>
               <RenderHeading type="secondary" value="Set a title field" />
             </Grid>
 
-            <Grid item>
+            <Grid item={true}>
               <DropDown
                 options={
                   properties?.map((property) => {
@@ -1028,7 +1028,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
   function renderAddFieldsAndSaveModelButtonGroup() {
     if (contentModelData.displayName) {
       return (
-        <Grid container justify={"flex-end"} className={"modal-action-buttons"}>
+        <Grid container={true} justifyContent={"flex-end"} className={"modal-action-buttons"}>
           <Button
             name={"Add Fields"}
             onClick={onClickAddFields}
@@ -1058,18 +1058,18 @@ const CreateDataModel = (props: CreateDataModelType) => {
   }, [modelSetting.id]);
 
   return (
-    <Grid container className={"create-data-model-container"}>
+    <Grid container={true} className={"create-data-model-container"}>
       {isLoading ? <Loader /> : null}
 
-      <Grid item className="left-container">
+      <Grid item={true} className="left-container">
         <Grid
           style={{ flexWrap: "nowrap" }}
           container
           className={"model-name-container"}
-          justify="space-between"
+          justifyContent="space-between"
         >
-          <Grid item>{renderNameSection()}</Grid>
-          <Grid item className="round-padding">
+          <Grid item={true}>{renderNameSection()}</Grid>
+          <Grid item={true} className="round-padding">
             <Tooltip title="Close">
               <IconButton
                 onClick={() =>
@@ -1091,8 +1091,8 @@ const CreateDataModel = (props: CreateDataModelType) => {
             </Tooltip>
           </Grid>
         </Grid>
-        <Grid container className="create-model-container">
-          <Grid item className="create-content-model">
+        <Grid container={true} className="create-model-container">
+          <Grid item={true} className="create-content-model">
             <Grid>
               {contentModelData.displayName ? (
                 renderPropertiesSection()
@@ -1106,17 +1106,17 @@ const CreateDataModel = (props: CreateDataModelType) => {
             </Grid>
 
             {addingField ? (
-              <Grid container className="fields-container">
-                <Grid container justify={"space-between"}>
-                  <Grid item>
+              <Grid container={true} className="fields-container">
+                <Grid container={true} justifyContent={"space-between"}>
+                  <Grid item={true}>
                     <RenderHeading
                       className="field-heading-container"
                       type={"primary"}
                       value={"Add new field"}
                     />
                   </Grid>
-                  <Grid item>
-                    <Grid container justify={"center"} direction={"column"}>
+                  <Grid item={true}>
+                    <Grid container={true} justifyContent={"center"} direction={"column"}>
                       <Button
                         className={"cancel-button"}
                         variant={"outlined"}
@@ -1130,7 +1130,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 <Grid
                   spacing={1}
                   container
-                  justify={"center"}
+                  justifyContent={"center"}
                   className="fields-grid"
                 >
                   {fieldItem(
@@ -1208,7 +1208,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
       {/* MODAL SETTING CONTAINER */}
 
       {properties && properties.length ? (
-        <Grid item className="right-container">
+        <Grid item={true} className="right-container">
           <div>
             <RenderHeading
               className={"main-heading"}
@@ -1291,7 +1291,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
                 onClick={closeAddFieldForm}
               />
             </Grid>
-            <Grid item>
+            <Grid item={true}>
               <Form
                 groups={[
                   FIELD_NAME_GROUP,

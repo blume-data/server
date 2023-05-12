@@ -632,7 +632,7 @@ export const Form = (props: FormType) => {
     <Grid
       className={`${className} app-common-form`}
       container
-      justify={"center"}
+      justifyContent={"center"}
       direction={"column"}
     >
       {fields.map((option: ConfigField, index) => {
@@ -677,9 +677,9 @@ export const Form = (props: FormType) => {
         </VerticalTab>
       ) : null}
 
-      <Grid container className={"button-section"}>
+      <Grid container={true} className={"button-section"}>
         {showClearButton ? (
-          <Grid item>
+          <Grid item={true}>
             <Button
               name={"Clear values"}
               onClick={clearForm}
@@ -687,14 +687,14 @@ export const Form = (props: FormType) => {
             />
           </Grid>
         ) : null}
-        <Grid item>
+        <Grid item={true}>
           <Button
             name={submitButtonName ? submitButtonName : "Submit"}
             onClick={onClickSubmit}
             color={"primary"}
           >
-            <Grid container justify="space-between" alignItems="center">
-              <Grid container style={{ flex: 1 }} justify="center">
+            <Grid container={true} justifyContent="space-between" alignItems="center">
+              <Grid container={true} style={{ flex: 1 }} justifyContent="center">
                 <RenderHeading
                   value={
                     loading

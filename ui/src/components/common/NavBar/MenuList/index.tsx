@@ -31,7 +31,7 @@ export const MenuList = (props: ApplicationNamesListProps) => {
   }
 
   return (
-    <Grid container justify={"flex-start"} className={"menu-list-container"}>
+    <Grid container={true} justifyContent={"flex-start"} className={"menu-list-container"}>
       <Tooltip title={"Application Name"} aria-label={"Application Name"}>
         <Button
           className={"application-name-container"}

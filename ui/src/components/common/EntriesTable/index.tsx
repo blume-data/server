@@ -157,7 +157,7 @@ const EntriesTableComponent = (props: EntriesTableType) => {
             );
           } else if (i[assetTypeRow.name] && i[assetTypeRow.name].length) {
             component = (
-              <Grid container className={"entries-avatar-list"}>
+              <Grid container={true} className={"entries-avatar-list"}>
                 {i[assetTypeRow.name].map(
                   (
                     assetRow: { fileName: string; thumbnailUrl: string },
@@ -367,8 +367,8 @@ const EntriesTableComponent = (props: EntriesTableType) => {
       {isLoading ? <Loader /> : null}
 
       {selectedEntries && selectedEntries.length ? (
-        <Grid container justify={"flex-end"} className="action-buttons">
-          <Grid item className="action-button">
+        <Grid container={true} justifyContent={"flex-end"} className="action-buttons">
+          <Grid item={true} className="action-button">
             {selectable ? null : (
               <Button
                 onClick={deleteSelectedEntries}

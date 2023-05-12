@@ -15,16 +15,16 @@ const Home = (props: PropsFromRedux) => {
 
   return (
     <Grid>
-      <Grid container justify="flex-end">
-        <Grid item>
+      <Grid container={true} justifyContent="flex-end">
+        <Grid item={true}>
           <Link to={dashboardApplicationNamesUrl}>
             <Button name="Application Spaces" />
           </Link>
         </Grid>
       </Grid>
       {/* <Paper elevation={3}> */}
-      <Grid container justify={"center"}>
-        <Grid item lg={4} xl={12}>
+      <Grid container={true} justifyContent={"center"}>
+        <Grid item={true} lg={4} xl={12}>
           <List>
             <ListItem>
               <Typography component={"h4"} variant={"h4"}>

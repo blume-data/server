@@ -149,12 +149,12 @@ export const AssetsAdderComponent = (props: AssetsAdderType) => {
     <Grid className={`${className} assets-adder-editor-wrapper`}>
       <RenderHeading value={label} type={"primary"} />
       <RenderHeading value={descriptionText} type={"secondary"} />
-      <Grid container justify={"flex-end"}>
+      <Grid container={true} justifyContent={"flex-end"}>
         {assetType === MULTIPLE_ASSETS_TYPE ||
         (filesIds.length < 1 && assetType === SINGLE_ASSETS_TYPE) ? (
           <Grid
             container={true}
-            justify={"center"}
+            justifyContent={"center"}
             className={"action-button-wrapper"}
           >
             {/* <UploadAsset
@@ -180,7 +180,7 @@ export const AssetsAdderComponent = (props: AssetsAdderType) => {
         ) : null}
       </Grid>
       {isLoading ? <Loader /> : null}
-      <Grid container className={"files-component"} justify={"flex-start"}>
+      <Grid container={true} className={"files-component"} justifyContent={"flex-start"}>
         {filesIds.map((refId, index) => {
           return (
             <Chip
