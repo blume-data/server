@@ -48,11 +48,13 @@ const Home = lazy(() => import("./modules/dashboard/pages/home"));
 const CreateEntry = lazy(
   () => import("./modules/dashboard/pages/DateEntries/CreateEntry")
 );
-const CreateDataModel = lazy(
-  () =>
-    import(
-      "./modules/dashboard/pages/ApplicationName/DataModels/CreateDataModel"
-    )
+
+const CreateDataModel = lazy(() =>
+  import(
+    "./modules/dashboard/pages/ApplicationName/DataModels/CreateDataModel"
+  ).then((module) => ({
+    default: module.CreateDataModel,
+  }))
 );
 
 function suspenceComponent(Component: any) {

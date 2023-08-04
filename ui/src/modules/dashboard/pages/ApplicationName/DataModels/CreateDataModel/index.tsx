@@ -131,7 +131,7 @@ interface ContentModelBasicInfoType {
   titleProperty: string;
 }
 
-const CreateDataModel = (props: CreateDataModelType) => {
+const CreateDataModelComponent = (props: CreateDataModelType) => {
   const [modelNames, setModelNames] = useState<
     { label: string; value: string }[]
   >([]);
@@ -366,9 +366,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
       }
     });
 
-    const contentModelName = name
-      ? name
-      : trimCharactersAndNumbers(displayName);
+    const contentModelName = name || trimCharactersAndNumbers(displayName);
 
     if (contentModelName) {
       setHideNames(true);
@@ -747,6 +745,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
     setAddingField(false);
   }
 
+  // Need to move out
   function fieldItem(
     name: string,
     description: string,
@@ -777,6 +776,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
     );
   }
 
+  // Need to move out
   function renderNameSection() {
     function onClick() {
       // turn off fields
@@ -869,6 +869,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
     }
   }
 
+  // Need to move out
   function renderPropertiesSection() {
     const tableRows: any = [
       { name: "Name", value: DISPLAY_NAME },
@@ -1025,10 +1026,15 @@ const CreateDataModel = (props: CreateDataModelType) => {
     setSettingFieldName(false);
   }
 
+  // Need to move out
   function renderAddFieldsAndSaveModelButtonGroup() {
     if (contentModelData.displayName) {
       return (
-        <Grid container={true} justifyContent={"flex-end"} className={"modal-action-buttons"}>
+        <Grid
+          container={true}
+          justifyContent={"flex-end"}
+          className={"modal-action-buttons"}
+        >
           <Button
             name={"Add Fields"}
             onClick={onClickAddFields}
@@ -1060,6 +1066,7 @@ const CreateDataModel = (props: CreateDataModelType) => {
   return (
     <Grid container={true} className={"create-data-model-container"}>
       {isLoading ? <Loader /> : null}
+      <h1>Taranjeet SIngh</h1>
 
       <Grid item={true} className="left-container">
         <Grid
@@ -1116,7 +1123,11 @@ const CreateDataModel = (props: CreateDataModelType) => {
                     />
                   </Grid>
                   <Grid item={true}>
-                    <Grid container={true} justifyContent={"center"} direction={"column"}>
+                    <Grid
+                      container={true}
+                      justifyContent={"center"}
+                      direction={"column"}
+                    >
                       <Button
                         className={"cancel-button"}
                         variant={"outlined"}
@@ -1326,4 +1337,4 @@ const mapState = (state: RootState) => {
 };
 
 const connector = connect(mapState);
-export default connector(CreateDataModel);
+export const CreateDataModel = connector(CreateDataModelComponent);
