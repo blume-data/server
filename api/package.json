@@ -6,6 +6,7 @@
   "scripts": {
     "start": "export ENVIORNMENT=production && export NODE_OPTIONS=--openssl-legacy-provider && node --trace-warnings build/index.js",
     "dev": "export ENVIORNMENT=dev && ts-node-dev --poll src/index.ts",
+    "d": "ts-node-dev --poll src/index.ts",
     "test": "jest --watchAll --no-cache",
     "test:ci": "jest",
     "build": "export ENVIORNMENT=production && export NODE_OPTIONS=--openssl-legacy-provider && webpack",
@@ -13,7 +14,8 @@
     "ingress": "kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/cloud/deploy.yaml",
     "clear-pods": "kubectl delete deployment auth-depl && kubectl delete deployment auth-mongo-depl && kubectl delete deployment data-depl",
     "jwt": "kubectl create secret generic jwt-secret --from-literal=JWT_KEY=sdjfksdjfdskfjdsk",
-    "DO:pods": "kubectl --kubeconfig=\".kube/ranjod-kubeconfig.yaml\" get pods"
+    "DO:pods": "kubectl --kubeconfig=\".kube/ranjod-kubeconfig.yaml\" get pods",
+    "sonar": "node ./sonarqube/sonarscan.js"
   },
   "jest": {
     "preset": "ts-jest",
@@ -39,6 +41,7 @@
     "@types/lodash": "^4.14.157",
     "@types/luxon": "^1.25.0",
     "@types/mongoose": "^5.7.8",
+    "@types/nodemailer": "^6.4.4",
     "@types/supertest": "^2.0.8",
     "@types/uuid": "^8.3.0",
     "axios": "^0.21.1",
@@ -65,7 +68,9 @@
     "uuid": "^8.3.2",
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.12",
-    "webpack-node-externals": "^1.7.2",
-    "@types/nodemailer": "^6.4.4"
+    "webpack-node-externals": "^1.7.2"
+  },
+  "devDependencies": {
+    "sonarqube-scanner": "^3.0.1"
   }
 }

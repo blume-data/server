@@ -115,3 +115,8 @@ dashboard/tsconfig.json
 client
 dashboard/src/stories
 .stories
+
+.scannerwork
+sonarqube/extensions
+sonarqube/data
+sonarqube/logs
