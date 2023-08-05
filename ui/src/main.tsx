@@ -1,4 +1,4 @@
-import { Profiler, StrictMode } from "react";
+import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import { applyMiddleware, compose } from "redux";
@@ -34,42 +34,18 @@ const store = createStore(
 );
 /* eslint-enable */
 
-const onRender = (
-  id: any,
-  phase: any,
-  actualDuration: any,
-  baseDuration: any,
-  startTime: any,
-  commitTime: any
-) => {
-  // Aggregate or log render timings...
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const logs = {
-    id,
-    phase,
-    actualDuration,
-    baseDuration,
-    startTime,
-    commitTime,
-  };
-
-  console.log("Main Log", logs);
-};
-
 const theme = createTheme({
   palette: paletteColor,
 });
 
 createRoot(document.getElementById("root") as HTMLElement).render(
   <StrictMode>
-    <Profiler id="profiler-app" onRender={onRender}>
-      <Provider store={store}>
-        <ThemeProvider theme={theme}>
-          <BrowserRouter>
-            <RouterComponent />
-          </BrowserRouter>
-        </ThemeProvider>
-      </Provider>
-    </Profiler>
+    <Provider store={store}>
+      <ThemeProvider theme={theme}>
+        <BrowserRouter>
+          <RouterComponent />
+        </BrowserRouter>
+      </ThemeProvider>
+    </Provider>
   </StrictMode>
 );

@@ -93,42 +93,21 @@ import { DropDown } from "../../../../../../components/common/Form/DropDown";
 import { DATA_ROUTES, paletteColor } from "../../../../../../utils/constants";
 import CloseOutlined from "@mui/icons-material/CloseOutlined";
 import ApplicationName from "../..";
-import { FieldDataType } from "./types";
 import { useAppState, withAppState } from "./AppContext";
 import { AddFieldsAndSaveModelButtonGroup } from "./components/AddFieldsAndSaveModelButtonGroup";
+import { FieldItem } from "./components/FieldItem";
 
 const CreateDataModelComponent = (props: CreateDataModelType) => {
   const [modelNames, setModelNames] = useState<
     { label: string; value: string }[]
   >([]);
-  const [settingFieldName, setSettingFieldName] = useState<boolean>(false);
-  const [fieldData, setFieldData] = useState<FieldDataType>({});
+  // const [settingFieldName, setSettingFieldName] = useState<boolean>(false);
   const [fieldEditMode, setFieldEditMode] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState<boolean>(false);
   const [deleteEntryName, setDeleteEntryName] = useState<string>("");
 
   const { env, applicationName, language } = props;
-
-  const {
-    fieldName = "",
-    fieldDisplayName = "",
-    fieldMatchPattern = "",
-    fieldMatchCustomPattern = "",
-    fieldProhibitPattern = "",
-    fieldMax = "",
-    fieldMinMaxCustomErrorMessage = "",
-    fieldMin = "",
-    fieldAssetsType = "",
-    fieldType = "",
-    fieldDefaultValue = "",
-    fieldDescription = "",
-    fieldIsRequired = "",
-    fieldIsUnique = "",
-    fieldMatchPatternCustomError = "",
-    fieldProhibitPatternCustomError = "",
-    fieldOnlySpecifiedValues = "",
-  } = fieldData;
 
   const history = useHistory();
 
@@ -153,7 +132,31 @@ const CreateDataModelComponent = (props: CreateDataModelType) => {
     modelSetting,
     setModelSetting,
     onClickSaveDataModel,
+    fieldData,
+    setFieldData,
+    settingFieldName,
+    setSettingFieldName,
   } = useAppState();
+
+  const {
+    fieldName = "",
+    fieldDisplayName = "",
+    fieldMatchPattern = "",
+    fieldMatchCustomPattern = "",
+    fieldProhibitPattern = "",
+    fieldMax = "",
+    fieldMinMaxCustomErrorMessage = "",
+    fieldMin = "",
+    fieldAssetsType = "",
+    fieldType = "",
+    fieldDefaultValue = "",
+    fieldDescription = "",
+    fieldIsRequired = "",
+    fieldIsUnique = "",
+    fieldMatchPatternCustomError = "",
+    fieldProhibitPatternCustomError = "",
+    fieldOnlySpecifiedValues = "",
+  } = fieldData;
 
   async function getData() {
     setIsLoading(true);
@@ -601,37 +604,6 @@ const CreateDataModelComponent = (props: CreateDataModelType) => {
   }
 
   // TODO:  Need to move out
-  function fieldItem(
-    name: string,
-    description: string,
-    Icon: JSX.Element,
-    value: string
-  ) {
-    function onClick() {
-      setFieldData({
-        ...fieldData,
-        fieldType: value,
-      });
-      setAddingField(false);
-      setSettingFieldName(true);
-    }
-
-    return (
-      <Tooltip title={description}>
-        <Paper onClick={onClick} className="paper-field-item">
-          <Grid className={"field-item"}>
-            <Button>
-              {Icon}
-              <h2>{name}</h2>
-              <p>{description}</p>
-            </Button>
-          </Grid>
-        </Paper>
-      </Tooltip>
-    );
-  }
-
-  // TODO:  Need to move out
   function renderNameSection() {
     function onClick() {
       // turn off fields
@@ -642,7 +614,7 @@ const CreateDataModelComponent = (props: CreateDataModelType) => {
       setHideNames(false);
     }
 
-    console.log("contentModelData", contentModelData);
+    // console.log("contentModelData", fieldData);
 
     return (
       <Grid
@@ -738,7 +710,6 @@ const CreateDataModelComponent = (props: CreateDataModelType) => {
         setAddingField(false);
         setFieldEditMode(true);
         setFieldData({
-          ...fieldData,
           fieldType: property.type,
           fieldDisplayName: property.displayName,
           fieldName: property.name,
@@ -889,8 +860,6 @@ const CreateDataModelComponent = (props: CreateDataModelType) => {
   return (
     <Grid container={true} className={"create-data-model-container"}>
       {isLoading ? <Loader /> : null}
-      <h1>Taranjeet SIngh</h1>
-
       <Grid item={true} className="left-container">
         <Grid
           style={{ flexWrap: "nowrap" }}
@@ -967,70 +936,72 @@ const CreateDataModelComponent = (props: CreateDataModelType) => {
                   justifyContent={"center"}
                   className="fields-grid"
                 >
-                  {fieldItem(
-                    "Formatted Text",
-                    "customised text with links and media",
-                    <TextFieldsIcon />,
-                    LONG_STRING_FIELD_TYPE
-                  )}
-                  {fieldItem(
-                    "Text",
-                    "names, paragraphs, title",
-                    <TextFieldsIcon />,
-                    SHORT_STRING_FIElD_TYPE
-                  )}
-                  {fieldItem(
-                    "Number",
-                    "numbers like age, count, quantity",
-                    <Grid className={"numbers"}>
-                      <Looks3Icon />
-                      <Looks4Icon />
-                      <Looks5Icon />
-                    </Grid>,
-                    INTEGER_FIElD_TYPE
-                  )}
-                  {fieldItem(
-                    "Date",
-                    "only date, years, months, days",
-                    <DateRangeIcon />,
-                    DATE_FIElD_TYPE
-                  )}
-                  {fieldItem(
-                    "Date and time",
-                    "date with time, days, hours, events",
-                    <AccessTimeIcon />,
-                    DATE_AND_TIME_FIElD_TYPE
-                  )}
-                  {fieldItem(
-                    "Location",
-                    "coordinates",
-                    <LocationOnIcon />,
-                    LOCATION_FIELD_TYPE
-                  )}
-                  {fieldItem(
-                    "Boolean",
-                    "true or false",
-                    <ToggleOffIcon />,
-                    BOOLEAN_FIElD_TYPE
-                  )}
-                  {fieldItem(
-                    "Json",
-                    "json data",
-                    <CodeIcon />,
-                    JSON_FIELD_TYPE
-                  )}
-                  {fieldItem(
-                    "Media",
-                    "videos, photos, files",
-                    <PermMediaIcon />,
-                    MEDIA_FIELD_TYPE
-                  )}
-                  {fieldItem(
-                    "Reference",
-                    "For example a comment can refer to authors",
-                    <LinkIcon />,
-                    REFERENCE_FIELD_TYPE
-                  )}
+                  <FieldItem
+                    value={LONG_STRING_FIELD_TYPE}
+                    name="Formatted Text"
+                    description="customised text with links and media"
+                    Icon={<TextFieldsIcon />}
+                  />
+                  <FieldItem
+                    value={SHORT_STRING_FIElD_TYPE}
+                    name="Text"
+                    description="names, paragraphs, title"
+                    Icon={<TextFieldsIcon />}
+                  />
+                  <FieldItem
+                    value={INTEGER_FIElD_TYPE}
+                    name="Number"
+                    description="numbers like age, count, quantity"
+                    Icon={
+                      <Grid className={"numbers"}>
+                        <Looks3Icon />
+                        <Looks4Icon />
+                        <Looks5Icon />
+                      </Grid>
+                    }
+                  />
+                  <FieldItem
+                    value={DATE_FIElD_TYPE}
+                    name="Date"
+                    description="only date, years, months, days"
+                    Icon={<DateRangeIcon />}
+                  />
+                  <FieldItem
+                    value={DATE_AND_TIME_FIElD_TYPE}
+                    name="Date and time"
+                    description="date with time, days, hours, events"
+                    Icon={<AccessTimeIcon />}
+                  />
+                  <FieldItem
+                    value={LOCATION_FIELD_TYPE}
+                    name="Location"
+                    description="coordinates"
+                    Icon={<LocationOnIcon />}
+                  />
+                  <FieldItem
+                    value={BOOLEAN_FIElD_TYPE}
+                    name="Boolean"
+                    description="true or false"
+                    Icon={<ToggleOffIcon />}
+                  />
+                  <FieldItem
+                    value={JSON_FIELD_TYPE}
+                    name="Json"
+                    description="json data"
+                    Icon={<CodeIcon />}
+                  />
+                  <FieldItem
+                    value={MEDIA_FIELD_TYPE}
+                    name="Media"
+                    description="videos, photos, files"
+                    Icon={<PermMediaIcon />}
+                  />
+                  <FieldItem
+                    value={REFERENCE_FIELD_TYPE}
+                    name="Reference"
+                    description="For example a comment can refer to authors"
+                    Icon={<LinkIcon />}
+                  />
                 </Grid>
               </Grid>
             ) : settingFieldName ? null : (

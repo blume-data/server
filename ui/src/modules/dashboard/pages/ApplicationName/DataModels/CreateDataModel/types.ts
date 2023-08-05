@@ -39,9 +39,9 @@ export type FormResponseType = string | ErrorMessagesType[];
 
 export interface ContextStateType {
   // modelNames: ModelNameType[];
-  // settingFieldName: boolean;
+  settingFieldName: boolean;
   addingField: boolean;
-  // fieldData: FieldDataType;
+  fieldData: FieldDataType;
   // fieldEditMode: boolean;
   hideNames: boolean;
   contentModelData: ContentModelBasicInfoType;
@@ -64,6 +64,8 @@ export interface ContextType extends ContextStateType {
   setIsAlertOpen(action: boolean): void;
   setAlertMessage(action: AlertType): void;
   setModelSetting(action: ModelSettingType): void;
+  setFieldData(action: FieldDataType): void;
+  setSettingFieldName(action: boolean): void;
   clearAlert(): void;
   onClickAddFields(): void;
   onClickSaveDataModel(

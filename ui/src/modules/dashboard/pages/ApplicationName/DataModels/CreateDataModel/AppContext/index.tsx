@@ -5,7 +5,7 @@ import {
   ErrorMessagesType,
   MESSAGE,
 } from "@ranjodhbirkaur/constants";
-import { createContext, useState, useContext, useMemo } from "react";
+import { createContext, useState, useContext } from "react";
 import { AlertType } from "../../../../../../../components/common/Form";
 import {
   doPutRequest,
@@ -25,13 +25,14 @@ import {
   PropertyType,
   FormResponseType,
   ContextType,
+  FieldDataType,
 } from "../types";
 
 const initialState: ContextStateType = {
   // modelNames: [],
-  // settingFieldName: false,
+  settingFieldName: false,
   addingField: false,
-  // fieldData: {},
+  fieldData: {},
   // fieldEditMode: false,
   hideNames: false,
   // confirmDialogOpen: false,
@@ -74,6 +75,8 @@ const initialContext: ContextType = {
   setIsAlertOpen: () => undefined,
   setAlertMessage: () => undefined,
   setModelSetting: () => undefined,
+  setFieldData: () => undefined,
+  setSettingFieldName: () => undefined,
   clearAlert: () => undefined,
   onClickAddFields: () => undefined,
   onClickSaveDataModel: async () => undefined,
@@ -147,6 +150,22 @@ export function AppStateProvider(props: { children: React.ReactNode }) {
       return {
         ...old,
         modelSetting: action,
+      };
+    });
+  };
+  const setFieldData = (action: FieldDataType) => {
+    setAppState((old) => {
+      return {
+        ...old,
+        fieldData: action,
+      };
+    });
+  };
+  const setSettingFieldName = (action: boolean) => {
+    setAppState((old) => {
+      return {
+        ...old,
+        settingFieldName: action,
       };
     });
   };
@@ -280,7 +299,11 @@ export function AppStateProvider(props: { children: React.ReactNode }) {
     setModelSetting,
     setAlertMessage,
     setIsAlertOpen,
+    setFieldData,
+    setSettingFieldName,
   };
+
+  console.log("App State", appState);
 
   return (
     <AppContext.Provider value={{ ...appState, ...methods }}>
