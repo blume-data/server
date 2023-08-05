@@ -40,7 +40,6 @@ import ToggleOffIcon from "@mui/icons-material/ToggleOff";
 import CodeIcon from "@mui/icons-material/Code";
 import PermMediaIcon from "@mui/icons-material/PermMedia";
 import LinkIcon from "@mui/icons-material/Link";
-import EditIcon from "@mui/icons-material/Edit";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import { RootState } from "../../../../../../rootReducer";
 import { connect, ConnectedProps } from "react-redux";
@@ -56,10 +55,7 @@ import {
   getBaseUrl,
 } from "../../../../../../utils/urls";
 import Loader from "../../../../../../components/common/Loader";
-import BasicTableMIUI from "../../../../../../components/common/BasicTableMIUI";
-import DeleteIcon from "@mui/icons-material/Delete";
 import IconButton from "@mui/material/IconButton";
-import Paper from "@mui/material/Paper";
 import { Alert } from "../../../../../../components/common/Toast";
 import { AlertDialog } from "../../../../../../components/common/AlertDialog";
 import { useHistory } from "react-router";
@@ -89,30 +85,25 @@ import {
 } from "./constants";
 import { getNameFields, getPropertyFields } from "./fields";
 import { ModelSetting } from "./ModelSetting";
-import { DropDown } from "../../../../../../components/common/Form/DropDown";
 import { DATA_ROUTES, paletteColor } from "../../../../../../utils/constants";
 import CloseOutlined from "@mui/icons-material/CloseOutlined";
 import ApplicationName from "../..";
 import { useAppState, withAppState } from "./AppContext";
 import { AddFieldsAndSaveModelButtonGroup } from "./components/AddFieldsAndSaveModelButtonGroup";
 import { FieldItem } from "./components/FieldItem";
+import { NameSection } from "./components/NameSection";
+import { PropertiesSection } from "./components/PropertiesSection";
 
 const CreateDataModelComponent = (props: CreateDataModelType) => {
   const [modelNames, setModelNames] = useState<
     { label: string; value: string }[]
   >([]);
-  // const [settingFieldName, setSettingFieldName] = useState<boolean>(false);
-  const [fieldEditMode, setFieldEditMode] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [confirmDialogOpen, setConfirmDialogOpen] = useState<boolean>(false);
-  const [deleteEntryName, setDeleteEntryName] = useState<string>("");
 
   const { env, applicationName, language } = props;
 
   const history = useHistory();
 
   const GetCollectionNamesUrl = DATA_ROUTES.GetCollectionNamesUrl;
-  // const CollectionUrl = DATA_ROUTES.CollectionUrl;
 
   const {
     addingField,
@@ -136,6 +127,14 @@ const CreateDataModelComponent = (props: CreateDataModelType) => {
     setFieldData,
     settingFieldName,
     setSettingFieldName,
+    isLoading,
+    setIsLoading,
+    confirmDialogOpen,
+    deleteEntryName,
+    setDeleteEntryName,
+    setConfirmDialogOpen,
+    fieldEditMode,
+    setFieldEditMode,
   } = useAppState();
 
   const {
@@ -573,9 +572,7 @@ const CreateDataModelComponent = (props: CreateDataModelType) => {
     }
   }
 
-  /*
-   * Show message alert
-   * */
+  /*Show message alert* */
   function showAlert(message: string, severity?: "error" | "success" | "info") {
     if (!severity) {
       severity = "error";
@@ -601,241 +598,6 @@ const CreateDataModelComponent = (props: CreateDataModelType) => {
       });
       setProperties(tempProperties);
     }
-  }
-
-  // TODO:  Need to move out
-  function renderNameSection() {
-    function onClick() {
-      // turn off fields
-      // turn off setting fields property
-      // open name form
-      setSettingFieldName(false);
-      setAddingField(false);
-      setHideNames(false);
-    }
-
-    // console.log("contentModelData", fieldData);
-
-    return (
-      <Grid
-        container={true}
-        direction="column"
-        className="name-section-container"
-      >
-        <Grid item={true}>
-          <Grid container={true}>
-            <Grid item={true} className={"text-container"}>
-              <RenderHeading
-                type={"primary"}
-                className={"model-display-name m-0"}
-                value={`${
-                  contentModelData.displayName
-                    ? contentModelData.displayName
-                    : "untitled model"
-                }`}
-              />
-              {contentModelData.description ? (
-                <RenderHeading
-                  type={"secondary"}
-                  className={"model-description"}
-                  value={contentModelData.description}
-                />
-              ) : null}
-            </Grid>
-            <Grid item={true} className={"edit-button"}>
-              <Tooltip title={`Edit model ${contentModelData.displayName}`}>
-                <IconButton onClick={onClick} color="primary" size="small">
-                  <EditIcon />
-                </IconButton>
-              </Tooltip>
-            </Grid>
-          </Grid>
-        </Grid>
-        <Grid item={true}>
-          <Grid container={true} className="title-container" direction="column">
-            <Grid item={true}>
-              <RenderHeading type="secondary" value="Set a title field" />
-            </Grid>
-
-            <Grid item={true}>
-              <DropDown
-                options={
-                  properties?.map((property) => {
-                    return {
-                      label: property.displayName,
-                      value: property.name,
-                    };
-                  }) || []
-                }
-                name="title field"
-                placeholder="title field"
-                required={false}
-                onChange={(e) => {
-                  setContentModelData({
-                    ...contentModelData,
-                    titleProperty: e.target.value,
-                  });
-                }}
-                value={contentModelData.titleProperty}
-                label="title field"
-                className="title-drop-down"
-                descriptionText="title property of the model, if left blank first property will be set as title property"
-                index={9}
-              />
-            </Grid>
-          </Grid>
-        </Grid>
-      </Grid>
-    );
-  }
-
-  // TODO:  Need to move out
-  function renderPropertiesSection() {
-    const tableRows: any = [
-      { name: "Name", value: DISPLAY_NAME },
-      { name: "Description", value: DESCRIPTION },
-      { name: "Type", value: "type" },
-      { name: "Edit", value: "edit", onClick: true, align: "center" },
-      { name: "Delete", value: "delete", onClick: true, align: "center" },
-    ];
-
-    function openConfirmAlert(property: RuleType) {
-      setDeleteEntryName(property.name);
-      setConfirmDialogOpen(true);
-    }
-
-    function onClickEdit(property: RuleType) {
-      setTimeout(() => {
-        setSettingFieldName(true);
-        setAddingField(false);
-        setFieldEditMode(true);
-        setFieldData({
-          fieldType: property.type,
-          fieldDisplayName: property.displayName,
-          fieldName: property.name,
-          fieldDescription: property.description,
-          fieldIsRequired: property.required ? "true" : "false",
-          fieldIsUnique: property.unique ? "true" : "false",
-          fieldDefaultValue: (() => {
-            if (property.type === BOOLEAN_FIElD_TYPE) {
-              return property.default === "true" ? "true" : "false";
-            } else {
-              return property.default || "";
-            }
-          })(),
-          fieldAssetsType: (() => {
-            if (property.type === MEDIA_FIELD_TYPE) {
-              return property.assetsType || "";
-            }
-          })(),
-          fieldMax: (() => {
-            if (
-              property.type === SHORT_STRING_FIElD_TYPE ||
-              property.type === INTEGER_FIElD_TYPE
-            ) {
-              return property.max || "";
-            }
-          })(),
-          fieldMin: (() => {
-            if (
-              property.type === SHORT_STRING_FIElD_TYPE ||
-              property.type === INTEGER_FIElD_TYPE
-            ) {
-              return property.min || "";
-            }
-          })(),
-          fieldMinMaxCustomErrorMessage: (() => {
-            if (
-              property.type === SHORT_STRING_FIElD_TYPE ||
-              property.type === INTEGER_FIElD_TYPE
-            ) {
-              return property[FIELD_CUSTOM_ERROR_MSG_MIN_MAX] || "";
-            }
-          })(),
-          fieldOnlySpecifiedValues: (() => {
-            if (
-              property.type === SHORT_STRING_FIElD_TYPE ||
-              property.type === INTEGER_FIElD_TYPE
-            ) {
-              return property.onlyAllowedValues || "";
-            }
-          })(),
-          fieldMatchPattern: (() => {
-            if (property.type === SHORT_STRING_FIElD_TYPE) {
-              return property.matchSpecificPattern || "";
-            }
-          })(),
-          fieldMatchCustomPattern: (() => {
-            if (property.type === SHORT_STRING_FIElD_TYPE) {
-              return property.matchCustomSpecificPattern || "";
-            }
-          })(),
-          fieldProhibitPattern: (() => {
-            if (property.type === SHORT_STRING_FIElD_TYPE) {
-              return property.prohibitSpecificPattern || "";
-            }
-          })(),
-          fieldMatchPatternCustomError: (() => {
-            if (property.type === SHORT_STRING_FIElD_TYPE) {
-              return (
-                property[FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN] || ""
-              );
-            }
-          })(),
-          fieldProhibitPatternCustomError: (() => {
-            if (property.type === SHORT_STRING_FIElD_TYPE) {
-              return (
-                property[FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN] || ""
-              );
-            }
-          })(),
-        });
-      });
-    }
-
-    const rows =
-      properties &&
-      properties.map((property) => {
-        return {
-          ...property,
-          edit: (
-            <IconButton>
-              <EditIcon color="primary" />
-            </IconButton>
-          ),
-          delete: (
-            <IconButton>
-              <DeleteIcon color="secondary" />
-            </IconButton>
-          ),
-          "delete-click": () => openConfirmAlert(property),
-          "edit-click": () => onClickEdit(property),
-        };
-      });
-
-    return (
-      <Paper elevation={6}>
-        <Grid
-          container
-          direction={"column"}
-          className={"property-section-container"}
-        >
-          {properties && properties.length ? (
-            <BasicTableMIUI
-              rows={rows}
-              columns={tableRows}
-              tableName={"Fields"}
-            />
-          ) : addingField ? null : (
-            <RenderHeading
-              className={"no-fields-added"}
-              type={"primary"}
-              value={"Add some fields to get stated"}
-            />
-          )}
-        </Grid>
-      </Paper>
-    );
   }
 
   /*Close the form of fields properties*/
@@ -867,7 +629,9 @@ const CreateDataModelComponent = (props: CreateDataModelType) => {
           className={"model-name-container"}
           justifyContent="space-between"
         >
-          <Grid item={true}>{renderNameSection()}</Grid>
+          <Grid item={true}>
+            <NameSection />
+          </Grid>
           <Grid item={true} className="round-padding">
             <Tooltip title="Close">
               <IconButton
@@ -894,7 +658,7 @@ const CreateDataModelComponent = (props: CreateDataModelType) => {
           <Grid item={true} className="create-content-model">
             <Grid>
               {contentModelData.displayName ? (
-                renderPropertiesSection()
+                <PropertiesSection />
               ) : (
                 <RenderHeading
                   className={"add-name-heading"}

@@ -29,13 +29,11 @@ import {
 } from "../types";
 
 const initialState: ContextStateType = {
-  // modelNames: [],
   settingFieldName: false,
   addingField: false,
   fieldData: {},
-  // fieldEditMode: false,
   hideNames: false,
-  // confirmDialogOpen: false,
+  confirmDialogOpen: false,
   contentModelData: {
     name: "",
     description: "",
@@ -45,10 +43,11 @@ const initialState: ContextStateType = {
   },
   properties: null,
   formResponse: "",
-  // isLoading: false,
+  isLoading: false,
   isAlertOpen: false,
   alert: { message: "" },
-  //deleteEntryName: "",
+  deleteEntryName: "",
+  fieldEditMode: false,
   modelSetting: {
     id: null,
     getPermittedUserGroups: [],
@@ -77,6 +76,10 @@ const initialContext: ContextType = {
   setModelSetting: () => undefined,
   setFieldData: () => undefined,
   setSettingFieldName: () => undefined,
+  setDeleteEntryName: () => undefined,
+  setConfirmDialogOpen: () => undefined,
+  setFieldEditMode: () => undefined,
+  setIsLoading: () => undefined,
   clearAlert: () => undefined,
   onClickAddFields: () => undefined,
   onClickSaveDataModel: async () => undefined,
@@ -95,6 +98,7 @@ export function AppStateProvider(props: { children: React.ReactNode }) {
       };
     });
   };
+
   const setHideNames = (action: boolean) => {
     setAppState((old) => {
       return {
@@ -103,6 +107,7 @@ export function AppStateProvider(props: { children: React.ReactNode }) {
       };
     });
   };
+
   const setContentModelData = (action: ContentModelBasicInfoType) => {
     setAppState((old) => {
       return {
@@ -111,6 +116,7 @@ export function AppStateProvider(props: { children: React.ReactNode }) {
       };
     });
   };
+
   const setProperties = (action: PropertyType) => {
     setAppState((old) => {
       return {
@@ -119,6 +125,7 @@ export function AppStateProvider(props: { children: React.ReactNode }) {
       };
     });
   };
+
   const setFormResponse = (action: FormResponseType) => {
     setAppState((old) => {
       return {
@@ -145,6 +152,7 @@ export function AppStateProvider(props: { children: React.ReactNode }) {
       };
     });
   };
+
   const setModelSetting = (action: ModelSettingType) => {
     setAppState((old) => {
       return {
@@ -153,6 +161,7 @@ export function AppStateProvider(props: { children: React.ReactNode }) {
       };
     });
   };
+
   const setFieldData = (action: FieldDataType) => {
     setAppState((old) => {
       return {
@@ -161,11 +170,48 @@ export function AppStateProvider(props: { children: React.ReactNode }) {
       };
     });
   };
+
   const setSettingFieldName = (action: boolean) => {
     setAppState((old) => {
       return {
         ...old,
         settingFieldName: action,
+      };
+    });
+  };
+
+  const setConfirmDialogOpen = (action: boolean) => {
+    setAppState((old) => {
+      return {
+        ...old,
+        confirmDialogOpen: action,
+      };
+    });
+  };
+
+  const setFieldEditMode = (action: boolean) => {
+    setAppState((old) => {
+      return {
+        ...old,
+        fieldEditMode: action,
+      };
+    });
+  };
+
+  const setIsLoading = (action: boolean) => {
+    setAppState((old) => {
+      return {
+        ...old,
+        fieldEditMode: action,
+      };
+    });
+  };
+
+  const setDeleteEntryName = (action: string) => {
+    setAppState((old) => {
+      return {
+        ...old,
+        deleteEntryName: action,
       };
     });
   };
@@ -301,9 +347,11 @@ export function AppStateProvider(props: { children: React.ReactNode }) {
     setIsAlertOpen,
     setFieldData,
     setSettingFieldName,
+    setDeleteEntryName,
+    setConfirmDialogOpen,
+    setFieldEditMode,
+    setIsLoading,
   };
-
-  console.log("App State", appState);
 
   return (
     <AppContext.Provider value={{ ...appState, ...methods }}>

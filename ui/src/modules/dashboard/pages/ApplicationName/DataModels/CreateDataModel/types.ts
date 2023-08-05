@@ -42,16 +42,16 @@ export interface ContextStateType {
   settingFieldName: boolean;
   addingField: boolean;
   fieldData: FieldDataType;
-  // fieldEditMode: boolean;
+  fieldEditMode: boolean;
   hideNames: boolean;
   contentModelData: ContentModelBasicInfoType;
   properties: PropertyType;
   formResponse: FormResponseType;
-  // isLoading: boolean;
+  isLoading: boolean;
   isAlertOpen: boolean;
   alert: AlertType;
-  // confirmDialogOpen: boolean;
-  // deleteEntryName: string;
+  confirmDialogOpen: boolean;
+  deleteEntryName: string;
   modelSetting: ModelSettingType;
 }
 
@@ -66,6 +66,10 @@ export interface ContextType extends ContextStateType {
   setModelSetting(action: ModelSettingType): void;
   setFieldData(action: FieldDataType): void;
   setSettingFieldName(action: boolean): void;
+  setDeleteEntryName(action: string): void;
+  setConfirmDialogOpen(action: boolean): void;
+  setFieldEditMode(action: boolean): void;
+  setIsLoading(action: boolean): void;
   clearAlert(): void;
   onClickAddFields(): void;
   onClickSaveDataModel(
