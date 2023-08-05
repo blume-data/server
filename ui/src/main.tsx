@@ -1,13 +1,13 @@
-import { Profiler, StrictMode } from 'react'
-import {createRoot} from 'react-dom/client'
+import { Profiler, StrictMode } from "react";
+import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import { applyMiddleware, compose } from "redux";
-import {legacy_createStore as createStore} from 'redux';
+import { legacy_createStore as createStore } from "redux";
 import thunk from "redux-thunk";
 import { RouterComponent } from "./Router";
 import { rootReducer, RouteAddressStateType } from "./rootReducer";
 import { Provider } from "react-redux";
-import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { paletteColor } from "./utils/constants";
 import "./index.scss";
 declare global {
@@ -26,7 +26,6 @@ if (window.INITIAL_STATE && window.INITIAL_STATE.routeAddress) {
 
 console.log("Route Adddress", routeAddress);
 
- 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store = createStore(
   rootReducer,
@@ -35,20 +34,33 @@ const store = createStore(
 );
 /* eslint-enable */
 
-const onRender = (id: any, phase:any, actualDuration:any, baseDuration:any, startTime:any, commitTime:any) => {
+const onRender = (
+  id: any,
+  phase: any,
+  actualDuration: any,
+  baseDuration: any,
+  startTime: any,
+  commitTime: any
+) => {
   // Aggregate or log render timings...
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const logs = {
-    id, phase, actualDuration, baseDuration, startTime, commitTime
+    id,
+    phase,
+    actualDuration,
+    baseDuration,
+    startTime,
+    commitTime,
   };
 
-  console.log("Log", logs);
-}
+  console.log("Main Log", logs);
+};
 
 const theme = createTheme({
-  palette: paletteColor
+  palette: paletteColor,
 });
 
-createRoot(document.getElementById('root') as HTMLElement).render(
+createRoot(document.getElementById("root") as HTMLElement).render(
   <StrictMode>
     <Profiler id="profiler-app" onRender={onRender}>
       <Provider store={store}>
@@ -58,7 +70,6 @@ createRoot(document.getElementById('root') as HTMLElement).render(
           </BrowserRouter>
         </ThemeProvider>
       </Provider>
-      </Profiler>
+    </Profiler>
   </StrictMode>
-)
-
+);

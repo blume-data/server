@@ -1,4 +1,3 @@
-
 // import {Pagination} from '@material-ui/lab';
 import Grid from "@mui/material/Grid";
 import "./pagination.scss";
@@ -19,9 +18,10 @@ interface PaginationProps {
   totalItems: number;
   id: string;
 }
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function PaginationTab(props: PaginationProps) {
   // const { currentPage, limit, handleChange, totalItems, id } = props;
-  console.log("Props", props);
+  console.log("Pagination Props", props);
   return (
     <Grid className={"main-pagination-container"}>
       {/* <Pagination

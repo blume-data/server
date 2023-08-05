@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Grid, Tooltip } from "@mui/material";
-import { AlertType, Form } from "../../../../../../components/common/Form";
+import { Form } from "../../../../../../components/common/Form";
 import { ConfigField } from "../../../../../../components/common/Form/interface";
 import {
   BOOLEAN_FIElD_TYPE,
@@ -8,7 +8,6 @@ import {
   DATE_FIElD_TYPE,
   DESCRIPTION,
   DISPLAY_NAME,
-  ErrorMessagesType,
   FIELD_CUSTOM_ERROR_MSG_MATCH_SPECIFIC_PATTERN,
   FIELD_CUSTOM_ERROR_MSG_MIN_MAX,
   FIELD_CUSTOM_ERROR_MSG_PROHIBIT_SPECIFIC_PATTERN,
@@ -21,7 +20,6 @@ import {
   LOCATION_FIELD_TYPE,
   LONG_STRING_FIELD_TYPE,
   MEDIA_FIELD_TYPE,
-  MESSAGE,
   NAME,
   REFERENCE_FIELD_TYPE,
   SHORT_STRING_FIElD_TYPE,
@@ -46,11 +44,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import { RootState } from "../../../../../../rootReducer";
 import { connect, ConnectedProps } from "react-redux";
-import {
-  doGetRequest,
-  doPostRequest,
-  doPutRequest,
-} from "../../../../../../utils/baseApi";
+import { doGetRequest } from "../../../../../../utils/baseApi";
 import {
   getItemFromLocalStorage,
   getModelDataAndRules,
@@ -94,92 +88,25 @@ import {
   FIELD_REFERENCE_MODEL_NAME,
 } from "./constants";
 import { getNameFields, getPropertyFields } from "./fields";
-import { ModelSetting, ModelSettingType } from "./ModelSetting";
+import { ModelSetting } from "./ModelSetting";
 import { DropDown } from "../../../../../../components/common/Form/DropDown";
 import { DATA_ROUTES, paletteColor } from "../../../../../../utils/constants";
 import CloseOutlined from "@mui/icons-material/CloseOutlined";
 import ApplicationName from "../..";
-
-type PropsFromRedux = ConnectedProps<typeof connector>;
-type CreateDataModelType = PropsFromRedux;
-
-interface FieldData {
-  fieldName?: string;
-  fieldDescription?: string;
-  fieldMax?: string | number;
-  fieldMin?: string | number;
-  fieldMatchPattern?: string;
-  fieldMatchCustomPattern?: string;
-  fieldProhibitPattern?: string;
-  fieldMinMaxCustomErrorMessage?: string;
-  fieldMatchPatternCustomError?: string;
-  fieldProhibitPatternCustomError?: string;
-  fieldOnlySpecifiedValues?: string;
-  fieldDefaultValue?: string;
-  fieldDisplayName?: string;
-  fieldIsRequired?: string;
-  fieldIsUnique?: string;
-  fieldAssetsType?: string;
-  fieldType?: string;
-}
-
-interface ContentModelBasicInfoType {
-  name: string;
-  description: string;
-  displayName: string;
-  id: string;
-  titleProperty: string;
-}
+import { FieldDataType } from "./types";
+import { useAppState, withAppState } from "./AppContext";
+import { AddFieldsAndSaveModelButtonGroup } from "./components/AddFieldsAndSaveModelButtonGroup";
 
 const CreateDataModelComponent = (props: CreateDataModelType) => {
   const [modelNames, setModelNames] = useState<
     { label: string; value: string }[]
   >([]);
   const [settingFieldName, setSettingFieldName] = useState<boolean>(false);
-  const [addingField, setAddingField] = useState<boolean>(false);
-
-  const [fieldData, setFieldData] = useState<FieldData>({});
-
+  const [fieldData, setFieldData] = useState<FieldDataType>({});
   const [fieldEditMode, setFieldEditMode] = useState<boolean>(false);
-
-  const [hideNames, setHideNames] = useState<boolean>(false);
-
-  const [contentModelData, setContentModelData] =
-    useState<ContentModelBasicInfoType>({
-      name: "",
-      description: "",
-      displayName: "",
-      id: "",
-      titleProperty: "",
-    });
-
-  const [properties, setProperties] = useState<RuleType[] | null>(null);
-
-  const [formResponse, setFormResponse] = useState<
-    string | ErrorMessagesType[]
-  >("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  // to show alerts
-  const [isAlertOpen, setIsAlertOpen] = useState<boolean>(false);
-  const [alert, setAlertMessage] = useState<AlertType>({ message: "" });
   const [confirmDialogOpen, setConfirmDialogOpen] = useState<boolean>(false);
   const [deleteEntryName, setDeleteEntryName] = useState<string>("");
-
-  const [modelSetting, setModelSetting] = useState<ModelSettingType>({
-    id: null,
-    getPermittedUserGroups: [],
-    postPermittedUserGroups: [],
-    putPermittedUserGroups: [],
-    deletePermittedUserGroups: [],
-
-    getRestrictedUserGroups: [],
-    postRestrictedUserGroups: [],
-    putRestrictedUserGroups: [],
-    deleteRestrictedUserGroups: [],
-    supportedDomains: [],
-    isPublic: false,
-  });
 
   const { env, applicationName, language } = props;
 
@@ -206,7 +133,27 @@ const CreateDataModelComponent = (props: CreateDataModelType) => {
   const history = useHistory();
 
   const GetCollectionNamesUrl = DATA_ROUTES.GetCollectionNamesUrl;
-  const CollectionUrl = DATA_ROUTES.CollectionUrl;
+  // const CollectionUrl = DATA_ROUTES.CollectionUrl;
+
+  const {
+    addingField,
+    setAddingField,
+    hideNames,
+    setHideNames,
+    contentModelData,
+    setContentModelData,
+    properties,
+    setProperties,
+    formResponse,
+    setFormResponse,
+    isAlertOpen,
+    setIsAlertOpen,
+    alert,
+    setAlertMessage,
+    modelSetting,
+    setModelSetting,
+    onClickSaveDataModel,
+  } = useAppState();
 
   async function getData() {
     setIsLoading(true);
@@ -288,6 +235,7 @@ const CreateDataModelComponent = (props: CreateDataModelType) => {
 
       const fullUrl = `${getBaseUrl()}${url}?get=displayName,name`;
       const response = await doGetRequest(fullUrl, null, true);
+
       if (response && response.length) {
         const m: { label: string; value: string }[] = [];
         response.forEach((item: { displayName: string; name: string }) => {
@@ -395,7 +343,7 @@ const CreateDataModelComponent = (props: CreateDataModelType) => {
         ];
         setProperties(newProperties);
       }
-      onClickSaveDataModel(newData, properties || []);
+      onClickSaveDataModel(newData, properties || [], env, applicationName);
     } else {
       // show alert that model name is required
       showAlert("Please add Model name");
@@ -622,11 +570,6 @@ const CreateDataModelComponent = (props: CreateDataModelType) => {
     }
   }
 
-  function onClickAddFields() {
-    setAddingField(true);
-    setHideNames(true);
-  }
-
   /*
    * Show message alert
    * */
@@ -643,109 +586,21 @@ const CreateDataModelComponent = (props: CreateDataModelType) => {
     }, 10);
   }
 
-  /*Clear Alert*/
-  function clearAlert() {
-    setTimeout(() => {
-      setIsAlertOpen(false);
-      setAlertMessage({
-        message: "",
-      });
-    }, 3000);
-  }
-
-  async function onClickSaveDataModel(
-    contentModelData: ContentModelBasicInfoType,
-    properties: RuleType[]
-  ) {
-    const clientUserName = getItemFromLocalStorage(CLIENT_USER_NAME);
-    // validate
-    if (!contentModelData.displayName) {
-      setIsAlertOpen(true);
-      setAlertMessage({
-        message: "Please add model name",
-        severity: "error",
-      });
-      clearAlert();
-      return;
-    }
-
-    if (clientUserName && properties && properties.length) {
-      const url = CollectionUrl.replace(":clientUserName", clientUserName)
-        .replace(":env", env)
-        .replace(":applicationName", applicationName);
-
-      let resp;
-
-      if (contentModelData.id) {
-        resp = await doPutRequest(
-          `${getBaseUrl()}${url}`,
-          {
-            name: contentModelData.name,
-            displayName: contentModelData.displayName,
-            description: contentModelData.description,
-            rules: properties,
-            id: contentModelData.id,
-            titleField: contentModelData.titleProperty,
-            setting: modelSetting.id,
-          },
-          true
-        );
-        setFormResponse(resp);
-      } else {
-        resp = await doPostRequest(
-          `${getBaseUrl()}${url}`,
-          {
-            name: contentModelData.name,
-            displayName: contentModelData.displayName,
-            description: contentModelData.description,
-            rules: properties,
-            titleField: contentModelData.titleProperty,
-            setting: modelSetting.id,
-          },
-          true
-        );
-        if (resp?.id) {
-          setContentModelData({
-            ...contentModelData,
-            id: resp.id,
-          });
-        }
-        setFormResponse(resp);
-      }
-
-      if (resp && !resp.errors) {
-        const url = dashboardCreateDataModelsUrl.replace(
-          `:${APPLICATION_NAME}`,
-          applicationName
-        );
-        history.push(`${url}?name=${contentModelData.name}`);
-      } else if (resp.errors && resp.errors.length) {
-        setIsAlertOpen(true);
-        let message = "";
-        resp.errors.map((errorItem: ErrorMessagesType, index: number) => {
-          return (message += `${index + 1}: ${errorItem[MESSAGE]} \n`);
-        });
-        setAlertMessage({
-          message,
-          severity: "error",
-        });
-      }
-    } else if (!properties || !properties.length) {
-      setIsAlertOpen(true);
-      setAlertMessage({
-        message: "Please add fields",
-        severity: "error",
-      });
-      clearAlert();
-    }
-  }
-
   /*Handle click on cancel add field*/
   function onClickCancelAddField() {
     setAddingField(false);
   }
 
-  // Need to move out
+  function onClickDeleteProperty(propertyName: string) {
+    if (properties) {
+      const tempProperties = properties.filter((propertyItem) => {
+        return propertyItem.name !== propertyName;
+      });
+      setProperties(tempProperties);
+    }
+  }
+
+  // TODO:  Need to move out
   function fieldItem(
     name: string,
     description: string,
@@ -776,7 +631,7 @@ const CreateDataModelComponent = (props: CreateDataModelType) => {
     );
   }
 
-  // Need to move out
+  // TODO:  Need to move out
   function renderNameSection() {
     function onClick() {
       // turn off fields
@@ -786,6 +641,8 @@ const CreateDataModelComponent = (props: CreateDataModelType) => {
       setAddingField(false);
       setHideNames(false);
     }
+
+    console.log("contentModelData", contentModelData);
 
     return (
       <Grid
@@ -860,16 +717,7 @@ const CreateDataModelComponent = (props: CreateDataModelType) => {
     );
   }
 
-  function onClickDeleteProperty(propertyName: string) {
-    if (properties) {
-      const tempProperties = properties.filter((propertyItem) => {
-        return propertyItem.name !== propertyName;
-      });
-      setProperties(tempProperties);
-    }
-  }
-
-  // Need to move out
+  // TODO:  Need to move out
   function renderPropertiesSection() {
     const tableRows: any = [
       { name: "Name", value: DISPLAY_NAME },
@@ -1026,40 +874,15 @@ const CreateDataModelComponent = (props: CreateDataModelType) => {
     setSettingFieldName(false);
   }
 
-  // Need to move out
-  function renderAddFieldsAndSaveModelButtonGroup() {
-    if (contentModelData.displayName) {
-      return (
-        <Grid
-          container={true}
-          justifyContent={"flex-end"}
-          className={"modal-action-buttons"}
-        >
-          <Button
-            name={"Add Fields"}
-            onClick={onClickAddFields}
-            color={"secondary"}
-            variant={"contained"}
-          />
-          {properties && properties.length ? (
-            <Button
-              name={"Save Model"}
-              className={"save-model"}
-              onClick={() => onClickSaveDataModel(contentModelData, properties)}
-              color={"primary"}
-              variant={"contained"}
-            />
-          ) : null}
-        </Grid>
-      );
-    }
-    return null;
-  }
-
   // When settings is created save the model
   useEffect(() => {
     if (modelSetting.id) {
-      onClickSaveDataModel(contentModelData, properties || []);
+      onClickSaveDataModel(
+        contentModelData,
+        properties || [],
+        env,
+        applicationName
+      );
     }
   }, [modelSetting.id]);
 
@@ -1211,7 +1034,10 @@ const CreateDataModelComponent = (props: CreateDataModelType) => {
                 </Grid>
               </Grid>
             ) : settingFieldName ? null : (
-              renderAddFieldsAndSaveModelButtonGroup()
+              <AddFieldsAndSaveModelButtonGroup
+                env={env}
+                applicationName={applicationName}
+              />
             )}
           </Grid>
         </Grid>
@@ -1335,6 +1161,10 @@ const mapState = (state: RootState) => {
     language: state.authentication.language,
   };
 };
-
 const connector = connect(mapState);
-export const CreateDataModel = connector(CreateDataModelComponent);
+export const CreateDataModel = connector(
+  withAppState(CreateDataModelComponent)
+);
+
+type PropsFromRedux = ConnectedProps<typeof connector>;
+type CreateDataModelType = PropsFromRedux;

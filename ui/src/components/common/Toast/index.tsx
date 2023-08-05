@@ -1,4 +1,3 @@
-
 // import { SyntheticEvent } from 'react'
 // import Snackbar from "@mui/material/Snackbar";
 
@@ -9,6 +8,7 @@ export interface AlertType {
   message: string;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const Alert = (props: AlertType) => {
   // const { severity = "success", message, isAlertOpen, onAlertClose } = props;
 
@@ -16,7 +16,7 @@ export const Alert = (props: AlertType) => {
   //   if (reason === "clickaway") return;
   //   onAlertClose(false);
   // };
-  console.log("Props", props);
+  console.log("Alert Props", props);
 
   return (
     <div>
