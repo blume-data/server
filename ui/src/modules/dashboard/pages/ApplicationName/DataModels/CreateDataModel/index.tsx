@@ -64,22 +64,14 @@ import { RenderHeading } from "../../../../../../components/common/RenderHeading
 import { Button } from "../../../../../../components/common/Button";
 import {
   FIELD_ONLY_SPECIFIED_VALUES,
-  FIELD_ALLOW_ONLY_SPECIFIC_VALUES_GROUP,
   FIELD_NAME,
   FIELD_ID,
-  FIELD_NAME_GROUP,
   FIELD_DESCRIPTION,
   FIELD_ASSET_TYPE,
   FIELD_DEFAULT_VALUE,
   FIELD_PROHIBIT_SPECIFIC_PATTERN,
   FIELD_MATCH_SPECIFIC_PATTERN_STRING,
   FIELD_MATCH_SPECIFIC_PATTERN,
-  FIELD_LIMIT_CHARACTER_COUNT_GROUP,
-  FIELD_REFERENCE_MODEL_GROUP,
-  FIELD_LIMIT_VALUE_GROUP,
-  FIELD_DEFAULT_VALUE_GROUP,
-  FIELD_PROHIBIT_SPECIFIC_PATTERN_GROUP,
-  FIELD_MATCH_SPECIFIC_PATTERN_GROUP,
   FIELD_REFERENCE_MODEL_TYPE,
   FIELD_REFERENCE_MODEL_NAME,
 } from "./constants";
@@ -93,6 +85,7 @@ import { AddFieldsAndSaveModelButtonGroup } from "./components/AddFieldsAndSaveM
 import { FieldItem } from "./components/FieldItem";
 import { NameSection } from "./components/NameSection";
 import { PropertiesSection } from "./components/PropertiesSection";
+import { AddFieldForm } from "./components/AddFieldForm";
 
 const CreateDataModelComponent = (props: CreateDataModelType) => {
   const [modelNames, setModelNames] = useState<
@@ -622,6 +615,9 @@ const CreateDataModelComponent = (props: CreateDataModelType) => {
   return (
     <Grid container={true} className={"create-data-model-container"}>
       {isLoading ? <Loader /> : null}
+
+      {/* Top Section */}
+      {/* Content Model data, addingField, settingFieldName */}
       <Grid item={true} className="left-container">
         <Grid
           style={{ flexWrap: "nowrap" }}
@@ -777,8 +773,9 @@ const CreateDataModelComponent = (props: CreateDataModelType) => {
           </Grid>
         </Grid>
       </Grid>
-      {/* MODAL SETTING CONTAINER */}
 
+      {/* MODAL SETTING CONTAINER */}
+      {/* properties, modelSetting, setModelSetting, isLoading */}
       {properties && properties.length ? (
         <Grid item={true} className="right-container">
           <div>
@@ -798,6 +795,7 @@ const CreateDataModelComponent = (props: CreateDataModelType) => {
         </Grid>
       ) : null}
 
+      {/*confirmDialogOpen, deleteEntryName  */}
       <AlertDialog
         onClose={() => {
           setConfirmDialogOpen(false);
@@ -817,74 +815,45 @@ const CreateDataModelComponent = (props: CreateDataModelType) => {
         subTitle={"Please confirm if you want to delete"}
       />
 
+      {/* isAlertOpen, alert */}
       <Alert
         isAlertOpen={isAlertOpen}
         onAlertClose={setIsAlertOpen}
         severity={alert.severity}
         message={alert.message}
       />
+
+      {/* fieldEditMode, contentModelData, hideNames, formResponse, nameFields, onSubmitCreateCOntentModel  */}
       <ModalDialog
         title={`${
           fieldEditMode || contentModelData.id ? "Edit" : "Create new"
         } Model`}
         isOpen={!hideNames}
         handleClose={() => setHideNames(true)}
-        children={
-          <Form
-            response={formResponse}
-            submitButtonName={"Save model name"}
-            className={"create-content-model-form"}
-            fields={nameFields}
-            showClearButton={true}
-            onSubmit={onSubmitCreateContentModel}
-          />
-        }
-      />
+      >
+        <Form
+          response={formResponse}
+          submitButtonName={"Save model name"}
+          className={"create-content-model-form"}
+          fields={nameFields}
+          showClearButton={true}
+          onSubmit={onSubmitCreateContentModel}
+        />
+      </ModalDialog>
 
+      {/* settingFieldName, closeAddFieldForm, onSubmitFieldProperty, propertyNameFields
+       */}
       <ModalDialog
         title={`Field`}
         isOpen={!!settingFieldName}
         handleClose={closeAddFieldForm}
-        children={
-          <Grid
-            container
-            direction={"column"}
-            className={"set-fields-property-container"}
-          >
-            <Grid
-              item
-              style={{ display: "none" }}
-              className={"cancel-button-container"}
-            >
-              <Button
-                variant={"outlined"}
-                name={"Cancel"}
-                color={"primary"}
-                onClick={closeAddFieldForm}
-              />
-            </Grid>
-            <Grid item={true}>
-              <Form
-                groups={[
-                  FIELD_NAME_GROUP,
-                  FIELD_LIMIT_CHARACTER_COUNT_GROUP,
-                  FIELD_LIMIT_VALUE_GROUP,
-                  FIELD_ALLOW_ONLY_SPECIFIC_VALUES_GROUP,
-                  FIELD_DEFAULT_VALUE_GROUP,
-                  FIELD_MATCH_SPECIFIC_PATTERN_GROUP,
-                  FIELD_PROHIBIT_SPECIFIC_PATTERN_GROUP,
-                  FIELD_REFERENCE_MODEL_GROUP,
-                ]}
-                response={formResponse}
-                submitButtonName={"Save field"}
-                onSubmit={onSubmitFieldProperty}
-                fields={propertyNameFields()}
-                className={"field-property-form"}
-              />
-            </Grid>
-          </Grid>
-        }
-      />
+      >
+        <AddFieldForm
+          closeAddFieldForm={closeAddFieldForm}
+          onSubmitFieldProperty={onSubmitFieldProperty}
+          fields={propertyNameFields()}
+        />
+      </ModalDialog>
     </Grid>
   );
 };

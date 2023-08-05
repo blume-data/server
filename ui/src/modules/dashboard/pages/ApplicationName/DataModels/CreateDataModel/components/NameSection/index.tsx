@@ -6,7 +6,6 @@ import IconButton from "@mui/material/IconButton";
 import EditIcon from "@mui/icons-material/Edit";
 import { DropDown } from "../../../../../../../../components/common/Form/DropDown";
 
-// TODO:  Need to move out
 export function NameSection() {
   const {
     setSettingFieldName,
